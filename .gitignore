@@ -1,2 +1,4 @@
 ~*
-blubb
+
+# Python byte code
+*.pyc
