@@ -9,17 +9,17 @@
 
 from django.db import models
 
-class ComponentHashes(models.Model):
-    component = models.IntegerField(primary_key=True)
-    key = models.IntegerField(primary_key=True)
+class ComponentHash(models.Model):
     seq_no = models.IntegerField(primary_key=True)
+    component = models.IntegerField()
+    key = models.IntegerField()
     pcr = models.IntegerField()
-    algo = models.IntegerField(primary_key=True)
-    hash = models.TextField() # This field type is a guess.
+    algo = models.IntegerField()
+    hash = models.TextField()
     class Meta:
         db_table = u'component_hashes'
 
-class Components(models.Model):
+class Component(models.Model):
     id = models.IntegerField(primary_key=True)
     vendor_id = models.IntegerField()
     name = models.IntegerField()
@@ -27,8 +27,8 @@ class Components(models.Model):
     class Meta:
         db_table = u'components'
 
-class DeviceInfos(models.Model):
-    device = models.IntegerField(primary_key=True)
+class DeviceInfo(models.Model):
+    device = models.IntegerField()
     time = models.IntegerField(primary_key=True)
     product = models.IntegerField(null=True, blank=True)
     count = models.IntegerField(null=True, blank=True)
@@ -38,14 +38,14 @@ class DeviceInfos(models.Model):
     class Meta:
         db_table = u'device_infos'
 
-class Devices(models.Model):
+class Device(models.Model):
     id = models.IntegerField(primary_key=True)
-    value = models.TextField() # This field type is a guess.
+    value = models.TextField()
     class Meta:
         db_table = u'devices'
 
-class FileHashes(models.Model):
-    file = models.IntegerField(primary_key=True)
+class FileHash(models.Model):
+    file = models.IntegerField()
     directory = models.IntegerField(null=True, primary_key=True, blank=True)
     product = models.IntegerField(primary_key=True)
     key = models.IntegerField(null=True, blank=True)
@@ -54,7 +54,7 @@ class FileHashes(models.Model):
     class Meta:
         db_table = u'file_hashes'
 
-class Files(models.Model):
+class File(models.Model):
     def __unicode__(self):
         return self.path
     id = models.IntegerField(primary_key=True)
@@ -71,16 +71,20 @@ class KeyComponent(models.Model):
     class Meta:
         db_table = u'key_component'
 
-class Keys(models.Model):
+class Key(models.Model):
     id = models.IntegerField(primary_key=True)
     keyid = models.TextField() # This field type is a guess.
     owner = models.TextField()
     class Meta:
         db_table = u'keys'
 
-class Packages(models.Model):
+class Package(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
+
+    def __unicode__(self):
+        return self.name
+
     class Meta:
         db_table = u'packages'
 
@@ -92,19 +96,27 @@ class ProductFile(models.Model):
     class Meta:
         db_table = u'product_file'
 
-class Products(models.Model):
+class Product(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
+
+    def __unicode__(self):
+        return self.name
+
     class Meta:
         db_table = u'products'
 
-class Versions(models.Model):
+class Version(models.Model):
     id = models.IntegerField(primary_key=True)
     package = models.IntegerField()
     product = models.IntegerField()
     release = models.TextField()
     security = models.IntegerField(null=True, blank=True)
     time = models.IntegerField(null=True, blank=True)
+
+    def __unicode__(self):
+        return self.release
+
     class Meta:
         db_table = u'versions'
 
