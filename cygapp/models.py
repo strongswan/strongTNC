@@ -7,6 +7,8 @@
 # Also note: You'll have to insert the output of 'django-admin.py sqlcustom [appname]'
 # into your database.
 
+import base64
+import simplejson
 from django.db import models
 
 class ComponentHash(models.Model):
@@ -51,15 +53,38 @@ class FileHash(models.Model):
     key = models.IntegerField(null=True, blank=True)
     algo = models.IntegerField(primary_key=True)
     hash = models.TextField() # This field type is a guess.
+
+    def __unicode__(self):
+        return base64.encodestring(self.hash.__str__())
+
+    def __json__(self):
+        return simplejson.dumps({
+            'file' : self.file,
+            'directory' : self.directory,
+            'product' : self.product,
+            'key' : self.key,
+            'algo' : self.algo,
+            'hash' : base64.encodestring(self.hash.__str__()),
+            })
+
     class Meta:
         db_table = u'file_hashes'
 
 class File(models.Model):
-    def __unicode__(self):
-        return self.path
     id = models.IntegerField(primary_key=True)
     type = models.IntegerField()
     path = models.TextField()
+
+    def __unicode__(self):
+        return self.path
+
+    def __json__(self):
+        return simplejson.dumps({
+            'id' : self.id,
+            'type' : self.type,
+            'path' : self.path,
+            })
+
     class Meta:
         db_table = u'files'
 
