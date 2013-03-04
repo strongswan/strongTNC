@@ -48,10 +48,10 @@ class Device(models.Model):
 
 class FileHash(models.Model):
     file = models.IntegerField()
-    directory = models.IntegerField(null=True, primary_key=True, blank=True)
+    directory = models.IntegerField(null=True, blank=True)
     product = models.IntegerField(primary_key=True)
     key = models.IntegerField(null=True, blank=True)
-    algo = models.IntegerField(primary_key=True)
+    algo = models.IntegerField()
     hash = models.TextField() # This field type is a guess.
 
     def __unicode__(self):
@@ -90,7 +90,7 @@ class File(models.Model):
 
 class KeyComponent(models.Model):
     key = models.IntegerField(primary_key=True)
-    component = models.IntegerField(primary_key=True)
+    component = models.IntegerField()
     depth = models.IntegerField(null=True, blank=True)
     seq_no = models.IntegerField(null=True, blank=True)
     class Meta:
@@ -114,8 +114,8 @@ class Package(models.Model):
         db_table = u'packages'
 
 class ProductFile(models.Model):
-    product = models.IntegerField(primary_key=True)
-    file = models.IntegerField(primary_key=True)
+    product = models.IntegerField()
+    file = models.IntegerField()
     measurement = models.IntegerField(null=True, blank=True)
     metadata = models.IntegerField(null=True, blank=True)
     class Meta:

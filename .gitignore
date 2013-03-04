@@ -1,4 +1,7 @@
 ~*
 
+# vim swap-files:
+*.swp
+
 # Python byte code
 *.pyc
