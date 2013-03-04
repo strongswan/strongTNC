@@ -1,5 +1,6 @@
 import base64   
 from django.http import HttpResponse
+from django.template import Context, loader
 from django.shortcuts import get_object_or_404
 from models import File,FileHash
 
@@ -9,8 +10,33 @@ def index(request):
 
 def files(request):
     flist = File.objects.all()
-    answer = '<br />\n'.join(file.path for file in flist)
+    template = loader.get_template("cygapp/files.html")
+    context = Context({ "flist": flist })
+    return HttpResponse(template.render(context))
+
+def fileshashes(request):
+    flist = File.objects.all()
+    answer = ""
+
+    for f in flist:
+        hashes = FileHash.objects.filter(file=f.id)
+        answer += f.id.__str__() + ":" 
+        for h in hashes:
+            answer += h.__str__() + ","
+
+        answer += "\n"
     return HttpResponse(answer)
+
+def fileshashesjson(request):
+    flist = File.objects.all()
+    answer = "{"
+
+    for file in flist:
+        hashes = FileHash.objects.filter(file=file.id)
+        answer += ",\n".join(hash.__json__() for hash in hashes)
+
+    answer += "}"
+    return HttpResponse(answer, mimetype="application/json")
 
 def file(request, fileid):
     f = get_object_or_404(File, pk=fileid)

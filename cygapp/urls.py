@@ -6,6 +6,8 @@ import views
 urlpatterns = patterns('',
         url(r'^$', views.index, name='index'),
         url(r'^files$', views.files, name='files'),
+        url(r'^files/hashes$', views.fileshashes, name='fileshashes'),
+        url(r'^files/hashes/json$', views.fileshashesjson, name='fileshashesjson'),
         url(r'^files/(?P<fileid>\d+)$', views.file, name='file'),
         url(r'^files/(?P<fileid>\d+)/hashes$', views.filehashes, name='filehashes'),
         url(r'^files/(?P<fileid>\d+)/json$', views.filejson, name='filejson'),

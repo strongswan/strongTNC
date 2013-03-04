@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <style type="text/css">
+            thead>tr>td { font-weight: bold}
+            tbody>tr:nth-child(2n + 1) {background-color : lightgray}
+        </style>
+        <title>Cygnet - file list</title>
+    </head>
+    <body>
+        <h1>Cygnet - file list</h1>
+        <h3>There are {{ flist.count }} files</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Type</td>
+                    <td>Path</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in flist %}
+                <tr>
+                    <td>{{ file.id }}</td>
+                    <td>{{ file.type }}</td>
+                    <td>{{ file.path }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
