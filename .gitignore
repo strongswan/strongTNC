@@ -5,3 +5,5 @@
 
 # Python byte code
 *.pyc
+
+*.db-journal

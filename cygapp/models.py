@@ -29,8 +29,14 @@ class Component(models.Model):
     class Meta:
         db_table = u'components'
 
+class Device(models.Model):
+    id = models.IntegerField(primary_key=True)
+    value = models.TextField()
+    class Meta:
+        db_table = u'devices'
+
 class DeviceInfo(models.Model):
-    device = models.IntegerField()
+    device = models.ForeignKey(Device)
     time = models.IntegerField(primary_key=True)
     product = models.IntegerField(null=True, blank=True)
     count = models.IntegerField(null=True, blank=True)
@@ -39,12 +45,6 @@ class DeviceInfo(models.Model):
     flags = models.IntegerField(null=True, blank=True)
     class Meta:
         db_table = u'device_infos'
-
-class Device(models.Model):
-    id = models.IntegerField(primary_key=True)
-    value = models.TextField()
-    class Meta:
-        db_table = u'devices'
 
 class FileHash(models.Model):
     file = models.IntegerField()

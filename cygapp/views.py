@@ -29,13 +29,13 @@ def fileshashes(request):
 
 def fileshashesjson(request):
     flist = File.objects.all()
-    answer = "{"
+    answer = "{["
 
     for file in flist:
         hashes = FileHash.objects.filter(file=file.id)
         answer += ",\n".join(hash.__json__() for hash in hashes)
 
-    answer += "}"
+    answer += "]}"
     return HttpResponse(answer, mimetype="application/json")
 
 def file(request, fileid):
