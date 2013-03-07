@@ -11,34 +11,22 @@ import base64
 import simplejson
 from django.db import models
 
-class ComponentHash(models.Model):
-    seq_no = models.IntegerField(primary_key=True)
-    component = models.IntegerField()
-    key = models.IntegerField()
-    pcr = models.IntegerField()
-    algo = models.IntegerField()
-    hash = models.TextField()
-    class Meta:
-        db_table = u'component_hashes'
-
-class Component(models.Model):
-    id = models.IntegerField(primary_key=True)
-    vendor_id = models.IntegerField()
-    name = models.IntegerField()
-    qualifier = models.IntegerField(null=True, blank=True)
-    class Meta:
-        db_table = u'components'
-
 class Device(models.Model):
+    """
+    Represents and Android Device identified by its AndroidID
+    """
     id = models.IntegerField(primary_key=True)
     value = models.TextField()
     class Meta:
         db_table = u'devices'
 
 class DeviceInfo(models.Model):
-    device = models.ForeignKey(Device)
+    """
+    Result of a TNC health check
+    """
+    device = models.ForeignKey(Device,related_name='logins')
     time = models.IntegerField(primary_key=True)
-    product = models.IntegerField(null=True, blank=True)
+    product = models.ForeignKey(Product)
     count = models.IntegerField(null=True, blank=True)
     count_update = models.IntegerField(null=True, blank=True)
     count_blacklist = models.IntegerField(null=True, blank=True)
@@ -46,13 +34,50 @@ class DeviceInfo(models.Model):
     class Meta:
         db_table = u'device_infos'
 
+class Directory(models.Model):
+    id = models.IntegerField(primary_key=True)
+    path = models.CharField(null=False, blank=False) #TODO: Sinnvolle max_length?
+    
+
+class File(models.Model):
+    id = models.IntegerField(primary_key=True)
+    dir = models.ForeignKey(Directory, related_name='files')
+    name = models.CharField()
+
+    def __unicode__(self):
+        return self.name
+
+    def __json__(self):
+        return simplejson.dumps({
+            'id' : self.id,
+            'type' : self.type,
+            'path' : self.path,
+            })
+
+    class Meta:
+        db_table = u'files'
+
+class Product(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.TextField()
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        db_table = u'products'
+
 class FileHash(models.Model):
-    file = models.IntegerField()
-    directory = models.IntegerField(null=True, blank=True)
-    product = models.IntegerField(primary_key=True)
+    file = models.ForeignKey(File, related_name='hashes')
+    directory = models.ForeignKey(File, null=True)
+    product = models.ForeignKey(Product)
     key = models.IntegerField(null=True, blank=True)
     algo = models.IntegerField()
     hash = models.TextField() # This field type is a guess.
+
+    class Meta:
+        db_table = u'file_hashes'
+        unique_together = (("file","product"))
 
     def __unicode__(self):
         return base64.encodestring(self.hash.__str__())
@@ -67,41 +92,6 @@ class FileHash(models.Model):
             'hash' : base64.encodestring(self.hash.__str__()),
             })
 
-    class Meta:
-        db_table = u'file_hashes'
-
-class File(models.Model):
-    id = models.IntegerField(primary_key=True)
-    type = models.IntegerField()
-    path = models.TextField()
-
-    def __unicode__(self):
-        return self.path
-
-    def __json__(self):
-        return simplejson.dumps({
-            'id' : self.id,
-            'type' : self.type,
-            'path' : self.path,
-            })
-
-    class Meta:
-        db_table = u'files'
-
-class KeyComponent(models.Model):
-    key = models.IntegerField(primary_key=True)
-    component = models.IntegerField()
-    depth = models.IntegerField(null=True, blank=True)
-    seq_no = models.IntegerField(null=True, blank=True)
-    class Meta:
-        db_table = u'key_component'
-
-class Key(models.Model):
-    id = models.IntegerField(primary_key=True)
-    keyid = models.TextField() # This field type is a guess.
-    owner = models.TextField()
-    class Meta:
-        db_table = u'keys'
 
 class Package(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -120,16 +110,6 @@ class ProductFile(models.Model):
     metadata = models.IntegerField(null=True, blank=True)
     class Meta:
         db_table = u'product_file'
-
-class Product(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.TextField()
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        db_table = u'products'
 
 class Version(models.Model):
     id = models.IntegerField(primary_key=True)
