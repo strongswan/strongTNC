@@ -1,24 +1,28 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#     * Rearrange models' order
-#     * Make sure each model has one field with primary_key=True
-# Feel free to rename the models, but don't rename db_table values or field names.
-#
-# Also note: You'll have to insert the output of 'django-admin.py sqlcustom [appname]'
-# into your database.
-
 import base64
 import simplejson
 from django.db import models
 
 class Device(models.Model):
     """
-    Represents and Android Device identified by its AndroidID
+    An Android Device identified by its AndroidID
     """
     id = models.IntegerField(primary_key=True)
     value = models.TextField()
     class Meta:
         db_table = u'devices'
+
+class Product(models.Model):
+    """
+    Android Platform
+    """
+    id = models.IntegerField(primary_key=True)
+    name = models.TextField()
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        db_table = u'products'
 
 class DeviceInfo(models.Model):
     """
@@ -35,14 +39,20 @@ class DeviceInfo(models.Model):
         db_table = u'device_infos'
 
 class Directory(models.Model):
+    """
+    Unix-style directory path
+    """
     id = models.IntegerField(primary_key=True)
-    path = models.CharField(null=False, blank=False) #TODO: Sinnvolle max_length?
+    path = models.CharField(max_length=500, null=False, blank=False) #TODO: Sinnvolle max_length?
     
 
 class File(models.Model):
+    """
+    Filename
+    """
     id = models.IntegerField(primary_key=True)
     dir = models.ForeignKey(Directory, related_name='files')
-    name = models.CharField()
+    name = models.CharField(max_length=500) #TODO: Sinnvolle max_length?
 
     def __unicode__(self):
         return self.name
@@ -57,23 +67,16 @@ class File(models.Model):
     class Meta:
         db_table = u'files'
 
-class Product(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.TextField()
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        db_table = u'products'
-
 class FileHash(models.Model):
+    """
+    SHA-1 or similar filehash
+    """
     file = models.ForeignKey(File, related_name='hashes')
     directory = models.ForeignKey(File, null=True)
     product = models.ForeignKey(Product)
     key = models.IntegerField(null=True, blank=True)
     algo = models.IntegerField()
-    hash = models.TextField() # This field type is a guess.
+    hash = models.TextField()
 
     class Meta:
         db_table = u'file_hashes'
@@ -94,8 +97,11 @@ class FileHash(models.Model):
 
 
 class Package(models.Model):
+    """
+    aptitude Package name
+    """
     id = models.IntegerField(primary_key=True)
-    name = models.TextField()
+    name = models.TextField(unique=True)
 
     def __unicode__(self):
         return self.name
@@ -104,6 +110,9 @@ class Package(models.Model):
         db_table = u'packages'
 
 class ProductFile(models.Model):
+    """
+    Resolving table -> to be dumped?
+    """
     product = models.IntegerField()
     file = models.IntegerField()
     measurement = models.IntegerField(null=True, blank=True)
@@ -112,12 +121,15 @@ class ProductFile(models.Model):
         db_table = u'product_file'
 
 class Version(models.Model):
+    """
+    Version number string of a package
+    """
     id = models.IntegerField(primary_key=True)
-    package = models.IntegerField()
-    product = models.IntegerField()
-    release = models.TextField()
-    security = models.IntegerField(null=True, blank=True)
-    time = models.IntegerField(null=True, blank=True)
+    package = models.ForeignKey(Package)
+    product = models.ForeignKey(Product, related_name='versions')
+    release = models.TextField(blank=False)
+    security = models.BooleanField(null=False)
+    time = models.DateTimeField()
 
     def __unicode__(self):
         return self.release
