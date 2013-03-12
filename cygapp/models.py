@@ -69,11 +69,11 @@ class File(models.Model):
     class Meta:
         db_table = u'files'
 
-class Algorithm
+class Algorithm(models.Model):
     """
     A hashing algorithm
     """
-    id = models.Integerfield(primary_key=True)
+    id = models.IntegerField(primary_key=True)
     name = models.TextField(null=False, blank=False)
 
 class FileHash(models.Model):
