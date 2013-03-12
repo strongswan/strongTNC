@@ -8,6 +8,8 @@ class Device(models.Model):
     """
     id = models.IntegerField(primary_key=True)
     value = models.TextField()
+    description = models.TextField()
+
     class Meta:
         db_table = u'devices'
 
@@ -28,9 +30,9 @@ class DeviceInfo(models.Model):
     """
     Result of a TNC health check
     """
-    device = models.ForeignKey(Device,related_name='logins')
+    device = models.ForeignKey(Device,db_column='device',related_name='logins')
     time = models.IntegerField(primary_key=True)
-    product = models.ForeignKey(Product)
+    product = models.ForeignKey(Product,db_column='product')
     count = models.IntegerField(null=True, blank=True)
     count_update = models.IntegerField(null=True, blank=True)
     count_blacklist = models.IntegerField(null=True, blank=True)
@@ -43,7 +45,7 @@ class Directory(models.Model):
     Unix-style directory path
     """
     id = models.IntegerField(primary_key=True)
-    path = models.CharField(max_length=500, null=False, blank=False) #TODO: Sinnvolle max_length?
+    path = models.TextField()
     
 
 class File(models.Model):
@@ -51,8 +53,8 @@ class File(models.Model):
     Filename
     """
     id = models.IntegerField(primary_key=True)
-    dir = models.ForeignKey(Directory, related_name='files')
-    name = models.CharField(max_length=500) #TODO: Sinnvolle max_length?
+    dir = models.ForeignKey(Directory, db_column='dir', related_name='files')
+    name = models.TextField()
 
     def __unicode__(self):
         return self.name
@@ -67,15 +69,22 @@ class File(models.Model):
     class Meta:
         db_table = u'files'
 
+class Algorithm
+    """
+    A hashing algorithm
+    """
+    id = models.Integerfield(primary_key=True)
+    name = models.TextField(null=False, blank=False)
+
 class FileHash(models.Model):
     """
     SHA-1 or similar filehash
     """
-    file = models.ForeignKey(File, related_name='hashes')
-    directory = models.ForeignKey(File, null=True)
-    product = models.ForeignKey(Product)
-    key = models.IntegerField(null=True, blank=True)
-    algo = models.IntegerField()
+    file = models.ForeignKey(File, db_column='file', related_name='hashes')
+    directory = models.ForeignKey(File, db_column='dir', null=True)
+    product = models.ForeignKey(Product, db_column='product')
+    key = models.IntegerField(null=False, default=0)
+    algo = models.ForeignKey(Algorithm, db_column='algo')
     hash = models.TextField()
 
     class Meta:
@@ -125,8 +134,9 @@ class Version(models.Model):
     Version number string of a package
     """
     id = models.IntegerField(primary_key=True)
-    package = models.ForeignKey(Package)
-    product = models.ForeignKey(Product, related_name='versions')
+    package = models.ForeignKey(Package, db_column='package')
+    product = models.ForeignKey(Product, related_name='versions',
+            db_column='product')
     release = models.TextField(blank=False)
     security = models.BooleanField(null=False)
     time = models.DateTimeField()
@@ -137,3 +147,24 @@ class Version(models.Model):
     class Meta:
         db_table = u'versions'
 
+# The following classes are only stubs. Their purpose is to justify the
+# existence of the according database-tables to django
+#class Component(models.Model):
+#    pass
+#    class Meta:
+#        db_table = u'component'
+#
+#class ComponentHash(models.Model):
+#    pass
+#    class Meta:
+#        db_table = u'componenthash'
+#
+#class Key(models.Model):
+#    pass
+#    class Meta:
+#        db_table = u'key'
+#
+#class KeyComponent(models.Model):
+#    pass
+#    class Meta:
+#        db_table = u'keycomponent'
