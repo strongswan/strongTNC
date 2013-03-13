@@ -10,7 +10,13 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
+
     'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '',
+    },
+    
+    'meta': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'django.db',
     },
@@ -20,6 +26,8 @@ DATABASES = {
         'NAME': 'ipsec.config.db',             
     }
 }
+
+DATABASE_ROUTERS = ['router.DBRouter']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

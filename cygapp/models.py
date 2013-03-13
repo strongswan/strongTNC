@@ -49,6 +49,9 @@ class Directory(models.Model):
     """
     id = models.IntegerField(primary_key=True)
     path = models.TextField()
+
+    class Meta:
+        db_table = u'directory'
     
 
 class File(models.Model):
@@ -78,6 +81,9 @@ class Algorithm(models.Model):
     """
     id = models.IntegerField(primary_key=True)
     name = models.TextField(null=False, blank=False)
+
+    class Meta:
+        db_table = u'algorithm'
 
 class FileHash(models.Model):
     """
