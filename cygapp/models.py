@@ -30,15 +30,18 @@ class DeviceInfo(models.Model):
     """
     Result of a TNC health check
     """
-    device = models.ForeignKey(Device,db_column='device',related_name='logins')
-    time = models.IntegerField(primary_key=True)
-    product = models.ForeignKey(Product,db_column='product')
-    count = models.IntegerField(null=True, blank=True)
-    count_update = models.IntegerField(null=True, blank=True)
-    count_blacklist = models.IntegerField(null=True, blank=True)
-    flags = models.IntegerField(null=True, blank=True)
+    id = models.IntegerField(primary_key = True)
+    device = models.ForeignKey(Device, db_column='device', related_name='logins')
+    time = models.IntegerField()
+    product = models.ForeignKey(Product, db_column = 'product')
+    packagecount = models.IntegerField(default = 0, blank = True,
+            db_column = 'count')
+    count_update = models.IntegerField(default = 0, blank = True)
+    count_blacklist = models.IntegerField(default = 0, blank = True)
+    flags = models.IntegerField(default = 0, blank = True)
     class Meta:
         db_table = u'device_infos'
+        unique_together = (('device','time'))
 
 class Directory(models.Model):
     """
@@ -53,7 +56,7 @@ class File(models.Model):
     Filename
     """
     id = models.IntegerField(primary_key=True)
-    dir = models.ForeignKey(Directory, db_column='dir', related_name='files')
+    directory = models.ForeignKey(Directory, db_column='dir', related_name='files')
     name = models.TextField()
 
     def __unicode__(self):
@@ -84,12 +87,12 @@ class FileHash(models.Model):
     directory = models.ForeignKey(File, db_column='dir', null=True)
     product = models.ForeignKey(Product, db_column='product')
     key = models.IntegerField(null=False, default=0)
-    algo = models.ForeignKey(Algorithm, db_column='algo')
+    algorithm = models.ForeignKey(Algorithm, db_column='algo')
     hash = models.TextField()
 
     class Meta:
         db_table = u'file_hashes'
-        unique_together = (("file","product"))
+        unique_together = (('file','product'))
 
     def __unicode__(self):
         return base64.encodestring(self.hash.__str__())
@@ -118,16 +121,16 @@ class Package(models.Model):
     class Meta:
         db_table = u'packages'
 
-class ProductFile(models.Model):
-    """
-    Resolving table -> to be dumped?
-    """
-    product = models.IntegerField()
-    file = models.IntegerField()
-    measurement = models.IntegerField(null=True, blank=True)
-    metadata = models.IntegerField(null=True, blank=True)
-    class Meta:
-        db_table = u'product_file'
+#class ProductFile(models.Model):
+#    """
+#    Resolving table -> to be dumped?
+#    """
+#    product = models.IntegerField()
+#    file = models.IntegerField()
+#    measurement = models.IntegerField(null=True, blank=True)
+#    metadata = models.IntegerField(null=True, blank=True)
+#    class Meta:
+#        db_table = u'product_file'
 
 class Version(models.Model):
     """
