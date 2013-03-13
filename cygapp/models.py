@@ -15,13 +15,20 @@ class Device(models.Model):
 
 class Product(models.Model):
     """
-    Android Platform
+    Platform (f.e Android or Ubuntu)
     """
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
 
     def __unicode__(self):
         return self.name
+
+    def __json__(self):
+        return simplejson.dumps({
+            'id': self.id,
+            'name': self.name
+            })
+
 
     class Meta:
         db_table = u'products'
@@ -51,7 +58,7 @@ class Directory(models.Model):
     path = models.TextField()
 
     class Meta:
-        db_table = u'directory'
+        db_table = u'directories'
     
 
 class File(models.Model):
@@ -68,8 +75,7 @@ class File(models.Model):
     def __json__(self):
         return simplejson.dumps({
             'id' : self.id,
-            'type' : self.type,
-            'path' : self.path,
+            'name' : self.name,
             })
 
     class Meta:
@@ -82,15 +88,20 @@ class Algorithm(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(null=False, blank=False)
 
+    def __json__(self):
+        return simplejson.dumps({
+            'id' : self.id,
+            'name' : self.name,
+            })
+
     class Meta:
-        db_table = u'algorithm'
+        db_table = u'algorithms'
 
 class FileHash(models.Model):
     """
     SHA-1 or similar filehash
     """
     file = models.ForeignKey(File, db_column='file', related_name='hashes')
-    directory = models.ForeignKey(File, db_column='dir', null=True)
     product = models.ForeignKey(Product, db_column='product')
     key = models.IntegerField(null=False, default=0)
     algorithm = models.ForeignKey(Algorithm, db_column='algo')
@@ -105,11 +116,10 @@ class FileHash(models.Model):
 
     def __json__(self):
         return simplejson.dumps({
-            'file' : self.file,
-            'directory' : self.directory,
-            'product' : self.product,
+            'file' : self.file.__json__(),
+            'product' : self.product.__json__(),
             'key' : self.key,
-            'algo' : self.algo,
+            'algo' : self.algorithm.__json__(),
             'hash' : base64.encodestring(self.hash.__str__()),
             })
 
@@ -126,17 +136,6 @@ class Package(models.Model):
 
     class Meta:
         db_table = u'packages'
-
-#class ProductFile(models.Model):
-#    """
-#    Resolving table -> to be dumped?
-#    """
-#    product = models.IntegerField()
-#    file = models.IntegerField()
-#    measurement = models.IntegerField(null=True, blank=True)
-#    metadata = models.IntegerField(null=True, blank=True)
-#    class Meta:
-#        db_table = u'product_file'
 
 class Version(models.Model):
     """
@@ -156,24 +155,3 @@ class Version(models.Model):
     class Meta:
         db_table = u'versions'
 
-# The following classes are only stubs. Their purpose is to justify the
-# existence of the according database-tables to django
-#class Component(models.Model):
-#    pass
-#    class Meta:
-#        db_table = u'component'
-#
-#class ComponentHash(models.Model):
-#    pass
-#    class Meta:
-#        db_table = u'componenthash'
-#
-#class Key(models.Model):
-#    pass
-#    class Meta:
-#        db_table = u'key'
-#
-#class KeyComponent(models.Model):
-#    pass
-#    class Meta:
-#        db_table = u'keycomponent'

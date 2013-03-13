@@ -14,7 +14,6 @@
             <thead>
                 <tr>
                     <td>ID</td>
-                    <td>Type</td>
                     <td>Path</td>
                 </tr>
             </thead>
@@ -22,8 +21,7 @@
                 {% for file in flist %}
                 <tr>
                     <td>{{ file.id }}</td>
-                    <td>{{ file.type }}</td>
-                    <td>{{ file.path }}</td>
+                    <td>{{ file.directory.path }}/{{ file.name }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

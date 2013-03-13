@@ -40,7 +40,7 @@ def fileshashesjson(request):
 
 def file(request, fileid):
     f = get_object_or_404(File, pk=fileid)
-    return HttpResponse(f.path)
+    return HttpResponse(f.directory.path + '/' + f.name)
 
 def filejson(request, fileid):
     f = get_object_or_404(File, pk=fileid)
