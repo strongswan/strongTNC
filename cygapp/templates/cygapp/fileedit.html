@@ -11,7 +11,7 @@
         <h3>{{ file.name }}</h3>
         
         {% if message %}
-        <div id="message">{{ message }}</div>
+        <div id="message"><strong>{{ message }}</strong></div>
         {% endif %}
         <table>
             <thead>
@@ -26,8 +26,16 @@
                     <td>
                         <form method="POST" action="./edit">
                             {% csrf_token %}
-                            <input type="text" name="path"
-                            value="{{file.directory.path}}" />
+                            <datalist id="dirs">
+                                {% for dir in dirs %}
+                                <option name="option{{dir.id}}" value="{{dir}}">
+                                    {{dir}}
+                                </option>
+                                {%  endfor %}
+                            </datalist>
+                            <input list="dirs" name="path"
+                            value="{{file.directory}}" />
+                            /
                             <input type="text" name="name" value="{{file.name}}" />
                             <input type="submit" value="Save" />
                         </form>

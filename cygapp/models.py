@@ -29,7 +29,6 @@ class Product(models.Model):
             'name': self.name
             })
 
-
     class Meta:
         db_table = u'products'
 

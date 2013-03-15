@@ -21,7 +21,7 @@
                 {% for file in flist %}
                 <tr>
                     <td>{{ file.id }}</td>
-		    <td><a href="./files/{{file.id}}">{{ file.directory.path }}/{{ file.name }}</a></td>
+		    <td><a href="./{{file.id}}">{{ file.directory.path }}/{{ file.name }}</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
