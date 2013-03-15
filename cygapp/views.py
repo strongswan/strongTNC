@@ -55,12 +55,8 @@ def fileedit(request, fileid):
     elif request.method == 'POST':
         f = get_object_or_404(File, pk=fileid)
         f.name = request.POST['name']
-        try:
-            dir = Directory.objects.get( path = request.POST['path'] )
-        except ObjectDoesNotExist:
-            dir = Directory()
-            dir.path = request.POST['path']
-            dir.save()
+        dir, created = Directory.objects.get_or_create( path = request.POST['path'] )
+        if created:
             print('Warning: had to create new directory (' + str(dir.id) + ')')
 
         print(str(dir.id) + ': ' + dir.path)
