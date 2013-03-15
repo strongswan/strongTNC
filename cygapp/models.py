@@ -6,7 +6,7 @@ class Device(models.Model):
     """
     An Android Device identified by its AndroidID
     """
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     value = models.TextField()
     description = models.TextField()
 
@@ -17,7 +17,7 @@ class Product(models.Model):
     """
     Platform (f.e Android or Ubuntu)
     """
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
 
     def __unicode__(self):
@@ -37,7 +37,7 @@ class DeviceInfo(models.Model):
     """
     Result of a TNC health check
     """
-    id = models.IntegerField(primary_key = True)
+    id = models.AutoField(primary_key = True)
     device = models.ForeignKey(Device, db_column='device', related_name='logins')
     time = models.IntegerField()
     product = models.ForeignKey(Product, db_column = 'product')
@@ -54,8 +54,11 @@ class Directory(models.Model):
     """
     Unix-style directory path
     """
-    id = models.IntegerField(primary_key=True)
-    path = models.TextField()
+    id = models.AutoField(primary_key=True)
+    path = models.TextField(unique=True)
+
+    def __unicode__(self):
+        return self.path
 
     class Meta:
         db_table = u'directories'
@@ -65,7 +68,7 @@ class File(models.Model):
     """
     Filename
     """
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     directory = models.ForeignKey(Directory, db_column='dir', related_name='files')
     name = models.TextField()
 
@@ -85,7 +88,7 @@ class Algorithm(models.Model):
     """
     A hashing algorithm
     """
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField(null=False, blank=False)
 
     def __json__(self):
@@ -101,6 +104,7 @@ class FileHash(models.Model):
     """
     SHA-1 or similar filehash
     """
+    id = models.AutoField(primary_key=True)
     file = models.ForeignKey(File, db_column='file', related_name='hashes')
     product = models.ForeignKey(Product, db_column='product')
     key = models.IntegerField(null=False, default=0)
@@ -128,7 +132,7 @@ class Package(models.Model):
     """
     aptitude Package name
     """
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField(unique=True)
 
     def __unicode__(self):
@@ -141,7 +145,7 @@ class Version(models.Model):
     """
     Version number string of a package
     """
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     package = models.ForeignKey(Package, db_column='package')
     product = models.ForeignKey(Product, related_name='versions',
             db_column='product')

@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <style type="text/css">
+            thead>tr>td { font-weight: bold}
+            tbody>tr:nth-child(2n + 1) {background-color : lightgray}
+        </style>
+        <title>Cygnet - fileedit</title>
+    </head>
+    <body>
+        <h1>Cygnet - fileedit</h1>
+        <h3>{{ file.name }}</h3>
+        
+        {% if message %}
+        <div id="message">{{ message }}</div>
+        {% endif %}
+        <table>
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Path</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ file.id }}</td>
+                    <td>
+                        <form method="POST" action="./edit">
+                            {% csrf_token %}
+                            <input type="text" name="path"
+                            value="{{file.directory.path}}" />
+                            <input type="text" name="name" value="{{file.name}}" />
+                            <input type="submit" value="Save" />
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="./..">Cancel</a>
+    </body>
+</html>

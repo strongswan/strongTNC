@@ -4,11 +4,11 @@
             thead>tr>td { font-weight: bold}
             tbody>tr:nth-child(2n + 1) {background-color : lightgray}
         </style>
-        <title>Cygnet - file list</title>
+        <title>Cygnet - file</title>
     </head>
     <body>
-        <h1>Cygnet - file list</h1>
-        <h3>There are {{ flist.count }} files</h3>
+        <h1>Cygnet - file</h1>
+        <h3>{{ file.name }}</h3>
 
         <table>
             <thead>
@@ -18,13 +18,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for file in flist %}
                 <tr>
                     <td>{{ file.id }}</td>
-		    <td><a href="./files/{{file.id}}">{{ file.directory.path }}/{{ file.name }}</a></td>
+		    <td><a href="./{{file.id}}">{{ file.directory.path }}/{{ file.name }}</a></td>
                 </tr>
-                {% endfor %}
             </tbody>
         </table>
+	<a href="./{{file.id}}/edit">Edit</a>
     </body>
 </html>

@@ -1,8 +1,9 @@
 import base64   
-from django.http import HttpResponse
-from django.template import Context, loader
-from django.shortcuts import get_object_or_404
-from models import File,FileHash
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, HttpResponseRedirect
+from django.template import Context, loader, RequestContext
+from django.shortcuts import get_object_or_404, render
+from models import *
 
 def index(request):
     answer='Select view:<br/><a href=./files>Files</a>'
@@ -40,7 +41,36 @@ def fileshashesjson(request):
 
 def file(request, fileid):
     f = get_object_or_404(File, pk=fileid)
-    return HttpResponse(f.directory.path + '/' + f.name)
+    template = loader.get_template("cygapp/file.html")
+    context = Context({ "file": f})
+    return HttpResponse(template.render(context))
+
+def fileedit(request, fileid):
+    if request.method == 'GET':
+        f = get_object_or_404(File, pk=fileid)
+        context = Context({ "file": f})
+
+        return render(request, 'cygapp/fileedit.html', context)
+
+    elif request.method == 'POST':
+        f = get_object_or_404(File, pk=fileid)
+        f.name = request.POST['name']
+        try:
+            dir = Directory.objects.get( path = request.POST['path'] )
+        except ObjectDoesNotExist:
+            dir = Directory()
+            dir.path = request.POST['path']
+            dir.save()
+            print('Warning: had to create new directory (' + str(dir.id) + ')')
+
+        print(str(dir.id) + ': ' + dir.path)
+        f.directory = dir
+        f.save()
+        return HttpResponseRedirect('/cygapp/files/' + f.id.__str__() + '/edit')
+    
+    #No valid HTTP method
+    raise Http500
+
 
 def filejson(request, fileid):
     f = get_object_or_404(File, pk=fileid)
