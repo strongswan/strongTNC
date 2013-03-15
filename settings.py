@@ -13,18 +13,13 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '',
+        'NAME': 'ipsec.config.db',
     },
     
     'meta': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'django.db',
     },
-
-    'cygnet': {
-        'ENGINE': 'django.db.backends.sqlite3', 
-        'NAME': 'ipsec.config.db',             
-    }
 }
 
 DATABASE_ROUTERS = ['router.DBRouter']

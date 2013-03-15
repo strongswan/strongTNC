@@ -8,12 +8,21 @@ class DBRouter(object):
                 model._meta.db_table.startswith('django_') :
             return 'meta'
 
-        return 'cygnet'
+        return 'default'
 
     def db_for_write(self, model, **hints):
         if model._meta.db_table.startswith('auth_') or \
                 model._meta.db_table.startswith('django_') :
             return 'meta'
 
-        return 'cygnet'
+        return 'default'
+
+    def allow_syncdb(self, db, model):
+        if (model._meta.db_table.startswith('auth_') or \
+                model._meta.db_table.startswith('django_')):
+            return db == 'meta'
+
+        else:
+            return db == 'default'
+        
         
