@@ -1,7 +1,7 @@
 import base64   
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
-from django.template import Context, loader, RequestContext
+from django.template import Context, RequestContext, loader, RequestContext
 from django.shortcuts import get_object_or_404, render
 from models import *
 
@@ -12,7 +12,7 @@ def index(request):
 def files(request):
     flist = File.objects.all()
     template = loader.get_template('cygapp/files.html')
-    context = Context({ 'flist': flist })
+    context = RequestContext(request, { 'flist': flist })
     return HttpResponse(template.render(context))
 
 def fileshashes(request):
@@ -42,7 +42,7 @@ def fileshashesjson(request):
 def file(request, fileid):
     f = get_object_or_404(File, pk=fileid)
     template = loader.get_template('cygapp/file.html')
-    context = Context({ 'file': f})
+    context = RequestContext(request, { 'file': f})
     return HttpResponse(template.render(context))
 
 def fileedit(request, fileid):
