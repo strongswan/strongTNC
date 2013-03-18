@@ -1,6 +1,30 @@
 import base64
 import simplejson
+import binascii
 from django.db import models
+
+
+class BlobField(models.Field):
+    """
+    Stores raw binary data
+    """
+
+    description = 'Stores raw binary data'
+    __metaclass__ = models.SubfieldBase
+
+    def __init__(self, *args, **kwds):
+        super(BlobField, self).__init__(*args, **kwds)
+
+    def get_internal_type(self):
+        return "BlobField"
+
+    def get_db_prep_value(self, value, connection=None, prepared=False):
+        print base64.decodestring(value)
+        return base64.decodestring(value)
+
+    def to_python(self, value):
+        return base64.encodestring(value)
+
 
 class Device(models.Model):
     """
@@ -108,7 +132,17 @@ class FileHash(models.Model):
     product = models.ForeignKey(Product, db_column='product')
     key = models.IntegerField(null=False, default=0)
     algorithm = models.ForeignKey(Algorithm, db_column='algo')
-    hash = models.TextField()
+
+    # encapsulate BLOB-field with base64-wrapper
+    hash = BlobField(db_column='hash')
+
+#    def hash_set(self, data):
+#        self._hash = base64.decodestring(data)
+#
+#    def hash_get(self):
+#        return base64.encodestring(self._hash)
+#
+#    hash = property(hash_get, hash_set)
 
     class Meta:
         db_table = u'file_hashes'
