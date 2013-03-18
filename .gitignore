@@ -3,6 +3,9 @@
 # vim swap-files:
 *.swp
 
+# MacOSX temp-files
+*.DS_Store
+
 # Python byte code
 *.pyc
 
