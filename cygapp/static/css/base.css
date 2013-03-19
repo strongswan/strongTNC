@@ -1,2 +1,2 @@
 thead>tr>td { font-weight: bold}
-tbody>tr:nth-child(2n + 1) {background-color : lightgray}
+/*tbody>tr:nth-child(2n + 1) {background-color : lightgray}*/
