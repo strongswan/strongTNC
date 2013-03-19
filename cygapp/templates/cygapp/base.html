@@ -1,0 +1,22 @@
+<html>
+    <head>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base.css" />
+	<link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+        <title>{% block title %}cygnet{% endblock %}</title>
+    </head>
+    <body>
+    <div id="sidebar">
+        {% block sidebar %}
+        <ul>
+            <li><a href="/policy/">Policy</a></li>
+            <li><a href="/statistics/">Statistics</a></li>
+        </ul>
+        {% endblock %}
+    </div>
+
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+    </body>
+</html>

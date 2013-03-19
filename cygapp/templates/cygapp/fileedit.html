@@ -1,45 +1,42 @@
-<html>
-    <head>
-	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base.css" />
-        <title>Cygnet - fileedit</title>
-    </head>
-    <body>
-        <h1>Cygnet - fileedit</h1>
-        <h3>{{ file.name }}</h3>
+{% extends "cygapp/base.html" %}
+
+{% block title %}file edit{% endblock %}
+
+{% block content %}
+    <h1>Cygnet - fileedit</h1>
+    <h3>{{ file.name }}</h3>
         
-        {% if message %}
-        <div id="message"><strong>{{ message }}</strong></div>
-        {% endif %}
-        <table>
-            <thead>
-                <tr>
-                    <td>ID</td>
-                    <td>Path</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{ file.id }}</td>
-                    <td>
-                        <form method="POST" action="./edit">
-                            {% csrf_token %}
-                            <datalist id="dirs">
-                                {% for dir in dirs %}
-                                <option name="option{{dir.id}}" value="{{dir}}">
-                                    {{dir}}
-                                </option>
-                                {%  endfor %}
-                            </datalist>
-                            <input list="dirs" name="path"
-                            value="{{file.directory}}" />
-                            /
-                            <input type="text" name="name" value="{{file.name}}" />
-                            <input type="submit" value="Save" />
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <a href="./..">Cancel</a>
-    </body>
-</html>
+    {% if message %}
+    <div id="message"><strong>{{ message }}</strong></div>
+    {% endif %}
+    <table>
+        <thead>
+            <tr>
+                <td>ID</td>
+                <td>Path</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ file.id }}</td>
+                <td>
+                    <form method="POST" action="./edit">
+                     <!--   {% csrf_token %}
+                        <datalist id="dirs">
+                            {% for dir in dirs %}
+                            <option name="option{{dir.id}}" value="{{dir}}">
+                                {{dir}}
+                            </option>
+                            {%  endfor %}
+                        </datalist> -->
+                        <input type="text" list="dirs" name="path" value="{{file.directory}}" />
+                        /
+                        <input type="text" name="name" value="{{file.name}}" />
+                        <input type="submit" class="btn" value="Save" />
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+	</table>
+    <a href="./.."><button class="btn" type="button">Cancel</button></a>
+{% endblock %}
