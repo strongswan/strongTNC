@@ -1,29 +1,35 @@
 import base64
 import simplejson
 import binascii
-from django.db import models
+from django.db import connection, models
+from django.utils.translation import ugettext_lazy as _
 
+class BinaryField(models.Field):
+    description = _("Raw binary data")
 
-class BlobField(models.Field):
-    """
-    Stores raw binary data
-    """
-
-    description = 'Stores raw binary data'
-    __metaclass__ = models.SubfieldBase
-
-    def __init__(self, *args, **kwds):
-        super(BlobField, self).__init__(*args, **kwds)
+    def __init__(self, *args, **kwargs):
+        kwargs['editable'] = False
+        super(BinaryField, self).__init__(*args, **kwargs)
+        if self.max_length is not None:
+            self.validators.append(validators.MaxLengthValidator(self.max_length))
 
     def get_internal_type(self):
-        return "BlobField"
+        return "BinaryField"
 
-    def get_db_prep_value(self, value, connection=None, prepared=False):
-        print base64.decodestring(value)
-        return base64.decodestring(value)
+    def get_default(self):
+        if self.has_default() and not callable(self.default):
+            return self.default
+        default = super(BinaryField, self).get_default()
+        if default == '':
+            return b''
+        return default
 
-    def to_python(self, value):
-        return base64.encodestring(value)
+    def get_db_prep_value(self, value, connection, prepared=False):
+#        value = super(BinaryField, self
+#            ).get_db_prep_value(value, prepared, connection=connection)
+#        if value is not None:
+#            return connection.Database.Binary(value)
+        return value
 
 
 class Device(models.Model):
@@ -132,21 +138,10 @@ class FileHash(models.Model):
     product = models.ForeignKey(Product, db_column='product')
     key = models.IntegerField(null=False, default=0)
     algorithm = models.ForeignKey(Algorithm, db_column='algo')
-
-    # encapsulate BLOB-field with base64-wrapper
-    hash = BlobField(db_column='hash')
-
-#    def hash_set(self, data):
-#        self._hash = base64.decodestring(data)
-#
-#    def hash_get(self):
-#        return base64.encodestring(self._hash)
-#
-#    hash = property(hash_get, hash_set)
+    hash = BinaryField(db_column='hash')
 
     class Meta:
         db_table = u'file_hashes'
-        unique_together = (('file','product'))
 
     def __unicode__(self):
         return base64.encodestring(self.hash.__str__())
