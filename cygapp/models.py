@@ -5,32 +5,38 @@ from django.db import connection, models
 from django.utils.translation import ugettext_lazy as _
 
 class BinaryField(models.Field):
-    description = _("Raw binary data")
+    description = _("Raw binary data for SQLite")
 
     def __init__(self, *args, **kwargs):
         kwargs['editable'] = False
         super(BinaryField, self).__init__(*args, **kwargs)
-        if self.max_length is not None:
-            self.validators.append(validators.MaxLengthValidator(self.max_length))
 
-    def get_internal_type(self):
-        return "BinaryField"
+    def db_type(self, connection):
+        """Internal database field type."""
+        return 'blob'
 
-    def get_default(self):
-        if self.has_default() and not callable(self.default):
-            return self.default
-        default = super(BinaryField, self).get_default()
-        if default == '':
-            return b''
-        return default
+class HashField(BinaryField):
+    __metaclass__ = models.SubfieldBase
 
-    def get_db_prep_value(self, value, connection, prepared=False):
-#        value = super(BinaryField, self
-#            ).get_db_prep_value(value, prepared, connection=connection)
-#        if value is not None:
-#            return connection.Database.Binary(value)
-        return value
+    def to_python(self, value):
+        return binascii.hexlify(value)
 
+    def get_prep_value(self, value):
+
+        return binascii.unhexlify(value)
+
+class Group(models.Model):
+    """
+    Management group of devices
+    """
+    id = models.AutoField(primary_key=True)
+    name = models.TextField(unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        db_table = u'groups'
 
 class Device(models.Model):
     """
@@ -39,6 +45,7 @@ class Device(models.Model):
     id = models.AutoField(primary_key=True)
     value = models.TextField()
     description = models.TextField()
+    group = models.ForeignKey(Group, related_name='members')
 
     class Meta:
         db_table = u'devices'
@@ -120,6 +127,9 @@ class Algorithm(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.TextField(null=False, blank=False)
 
+    def __unicode__(self):
+        return self.name
+
     def __json__(self):
         return simplejson.dumps({
             'id' : self.id,
@@ -138,13 +148,13 @@ class FileHash(models.Model):
     product = models.ForeignKey(Product, db_column='product')
     key = models.IntegerField(null=False, default=0)
     algorithm = models.ForeignKey(Algorithm, db_column='algo')
-    hash = BinaryField(db_column='hash')
+    hash = HashField(db_column='hash')
 
     class Meta:
         db_table = u'file_hashes'
 
     def __unicode__(self):
-        return base64.encodestring(self.hash.__str__())
+        return '%s (%s)' % (self.hash, self.algorithm)
 
     def __json__(self):
         return simplejson.dumps({
@@ -186,4 +196,3 @@ class Version(models.Model):
 
     class Meta:
         db_table = u'versions'
-
