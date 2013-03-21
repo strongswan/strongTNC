@@ -24,19 +24,6 @@ class HashField(BinaryField):
     def get_prep_value(self, value):
         return binascii.unhexlify(value)
 
-class Group(models.Model):
-    """
-    Management group of devices
-    """
-    id = models.AutoField(primary_key=True)
-    name = models.TextField(unique=True)
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        db_table = u'groups'
-
 class Device(models.Model):
     """
     An Android Device identified by its AndroidID
@@ -44,10 +31,23 @@ class Device(models.Model):
     id = models.AutoField(primary_key=True)
     value = models.TextField()
     description = models.TextField()
-    group = models.ForeignKey(Group, related_name='members')
 
     class Meta:
         db_table = u'devices'
+
+class Group(models.Model):
+    """
+    Management group of devices
+    """
+    id = models.AutoField(primary_key=True)
+    name = models.TextField(unique=True)
+    members = models.ManyToManyField(Device, related_name='groups')
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        db_table = u'groups'
 
 class Product(models.Model):
     """
@@ -195,3 +195,61 @@ class Version(models.Model):
 
     class Meta:
         db_table = u'versions'
+
+class DeviceLog(models.Model):
+    """
+    History of logins per device
+    """
+    id = models.AutoField(primary_key=True)
+    device = models.ForeignKey(Device, related_name='log')
+    time = models.DateTimeField()
+    result = models.CharField(max_length=20, null=False)
+    score = models.IntegerField(null=False, blank=True)
+
+    class Meta:
+        db_table = u'device_logs'
+
+class Policy(models.Model):
+    """
+    Instance of a policy. Defines a specific check
+    """
+    id = models.AutoField(primary_key=True)
+    type = models.IntegerField(null=False, blank=False)
+    name = models.TextField(unique=True)
+    score = models.IntegerField(null=False, blank=False)
+
+    class Meta:
+        db_table = u'policies'
+
+class Enforcement(models.Model):
+    """
+    Rule to enforce a policy on a group
+    """
+    id = models.AutoField(primary_key=True)
+    policy = models.ForeignKey(Policy)
+    group = models.ForeignKey(Group, related_name='enforcements')
+    threshold = models.IntegerField(null=False)
+
+    class Meta:
+        db_table = u'enforcements'
+
+class WorkItem(models.Model):
+    id = models.AutoField(primary_key=True)
+    policy = models.ForeignKey(Policy)
+    device = models.ForeignKey(Device)
+    type = models.IntegerField(null=False, blank=False)
+    param = models.TextField()
+
+    class Meta:
+        db_table = u'workitems'
+
+class Result(models.Model):
+    id = models.AutoField(primary_key=True)
+    device = models.ForeignKey(Device)
+    policy = models.ForeignKey(Policy)
+    last_check = models.DateTimeField(null=False)
+    success_count = models.IntegerField(null=False, blank=True)
+
+    class Meta:
+        db_table = u'results'
+
