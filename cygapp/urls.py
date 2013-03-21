@@ -1,8 +1,11 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls.defaults import patterns, include, url
 from django.views.generic import DetailView, ListView
+from django.contrib import admin
 from cygapp.models import *
 import settings
 import views
+
+admin.autodiscover()
 
 urlpatterns = patterns('',
         url(r'^$', views.index, name='index'),
@@ -38,4 +41,7 @@ urlpatterns = patterns('',
 
         url(r'^files/(?P<fileid>\d+)/hashes/json/?$', views.filehashesjson,
             name='filehashesjson'),
+
+        #To enable built-in admin-interface:
+        url(r'^admin/', include(admin.site.urls)),
         )

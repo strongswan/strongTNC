@@ -32,6 +32,9 @@ class Device(models.Model):
     value = models.TextField()
     description = models.TextField()
 
+    def __unicode__(self):
+        return '%s %s' % (self.value[:10], self.description)
+
     class Meta:
         db_table = u'devices'
 
@@ -232,6 +235,7 @@ class Enforcement(models.Model):
 
     class Meta:
         db_table = u'enforcements'
+        unique_together = (('policy','group'))
 
 class WorkItem(models.Model):
     id = models.AutoField(primary_key=True)
@@ -252,4 +256,5 @@ class Result(models.Model):
 
     class Meta:
         db_table = u'results'
+        unique_together = (('policy','device'))
 
