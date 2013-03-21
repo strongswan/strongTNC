@@ -22,7 +22,6 @@ class HashField(BinaryField):
         return binascii.hexlify(value)
 
     def get_prep_value(self, value):
-
         return binascii.unhexlify(value)
 
 class Group(models.Model):

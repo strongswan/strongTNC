@@ -9,12 +9,6 @@ def index(request):
     answer='Select view:<br/><a href=./files>Files</a>'
     return HttpResponse(answer)
 
-def files(request):
-    flist = File.objects.all()
-    template = loader.get_template('cygapp/files.html')
-    context = RequestContext(request, { 'flist': flist })
-    return HttpResponse(template.render(context))
-
 def fileshashes(request):
     flist = File.objects.all()
     answer = ''
@@ -38,12 +32,6 @@ def fileshashesjson(request):
 
     answer += ']}'
     return HttpResponse(answer, mimetype='application/json')
-
-def file(request, fileid):
-    f = get_object_or_404(File, pk=fileid)
-    template = loader.get_template('cygapp/file.html')
-    context = RequestContext(request, { 'file': f})
-    return HttpResponse(template.render(context))
 
 def fileedit(request, fileid):
     if request.method == 'GET':

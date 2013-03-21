@@ -1,5 +1,8 @@
-INSERT INTO algorithms(id, name) VALUES (65536, 'SHA-1'); --TODO: Enter the correct name
-INSERT INTO algorithms(id, name) VALUES (32768, 'SHA-256'); --TODO: Enter the correct name
+INSERT INTO algorithms(id, name) VALUES (65536, 'SHA1_IMA');
+INSERT INTO algorithms(id, name) VALUES (32768, 'SHA1');
+INSERT INTO algorithms(id, name) VALUES (16384, 'SHA256');
+INSERT INTO algorithms(id, name) VALUES (8192, 'SHA384');
+INSERT INTO algorithms(id, name) VALUES (0, 'NONE');
 
 INSERT INTO directories(id, path) VALUES (1, '/bin');
 INSERT INTO directories(id, path) VALUES (2, '/system/bin');
