@@ -1,7 +1,7 @@
 import base64
 import simplejson
 import binascii
-from django.db import connection, models
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 class BinaryField(models.Field):
@@ -29,11 +29,25 @@ class Device(models.Model):
     An Android Device identified by its AndroidID
     """
     id = models.AutoField(primary_key=True)
-    value = models.TextField()
-    description = models.TextField()
+    value = models.CharField(max_length=50)
+    description = models.CharField(default='', max_length=50, blank=True)
 
     def __unicode__(self):
-        return '%s %s' % (self.value[:10], self.description)
+        return '%s (%s)' % (self.description, self.value[:10])
+
+    def getWorkItems(self):
+        items = []
+        for g in self.groups.all():
+            for e in g.enforcements.all():
+                items.append(e)
+
+        workitems = []
+        for i in set(items):
+            workitems.append(i.policy.getWorkItem())
+
+        return workitems
+
+
 
     class Meta:
         db_table = u'devices'
@@ -43,7 +57,7 @@ class Group(models.Model):
     Management group of devices
     """
     id = models.AutoField(primary_key=True)
-    name = models.TextField(unique=True)
+    name = models.CharField(unique=True, max_length=50)
     members = models.ManyToManyField(Device, related_name='groups')
 
     def __unicode__(self):
@@ -57,7 +71,7 @@ class Product(models.Model):
     Platform (f.e Android or Ubuntu)
     """
     id = models.AutoField(primary_key=True)
-    name = models.TextField()
+    name = models.CharField(max_length=50)
 
     def __unicode__(self):
         return self.name
@@ -93,7 +107,7 @@ class Directory(models.Model):
     Unix-style directory path
     """
     id = models.AutoField(primary_key=True)
-    path = models.TextField(unique=True)
+    path = models.CharField(unique=True, max_length=500)
 
     def __unicode__(self):
         return self.path
@@ -108,7 +122,7 @@ class File(models.Model):
     """
     id = models.AutoField(primary_key=True)
     directory = models.ForeignKey(Directory, db_column='dir', related_name='files')
-    name = models.TextField()
+    name = models.CharField(max_length=100)
 
     def __unicode__(self):
         return self.name
@@ -127,7 +141,7 @@ class Algorithm(models.Model):
     A hashing algorithm
     """
     id = models.AutoField(primary_key=True)
-    name = models.TextField(null=False, blank=False)
+    name = models.CharField(null=False, blank=False, max_length=20)
 
     def __unicode__(self):
         return self.name
@@ -173,7 +187,7 @@ class Package(models.Model):
     aptitude Package name
     """
     id = models.AutoField(primary_key=True)
-    name = models.TextField(unique=True)
+    name = models.CharField(unique=True, max_length=100)
 
     def __unicode__(self):
         return self.name
@@ -189,7 +203,7 @@ class Version(models.Model):
     package = models.ForeignKey(Package, db_column='package')
     product = models.ForeignKey(Product, related_name='versions',
             db_column='product')
-    release = models.TextField(blank=False)
+    release = models.CharField(blank=False, max_length=100)
     security = models.BooleanField(null=False)
     time = models.DateTimeField()
 
@@ -218,20 +232,31 @@ class Policy(models.Model):
     """
     id = models.AutoField(primary_key=True)
     type = models.IntegerField(null=False, blank=False)
-    name = models.TextField(unique=True)
+    name = models.CharField(unique=True, max_length=100)
+    argument = models.CharField(max_length=500, blank=True)
     score = models.IntegerField(null=False, blank=False)
+
+    def __unicode__(self):
+        return self.name
+
+    def getWorkItem(self):
+        raise NotImplementedError
 
     class Meta:
         db_table = u'policies'
+        verbose_name_plural = 'Policies'
 
 class Enforcement(models.Model):
     """
     Rule to enforce a policy on a group
     """
     id = models.AutoField(primary_key=True)
-    policy = models.ForeignKey(Policy)
+    policy = models.ForeignKey(Policy, related_name='enforcements')
     group = models.ForeignKey(Group, related_name='enforcements')
     threshold = models.IntegerField(null=False)
+
+    def __unicode__(self):
+        return '%s on %s' % (self.policy.name, self.group.name)
 
     class Meta:
         db_table = u'enforcements'
@@ -242,7 +267,7 @@ class WorkItem(models.Model):
     policy = models.ForeignKey(Policy)
     device = models.ForeignKey(Device)
     type = models.IntegerField(null=False, blank=False)
-    param = models.TextField()
+    param = models.CharField(max_length=500)
 
     class Meta:
         db_table = u'workitems'

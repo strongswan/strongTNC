@@ -8,4 +8,5 @@ admin.site.register(models.Policy)
 admin.site.register(models.Group)
 admin.site.register(models.Product)
 admin.site.register(models.Package)
+admin.site.register(models.Enforcement)
 
