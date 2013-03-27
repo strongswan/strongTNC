@@ -5,7 +5,7 @@ Unit tests for the django app cygnet are specified in this file
 """
 
 from django.test import TestCase
-from models import File, FileHash
+from models import File
 
 class CygappTest(TestCase):
     def test_file_basics(self):
@@ -22,4 +22,8 @@ class CygappTest(TestCase):
         self.assertEqual(0, h.type)
         self.assertEqual('{"path": "grep", "type": 0, "id": 1}', h.__json__())
 
+    def test_imv_login(self):
+        import simIMV as imv
+
+        imv.run_test_case()
 

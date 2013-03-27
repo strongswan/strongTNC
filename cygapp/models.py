@@ -42,6 +42,8 @@ class Device(models.Model):
         return '%s (%s)' % (self.description, self.value[:10])
 
     def getWorkItems(self):
+        #Method won't work anymore
+        raise NotImplementedError
         items = []
         for g in self.groups.all():
             items += g.enforcements.all()
@@ -273,7 +275,7 @@ class Enforcement(models.Model):
 class WorkItem(models.Model):
     id = models.AutoField(primary_key=True)
     policy = models.ForeignKey(Policy)
-    device = models.ForeignKey(Device)
+    device = models.ForeignKey(Device, related_name='workitems')
     type = models.IntegerField(null=False, blank=False)
     argument = models.CharField(max_length=500)
     fail = models.IntegerField(blank=True)

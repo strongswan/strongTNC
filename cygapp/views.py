@@ -1,7 +1,5 @@
-import base64   
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
-from django.template import Context, RequestContext, loader, RequestContext
+from django.template import Context, loader
 from django.shortcuts import get_object_or_404, render
 from models import *
 
@@ -45,13 +43,11 @@ def fileedit(request, fileid):
     elif request.method == 'POST':
         f = get_object_or_404(File, pk=fileid)
         f.name = request.POST['name']
-        template = loader.get_template('cygapp/fileedit.html')
         context = {}
         if request.POST['path'] is None or request.POST['path'] == '':
             context['file'] = f
             context['dirs'] = Directory.objects.all()
             context['message'] = 'Path cannot be empty!'
-            c = Context(context)
             return render(request, 'cygapp/fileedit.html', context)
 
         dir, created = Directory.objects.get_or_create( path = request.POST['path'] )
@@ -87,3 +83,8 @@ def filehashesjson(request, fileid):
 
     return HttpResponse('\n'.join(hash.__json__() for hash in hashes), mimetype='application/json')
 
+def startlogin(request, deviceID):
+    raise NotImplementedError
+
+def finishlogin(request, deviceID):
+    raise NotImplementedError

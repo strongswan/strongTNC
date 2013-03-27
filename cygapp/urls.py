@@ -8,6 +8,7 @@ import views
 admin.autodiscover()
 
 urlpatterns = patterns('',
+        #Management CRUD views
         url(r'^$', views.index, name='index'),
 
         url(r'^media/(?P<path>.*)$','django.views.static.serve',
@@ -41,6 +42,14 @@ urlpatterns = patterns('',
 
         url(r'^files/(?P<fileid>\d+)/hashes/json/?$', views.filehashesjson,
             name='filehashesjson'),
+
+        #IMV API patterns
+        url(r'^cmd/startlogin/(?P<deviceID>[a-f0-9]+)/?$', views.startlogin,
+            name='startlogin'),
+
+        url(r'^cmd/finishlogin/(?P<deviceID>[a-f0-9]+)/?$', views.finishlogin,
+            name='finishlogin'),
+
 
         #To enable built-in admin-interface:
         url(r'^admin/', include(admin.site.urls)),
