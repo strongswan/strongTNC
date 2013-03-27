@@ -24,6 +24,12 @@ class HashField(BinaryField):
     def get_prep_value(self, value):
         return binascii.unhexlify(value)
 
+class Action():
+    NONE = 0
+    ALLOW = 1
+    ISOLATE = 2
+    BLOCK = 3
+
 class Device(models.Model):
     """
     An Android Device identified by its AndroidID
@@ -38,16 +44,13 @@ class Device(models.Model):
     def getWorkItems(self):
         items = []
         for g in self.groups.all():
-            for e in g.enforcements.all():
-                items.append(e)
+            items += g.enforcements.all()
 
         workitems = []
         for i in set(items):
             workitems.append(i.policy.getWorkItem())
 
         return workitems
-
-
 
     class Meta:
         db_table = u'devices'
@@ -59,6 +62,8 @@ class Group(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=50)
     members = models.ManyToManyField(Device, related_name='groups')
+    parent = models.ForeignKey('self', related_name='membergroups', null=True,
+            blank=True)
 
     def __unicode__(self):
         return self.name
@@ -85,22 +90,22 @@ class Product(models.Model):
     class Meta:
         db_table = u'products'
 
-class DeviceInfo(models.Model):
-    """
-    Result of a TNC health check
-    """
-    id = models.AutoField(primary_key = True)
-    device = models.ForeignKey(Device, db_column='device', related_name='logins')
-    time = models.IntegerField()
-    product = models.ForeignKey(Product, db_column = 'product')
-    packagecount = models.IntegerField(default = 0, blank = True,
-            db_column = 'count')
-    count_update = models.IntegerField(default = 0, blank = True)
-    count_blacklist = models.IntegerField(default = 0, blank = True)
-    flags = models.IntegerField(default = 0, blank = True)
-    class Meta:
-        db_table = u'device_infos'
-        unique_together = (('device','time'))
+#class DeviceInfo(models.Model):
+#    """
+#    Result of a TNC health check
+#    """
+#    id = models.AutoField(primary_key = True)
+#    device = models.ForeignKey(Device, db_column='device', related_name='logins')
+#    time = models.IntegerField()
+#    product = models.ForeignKey(Product, db_column = 'product')
+#    packagecount = models.IntegerField(default = 0, blank = True,
+#            db_column = 'count')
+#    count_update = models.IntegerField(default = 0, blank = True)
+#    count_blacklist = models.IntegerField(default = 0, blank = True)
+#    flags = models.IntegerField(default = 0, blank = True)
+#    class Meta:
+#        db_table = u'device_infos'
+#        unique_together = (('device','time'))
 
 class Directory(models.Model):
     """
@@ -125,7 +130,7 @@ class File(models.Model):
     name = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return self.name
+        return '%s/%s' % (self.directory.path, self.name)
 
     def __json__(self):
         return simplejson.dumps({
@@ -231,10 +236,11 @@ class Policy(models.Model):
     Instance of a policy. Defines a specific check
     """
     id = models.AutoField(primary_key=True)
-    type = models.IntegerField(null=False, blank=False)
+    type = models.IntegerField()
     name = models.CharField(unique=True, max_length=100)
     argument = models.CharField(max_length=500, blank=True)
-    score = models.IntegerField(null=False, blank=False)
+    fail = models.IntegerField(blank=True)
+    default = models.IntegerField(blank=True)
 
     def __unicode__(self):
         return self.name
@@ -253,7 +259,9 @@ class Enforcement(models.Model):
     id = models.AutoField(primary_key=True)
     policy = models.ForeignKey(Policy, related_name='enforcements')
     group = models.ForeignKey(Group, related_name='enforcements')
-    threshold = models.IntegerField(null=False)
+    max_age = models.IntegerField()
+    fail = models.IntegerField(blank=True)
+    default = models.IntegerField(blank=True)
 
     def __unicode__(self):
         return '%s on %s' % (self.policy.name, self.group.name)
@@ -267,7 +275,11 @@ class WorkItem(models.Model):
     policy = models.ForeignKey(Policy)
     device = models.ForeignKey(Device)
     type = models.IntegerField(null=False, blank=False)
-    param = models.CharField(max_length=500)
+    argument = models.CharField(max_length=500)
+    fail = models.IntegerField(blank=True)
+    default = models.IntegerField(blank=True)
+    error = models.IntegerField(blank=True)
+    recommendation = models.IntegerField(blank=True)
 
     class Meta:
         db_table = u'workitems'
@@ -276,10 +288,17 @@ class Result(models.Model):
     id = models.AutoField(primary_key=True)
     device = models.ForeignKey(Device)
     policy = models.ForeignKey(Policy)
-    last_check = models.DateTimeField(null=False)
-    success_count = models.IntegerField(null=False, blank=True)
+    last_check = models.DateTimeField()
+    error = models.IntegerField(null=False, blank=True)
+    recommendation = models.IntegerField()
 
     class Meta:
         db_table = u'results'
-        unique_together = (('policy','device'))
 
+class Identity(models.Model):
+    id = models.AutoField(primary_key=True)
+    type = models.IntegerField()
+    data = models.TextField()
+
+    class Meta:
+        db_table = u'identities'
