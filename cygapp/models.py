@@ -92,23 +92,6 @@ class Product(models.Model):
     class Meta:
         db_table = u'products'
 
-#class DeviceInfo(models.Model):
-#    """
-#    Result of a TNC health check
-#    """
-#    id = models.AutoField(primary_key = True)
-#    device = models.ForeignKey(Device, db_column='device', related_name='logins')
-#    time = models.IntegerField()
-#    product = models.ForeignKey(Product, db_column = 'product')
-#    packagecount = models.IntegerField(default = 0, blank = True,
-#            db_column = 'count')
-#    count_update = models.IntegerField(default = 0, blank = True)
-#    count_blacklist = models.IntegerField(default = 0, blank = True)
-#    flags = models.IntegerField(default = 0, blank = True)
-#    class Meta:
-#        db_table = u'device_infos'
-#        unique_together = (('device','time'))
-
 class Directory(models.Model):
     """
     Unix-style directory path
@@ -138,6 +121,7 @@ class File(models.Model):
         return simplejson.dumps({
             'id' : self.id,
             'name' : self.name,
+            'dir' : self.directory.path,
             })
 
     class Meta:
