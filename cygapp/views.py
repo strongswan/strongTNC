@@ -8,6 +8,13 @@ def index(request):
     answer='Select view:<br/><a href=./files>Files</a>'
     return HttpResponse(answer)
 
+# TODO: ev. Korrigieren
+def overview(request):
+    return render(request, 'cygapp/overview.html')
+
+def groups(request):
+    return render(request, 'cygapp/groups.html')
+
 def fileshashes(request):
     flist = File.objects.all()
     answer = ''

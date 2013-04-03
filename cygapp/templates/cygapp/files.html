@@ -1,25 +1,36 @@
 {% extends "cygapp/base.html" %}
 
-{% block title %}file list{% endblock %}
+{% block title %}FILE LIST{% endblock %}
+
+{% block hero %}
+  <h1>File List</h1>
+  <p>This list contains a lot of files and shows their id and path. Click the path and you get the information of the file. There you can change the path if you want.</p>
+{% endblock %}
 
 {% block content %}
-    <h1>Cygnet - file list</h1>
-    <h3>There are {{ flist.count }} files</h3>
+  <div class="container-fluid">
+    <div class="row-fluid">
+      
+      <div class="span12" id="content">
+	<h4>There are {{ flist.count }} files</h4>
 
-    <table class="table table-striped table-hover table-condensed">
-        <thead>
-            <tr>
-                <td>ID</td>
-                <td>Path</td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for file in flist %}
-            <tr>
-		<td>{{ file.id }}</td>
-		<td><a href="files/{{file.id}}">{{ file.directory.path }}/{{ file.name }}</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+	<table class="table table-striped table-hover table-condensed">
+	  <thead>
+	    <tr>
+	      <td>ID</td>
+	      <td>Path</td>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    {% for file in flist %}
+	    <tr>
+	      <td>{{ file.id }}</td>
+	      <td><a href="files/{{file.id}}">{{ file.directory.path }}/{{ file.name }}</a></td>
+	    </tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
+      </div><!--content-->
+    </div><!--/row-->
+  </div>
 {% endblock %}

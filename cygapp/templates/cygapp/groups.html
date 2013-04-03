@@ -1,0 +1,71 @@
+{% extends "cygapp/base.html" %}
+
+{% block title %}GROUP MANAGEMENT{% endblock %}
+
+{% block hero %}
+  <h1>Groupname</h1>
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span2">
+	<h4>Group</h4>
+	<table class="table table-hover">
+	  <tbody>
+	    <tr>
+	      <td>default</td>
+	      <td><span class="badge">9</span></a></td>
+	    </tr>
+	    <tr>
+	      <td>administrators</td>
+	      <td><span class="badge">2</span></a></td>
+	    </tr>
+	    <tr>
+	      <td>developer</td>
+	      <td><span class="badge">3</span></a></td>
+	    </tr>
+	    <tr>
+	      <td>field staff</td>
+	      <td><span class="badge">2</span></a></td>
+	    </tr>
+	    <tr>
+	      <td>whitelisted devices</td>
+	      <td><span class="badge">6</span></a></td>
+	    </tr>
+	  </tbody>
+	</table>
+      </div>
+      
+      <div class="span10" id="content">
+	<form class="form-horizontal">
+          <div class="control-group">
+            <label class="control-label" for="name">Name</label>
+            <div class="controls">
+              <input type="text" id="name" placeholder="Name">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="parent">Parent Group</label>
+            <div class="controls">
+              <select>
+                <option>default</option>
+                <option>administrators</option>
+                <option>developer</option>
+                <option>field staff</option>
+                <option>whitelisted devices</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="info">Group Info</label>
+            <div class="controls">
+              <textarea id="info" rows="3"></textarea>
+            </div>
+          </div>
+        </form>
+        <hr>
+      </div><!--content-->
+    </div><!--/row-->
+  </div>
+{% endblock %}

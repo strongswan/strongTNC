@@ -2,21 +2,69 @@
     <head>
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base.css" />
 	<link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet" media="screen">
-	<script src="{{ STATIC_URL }}js/bootstrap.js"></script>
-        <title>{% block title %}cygnet{% endblock %}</title>
+
+        <title>cygnet - {% block title %}{% endblock %}</title>
     </head>
+    
     <body>
-    <div id="sidebar">
-        {% block sidebar %}
-        <ul>
-            <li><a href="/policy/">Policy</a></li>
-            <li><a href="/statistics/">Statistics</a></li>
-        </ul>
-        {% endblock %}
+	
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">CYGNET</a>
+          <div class="nav-collapse collapse">
+            <p class="navbar-text pull-right">
+              Logged in as <a href="#" class="navbar-link">Username</a>
+            </p>
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
     </div>
 
-    <div id="content">
-        {% block content %}{% endblock %}
-    </div>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+	      {% block sidebar %}
+	      <li class="nav-header">Sidebar</li>
+              <li class="active"><a href="#"><i class="icon-eye-open"></i> Overview</a></li>
+              <li><a href="#"><i class="icon-tasks"></i> Statistics</a></li>
+              <li class="nav-header">Sidebar</li>
+              <li><a href="#"><i class="icon-user"></i> Groups</a></li>
+              <li><a href="#"><i class="icon-list-alt"></i> Policies</a></li>
+              <li><a href="#"><i class="icon-hdd"></i> Devices</a></li>
+              <li class="nav-header">Sidebar</li>
+              <li><a href="#"><i class="icon-gift"></i> Packages</a></li>
+              <li><a href="#"><i class="icon-lock"></i> Products</a></li>
+	      {% endblock %}
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+	
+	<div class="span9">
+          <div class="hero-unit">
+	    {% block hero %}{% endblock %}
+          </div>
+
+	  <div class="row-fluid">
+	    {% block content %}{% endblock %}
+	  </div><!--/row-->
+	</div><!--/span-->
+      </div><!--/row-->
+    </div><!--/.fluid-container-->
+    
+    <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+    
     </body>
 </html>

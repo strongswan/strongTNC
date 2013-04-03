@@ -1,2 +1,11 @@
 thead>tr>td { font-weight: bold}
 /*tbody>tr:nth-child(2n + 1) {background-color : lightgray}*/
+
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+
+.sidebar-nav {
+    padding: 9px 0;
+}
