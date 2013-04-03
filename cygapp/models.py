@@ -24,7 +24,7 @@ class HashField(BinaryField):
     def get_prep_value(self, value):
         return binascii.unhexlify(value)
 
-class Action():
+class Action(object):
     NONE = 0
     ALLOW = 1
     ISOLATE = 2
@@ -65,7 +65,7 @@ class Group(models.Model):
     name = models.CharField(unique=True, max_length=50)
     members = models.ManyToManyField(Device, related_name='groups')
     parent = models.ForeignKey('self', related_name='membergroups', null=True,
-            blank=True)
+            blank=True, on_delete=models.CASCADE)
 
     def __unicode__(self):
         return self.name
@@ -111,7 +111,8 @@ class File(models.Model):
     Filename
     """
     id = models.AutoField(primary_key=True)
-    directory = models.ForeignKey(Directory, db_column='dir', related_name='files')
+    directory = models.ForeignKey(Directory, db_column='dir',
+            related_name='files', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
 
     def __unicode__(self):
@@ -151,10 +152,12 @@ class FileHash(models.Model):
     SHA-1 or similar filehash
     """
     id = models.AutoField(primary_key=True)
-    file = models.ForeignKey(File, db_column='file', related_name='hashes')
+    file = models.ForeignKey(File, db_column='file', related_name='hashes',
+            on_delete=models.CASCADE)
     product = models.ForeignKey(Product, db_column='product')
     key = models.IntegerField(null=False, default=0)
-    algorithm = models.ForeignKey(Algorithm, db_column='algo')
+    algorithm = models.ForeignKey(Algorithm, db_column='algo',
+            on_delete=models.PROTECT)
     hash = HashField(db_column='hash')
 
     class Meta:
@@ -191,9 +194,10 @@ class Version(models.Model):
     Version number string of a package
     """
     id = models.AutoField(primary_key=True)
-    package = models.ForeignKey(Package, db_column='package')
+    package = models.ForeignKey(Package, db_column='package',
+            on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='versions',
-            db_column='product')
+            db_column='product', on_delete=models.CASCADE)
     release = models.CharField(blank=False, max_length=100)
     security = models.BooleanField(null=False)
     time = models.DateTimeField()
@@ -209,7 +213,8 @@ class DeviceLog(models.Model):
     History of logins per device
     """
     id = models.AutoField(primary_key=True)
-    device = models.ForeignKey(Device, related_name='log')
+    device = models.ForeignKey(Device, related_name='log',
+            on_delete=models.CASCADE)
     time = models.DateTimeField()
     result = models.CharField(max_length=20, null=False)
     score = models.IntegerField(null=False, blank=True)
@@ -243,8 +248,10 @@ class Enforcement(models.Model):
     Rule to enforce a policy on a group
     """
     id = models.AutoField(primary_key=True)
-    policy = models.ForeignKey(Policy, related_name='enforcements')
-    group = models.ForeignKey(Group, related_name='enforcements')
+    policy = models.ForeignKey(Policy, related_name='enforcements',
+            on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, related_name='enforcements',
+            on_delete=models.CASCADE)
     max_age = models.IntegerField()
     fail = models.IntegerField(blank=True)
     default = models.IntegerField(blank=True)
@@ -258,8 +265,9 @@ class Enforcement(models.Model):
 
 class WorkItem(models.Model):
     id = models.AutoField(primary_key=True)
-    policy = models.ForeignKey(Policy)
-    device = models.ForeignKey(Device, related_name='workitems')
+    policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
+    device = models.ForeignKey(Device, related_name='workitems',
+            on_delete=models.CASCADE)
     type = models.IntegerField(null=False, blank=False)
     argument = models.CharField(max_length=500)
     fail = models.IntegerField(blank=True)
@@ -272,8 +280,8 @@ class WorkItem(models.Model):
 
 class Result(models.Model):
     id = models.AutoField(primary_key=True)
-    device = models.ForeignKey(Device)
-    policy = models.ForeignKey(Policy)
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
+    policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
     last_check = models.DateTimeField()
     error = models.IntegerField(null=False, blank=True)
     recommendation = models.IntegerField()
