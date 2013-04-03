@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from django.views.generic import DetailView, ListView
 from django.contrib import admin
 from cygapp.models import *
