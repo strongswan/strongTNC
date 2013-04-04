@@ -41,20 +41,24 @@ class Device(models.Model):
     def __unicode__(self):
         return '%s (%s)' % (self.description, self.value[:10])
 
-    def getWorkItems(self):
-        
-        #Method won't work anymore
+    def getGroupSet(self):
+        groups = []
+        for g in self.groups.all():
+            groups.append(g)
+            groups += g.getParents()
+
+        groups = set(groups)
+        return groups
+
+    def createWorkItems(self):
+
         raise NotImplementedError
 
-        items = []
-        for g in self.groups.all():
-            items += g.enforcements.all()
+        groups = []
+        for i in set(groups):
+            groups.append(i.policy.getWorkItem())
 
-        workitems = []
-        for i in set(items):
-            workitems.append(i.policy.getWorkItem())
-
-        return workitems
+        return groups
 
     class Meta:
         db_table = u'devices'
@@ -65,12 +69,18 @@ class Group(models.Model):
     """
     id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=50)
-    members = models.ManyToManyField(Device, related_name='groups')
+    members = models.ManyToManyField(Device, related_name='groups',blank=True)
     parent = models.ForeignKey('self', related_name='membergroups', null=True,
             blank=True, on_delete=models.CASCADE)
 
     def __unicode__(self):
         return self.name
+
+    def getParents(self):
+        if not self.parent:
+            return []
+
+        return [self.parent] + self.parent.getParents()
 
     class Meta:
         db_table = u'groups'
@@ -220,7 +230,7 @@ class Policy(models.Model):
     name = models.CharField(unique=True, max_length=100)
     argument = models.CharField(max_length=500, blank=True)
     fail = models.IntegerField(blank=True)
-    default = models.IntegerField(blank=True)
+    noresult = models.IntegerField(blank=True)
 
     def __unicode__(self):
         return self.name
@@ -243,7 +253,7 @@ class Enforcement(models.Model):
             on_delete=models.CASCADE)
     max_age = models.IntegerField()
     fail = models.IntegerField(blank=True)
-    default = models.IntegerField(blank=True)
+    noresult = models.IntegerField(blank=True)
 
     def __unicode__(self):
         return '%s on %s' % (self.policy.name, self.group.name)
@@ -279,7 +289,7 @@ class WorkItem(models.Model):
     type = models.IntegerField(null=False, blank=False)
     argument = models.CharField(max_length=500)
     fail = models.IntegerField(blank=True)
-    default = models.IntegerField(blank=True)
+    noresult = models.IntegerField(blank=True)
     error = models.IntegerField(blank=True)
     recommendation = models.IntegerField(blank=True)
 

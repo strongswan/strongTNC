@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.template import Context, loader
+from django.template import Context
 from django.shortcuts import get_object_or_404, render
 from models import *
 
@@ -14,10 +14,10 @@ def fileshashes(request):
     for f in flist:
         hashes = FileHash.objects.filter(file=f.id)
         answer += f.id.__str__() + ':' 
-        for h in hashes:
-            answer += h.__str__() + ','
+        answer += ','.join('%s' % h for h in hashes)
 
         answer += '\n'
+
     return HttpResponse(answer)
 
 def fileshashesjson(request):
@@ -84,7 +84,13 @@ def filehashesjson(request, fileid):
     return HttpResponse('\n'.join(hash.__json__() for hash in hashes), mimetype='application/json')
 
 def startlogin(request, deviceID):
-    raise NotImplementedError
+    try:
+        device = Device.objects.get(value=deviceID)
+    except Device.DoesNotExist:
+        return HttpResponse(status=404,content=None)
+    
+    device.createWorkItems()
+    return HttpResponse(content=None)
 
 def finishlogin(request, deviceID):
     raise NotImplementedError
