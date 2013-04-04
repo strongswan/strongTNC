@@ -1,6 +1,7 @@
 import base64
 import simplejson
 import binascii
+from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -50,13 +51,44 @@ class Device(models.Model):
         groups = set(groups)
         return groups
 
+    def isDueFor(self, enforcement):
+        try:
+            last_meas = Measurement.objects.filter(device=self).latest('time')
+        except Measurement.DoesNotExist:
+            return True
+
+        age = last_meas.time - datetime.today() 
+        result = Result.objects.filter(measurement=last_meas,
+                policy=enforcement.policy)
+
+        if age.days >= enforcement.max_age or result.error != 0:
+            return True
+
+        return False
+
     def createWorkItems(self):
 
-        raise NotImplementedError
+        groups = self.getGroupSet()
+        enforcements = []
+        for group in groups:
+           enforcements += group.enforcements.all()
 
-        groups = []
-        for i in set(groups):
-            groups.append(i.policy.getWorkItem())
+        minforcements=[]
+
+        #TODO: Refactor me!
+        while enforcements:
+            emin = enforcements.pop()
+            for e in enforcements:
+                if emin.policy == e.policy:
+                    emin = min(emin,e, key=lambda x: x.max_age)
+                    if emin == e:
+                        enforcements.remove(e)
+
+            minforcements.append(emin)
+
+        for enforcement in minforcements:
+            if self.isDueFor(enforcement):
+                enforcement.policy.createWorkItem()
 
         return groups
 
@@ -229,14 +261,14 @@ class Policy(models.Model):
     type = models.IntegerField()
     name = models.CharField(unique=True, max_length=100)
     argument = models.CharField(max_length=500, blank=True)
-    fail = models.IntegerField(blank=True)
-    noresult = models.IntegerField(blank=True)
+    fail = models.IntegerField(null=True,blank=True)
+    noresult = models.IntegerField(null=True,blank=True)
+
+    def createWorkItem(self):
+        raise NotImplementedError
 
     def __unicode__(self):
         return self.name
-
-    def getWorkItem(self):
-        raise NotImplementedError
 
     class Meta:
         db_table = u'policies'
@@ -252,8 +284,8 @@ class Enforcement(models.Model):
     group = models.ForeignKey(Group, related_name='enforcements',
             on_delete=models.CASCADE)
     max_age = models.IntegerField()
-    fail = models.IntegerField(blank=True)
-    noresult = models.IntegerField(blank=True)
+    fail = models.IntegerField(null=True,blank=True)
+    noresult = models.IntegerField(null=True,blank=True)
 
     def __unicode__(self):
         return '%s on %s' % (self.policy.name, self.group.name)
@@ -277,6 +309,7 @@ class Measurement(models.Model):
         on_delete=models.CASCADE)
     user = models.ForeignKey(Identity, related_name='measurements',
             on_delete=models.CASCADE)
+    time = models.DateTimeField()
 
     class Meta:
         db_table = u'measurements'
@@ -288,8 +321,8 @@ class WorkItem(models.Model):
             on_delete=models.CASCADE)
     type = models.IntegerField(null=False, blank=False)
     argument = models.CharField(max_length=500)
-    fail = models.IntegerField(blank=True)
-    noresult = models.IntegerField(blank=True)
+    fail = models.IntegerField(null=True,blank=True)
+    noresult = models.IntegerField(null=True,blank=True)
     error = models.IntegerField(blank=True)
     recommendation = models.IntegerField(blank=True)
 
