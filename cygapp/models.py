@@ -42,8 +42,10 @@ class Device(models.Model):
         return '%s (%s)' % (self.description, self.value[:10])
 
     def getWorkItems(self):
+        
         #Method won't work anymore
         raise NotImplementedError
+
         items = []
         for g in self.groups.all():
             items += g.enforcements.all()
@@ -79,6 +81,7 @@ class Product(models.Model):
     """
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
+    defaultgroups = models.ManyToManyField(Group)
 
     def __unicode__(self):
         return self.name
@@ -208,20 +211,6 @@ class Version(models.Model):
     class Meta:
         db_table = u'versions'
 
-class DeviceLog(models.Model):
-    """
-    History of logins per device
-    """
-    id = models.AutoField(primary_key=True)
-    device = models.ForeignKey(Device, related_name='log',
-            on_delete=models.CASCADE)
-    time = models.DateTimeField()
-    result = models.CharField(max_length=20, null=False)
-    score = models.IntegerField(null=False, blank=True)
-
-    class Meta:
-        db_table = u'device_logs'
-
 class Policy(models.Model):
     """
     Instance of a policy. Defines a specific check
@@ -263,6 +252,25 @@ class Enforcement(models.Model):
         db_table = u'enforcements'
         unique_together = (('policy','group'))
 
+class Identity(models.Model):
+    id = models.AutoField(primary_key=True)
+    type = models.IntegerField()
+    data = models.TextField()
+
+    class Meta:
+        db_table = u'identities'
+
+class Measurement(models.Model):
+    """Result of a TNC measurement."""
+    id = models.AutoField(primary_key=True)
+    device = models.ForeignKey(Device, related_name='measurements',
+        on_delete=models.CASCADE)
+    user = models.ForeignKey(Identity, related_name='measurements',
+            on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = u'measurements'
+
 class WorkItem(models.Model):
     id = models.AutoField(primary_key=True)
     policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
@@ -288,11 +296,3 @@ class Result(models.Model):
 
     class Meta:
         db_table = u'results'
-
-class Identity(models.Model):
-    id = models.AutoField(primary_key=True)
-    type = models.IntegerField()
-    data = models.TextField()
-
-    class Meta:
-        db_table = u'identities'
