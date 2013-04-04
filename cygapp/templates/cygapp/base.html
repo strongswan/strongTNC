@@ -33,20 +33,21 @@
 
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span3">
+        <div class="span2">
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
 	      {% block sidebar %}
-	      <li class="nav-header">Sidebar</li>
-              <li class="active"><a href="#"><i class="icon-eye-open"></i> Overview</a></li>
-              <li><a href="#"><i class="icon-tasks"></i> Statistics</a></li>
-              <li class="nav-header">Sidebar</li>
+	      <!-- <li class="nav-header">Sidebar</li> -->
+              <li></li><a href="#"><i class="icon-eye-open"></i> Overview</a></li>
+              <li class="nav-header">Configuration</li>
               <li><a href="#"><i class="icon-user"></i> Groups</a></li>
               <li><a href="#"><i class="icon-list-alt"></i> Policies</a></li>
               <li><a href="#"><i class="icon-hdd"></i> Devices</a></li>
-              <li class="nav-header">Sidebar</li>
+              <li class="nav-header">Data Views</li>
+              <li><a href="#"><i class="icon-tasks"></i> Statistics</a></li>
               <li><a href="#"><i class="icon-gift"></i> Packages</a></li>
               <li><a href="#"><i class="icon-lock"></i> Products</a></li>
+	      <li><a href="#"><i class="icon-folder-open"></i> Files</a></li>
 	      {% endblock %}
             </ul>
           </div><!--/.well -->
