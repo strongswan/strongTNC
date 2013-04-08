@@ -14,7 +14,7 @@ urlpatterns = patterns('',
         url(r'^overview/?$', views.overview, name='overview'),
 
         url(r'^groups/?$', views.groups, name='groups'),
-
+        
         url(r'^media/(?P<path>.*)$','django.views.static.serve',
             {'document_root': settings.MEDIA_ROOT}),
 
