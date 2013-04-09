@@ -1,5 +1,4 @@
-import models as m
-import random, httplib
+import  httplib
 
 start_url = '/cygapp/cmd/startlogin/'
 end_url  = '/cygapp/cmd/finishlogin/'
@@ -34,26 +33,4 @@ def finish_login():
     body = response.read()
     if body != '':
         raise AssertionError('Expceted empty body, got: %s' % body)
-
-def run_test_case():
-    start_login()
-
-    #Simulate IMV, generate some random results
-    device = m.Device.objects.get(value=deviceID)
-
-    if not device.workitems:
-        raise ValueError('Received no workitems for %s' % device.id)
-
-    for item in device.workitems:
-        item.error = random.randint(0,1)
-        item.recommendation = random.choice((item.fail, item.default))
-        item.save()
-
-    finish_login()
-
-if __name__ != '__main__':
-    run_test_case()
-else: print 'Can only run as module'
-
-
 

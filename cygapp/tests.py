@@ -159,6 +159,20 @@ class CygappTest(TestCase):
     def test_imv_login(self):
         import simIMV as imv
 
-        imv.run_test_case()
+        imv.start_login()
+
+        #Simulate IMV, generate some random results
+        device = m.Device.objects.get(value=deviceID)
+
+        if not device.workitems:
+            raise ValueError('Received no workitems for %s' % device.id)
+
+        for item in device.workitems:
+            item.error = random.randint(0,1)
+            item.recommendation = random.choice((item.fail, item.default))
+            item.save()
+
+        imv.finish_login()
+
 
 
