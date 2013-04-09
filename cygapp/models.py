@@ -263,20 +263,26 @@ class Policy(models.Model):
     type = models.IntegerField()
     name = models.CharField(unique=True, max_length=100)
     argument = models.CharField(max_length=500, blank=True)
-    fail = models.IntegerField(null=True,blank=True)
-    noresult = models.IntegerField(null=True,blank=True)
+    fail = models.IntegerField(blank=True)
+    noresult = models.IntegerField(blank=True)
 
     def createWorkItem(self, enforcement, measurement):
-        print 'Measurement passed in: %d' % measurement.id
         item = WorkItem()
-        item.policy = self
         item.result = None
         item.type = self.type
         item.recommendation = None
         item.argument = self.argument
+        item.enforcement = enforcement
         item.measurement = measurement
-        item.fail = enforcement.fail if enforcement.fail != None else self.fail
-        item.noresult = enforcement.noresult if enforcement.noresult != None else self.noresult
+        
+        item.fail = self.fail
+        if enforcement.fail is not None:
+            item.fail = enforcement.fail
+
+        item.noresult = self.noresult
+        if enforcement.noresult is not None:
+            item.noresult = enforcement.noresult
+
         item.save()
 
     def __unicode__(self):
@@ -329,7 +335,7 @@ class Measurement(models.Model):
 
 class WorkItem(models.Model):
     id = models.AutoField(primary_key=True)
-    policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
+    enforcement = models.ForeignKey(Enforcement, on_delete=models.CASCADE)
     measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
     type = models.IntegerField(null=False, blank=False)
     argument = models.CharField(max_length=500)

@@ -105,12 +105,56 @@ class CygappTest(TestCase):
         items = m.WorkItem.objects.filter(measurement=measurement)
         self.assertEqual(2, len(items))
 
+    def test_actionInheritance(self):
+        setupTestData()
+
+        #bash : fail=3 noresult=0
+        g = m.Group.objects.get(name='B1.1.1')
+        p = m.Policy.objects.get(name='bash')
+        e1 = m.Enforcement(group=g, policy=p, max_age=3)
+        e1.fail = None
+        e1.noresult = None
+        e1.save()
+
+        e1 = m.Enforcement.objects.get(group=g, policy=p)
+
+        #usrbin: fail=4 noresult=1
+        g = m.Group.objects.get(name='L1.3.1')
+        p = m.Policy.objects.get(name='usrbin')
+        e2 = m.Enforcement(group=g, policy=p, max_age=2)
+        e2.fail = 3
+        e2.noresult = 0
+        e2.save()
+
+        user = m.Identity()
+        user.type = 1
+        user.data = 'foobar'
+        user.save()
+        
+        device = m.Device.objects.get(value='def')
+
+        measurement = m.Measurement()
+        measurement.device = device
+        measurement.time = datetime.today()
+        measurement.connectionID = 123
+        measurement.user = user
+        measurement.save()
+
+        device.createWorkItems(measurement)
+
+        item = m.WorkItem.objects.get(measurement=measurement, enforcement=e1)
+        self.assertEqual(3, item.fail)
+        self.assertEqual(0, item.noresult)
+
+        
+        item = m.WorkItem.objects.get(measurement=measurement, enforcement=e2)
+        self.assertEqual(3, item.fail)
+        self.assertEqual(0, item.noresult)
+
+
     def test_isDueFor(self):
-        raise NotImplementedError 
-        
-
-        
-
+        #TODO
+        pass
         
     def test_imv_login(self):
         import simIMV as imv
