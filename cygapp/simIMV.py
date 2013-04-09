@@ -5,10 +5,6 @@ start_url = '/cygapp/cmd/startlogin/'
 end_url  = '/cygapp/cmd/finishlogin/'
 deviceID = 'deadbeef'
 
-if __name__ != '__main__':
-    run_test_case()
-else: print 'Can only run as module'
-
 def start_login():
     """Call start url to invoke cygnet workItem generation."""
 
@@ -55,6 +51,9 @@ def run_test_case():
 
     finish_login()
 
+if __name__ != '__main__':
+    run_test_case()
+else: print 'Can only run as module'
 
 
 

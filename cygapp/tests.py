@@ -6,6 +6,7 @@ Unit tests for the django app cygnet are specified in this file
 
 from django.test import TestCase
 from cygapp.policies import *
+from datetime import datetime
 import cygapp.models as m
 
 
@@ -72,7 +73,7 @@ class CygappTest(TestCase):
         groups = device.getGroupSet()
         self.assertEqual(7, len(groups))
 
-    def test_getWorkItems(self):
+    def test_createWorkItems(self):
         setupTestData()
 
         g = m.Group.objects.get(name='B1.1.1')
@@ -85,10 +86,23 @@ class CygappTest(TestCase):
         e = m.Enforcement(group=g, policy=p, max_age=2)
         e.save()
 
+        user = m.Identity()
+        user.type = 1
+        user.data = 'foobar'
+        user.save()
+        
         device = m.Device.objects.get(value='def')
-        device.createWorkItems()
 
-        items = m.WorkItems.objects.filter(device=device)
+        measurement = m.Measurement()
+        measurement.device = device
+        measurement.time = datetime.today()
+        measurement.connectionID = 123
+        measurement.user = user
+        measurement.save()
+
+        device.createWorkItems(measurement)
+
+        items = m.WorkItem.objects.filter(measurement=measurement)
         self.assertEqual(2, len(items))
 
     def test_isDueFor(self):

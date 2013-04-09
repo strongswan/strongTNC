@@ -54,19 +54,21 @@ class Device(models.Model):
     def isDueFor(self, enforcement):
         try:
             last_meas = Measurement.objects.filter(device=self).latest('time')
+            age = last_meas.time - datetime.today() 
+            result = Result.objects.get(measurement=last_meas,
+                    policy=enforcement.policy).get()
         except Measurement.DoesNotExist:
             return True
+        except Result.DoesNotExist:
+            return True
 
-        age = last_meas.time - datetime.today() 
-        result = Result.objects.filter(measurement=last_meas,
-                policy=enforcement.policy)
 
         if age.days >= enforcement.max_age or result.error != 0:
             return True
 
         return False
 
-    def createWorkItems(self):
+    def createWorkItems(self, measurement):
 
         groups = self.getGroupSet()
         enforcements = []
@@ -88,7 +90,7 @@ class Device(models.Model):
 
         for enforcement in minforcements:
             if self.isDueFor(enforcement):
-                enforcement.policy.createWorkItem()
+                enforcement.policy.createWorkItem(enforcement, measurement)
 
         return groups
 
@@ -264,8 +266,18 @@ class Policy(models.Model):
     fail = models.IntegerField(null=True,blank=True)
     noresult = models.IntegerField(null=True,blank=True)
 
-    def createWorkItem(self):
-        raise NotImplementedError
+    def createWorkItem(self, enforcement, measurement):
+        print 'Measurement passed in: %d' % measurement.id
+        item = WorkItem()
+        item.policy = self
+        item.result = None
+        item.type = self.type
+        item.recommendation = None
+        item.argument = self.argument
+        item.measurement = measurement
+        item.fail = enforcement.fail if enforcement.fail != None else self.fail
+        item.noresult = enforcement.noresult if enforcement.noresult != None else self.noresult
+        item.save()
 
     def __unicode__(self):
         return self.name
@@ -305,6 +317,7 @@ class Identity(models.Model):
 class Measurement(models.Model):
     """Result of a TNC measurement."""
     id = models.AutoField(primary_key=True)
+    connectionID = models.IntegerField()
     device = models.ForeignKey(Device, related_name='measurements',
         on_delete=models.CASCADE)
     user = models.ForeignKey(Identity, related_name='measurements',
@@ -317,23 +330,21 @@ class Measurement(models.Model):
 class WorkItem(models.Model):
     id = models.AutoField(primary_key=True)
     policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
-    device = models.ForeignKey(Device, related_name='workitems',
-            on_delete=models.CASCADE)
+    measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
     type = models.IntegerField(null=False, blank=False)
     argument = models.CharField(max_length=500)
     fail = models.IntegerField(null=True,blank=True)
     noresult = models.IntegerField(null=True,blank=True)
-    error = models.IntegerField(blank=True)
-    recommendation = models.IntegerField(blank=True)
+    error = models.IntegerField(null=True,blank=True)
+    recommendation = models.IntegerField(null=True,blank=True)
 
     class Meta:
         db_table = u'workitems'
 
 class Result(models.Model):
     id = models.AutoField(primary_key=True)
-    device = models.ForeignKey(Device, on_delete=models.CASCADE)
+    measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
     policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
-    last_check = models.DateTimeField()
     error = models.IntegerField(null=False, blank=True)
     recommendation = models.IntegerField()
 
