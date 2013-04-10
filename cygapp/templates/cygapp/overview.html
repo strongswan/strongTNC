@@ -6,9 +6,10 @@
     <h1>Overview!</h1>
     <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
     <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-    <hr>
-      <div class="row-fluid">
-	<div class="span8">
+{% endblock %}
+
+{% block content %}
+      <div class="span8">
           <h2>News</h2>
 	  <dl class="dl-horizontal">
 	    <dt>April 03 14:14</dt>
@@ -37,13 +38,19 @@
 	      <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
 	    </dd>
 	  </dl>
-	</div><!--/span-->
+      </div><!--/span-->
       <div class="span4">
         <h2>Links</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
+	<ul class="nav nav-list">
+	  <li class="nav-header">CYGNET</li>
+          <li><a href="https://github.com/tannerli/cygnet" target="_blank"><i class="icon-star"></i> cygnet @ GithHub</a></li>
+          <li class="nav-header">Strongswan</li>
+          <li><a href="http://www.strongswan.org" target="_blank"><i class="icon-star"></i> strongswan.org</a></li>
+          <li><a href="https://github.com/strongswan" target="_blank"><i class="icon-star"></i> strongswan @ GitHub</a></li>
+	  <li class="nav-header">TNC</li>
+          <li><a href="http://wiki.strongswan.org/projects/strongswan/wiki/TrustedNetworkConnect" target="_blank"><i class="icon-star"></i> Android BYOD Security based on Trusted Network Connect </a></li>
+          <li><a href="http://wiki.strongswan.org/projects/strongswan/wiki/BYOD" target="_blank"><i class="icon-star"></i> Trusted Network Connect Architecture</a></li>
+	  <li><a href="http://security.hsr.ch/projects/SA_2012_strongSwan-Android4-Client-with-Endpoint-Assessment.pdf" target="_blank"><i class="icon-star"></i> Christoph Buehler & Patrick Loetscher, strongSwan Android 4 Client with Endpoint Assessment, HSR Studienarbeit HS12</a></li>
+	</ul>
       </div><!--/span-->
-    </div><!--/row-->
 {% endblock %}
-
-{% block content %}{% endblock %}

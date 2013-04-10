@@ -2,10 +2,12 @@
 
 {% block title %}file edit{% endblock %}
 
-{% block content %}
+{% block hero %}
     <h1>Cygnet - fileedit</h1>
     <h3>{{ file.name }}</h3>
-        
+{% endblock %}
+
+{% block content %}
     {% if message %}
     <div id="message"><strong>{{ message }}</strong></div>
     {% endif %}
