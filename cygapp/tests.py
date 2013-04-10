@@ -11,7 +11,8 @@ import cygapp.models as m
 
 
 def setupTestData():
-    device = m.Device(value='def', description='Test Device')
+    p = m.Product.objects.create(name='Fancy OS 3.14')
+    device = m.Device(value='def', description='Test Device', product=p)
     device.save()
     
     g1 = m.Group(name='ROOT')
@@ -159,10 +160,17 @@ class CygappTest(TestCase):
     def test_imv_login(self):
         import simIMV as imv
 
-        imv.start_login()
+        params = dict()
+        params['connectionID'] = 314159
+        params['deviceID'] = 'deadbeef'
+        params['OSVersion'] = 'Ubuntu%2012.04'
+        params['ar_id'] = 'tannerli'
 
+        imv.start_login(params)
+
+        import pdb; pdb.set_trace()
         #Simulate IMV, generate some random results
-        device = m.Device.objects.get(value=deviceID)
+        device = m.Device.objects.get(value=params['deviceID'])
 
         if not device.workitems:
             raise ValueError('Received no workitems for %s' % device.id)
@@ -172,7 +180,7 @@ class CygappTest(TestCase):
             item.recommendation = random.choice((item.fail, item.default))
             item.save()
 
-        imv.finish_login()
+        imv.finish_login(params)
 
 
 

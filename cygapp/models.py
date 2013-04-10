@@ -31,6 +31,25 @@ class Action(object):
     ISOLATE = 2
     BLOCK = 3
 
+class Product(models.Model):
+    """
+    Platform (f.e Android or Ubuntu)
+    """
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.name
+
+    def __json__(self):
+        return simplejson.dumps({
+            'id': self.id,
+            'name': self.name
+            })
+
+    class Meta:
+        db_table = u'products'
+
 class Device(models.Model):
     """
     An Android Device identified by its AndroidID
@@ -38,6 +57,8 @@ class Device(models.Model):
     id = models.AutoField(primary_key=True)
     value = models.CharField(max_length=50)
     description = models.CharField(default='', max_length=50, blank=True)
+    product = models.ForeignKey(Product, related_name='devices')
+
 
     def __unicode__(self):
         return '%s (%s)' % (self.description, self.value[:10])
@@ -104,6 +125,7 @@ class Group(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=50)
     members = models.ManyToManyField(Device, related_name='groups',blank=True)
+    product_defaults = models.ManyToManyField(Product, related_name='default_groups',blank=True)
     parent = models.ForeignKey('self', related_name='membergroups', null=True,
             blank=True, on_delete=models.CASCADE)
 
@@ -118,26 +140,6 @@ class Group(models.Model):
 
     class Meta:
         db_table = u'groups'
-
-class Product(models.Model):
-    """
-    Platform (f.e Android or Ubuntu)
-    """
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
-    defaultgroups = models.ManyToManyField(Group)
-
-    def __unicode__(self):
-        return self.name
-
-    def __json__(self):
-        return simplejson.dumps({
-            'id': self.id,
-            'name': self.name
-            })
-
-    class Meta:
-        db_table = u'products'
 
 class Directory(models.Model):
     """

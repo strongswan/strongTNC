@@ -1,14 +1,15 @@
 import  httplib
 
-start_url = '/cygapp/cmd/startlogin/'
-end_url  = '/cygapp/cmd/finishlogin/'
-deviceID = 'deadbeef'
+start_url = '/cmd/start_measurement'
+end_url  = '/cmd/finish_measurement'
 
-def start_login():
+def start_login(params):
     """Call start url to invoke cygnet workItem generation."""
 
     con = httplib.HTTPConnection('localhost', 8000)
-    con.request('HEAD', start_url + deviceID)
+    url = '%s?%s' % (start_url, '&'.join(['%s=%s' % (k,v) for k,v in
+        params.items()]))
+    con.request('HEAD', url)
     response = con.getresponse()
     
     if response.status != 200:
@@ -20,10 +21,12 @@ def start_login():
         raise AssertionError('Expceted empty body, got: %s' % body)
 
 
-def finish_login():
+def finish_login(params):
     """Call finish url to invoke cygnet result processing."""
     con = httplib.HTTPConnection('localhost', 8000)
-    con.request('HEAD', end_url + deviceID)
+
+    url = '%s?connectionID=%s' % params['connectionID']
+    con.request('HEAD', url)
     response = con.getresponse()
     
     if response.status != 200:

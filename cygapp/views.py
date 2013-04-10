@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context
 from django.shortcuts import get_object_or_404, render
+import re
 from models import *
 
 def index(request):
@@ -83,14 +84,41 @@ def filehashesjson(request, fileid):
 
     return HttpResponse('\n'.join(hash.__json__() for hash in hashes), mimetype='application/json')
 
-def startlogin(request, deviceID):
-    try:
-        device = Device.objects.get(value=deviceID)
-    except Device.DoesNotExist:
-        return HttpResponse(status=404,content=None)
+def startMeasurement(request):
+
+    #Sanitize input
+    deviceID = request.GET['deviceID']
+    if not re.match(r'^[a-f0-9]+$', deviceID):
+        return HttpResponse(status=400, content=None)
     
-    device.createWorkItems()
+    connectionID = request.GET['connectionID']
+    if not re.match(r'^[0-9]+$', connectionID):
+        return HttpResponse(status=400, content=None)
+
+    ar_id = request.GET['ar_id']
+    if not re.match(r'^\S+$', ar_id):
+        return HttpResponse(status=400, content=None)
+
+    OSVersion = request.GET['OSVersion']
+    product, new = Product.objects.get_or_create(name=OSVersion)
+
+    if new:
+        # TODO: Add entry for default group
+        pass
+
+    device, new = Device.objects.get_or_create(value=deviceID, product=product)
+
+    if new:
+        # TODO: Read default group(s) for products, add to device
+        pass
+
+    id = Identity.objects.get_or_create(data=ar_id)[0]
+
+    measurement = Measurement.objects.create(time=datetime.today(), user=id,
+            device=device, connectionID=connectionID)
+    device.createWorkItems(measurement)
+
     return HttpResponse(content=None)
 
-def finishlogin(request, deviceID):
-    raise NotImplementedError
+def finishMeasurement(request):
+    return HttpResponse(status=501,content=None) #501: Not implemented :-)
