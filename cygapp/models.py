@@ -338,7 +338,8 @@ class Measurement(models.Model):
 class WorkItem(models.Model):
     id = models.AutoField(primary_key=True)
     enforcement = models.ForeignKey(Enforcement, on_delete=models.CASCADE)
-    measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
+    measurement = models.ForeignKey(Measurement, related_name='workitems',
+            on_delete=models.CASCADE)
     type = models.IntegerField(null=False, blank=False)
     argument = models.CharField(max_length=500)
     fail = models.IntegerField(null=True,blank=True)

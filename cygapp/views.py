@@ -87,17 +87,17 @@ def filehashesjson(request, fileid):
 def startMeasurement(request):
 
     #Sanitize input
-    deviceID = request.GET['deviceID']
+    deviceID = request.GET.get('deviceID', '')
     if not re.match(r'^[a-f0-9]+$', deviceID):
-        return HttpResponse(status=400, content=None)
+        return HttpResponse(status=400)
     
-    connectionID = request.GET['connectionID']
+    connectionID = request.GET.get('connectionID', '')
     if not re.match(r'^[0-9]+$', connectionID):
-        return HttpResponse(status=400, content=None)
+        return HttpResponse(status=400)
 
-    ar_id = request.GET['ar_id']
+    ar_id = request.GET.get('ar_id', '')
     if not re.match(r'^\S+$', ar_id):
-        return HttpResponse(status=400, content=None)
+        return HttpResponse(status=400)
 
     OSVersion = request.GET['OSVersion']
     product, new = Product.objects.get_or_create(name=OSVersion)
