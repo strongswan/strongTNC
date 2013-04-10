@@ -15,9 +15,6 @@ def overview(request):
 def groups(request):
     return render(request, 'cygapp/groups.html')
 
-def carousel(request):
-    return render(request, 'cygapp/carousel.html')
-
 def fileshashes(request):
     flist = File.objects.all()
     answer = ''
