@@ -8,12 +8,12 @@ from django.test import TestCase
 from cygapp.policies import *
 from datetime import datetime
 import cygapp.models as m
+import cygapp.views as v
 
 
 def setupTestData():
     p = m.Product.objects.create(name='Fancy OS 3.14')
-    device = m.Device(value='def', description='Test Device', product=p)
-    device.save()
+    device = m.Device.objects.create(value='def', description='Test Device', product=p)
     
     g1 = m.Group(name='ROOT')
     g1.save()
@@ -79,13 +79,11 @@ class CygappTest(TestCase):
 
         g = m.Group.objects.get(name='B1.1.1')
         p = m.Policy.objects.get(name='bash')
-        e = m.Enforcement(group=g, policy=p, max_age=3)
-        e.save()
+        m.Enforcement.objects.create(group=g, policy=p, max_age=3)
 
         g = m.Group.objects.get(name='L1.3.1')
         p = m.Policy.objects.get(name='usrbin')
-        e = m.Enforcement(group=g, policy=p, max_age=2)
-        e.save()
+        m.Enforcement.objects.create(group=g, policy=p, max_age=2)
 
         user = m.Identity()
         user.type = 1
@@ -105,6 +103,24 @@ class CygappTest(TestCase):
 
         items = m.WorkItem.objects.filter(measurement=measurement)
         self.assertEqual(2, len(items))
+
+        item = items[0]
+        self.assertEqual(2, item.type)
+        self.assertEqual(4, item.fail)
+        self.assertEqual(1, item.noresult)
+        self.assertEqual('/usr/bin/', item.argument)
+        self.assertEqual(None, item.recommendation)
+        self.assertEqual(None, item.result)
+
+
+        item = items[1]
+        self.assertEqual(1, item.type)
+        self.assertEqual(3, item.fail)
+        self.assertEqual(0, item.noresult)
+        self.assertEqual('/bin/bash', item.argument)
+        self.assertEqual(None, item.recommendation)
+        self.assertEqual(None, item.result)
+        
 
     def test_actionInheritance(self):
         setupTestData()
@@ -127,19 +143,12 @@ class CygappTest(TestCase):
         e2.noresult = 0
         e2.save()
 
-        user = m.Identity()
-        user.type = 1
-        user.data = 'foobar'
-        user.save()
+        user = m.Identity.objects.create(type=1, data='foobar')
         
         device = m.Device.objects.get(value='def')
 
-        measurement = m.Measurement()
-        measurement.device = device
-        measurement.time = datetime.today()
-        measurement.connectionID = 123
-        measurement.user = user
-        measurement.save()
+        measurement = m.Measurement.objects.create(device=device,
+                time=datetime.today(), connectionID=123, user=user)
 
         device.createWorkItems(measurement)
 
@@ -156,31 +165,39 @@ class CygappTest(TestCase):
     def test_isDueFor(self):
         #TODO
         pass
+
+    def test_generate_results(self):
+        setupTestData()
+
+        g = m.Group.objects.get(name='B1.1.1')
+        p = m.Policy.objects.get(name='bash')
+        e1 = m.Enforcement.objects.create(group=g, policy=p, max_age=3)
+
+        g = m.Group.objects.get(name='L1.3.1')
+        p = m.Policy.objects.get(name='usrbin')
+        e2 = m.Enforcement.objects.create(group=g, policy=p, max_age=2)
+
+        device = m.Device.objects.get(value='def')
+        user = m.Identity.objects.create(type=1, data='foobar')
+        measurement = m.Measurement.objects.create(device=device,
+                time=datetime.today(), connectionID=123, user=user)
         
+        m.WorkItem.objects.create(measurement=measurement, argument='asdf',
+                fail=3, noresult=0, result=0, recommendation=0, enforcement=e1,
+                type=1)
+        m.WorkItem.objects.create(measurement=measurement, argument='blubber',
+                fail=3, noresult=0, result=0, recommendation=0, enforcement=e2,
+                type=2)
+
+        v.generate_results(measurement)
+
     def test_imv_login(self):
-        import simIMV as imv
-
-        params = dict()
-        params['connectionID'] = 314159
-        params['deviceID'] = 'deadbeef'
-        params['OSVersion'] = 'Ubuntu%2012.04'
-        params['ar_id'] = 'tannerli'
-
-        imv.start_login(params)
-
-        import pdb; pdb.set_trace()
-        #Simulate IMV, generate some random results
-        device = m.Device.objects.get(value=params['deviceID'])
-
-        if not device.workitems:
-            raise ValueError('Received no workitems for %s' % device.id)
-
-        for item in device.workitems:
-            item.error = random.randint(0,1)
-            item.recommendation = random.choice((item.fail, item.default))
-            item.save()
-
-        imv.finish_login(params)
+        #This is no longer a simple test unit and dealt with in simIMV.py run
+        # simIMV.run_test() to execute the test
+        pass
 
 
+    def test_package_blacklist_inheritance(self):
+        #TODO
+        pass
 

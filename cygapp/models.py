@@ -75,16 +75,14 @@ class Device(models.Model):
     def isDueFor(self, enforcement):
         try:
             last_meas = Measurement.objects.filter(device=self).latest('time')
-            age = last_meas.time - datetime.today() 
             result = Result.objects.get(measurement=last_meas,
                     policy=enforcement.policy).get()
-        except Measurement.DoesNotExist:
-            return True
-        except Result.DoesNotExist:
+        except (Measurement.DoesNotExist, Result.DoesNotExist):
             return True
 
+        age = last_meas.time - datetime.today() 
 
-        if age.days >= enforcement.max_age or result.error != 0:
+        if age.days >= enforcement.max_age or result.result != 0:
             return True
 
         return False
@@ -231,6 +229,7 @@ class Package(models.Model):
     """
     id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=100)
+    blacklist = models.IntegerField(blank=True)
 
     def __unicode__(self):
         return self.name
@@ -250,6 +249,7 @@ class Version(models.Model):
     release = models.CharField(blank=False, max_length=100)
     security = models.BooleanField(null=False)
     time = models.DateTimeField()
+    blacklist = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):
         return self.release
@@ -344,7 +344,7 @@ class WorkItem(models.Model):
     argument = models.CharField(max_length=500)
     fail = models.IntegerField(null=True,blank=True)
     noresult = models.IntegerField(null=True,blank=True)
-    error = models.IntegerField(null=True,blank=True)
+    result = models.IntegerField(null=True,blank=True)
     recommendation = models.IntegerField(null=True,blank=True)
 
     class Meta:
@@ -354,7 +354,7 @@ class Result(models.Model):
     id = models.AutoField(primary_key=True)
     measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
     policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
-    error = models.IntegerField(null=False, blank=True)
+    result = models.IntegerField(null=False, blank=True)
     recommendation = models.IntegerField()
 
     class Meta:

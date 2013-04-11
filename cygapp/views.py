@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context
 from django.shortcuts import get_object_or_404, render
-import re
+import re, max
 from models import *
 
 def index(request):
@@ -127,5 +127,31 @@ def startMeasurement(request):
 
     return HttpResponse(content=None)
 
+def generate_results(measurement):
+    workitems = measurement.workitems.all()
+
+    for item in workitems:
+        #TODO: Result integrity check, see tannerli/cygnet-doc#34
+        Result.objects.create(result=item.result, measurement=measurement,
+                policy=item.enforcement.policy,
+                recommendation=item.recommendation)
+
+    measurement.recommendation = max(workitems, key = lambda x:
+            x.recommendation)
+
+    for item in workitems:
+        item.delete()
+
 def finishMeasurement(request):
-    return HttpResponse(status=501,content=None) #501: Not implemented :-)
+    deviceID = request.GET.get('deviceID', '')
+    connectionID = request.GET.get('connectionID', '')
+
+    try:
+        measurement = Measurement.objects.get(device__value=deviceID,
+                connectionID=connectionID) 
+    except Measurement.DoesNotExist:
+        return HttpResponse(404)
+
+    generate_results(measurement)
+    
+    return HttpResponse(status=200)
