@@ -15,37 +15,35 @@ def setupTestData():
     p = m.Product.objects.create(name='Fancy OS 3.14')
     device = m.Device.objects.create(value='def', description='Test Device', product=p)
     
-    g1 = m.Group(name='ROOT')
-    g1.save()
-    g11 = m.Group(name='B1.1', parent=g1)
-    g11.save()
-    g12 = m.Group(name='L1.2', parent=g1)
-    g12.save()
-    g13 = m.Group(name='B1.3', parent=g1)
-    g13.save()
-    g111 = m.Group(name='B1.1.1', parent=g11)
-    g111.save()
-    g1111 = m.Group(name='L1.1.1.1', parent=g111)
-    g1111.save()
-    g1112 = m.Group(name='L1.1.1.2', parent=g111)
-    g1112.save()
-    g131 = m.Group(name='L1.3.1', parent=g13)
-    g131.save()
-    g132 = m.Group(name='L1.3.2', parent=g13)
-    g132.save()
+    g1 = m.Group.objects.create(name='ROOT')
+    g11 = m.Group.objects.create(name='B1.1', parent=g1)
+    m.Group.objects.create(name='L1.2', parent=g1)
+    g13 = m.Group.objects.create(name='B1.3', parent=g1)
+    g111 = m.Group.objects.create(name='B1.1.1', parent=g11)
+    m.Group.objects.create(name='L1.1.1.1', parent=g111)
+    g1112 = m.Group.objects.create(name='L1.1.1.2', parent=g111)
+    g131 = m.Group.objects.create(name='L1.3.1', parent=g13)
+    m.Group.objects.create(name='L1.3.2', parent=g13)
 
     device.groups.add(g1112)
     device.groups.add(g131)
     device.save()
 
-    policies = []
-    policies.append(m.Policy(name='bash',type=1,argument='/bin/bash',fail=3,noresult=0))
-    policies.append(m.Policy(name='usrbin',type=2,argument='/usr/bin/',fail=4,noresult=1))
-    policies.append(m.Policy(name='ports',type=3,argument='0-1024',fail=0,noresult=0))
+    m.Policy.objects.create(name='bash',type=1,argument='/bin/bash',fail=3,noresult=0)
+    m.Policy.objects.create(name='usrbin',type=2,argument='/usr/bin/',fail=4,noresult=1)
+    m.Policy.objects.create(name='ports',type=3,argument='0-1024',fail=0,noresult=0)
 
-    for p in policies:
-        p.save()
+    lib = m.Package.create('libstrongswan')
+    ss = m.Package.create('strongswan')
+    ss_nm = m.Package.create('strongswan-nm')
+    ss_dbg = m.Package.create('strongswan-dbg')
+    ss_ike = m.Package.create('strongswan-ikev1')
 
+    m.Version.create(product=p, package=lib, release='1.1')
+    m.Version.create(product=p, package=ss, release='0.9')
+    m.Version.create(product=p, package=ss_nm, release='3.1')
+    m.Version.create(product=p, package=ss_dbg, release='2.3')
+    m.Version.create(product=p, package=ss_ike, release='1.1')
 
 class CygappTest(TestCase):
     def test_file_basics(self):
@@ -199,13 +197,10 @@ class CygappTest(TestCase):
         self.assertEqual(5, result.result)
         self.assertEqual(3, result.recommendation)
 
+        #TODO: According to tannerli/cygnet-doc#34, add testcases
+
     def test_imv_login(self):
         #This is no longer a simple test unit and dealt with in simIMV.py run
         # simIMV.run_test() to execute the test
-        pass
-
-
-    def test_package_blacklist_inheritance(self):
-        #TODO
         pass
 

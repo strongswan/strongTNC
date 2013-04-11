@@ -96,7 +96,6 @@ class Device(models.Model):
 
         minforcements=[]
 
-        #TODO: Refactor me!
         while enforcements:
             emin = enforcements.pop()
             for e in enforcements:
@@ -229,7 +228,7 @@ class Package(models.Model):
     """
     id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=100)
-    blacklist = models.IntegerField(blank=True)
+    blacklist = models.IntegerField(blank=True, default=0)
 
     def __unicode__(self):
         return self.name
@@ -247,8 +246,8 @@ class Version(models.Model):
     product = models.ForeignKey(Product, related_name='versions',
             db_column='product', on_delete=models.CASCADE)
     release = models.CharField(blank=False, max_length=100)
-    security = models.BooleanField(null=False)
-    time = models.DateTimeField()
+    security = models.BooleanField(default=0)
+    time = models.DateTimeField(datetime.today())
     blacklist = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):

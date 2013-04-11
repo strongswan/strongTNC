@@ -116,8 +116,10 @@ def startMeasurement(request):
     device, new = Device.objects.get_or_create(value=deviceID, product=product)
 
     if new:
-        # TODO: Read default group(s) for products, add to device
-        pass
+        for group in device.product.default_groups.all():
+            device.groups.add(group)
+
+        device.save()
 
     id = Identity.objects.get_or_create(data=ar_id)[0]
 
