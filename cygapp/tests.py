@@ -170,12 +170,12 @@ class CygappTest(TestCase):
         setupTestData()
 
         g = m.Group.objects.get(name='B1.1.1')
-        p = m.Policy.objects.get(name='bash')
-        e1 = m.Enforcement.objects.create(group=g, policy=p, max_age=3)
+        p1 = m.Policy.objects.get(name='bash')
+        e1 = m.Enforcement.objects.create(group=g, policy=p1, max_age=3)
 
         g = m.Group.objects.get(name='L1.3.1')
-        p = m.Policy.objects.get(name='usrbin')
-        e2 = m.Enforcement.objects.create(group=g, policy=p, max_age=2)
+        p2 = m.Policy.objects.get(name='usrbin')
+        e2 = m.Enforcement.objects.create(group=g, policy=p2, max_age=2)
 
         device = m.Device.objects.get(value='def')
         user = m.Identity.objects.create(type=1, data='foobar')
@@ -186,10 +186,18 @@ class CygappTest(TestCase):
                 fail=3, noresult=0, result=0, recommendation=0, enforcement=e1,
                 type=1)
         m.WorkItem.objects.create(measurement=measurement, argument='blubber',
-                fail=3, noresult=0, result=0, recommendation=0, enforcement=e2,
+                fail=3, noresult=0, result=5, recommendation=3, enforcement=e2,
                 type=2)
 
         v.generate_results(measurement)
+
+        result = m.Result.objects.get(measurement=measurement, policy=p1)
+        self.assertEqual(0, result.result)
+        self.assertEqual(0, result.recommendation)
+
+        result = m.Result.objects.get(measurement=measurement, policy=p2)
+        self.assertEqual(5, result.result)
+        self.assertEqual(3, result.recommendation)
 
     def test_imv_login(self):
         #This is no longer a simple test unit and dealt with in simIMV.py run

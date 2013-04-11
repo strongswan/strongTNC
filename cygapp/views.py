@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context
 from django.shortcuts import get_object_or_404, render
-import re, max
+import re
 from models import *
 
 def index(request):
