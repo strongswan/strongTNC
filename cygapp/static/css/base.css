@@ -18,3 +18,14 @@ body {
       padding-right: 5px;
     }
 }
+
+.hero-unit {
+    padding-top: 6px;
+    padding-bottom: 12px;
+    padding-left: 18px
+}
+
+.hero-unit h1 {
+  margin-bottom: 0;
+  font-size: 40px;
+}
