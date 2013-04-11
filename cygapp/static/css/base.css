@@ -29,3 +29,25 @@ body {
     margin-bottom: 0;
     font-size: 40px;
 }
+
+.icon-phone {
+  background-position: -96px -168px;
+}
+
+[class^="logo-"],
+[class*=" logo-"] {
+  display: inline-block;
+  width: 32px;
+  height: 21px;
+  margin-top: 1px;
+  *margin-right: .3em;
+  line-height: 21px;
+  vertical-align: text-top;
+  background-image: url("../img/swanicon.png");
+  background-position: 32px 21px;
+  background-repeat: no-repeat;
+}
+
+.logo-swanicon {
+  background-position: 0      0;
+}
