@@ -58,16 +58,16 @@ class cygappTest(TestCase):
     def test_getGroupSet(self):
         device = m.Device.objects.get(value='def')
 
-        groups = device.getGroupSet()
+        groups = device.get_group_set()
         self.assertEqual(6, len(groups))
 
         device.groups.add(m.Group.objects.get(name='B1.1.1'))
         device.groups.add(m.Group.objects.get(name='L1.3.2'))
         
-        groups = device.getGroupSet()
+        groups = device.get_group_set()
         self.assertEqual(7, len(groups))
 
-    def test_createWorkItems(self):
+    def test_create_work_items(self):
 
         g = m.Group.objects.get(name='B1.1.1')
         p = m.Policy.objects.get(name='bash')
@@ -91,7 +91,7 @@ class cygappTest(TestCase):
         measurement.user = user
         measurement.save()
 
-        device.createWorkItems(measurement)
+        device.create_work_items(measurement)
 
         items = m.WorkItem.objects.filter(measurement=measurement)
         self.assertEqual(2, len(items))
@@ -141,7 +141,7 @@ class cygappTest(TestCase):
         measurement = m.Measurement.objects.create(device=device,
                 time=datetime.today(), connectionID=123, user=user)
 
-        device.createWorkItems(measurement)
+        device.create_work_items(measurement)
 
         item = m.WorkItem.objects.get(measurement=measurement, enforcement=e1)
         self.assertEqual(3, item.fail)
@@ -153,7 +153,7 @@ class cygappTest(TestCase):
         self.assertEqual(0, item.noresult)
 
 
-    def test_isDueFor(self):
+    def test_is_due_for(self):
         g = m.Group.objects.get(name='L1.3.1')
         p = m.Policy.objects.get(name='usrbin')
         user = m.Identity.objects.create(type=1, data='foobar')
@@ -161,12 +161,12 @@ class cygappTest(TestCase):
         e = m.Enforcement.objects.create(group=g, policy=p, max_age=2)
 
         #No Measurement yet
-        self.assertEqual(True, device.isDueFor(e))
+        self.assertEqual(True, device.is_due_for(e))
 
         #Measurement yields no results for policy
         meas = m.Measurement.objects.create(device=device, time=datetime.today(),
                 connectionID=123, user=user)
-        self.assertEqual(True, device.isDueFor(e))
+        self.assertEqual(True, device.is_due_for(e))
 
 
         #Measurement is too old
@@ -175,15 +175,15 @@ class cygappTest(TestCase):
 
         meas.time -= timedelta(days=4)
         meas.save()
-        self.assertEqual(True, device.isDueFor(e))
+        self.assertEqual(True, device.is_due_for(e))
 
         meas.time = datetime.today() - timedelta(days=2, minutes=1)
         meas.save()
-        self.assertEqual(True, device.isDueFor(e))
+        self.assertEqual(True, device.is_due_for(e))
 
         meas.time = datetime.today() - timedelta(days=1, hours=23, minutes=59)
         meas.save()
-        self.assertEqual(False, device.isDueFor(e))
+        self.assertEqual(False, device.is_due_for(e))
 
         #TODO: Insert test cases for when last result wasn't OK, see
         #tannerli/cygnet-doc#35 for more info

@@ -62,39 +62,36 @@ class Device(models.Model):
     def __unicode__(self):
         return '%s (%s)' % (self.description, self.value[:10])
 
-    def getGroupSet(self):
+    def get_group_set(self):
         groups = []
         for g in self.groups.all():
             groups.append(g)
-            groups += g.getParents()
+            groups += g.get_parents()
 
         groups = set(groups)
         return groups
 
-    def isDueFor(self, enforcement):
+    def is_due_for(self, enforcement):
         try:
             last_meas = Measurement.objects.filter(device=self).latest('time')
             result = Result.objects.get(measurement=last_meas,
                     policy=enforcement.policy)
         except Measurement.DoesNotExist:
-            print 'No Measurement: is due'
             return True
         except Result.DoesNotExist:
-            print 'No Results: is due'
             return True
 
         age = datetime.today() - last_meas.time
 
         #See tannerli/cygnet-doc#35 for how previous results should be tested
         if age.days >= enforcement.max_age: #or result.result != 0:
-            print 'Too old results: is due'
             return True
 
         return False
 
-    def createWorkItems(self, measurement):
+    def create_work_items(self, measurement):
 
-        groups = self.getGroupSet()
+        groups = self.get_group_set()
         enforcements = []
         for group in groups:
            enforcements += group.enforcements.all()
@@ -112,8 +109,8 @@ class Device(models.Model):
             minforcements.append(emin)
 
         for enforcement in minforcements:
-            if self.isDueFor(enforcement):
-                enforcement.policy.createWorkItem(enforcement, measurement)
+            if self.is_due_for(enforcement):
+                enforcement.policy.create_work_item(enforcement, measurement)
 
         return groups
 
@@ -134,11 +131,11 @@ class Group(models.Model):
     def __unicode__(self):
         return self.name
 
-    def getParents(self):
+    def get_parents(self):
         if not self.parent:
             return []
 
-        return [self.parent] + self.parent.getParents()
+        return [self.parent] + self.parent.get_parents()
 
     class Meta:
         db_table = u'groups'
@@ -276,7 +273,7 @@ class Policy(models.Model):
     dir = models.ForeignKey(Directory, null=True, related_name='policies',
             on_delete=models.PROTECT)
 
-    def createWorkItem(self, enforcement, measurement):
+    def create_work_item(self, enforcement, measurement):
         item = WorkItem()
         item.result = None
         item.type = self.type
