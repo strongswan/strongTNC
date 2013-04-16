@@ -27,11 +27,9 @@ class FileExist(Policy):
     """ Policy to check if a given file exists. """
     type = 4
 
-    def __init__(self, file):
-        super(Policy, self).__init__()
-        self.type = FileExist.type
-        self.argument = '%s/%s' % (file.directory.path, file.name)
-        self.name = self.argument
+    def __init__(self, file, **kwargs):
+        kwargs['type'] = FileExist.type
+        self.argument = '%d' % file.id
 
 class NotFileExist(Policy):
     """ Policy to check if a given file does not exist. """

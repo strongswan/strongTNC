@@ -48,11 +48,11 @@ urlpatterns = patterns('',
             name='filehashesjson'),
 
         #IMV API patterns
-        url(r'^cmd/start_measurement/?$', views.startMeasurement,
+        url(r'^cmd/start_measurement/?$', views.start_measurement,
             name='start_measurement'),
 
-        url(r'^cmd/finish_measurement/?$', views.finishMeasurement,
-            name='finish_measurement'),
+        url(r'^cmd/end_measurement/?$', views.finish_measurement,
+            name='end_measurement'),
 
 
         #To enable built-in admin-interface:

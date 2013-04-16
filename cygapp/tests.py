@@ -46,14 +46,8 @@ class cygappTest(TestCase):
         m.Version.objects.create(time=datetime.today(), product=p, package=ss_dbg, release='2.3')
         m.Version.objects.create(time=datetime.today(), product=p, package=ss_ike, release='1.1')
 
-    def test_file_basics(self):
-        """
-        Tests basic file properties in different formats.
-        """
-        d = m.Directory.objects.create(path='/')
-        f = m.File.objects.create(name='grep', directory=d)
-
-        self.assertEqual('{"id": 1, "dir": "/", "name": "grep"}', f.__json__())
+        dir = m.Directory.objects.create(path='/bin')
+        m.File.objects.create(name='bash', directory=dir)
 
     def test_getGroupSet(self):
         device = m.Device.objects.get(value='def')
@@ -226,4 +220,27 @@ class cygappTest(TestCase):
         #This is no longer a simple test unit and dealt with in simIMV.py run
         # simIMV.run_test() to execute the test
         pass
+
+    def test_policy_file_protection(self):
+        file = m.File.objects.get(name='bash')
+
+        policy = m.Policy.objects.create(name='binbash', type=1, argument='%d'%file.id,
+                file=file, fail=m.Action.BLOCK, noresult=m.Action.ALLOW)
+
+        from django.db.models.deletion import ProtectedError
+        self.assertRaises(ProtectedError, file.delete)
+        policy.delete()
+        file.delete()
+
+    def test_policy_dir_protection(self):
+        dir = m.Directory.objects.get(path='/bin')
+
+        policy = m.Policy.objects.create(name='binhashes', type=2,
+                argument='%d'%dir.id, dir=dir, fail=m.Action.BLOCK,
+                noresult=m.Action.ALLOW)
+
+        from django.db.models.deletion import ProtectedError
+        self.assertRaises(ProtectedError, dir.delete)
+        policy.delete()
+        dir.delete()
 

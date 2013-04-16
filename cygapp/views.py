@@ -91,7 +91,7 @@ def filehashesjson(request, fileid):
 
     return HttpResponse('\n'.join(hash.__json__() for hash in hashes), mimetype='application/json')
 
-def startMeasurement(request):
+def start_measurement(request):
 
     #Sanitize input
     deviceID = request.GET.get('deviceID', '')
@@ -144,7 +144,7 @@ def generate_results(measurement):
     for item in workitems:
         item.delete()
 
-def finishMeasurement(request):
+def end_measurement(request):
     deviceID = request.GET.get('deviceID', '')
     connectionID = request.GET.get('connectionID', '')
 
