@@ -75,13 +75,19 @@ class Device(models.Model):
         try:
             last_meas = Measurement.objects.filter(device=self).latest('time')
             result = Result.objects.get(measurement=last_meas,
-                    policy=enforcement.policy).get()
-        except (Measurement.DoesNotExist, Result.DoesNotExist):
+                    policy=enforcement.policy)
+        except Measurement.DoesNotExist:
+            print 'No Measurement: is due'
+            return True
+        except Result.DoesNotExist:
+            print 'No Results: is due'
             return True
 
-        age = last_meas.time - datetime.today() 
+        age = datetime.today() - last_meas.time
 
-        if age.days >= enforcement.max_age or result.result != 0:
+        #See tannerli/cygnet-doc#35 for how previous results should be tested
+        if age.days >= enforcement.max_age: #or result.result != 0:
+            print 'Too old results: is due'
             return True
 
         return False

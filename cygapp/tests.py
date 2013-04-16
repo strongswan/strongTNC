@@ -6,7 +6,7 @@ Unit tests for the django app cygnet are specified in this file
 
 from django.test import TestCase
 from cygapp.policies import *
-from datetime import datetime
+from datetime import datetime, timedelta
 import cygapp.models as m
 import cygapp.views as v
 
@@ -154,7 +154,39 @@ class cygappTest(TestCase):
 
 
     def test_isDueFor(self):
-        pass
+        g = m.Group.objects.get(name='L1.3.1')
+        p = m.Policy.objects.get(name='usrbin')
+        user = m.Identity.objects.create(type=1, data='foobar')
+        device = m.Device.objects.get(value='def')
+        e = m.Enforcement.objects.create(group=g, policy=p, max_age=2)
+
+        #No Measurement yet
+        self.assertEqual(True, device.isDueFor(e))
+
+        #Measurement yields no results for policy
+        meas = m.Measurement.objects.create(device=device, time=datetime.today(),
+                connectionID=123, user=user)
+        self.assertEqual(True, device.isDueFor(e))
+
+
+        #Measurement is too old
+        m.Result.objects.create(policy=p, measurement=meas, result='OK',
+                recommendation = m.Action.ALLOW)
+
+        meas.time -= timedelta(days=4)
+        meas.save()
+        self.assertEqual(True, device.isDueFor(e))
+
+        meas.time = datetime.today() - timedelta(days=2, minutes=1)
+        meas.save()
+        self.assertEqual(True, device.isDueFor(e))
+
+        meas.time = datetime.today() - timedelta(days=1, hours=23, minutes=59)
+        meas.save()
+        self.assertEqual(False, device.isDueFor(e))
+
+        #TODO: Insert test cases for when last result wasn't OK, see
+        #tannerli/cygnet-doc#35 for more info
 
     def test_generate_results(self):
 
