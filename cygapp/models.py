@@ -3,10 +3,9 @@ import simplejson
 import binascii
 from datetime import datetime
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 class BinaryField(models.Field):
-    description = _("Raw binary data for SQLite")
+    description = "Raw binary data for SQLite"
 
     def __init__(self, *args, **kwargs):
         kwargs['editable'] = False
@@ -36,7 +35,7 @@ class Product(models.Model):
     Platform (f.e Android or Ubuntu)
     """
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.TextField()
 
     def __unicode__(self):
         return self.name
@@ -266,6 +265,10 @@ class Policy(models.Model):
     argument = models.CharField(max_length=500, blank=True)
     fail = models.IntegerField(blank=True)
     noresult = models.IntegerField(blank=True)
+    file = models.ForeignKey(File, null=True, related_name='policies',
+            on_delete=models.PROTECT)
+    dir = models.ForeignKey(Directory, null=True, related_name='policies',
+            on_delete=models.PROTECT)
 
     def createWorkItem(self, enforcement, measurement):
         item = WorkItem()

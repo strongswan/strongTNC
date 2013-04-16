@@ -33,17 +33,17 @@ def setupTestData():
     m.Policy.objects.create(name='usrbin',type=2,argument='/usr/bin/',fail=4,noresult=1)
     m.Policy.objects.create(name='ports',type=3,argument='0-1024',fail=0,noresult=0)
 
-    lib = m.Package.create('libstrongswan')
-    ss = m.Package.create('strongswan')
-    ss_nm = m.Package.create('strongswan-nm')
-    ss_dbg = m.Package.create('strongswan-dbg')
-    ss_ike = m.Package.create('strongswan-ikev1')
+    lib = m.Package.objects.create(name='libstrongswan')
+    ss = m.Package.objects.create(name='strongswan')
+    ss_nm = m.Package.objects.create(name='strongswan-nm')
+    ss_dbg = m.Package.objects.create(name='strongswan-dbg')
+    ss_ike = m.Package.objects.create(name='strongswan-ikev1')
 
-    m.Version.create(product=p, package=lib, release='1.1')
-    m.Version.create(product=p, package=ss, release='0.9')
-    m.Version.create(product=p, package=ss_nm, release='3.1')
-    m.Version.create(product=p, package=ss_dbg, release='2.3')
-    m.Version.create(product=p, package=ss_ike, release='1.1')
+    m.Version.objects.create(time=datetime.today(), product=p, package=lib, release='1.1')
+    m.Version.objects.create(time=datetime.today(), product=p, package=ss, release='0.9')
+    m.Version.objects.create(time=datetime.today(), product=p, package=ss_nm, release='3.1')
+    m.Version.objects.create(time=datetime.today(), product=p, package=ss_dbg, release='2.3')
+    m.Version.objects.create(time=datetime.today(), product=p, package=ss_ike, release='1.1')
 
 class CygappTest(TestCase):
     def test_file_basics(self):
