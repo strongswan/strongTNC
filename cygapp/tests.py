@@ -11,56 +11,51 @@ import cygapp.models as m
 import cygapp.views as v
 
 
-def setupTestData():
-    p = m.Product.objects.create(name='Fancy OS 3.14')
-    device = m.Device.objects.create(value='def', description='Test Device', product=p)
-    
-    g1 = m.Group.objects.create(name='ROOT')
-    g11 = m.Group.objects.create(name='B1.1', parent=g1)
-    m.Group.objects.create(name='L1.2', parent=g1)
-    g13 = m.Group.objects.create(name='B1.3', parent=g1)
-    g111 = m.Group.objects.create(name='B1.1.1', parent=g11)
-    m.Group.objects.create(name='L1.1.1.1', parent=g111)
-    g1112 = m.Group.objects.create(name='L1.1.1.2', parent=g111)
-    g131 = m.Group.objects.create(name='L1.3.1', parent=g13)
-    m.Group.objects.create(name='L1.3.2', parent=g13)
+class cygappTest(TestCase):
+    def setUp(self):
+        p = m.Product.objects.create(name='Fancy OS 3.14')
+        device = m.Device.objects.create(value='def', description='Test Device', product=p)
+        
+        g1 = m.Group.objects.create(name='ROOT')
+        g11 = m.Group.objects.create(name='B1.1', parent=g1)
+        m.Group.objects.create(name='L1.2', parent=g1)
+        g13 = m.Group.objects.create(name='B1.3', parent=g1)
+        g111 = m.Group.objects.create(name='B1.1.1', parent=g11)
+        m.Group.objects.create(name='L1.1.1.1', parent=g111)
+        g1112 = m.Group.objects.create(name='L1.1.1.2', parent=g111)
+        g131 = m.Group.objects.create(name='L1.3.1', parent=g13)
+        m.Group.objects.create(name='L1.3.2', parent=g13)
 
-    device.groups.add(g1112)
-    device.groups.add(g131)
-    device.save()
+        device.groups.add(g1112)
+        device.groups.add(g131)
+        device.save()
 
-    m.Policy.objects.create(name='bash',type=1,argument='/bin/bash',fail=3,noresult=0)
-    m.Policy.objects.create(name='usrbin',type=2,argument='/usr/bin/',fail=4,noresult=1)
-    m.Policy.objects.create(name='ports',type=3,argument='0-1024',fail=0,noresult=0)
+        m.Policy.objects.create(name='bash',type=1,argument='/bin/bash',fail=3,noresult=0)
+        m.Policy.objects.create(name='usrbin',type=2,argument='/usr/bin/',fail=4,noresult=1)
+        m.Policy.objects.create(name='ports',type=3,argument='0-1024',fail=0,noresult=0)
 
-    lib = m.Package.objects.create(name='libstrongswan')
-    ss = m.Package.objects.create(name='strongswan')
-    ss_nm = m.Package.objects.create(name='strongswan-nm')
-    ss_dbg = m.Package.objects.create(name='strongswan-dbg')
-    ss_ike = m.Package.objects.create(name='strongswan-ikev1')
+        lib = m.Package.objects.create(name='libstrongswan')
+        ss = m.Package.objects.create(name='strongswan')
+        ss_nm = m.Package.objects.create(name='strongswan-nm')
+        ss_dbg = m.Package.objects.create(name='strongswan-dbg')
+        ss_ike = m.Package.objects.create(name='strongswan-ikev1')
 
-    m.Version.objects.create(time=datetime.today(), product=p, package=lib, release='1.1')
-    m.Version.objects.create(time=datetime.today(), product=p, package=ss, release='0.9')
-    m.Version.objects.create(time=datetime.today(), product=p, package=ss_nm, release='3.1')
-    m.Version.objects.create(time=datetime.today(), product=p, package=ss_dbg, release='2.3')
-    m.Version.objects.create(time=datetime.today(), product=p, package=ss_ike, release='1.1')
+        m.Version.objects.create(time=datetime.today(), product=p, package=lib, release='1.1')
+        m.Version.objects.create(time=datetime.today(), product=p, package=ss, release='0.9')
+        m.Version.objects.create(time=datetime.today(), product=p, package=ss_nm, release='3.1')
+        m.Version.objects.create(time=datetime.today(), product=p, package=ss_dbg, release='2.3')
+        m.Version.objects.create(time=datetime.today(), product=p, package=ss_ike, release='1.1')
 
-class CygappTest(TestCase):
     def test_file_basics(self):
         """
         Tests basic file properties in different formats.
         """
-        f = m.File(name='grep')
-        d = m.Directory(path='/')
-        d.save()
-        f.directory=d
-        f.save()
+        d = m.Directory.objects.create(path='/')
+        f = m.File.objects.create(name='grep', directory=d)
 
-        h = m.File.objects.get(pk=1)
-        self.assertEqual('{"id": 1, "dir": "/", "name": "grep"}', h.__json__())
+        self.assertEqual('{"id": 1, "dir": "/", "name": "grep"}', f.__json__())
 
     def test_getGroupSet(self):
-        setupTestData()
         device = m.Device.objects.get(value='def')
 
         groups = device.getGroupSet()
@@ -73,7 +68,6 @@ class CygappTest(TestCase):
         self.assertEqual(7, len(groups))
 
     def test_createWorkItems(self):
-        setupTestData()
 
         g = m.Group.objects.get(name='B1.1.1')
         p = m.Policy.objects.get(name='bash')
@@ -121,7 +115,6 @@ class CygappTest(TestCase):
         
 
     def test_actionInheritance(self):
-        setupTestData()
 
         #bash : fail=3 noresult=0
         g = m.Group.objects.get(name='B1.1.1')
@@ -161,11 +154,9 @@ class CygappTest(TestCase):
 
 
     def test_isDueFor(self):
-        #TODO
         pass
 
     def test_generate_results(self):
-        setupTestData()
 
         g = m.Group.objects.get(name='B1.1.1')
         p1 = m.Policy.objects.get(name='bash')
@@ -181,20 +172,20 @@ class CygappTest(TestCase):
                 time=datetime.today(), connectionID=123, user=user)
         
         m.WorkItem.objects.create(measurement=measurement, argument='asdf',
-                fail=3, noresult=0, result=0, recommendation=0, enforcement=e1,
+                fail=3, noresult=0, result='OK', recommendation=0, enforcement=e1,
                 type=1)
         m.WorkItem.objects.create(measurement=measurement, argument='blubber',
-                fail=3, noresult=0, result=5, recommendation=3, enforcement=e2,
+                fail=3, noresult=0, result='FAIL', recommendation=3, enforcement=e2,
                 type=2)
 
         v.generate_results(measurement)
 
         result = m.Result.objects.get(measurement=measurement, policy=p1)
-        self.assertEqual(0, result.result)
+        self.assertEqual('OK', result.result)
         self.assertEqual(0, result.recommendation)
 
         result = m.Result.objects.get(measurement=measurement, policy=p2)
-        self.assertEqual(5, result.result)
+        self.assertEqual('FAIL', result.result)
         self.assertEqual(3, result.recommendation)
 
         #TODO: According to tannerli/cygnet-doc#34, add testcases

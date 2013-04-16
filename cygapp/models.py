@@ -54,8 +54,8 @@ class Device(models.Model):
     An Android Device identified by its AndroidID
     """
     id = models.AutoField(primary_key=True)
-    value = models.CharField(max_length=50)
-    description = models.CharField(default='', max_length=50, blank=True)
+    value = models.TextField()
+    description = models.TextField(blank=True)
     product = models.ForeignKey(Product, related_name='devices')
 
 
@@ -142,7 +142,7 @@ class Directory(models.Model):
     Unix-style directory path
     """
     id = models.AutoField(primary_key=True)
-    path = models.CharField(unique=True, max_length=500)
+    path = models.TextField(unique=True)
 
     def __unicode__(self):
         return self.path
@@ -158,7 +158,7 @@ class File(models.Model):
     id = models.AutoField(primary_key=True)
     directory = models.ForeignKey(Directory, db_column='dir',
             related_name='files', on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    name = models.TextField()
 
     def __unicode__(self):
         return '%s/%s' % (self.directory.path, self.name)
@@ -226,7 +226,7 @@ class Package(models.Model):
     aptitude Package name
     """
     id = models.AutoField(primary_key=True)
-    name = models.CharField(unique=True, max_length=100)
+    name = models.TextField(unique=True)
     blacklist = models.IntegerField(blank=True, default=0)
 
     def __unicode__(self):
@@ -244,7 +244,7 @@ class Version(models.Model):
             on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='versions',
             db_column='product', on_delete=models.CASCADE)
-    release = models.CharField(blank=False, max_length=100)
+    release = models.TextField()
     security = models.BooleanField(default=0)
     time = models.DateTimeField(datetime.today())
     blacklist = models.IntegerField(null=True, blank=True)
@@ -262,7 +262,7 @@ class Policy(models.Model):
     id = models.AutoField(primary_key=True)
     type = models.IntegerField()
     name = models.CharField(unique=True, max_length=100)
-    argument = models.CharField(max_length=500, blank=True)
+    argument = models.TextField()
     fail = models.IntegerField(blank=True)
     noresult = models.IntegerField(blank=True)
     file = models.ForeignKey(File, null=True, related_name='policies',
@@ -343,10 +343,10 @@ class WorkItem(models.Model):
     measurement = models.ForeignKey(Measurement, related_name='workitems',
             on_delete=models.CASCADE)
     type = models.IntegerField(null=False, blank=False)
-    argument = models.CharField(max_length=500)
+    argument = models.TextField()
     fail = models.IntegerField(null=True,blank=True)
     noresult = models.IntegerField(null=True,blank=True)
-    result = models.IntegerField(null=True,blank=True)
+    result = models.TextField(null=True)
     recommendation = models.IntegerField(null=True,blank=True)
 
     class Meta:
@@ -356,8 +356,9 @@ class Result(models.Model):
     id = models.AutoField(primary_key=True)
     measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
     policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
-    result = models.IntegerField(null=False, blank=True)
+    result = models.TextField()
     recommendation = models.IntegerField()
 
     class Meta:
         db_table = u'results'
+
