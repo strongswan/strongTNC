@@ -21,7 +21,19 @@ def groups(request):
 def group(request, groupID):
     context = {}
     context['groups'] = Group.objects.all().order_by('name')
-    context['group'] = Group.objects.get(pk=groupID)
+    group = Group.objects.get(pk=groupID)
+    context['group'] = group
+    members = group.members.all()
+    context['members'] = members
+
+    devices = Device.objects.all()
+    devices = list(devices)
+    for dev in devices:
+        if dev in members:
+            devices.remove(dev)
+
+    context['devices'] = devices
+
     context['title'] = _('Group ') + context['group'].name
     return render(request, 'cygapp/groups.html', context)
 

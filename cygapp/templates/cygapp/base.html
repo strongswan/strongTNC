@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+  {% load i18n %}
   <head>
     <meta charset="utf-8">
     <title>cygnet - {% block title %}{% endblock %}</title>
@@ -62,7 +63,7 @@
 	      <!-- <li class="nav-header">Sidebar</li> -->
               <li></li><a href="overview#"><i class="icon-eye-open"></i> Overview</a></li>
               <li class="nav-header">Configuration</li>
-              <li><a href="groups#"><i class="icon-user"></i> Groups</a></li>
+              <li><a href="/groups"><i class="icon-user"></i> Groups</a></li>
               <li><a href="#"><i class="icon-list-alt"></i> Policies</a></li>
               <li><a href="#"><i class="icon-phone"></i> Devices</a></li>
               <li class="nav-header">Data Views</li>
@@ -107,7 +108,6 @@
           'selector': '',
           'placement': 'right'
         });
-        console.log("temp");
       });
       $('.dropdown-toggle').dropdown();
     </script>

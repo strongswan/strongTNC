@@ -1,10 +1,12 @@
 {% extends "cygapp/base.html" %}
 
+{% load i18n %}
 {% block title %}GROUP MANAGEMENT{% endblock %}
 
 {% block hero %}
 <h1>{{ title }}</h1>
 {% endblock %}
+
 
 {% block content %}
   <div class="container-fluid">
@@ -18,8 +20,9 @@
 	<h4>Group</h4>
 	<table class="table table-hover">
     <tbody>
+      <tr><td><a class="btn" href="/groups/add">{% trans "Add Group" %}</a></td></tr>
       {% for group in groups %}
-      <tr><td><a href=/groups/{{ group.id }}>{{ group.name }}</a></td></tr>
+      <tr><td><a href=/groups/{{ group.id }}>{{ group }}</a></td></tr>
       {% endfor %}
     </tbody>
 	</table>
@@ -35,8 +38,9 @@
             <label class="control-label" for="name">Name</label>
             <div class="controls">
               <input type="text" id="name" name="name" placeholder="Name"
-              value="{{ group.name }}">
-	      <a class="btn-small" href="#" rel="tooltip" title="enter the name of the group"><i class="icon-info-sign"></i></a>
+              value="{{ group }}">
+        <a class="btn-small" href="#" rel="tooltip" title="enter the name of the
+          group"><i class="icon-info-sign"></i></a>
             </div>
           </div>
           <div class="control-group">
@@ -53,29 +57,62 @@
                   </option>
                 {% endfor %}
               </select>
-              <a class="btn-small" href="#" rel="tooltip" title="select a parental group"><i class="icon-info-sign"></i></a>
+              <a class="btn-small" href="#" rel="tooltip" title="select a
+                parental group"><i class="icon-info-sign"></i></a>
             </div>
           </div>
         </div>
+        <h4>Assign Devices</h4>
+        <div class="row-fluid">
+          <select size="5" name="selectionField" id="device_select" multiple="yes" >
+            {% for d in devices %}
+            <option value="{{ d.id }}">{{ d }}</option>
+            {% endfor %}
+          </select>
+          <div class="btn-group btn-group-vertical">
+            <button type="button" onclick="add_member()" class="btn"><i class="icon-forward"></i></button>
+            <button type="button" onclick="remove_member()" class="btn"><i class="icon-backward"></i></button>
+          </div>
+
+          <select size="5" name="selectionField" id="member_select" multiple="yes" >
+            {% for m in members %}
+            <option value="{{ m.id }}">{{ m }}</option>
+            {% endfor %}
+          </select>
+        </div>
       </form>
         <hr>
-	<h4>Assign Devices</h4>
-	<div class="row-fluid">
-	<select size="3" name="selectionField" multiple="yes" >
-	</select>
-	<div class="btn-group btn-group-vertical">
-	  <button type="button" class="btn"><i class="icon-forward"></i></button>
-          <button type="button" class="btn"><i class="icon-backward"></i></button>
-	</div>
-	<select size="3" name="selectionField" multiple="yes" >
-	</select>
-	</div>
   <p><a class="btn" href="#" onclick="groupform.submit()">Save &raquo;</a></p>
   {% if group.id %}
   <p><a class="btn" href="/groups/{{group.id}}/delete" >Delete &raquo;</a></p>
   {% endif %}
-        {% endif %}
-      </div><!--content-->
+  {% endif %}
+</div><!--content-->
     </div><!--/row-->
   </div>
+  <script type="text/javascript">
+    function print(msg)
+    {
+      console.log(msg);
+    }
+
+    function add_member()
+    {
+      $("#device_select > option:selected").each(function(index, elem){
+            $("#member_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
+      });
+      $("#device_select > option:selected").remove()
+    }
+
+    function remove_member()
+    {
+      $("#member_select > option:selected").each(function(index, elem){
+            $("#device_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
+      });
+      $("#member_select > option:selected").remove()
+    }
+
+  </script>
 {% endblock %}
+
+
