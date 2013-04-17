@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
+from django.utils.translation import ugettext_lazy as _
 import re
 from models import *
 
@@ -8,12 +9,52 @@ def index(request):
     answer='Select view:<br/><a href=./files>Files</a>'
     return HttpResponse(answer)
 
-# TODO: ev. Korrigieren
 def overview(request):
     return render(request, 'cygapp/overview.html')
 
 def groups(request):
-    return render(request, 'cygapp/groups.html')
+    context = {}
+    context['groups'] = Group.objects.all().order_by('name')
+    context['title'] = _('Groups')
+    return render(request, 'cygapp/groups.html', context)
+
+def group(request, groupID):
+    context = {}
+    context['groups'] = Group.objects.all().order_by('name')
+    context['group'] = Group.objects.get(pk=groupID)
+    context['title'] = _('Group ') + context['group'].name
+    return render(request, 'cygapp/groups.html', context)
+
+def group_add(request):
+    context = {}
+    context['title'] = _('New group')
+    context['groups'] = Group.objects.all().order_by('name')
+    context['group'] = Group()
+    return render(request, 'cygapp/groups.html', context)
+
+def group_save(request):
+    if request.method != 'POST':
+        return HttpResponse(status=405)
+
+    groupID = request.POST['groupId']
+
+    if groupID == 'None':
+        group = Group.objects.create(name=request.POST['name'],
+                parent=Group.objects.get(pk=request.POST['parent']))
+    else:
+        group = get_object_or_404(Group, pk=groupID)
+        group.name = request.POST['name']
+        group.parent = Group.objects.get(pk=request.POST['parent'])
+        group.save()
+
+    return redirect('/groups/%d' % group.id)
+
+def group_delete(request, groupID):
+    group = get_object_or_404(Group, pk=groupID)
+    group.delete()
+
+    return redirect('/groups')
+
 
 def fileshashes(request):
     flist = File.objects.all()

@@ -14,6 +14,13 @@ urlpatterns = patterns('',
         url(r'^overview/?$', views.overview, name='overview'),
 
         url(r'^groups/?$', views.groups, name='groups'),
+        url(r'^groups/(?P<groupID>\d+)/?$', views.group, name='group'),
+        url(r'^groups/(?P<groupID>\d+)/delete/?$', views.group_delete,
+            name='group_delete'),
+        url(r'^groups/add/?$', views.group_add, name='group_add'),
+        url(r'^groups/save?$', views.group_save, name='group_save'),
+
+        #==============================================
 
         url(r'^media/(?P<path>.*)$','django.views.static.serve',
             {'document_root': settings.MEDIA_ROOT}),
@@ -51,7 +58,7 @@ urlpatterns = patterns('',
         url(r'^cmd/start_measurement/?$', views.start_measurement,
             name='start_measurement'),
 
-        url(r'^cmd/end_measurement/?$', views.finish_measurement,
+        url(r'^cmd/end_measurement/?$', views.end_measurement,
             name='end_measurement'),
 
 
