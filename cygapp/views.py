@@ -19,6 +19,9 @@ def groups(request):
     return render(request, 'cygapp/groups.html', context)
 
 def group(request, groupID):
+    if request.method != 'GET':
+        return HttpResponse(status=405)
+
     context = {}
     context['groups'] = Group.objects.all().order_by('name')
     group = Group.objects.get(pk=groupID)
@@ -42,6 +45,7 @@ def group_add(request):
     context['title'] = _('New group')
     context['groups'] = Group.objects.all().order_by('name')
     context['group'] = Group()
+    context['devices'] = Device.objects.all()
     return render(request, 'cygapp/groups.html', context)
 
 def group_save(request):
@@ -49,15 +53,40 @@ def group_save(request):
         return HttpResponse(status=405)
 
     groupID = request.POST['groupId']
+    if not groupID == 'None' or re.match(r'^\d+$', groupID):
+        return HttpResponse(status=400)
+
+    members = []
+    if request.POST['memberlist'] != '':
+        members = request.POST['memberlist'].split(',')
+
+    for member in members:
+        if not re.match(r'^\d+$', member):
+            return HttpResponse(status=400)
+
+
+    parentId = request.POST['parent']
+    parent=None
+    if parentId != '':
+        try:
+            parent=Group.objects.get(pk=parentId)
+        except Group.DoesNotExist:
+            pass
 
     if groupID == 'None':
-        group = Group.objects.create(name=request.POST['name'],
-                parent=Group.objects.get(pk=request.POST['parent']))
+        group = Group.objects.create(name=request.POST['name'],parent=parent)
     else:
         group = get_object_or_404(Group, pk=groupID)
         group.name = request.POST['name']
-        group.parent = Group.objects.get(pk=request.POST['parent'])
+        group.parent = parent
         group.save()
+
+    group.members.clear()
+    members = Device.objects.filter(id__in=members)
+    for member in members:
+        group.members.add(member)
+
+    group.save()
 
     return redirect('/groups/%d' % group.id)
 
@@ -145,6 +174,8 @@ def filehashesjson(request, fileid):
     return HttpResponse('\n'.join(hash.__json__() for hash in hashes), mimetype='application/json')
 
 def start_measurement(request):
+    if request.method not in ('HEAD','GET'):
+        return HttpResponse(status=405)
 
     #Sanitize input
     deviceID = request.GET.get('deviceID', '')
@@ -198,6 +229,9 @@ def generate_results(measurement):
         item.delete()
 
 def end_measurement(request):
+    if request.method not in ('HEAD','GET'):
+        return HttpResponse(status=405)
+
     deviceID = request.GET.get('deviceID', '')
     connectionID = request.GET.get('connectionID', '')
 

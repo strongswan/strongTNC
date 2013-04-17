@@ -32,57 +32,60 @@
     {% if group %}
 	<h4>Group Info</h4>
   <form class="form-horizontal" method="POST" action="/groups/save" id="groupform">
-          {% csrf_token %}
-          <input type="hidden" name="groupId" value="{{ group.id }}" />
-          <div class="control-group">
-            <label class="control-label" for="name">Name</label>
-            <div class="controls">
-              <input type="text" id="name" name="name" placeholder="Name"
-              value="{{ group }}">
-        <a class="btn-small" href="#" rel="tooltip" title="enter the name of the
-          group"><i class="icon-info-sign"></i></a>
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label" for="parent">Parent Group</label>
-            <div class="controls">
-              <select name="parent">
-                <option value="" >Select one...</option>
-                {% for g in groups %}
-                  <option value={{ g.id }}
-                  {% if group.parent.id == g.id %}
-                    selected="selected"
-                  {% endif %}
-                  >{{ g.name }}
-                  </option>
-                {% endfor %}
-              </select>
-              <a class="btn-small" href="#" rel="tooltip" title="select a
-                parental group"><i class="icon-info-sign"></i></a>
-            </div>
-          </div>
-        </div>
-        <h4>Assign Devices</h4>
-        <div class="row-fluid">
-          <select size="5" name="selectionField" id="device_select" multiple="yes" >
-            {% for d in devices %}
-            <option value="{{ d.id }}">{{ d }}</option>
-            {% endfor %}
-          </select>
-          <div class="btn-group btn-group-vertical">
-            <button type="button" onclick="add_member()" class="btn"><i class="icon-forward"></i></button>
-            <button type="button" onclick="remove_member()" class="btn"><i class="icon-backward"></i></button>
-          </div>
+    {% csrf_token %}
 
-          <select size="5" name="selectionField" id="member_select" multiple="yes" >
-            {% for m in members %}
-            <option value="{{ m.id }}">{{ m }}</option>
-            {% endfor %}
-          </select>
-        </div>
-      </form>
+    <label class="control-label" for="name">Name</label>
+    
+    <div class="controls">
+      <input type="hidden" name="groupId" value="{{group.id}}" />
+      <input type="text" id="name" name="name" placeholder="Name"
+        value="{{ group }}">
+      <a class="btn-small" href="#" rel="tooltip" title="enter the name of the
+        group"><i class="icon-info-sign"></i></a>
+    </div>
+    
+    <div class="control-group">
+      <label class="control-label" for="parent">Parent Group</label>
+      <div class="controls">
+        <select name="parent">
+          <option value="" >Select one...</option>
+          {% for g in groups %}
+            <option value={{ g.id }}
+            {% if group.parent.id == g.id %}
+              selected="selected"
+            {% endif %}
+            >{{ g }}</option>
+          {% endfor %}
+        </select>
+        <a class="btn-small" href="#" rel="tooltip" title="select a parental
+          group"><i class="icon-info-sign"></i></a>
+      </div>
+    </div>
+
+    <h4>Assign Devices</h4>
+    <div class="row-fluid">
+
+      <select size="5" name="selectionField" id="device_select" multiple="yes" >
+        {% for d in devices %}
+        <option value="{{ d.id }}">{{ d }}</option>
+        {% endfor %}
+      </select>
+
+      <div class="btn-group btn-group-vertical">
+        <button type="button" onclick="add_member()" class="btn"><i class="icon-forward"></i></button>
+        <button type="button" onclick="remove_member()" class="btn"><i class="icon-backward"></i></button>
+      </div>
+
+      <select size="5" name="selectionField" id="member_select" multiple="yes" >
+        {% for m in members %}
+        <option value="{{ m.id }}">{{ m }}</option>
+        {% endfor %}
+      </select>
+
+    </div>
+  </form>
         <hr>
-  <p><a class="btn" href="#" onclick="groupform.submit()">Save &raquo;</a></p>
+  <p><a class="btn" href="#" onclick="save_group()">Save &raquo;</a></p>
   {% if group.id %}
   <p><a class="btn" href="/groups/{{group.id}}/delete" >Delete &raquo;</a></p>
   {% endif %}
@@ -91,9 +94,12 @@
     </div><!--/row-->
   </div>
   <script type="text/javascript">
-    function print(msg)
-    {
-      console.log(msg);
+    function save_group(){
+      $('<input />').attr('type', 'hidden').attr('name', 'memberlist').attr('value',
+          $("#member_select option").map(function() {
+            return this.value;
+            }).get().join()).appendTo("#groupform")
+      groupform.submit()
     }
 
     function add_member()
