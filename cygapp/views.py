@@ -1,9 +1,24 @@
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib import messages
 from django.template import Context
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 import re
 from models import *
+
+class Message(object):
+    types = {
+            'ok':'message_ok',
+            'info':'message_info',
+            'warning':'message_warning',
+            'error':'message_error',
+            }
+
+    def __init__(self, type, text):
+        self.text = text
+        self.type = Message.types[type]
+
+# TODO: Add method decorators to check HTTP Methods
 
 def index(request):
     answer='Select view:<br/><a href=./files>Files</a>'
@@ -22,22 +37,29 @@ def group(request, groupID):
     if request.method != 'GET':
         return HttpResponse(status=405)
 
+    try:
+        group = Group.objects.get(pk=groupID)
+    except Group.DoesNotExist:
+        group = None
+        messages.error(request, _('Group not found!'))
+
     context = {}
     context['groups'] = Group.objects.all().order_by('name')
-    group = Group.objects.get(pk=groupID)
-    context['group'] = group
-    members = group.members.all()
-    context['members'] = members
+    context['title'] = _('Groups')
+    if group:
+        context['group'] = group
+        members = group.members.all()
+        context['members'] = members
 
-    devices = Device.objects.all()
-    devices = list(devices)
-    for dev in devices:
-        if dev in members:
-            devices.remove(dev)
+        devices = Device.objects.all()
+        devices = list(devices)
+        for dev in devices:
+            if dev in members:
+                devices.remove(dev)
 
-    context['devices'] = devices
+        context['devices'] = devices
+        context['title'] = _('Group ') + context['group'].name
 
-    context['title'] = _('Group ') + context['group'].name
     return render(request, 'cygapp/groups.html', context)
 
 def group_add(request):
@@ -49,11 +71,8 @@ def group_add(request):
     return render(request, 'cygapp/groups.html', context)
 
 def group_save(request):
-    if request.method != 'POST':
-        return HttpResponse(status=405)
-
     groupID = request.POST['groupId']
-    if not groupID == 'None' or re.match(r'^\d+$', groupID):
+    if not (groupID == 'None' or re.match(r'^\d+$', groupID)):
         return HttpResponse(status=400)
 
     members = []
@@ -64,6 +83,9 @@ def group_save(request):
         if not re.match(r'^\d+$', member):
             return HttpResponse(status=400)
 
+    name = request.POST['name']
+    if not re.match(r'^[\S ]{1,50}$', name):
+        return HttpResponse(status=400)
 
     parentId = request.POST['parent']
     parent=None
@@ -74,26 +96,29 @@ def group_save(request):
             pass
 
     if groupID == 'None':
-        group = Group.objects.create(name=request.POST['name'],parent=parent)
+        group = Group.objects.create(name=name,parent=parent)
     else:
         group = get_object_or_404(Group, pk=groupID)
-        group.name = request.POST['name']
+        group.name = name
         group.parent = parent
         group.save()
 
-    group.members.clear()
-    members = Device.objects.filter(id__in=members)
-    for member in members:
-        group.members.add(member)
+    if members:
+        group.members.clear()
+        members = Device.objects.filter(id__in=members)
+        for member in members:
+            group.members.add(member)
 
-    group.save()
+        group.save()
 
+    messages.success(request, _('Group saved!'))
     return redirect('/groups/%d' % group.id)
 
 def group_delete(request, groupID):
     group = get_object_or_404(Group, pk=groupID)
     group.delete()
 
+    messages.success(request, _('Group deleted!'))
     return redirect('/groups')
 
 
@@ -174,9 +199,6 @@ def filehashesjson(request, fileid):
     return HttpResponse('\n'.join(hash.__json__() for hash in hashes), mimetype='application/json')
 
 def start_measurement(request):
-    if request.method not in ('HEAD','GET'):
-        return HttpResponse(status=405)
-
     #Sanitize input
     deviceID = request.GET.get('deviceID', '')
     if not re.match(r'^[a-f0-9]+$', deviceID):

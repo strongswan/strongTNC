@@ -1,5 +1,32 @@
 thead>tr>td { font-weight: bold}
-/*tbody>tr:nth-child(2n + 1) {background-color : lightgray}*/
+
+div.success {
+  float: none;
+  clear; both;
+  background-color: RGB(200,255,200);
+  color: green;
+}
+
+div.info {
+  float: none;
+  clear; both;
+  background-color: RGB(200,200,255);
+  color: blue;
+}
+
+div.warning {
+  float: none;
+  clear; both;
+  background-color: RGB(255,200,150);
+  color: RGB(255,150,0);
+}
+
+div.error {
+  float: none;
+  clear; both;
+  background-color: RGB(255,200,200);
+  color: red;
+}
 
 body {
     padding-top: 60px;
