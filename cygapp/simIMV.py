@@ -2,7 +2,7 @@ import httplib,random
 import models as m
 
 start_url = '/cmd/start_measurement'
-end_url  = '/cmd/finish_measurement'
+end_url  = '/cmd/end_measurement'
 
 def start_login(params):
     """Call start url to invoke cygnet workItem generation."""
@@ -60,5 +60,5 @@ def run_test():
 
         finish_login(params)
 
-if __name__=='main':
-    run_test()
+        measurement.delete()
+

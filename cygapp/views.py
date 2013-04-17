@@ -1,10 +1,13 @@
-from django.http import HttpResponse, HttpResponseRedirect
+import re
+from datetime import datetime
+from django.http import HttpResponse
+from django.views.decorators.http import (require_GET, require_POST,
+        require_safe) # require_save == GET or HEAD
 from django.contrib import messages
-from django.template import Context
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
-import re
-from models import *
+from models import (Group, Device, Product, Identity, Result, Measurement,
+        Action)
 
 class Message(object):
     types = {
@@ -18,21 +21,23 @@ class Message(object):
         self.text = text
         self.type = Message.types[type]
 
-# TODO: Add method decorators to check HTTP Methods
-
+@require_GET
 def index(request):
     answer='Select view:<br/><a href=./files>Files</a>'
     return HttpResponse(answer)
 
+@require_GET
 def overview(request):
     return render(request, 'cygapp/overview.html')
 
+@require_GET
 def groups(request):
     context = {}
     context['groups'] = Group.objects.all().order_by('name')
     context['title'] = _('Groups')
     return render(request, 'cygapp/groups.html', context)
 
+@require_GET
 def group(request, groupID):
     if request.method != 'GET':
         return HttpResponse(status=405)
@@ -62,6 +67,7 @@ def group(request, groupID):
 
     return render(request, 'cygapp/groups.html', context)
 
+@require_GET
 def group_add(request):
     context = {}
     context['title'] = _('New group')
@@ -70,6 +76,7 @@ def group_add(request):
     context['devices'] = Device.objects.all()
     return render(request, 'cygapp/groups.html', context)
 
+@require_POST
 def group_save(request):
     groupID = request.POST['groupId']
     if not (groupID == 'None' or re.match(r'^\d+$', groupID)):
@@ -114,6 +121,7 @@ def group_save(request):
     messages.success(request, _('Group saved!'))
     return redirect('/groups/%d' % group.id)
 
+@require_POST
 def group_delete(request, groupID):
     group = get_object_or_404(Group, pk=groupID)
     group.delete()
@@ -122,88 +130,13 @@ def group_delete(request, groupID):
     return redirect('/groups')
 
 
-def fileshashes(request):
-    flist = File.objects.all()
-    answer = ''
-
-    for f in flist:
-        hashes = FileHash.objects.filter(file=f.id)
-        answer += f.id.__str__() + ':' 
-        answer += ','.join('%s' % h for h in hashes)
-
-        answer += '\n'
-
-    return HttpResponse(answer)
-
-def fileshashesjson(request):
-    flist = File.objects.all()
-    answer = '{['
-
-    for file in flist:
-        hashes = FileHash.objects.filter(file=file.id)
-        answer += ',\n'.join(hash.__json__() for hash in hashes)
-
-    answer += ']}'
-    return HttpResponse(answer, mimetype='application/json')
-
-def fileedit(request, fileid):
-    if request.method == 'GET':
-        f = get_object_or_404(File, pk=fileid)
-        dirs = Directory.objects.all()
-        context = Context({ 'file': f,
-                            'dirs': dirs})
-
-        return render(request, 'cygapp/fileedit.html', context)
-
-    elif request.method == 'POST':
-        f = get_object_or_404(File, pk=fileid)
-        f.name = request.POST['name']
-        context = {}
-        if request.POST['path'] is None or request.POST['path'] == '':
-            context['file'] = f
-            context['dirs'] = Directory.objects.all()
-            context['message'] = 'Path cannot be empty!'
-            return render(request, 'cygapp/fileedit.html', context)
-
-        dir, created = Directory.objects.get_or_create( path = request.POST['path'] )
-        if created:
-            print('Warning: had to create new directory (' + str(dir.id) + ')')
-
-        print(str(dir.id) + ': ' + dir.path)
-        f.directory = dir
-        f.save()
-        return HttpResponseRedirect('/cygapp/files/' + str(f.id) + '/edit')
-    
-    #No valid HTTP method
-    raise Http500
-
-
-def filejson(request, fileid):
-    f = get_object_or_404(File, pk=fileid)
-    return HttpResponse(f.__json__(), mimetype='application/json')
-
-def filehashes(request, fileid):
-    f = get_object_or_404(File, pk=fileid)
-    hashes = FileHash.objects.filter(file=f.id)
-    if hashes.count() == 0:
-        return HttpResponse('No hashes')
-    
-    return HttpResponse('<br/>\n'.join(hash.__str__() for hash in hashes))
-
-def filehashesjson(request, fileid):
-    f = get_object_or_404(File, pk=fileid)
-    hashes = FileHash.objects.filter(file=f.id)
-    if hashes.count() == 0:
-        return HttpResponse('{}', mimetype='application/json')
-
-    return HttpResponse('\n'.join(hash.__json__() for hash in hashes), mimetype='application/json')
-
+@require_safe
 def start_measurement(request):
     #Sanitize input
     deviceID = request.GET.get('deviceID', '')
     if not re.match(r'^[a-f0-9]+$', deviceID):
         return HttpResponse(status=400)
-    
+
     connectionID = request.GET.get('connectionID', '')
     if not re.match(r'^[0-9]+$', connectionID):
         return HttpResponse(status=400)
@@ -231,10 +164,11 @@ def start_measurement(request):
 
     measurement = Measurement.objects.create(time=datetime.today(), user=id,
             device=device, connectionID=connectionID)
-    device.createWorkItems(measurement)
+    device.create_work_items(measurement)
 
     return HttpResponse(content=None)
 
+@require_safe
 def generate_results(measurement):
     workitems = measurement.workitems.all()
 
@@ -244,12 +178,16 @@ def generate_results(measurement):
                 policy=item.enforcement.policy,
                 recommendation=item.recommendation)
 
-    measurement.recommendation = max(workitems, key = lambda x:
-            x.recommendation)
+        if workitems:
+            measurement.recommendation = max(workitems, key = lambda x:
+                    x.recommendation)
+    else:
+        measurement.recommendation = Action.ALLOW
 
     for item in workitems:
         item.delete()
 
+@require_safe
 def end_measurement(request):
     if request.method not in ('HEAD','GET'):
         return HttpResponse(status=405)
@@ -264,5 +202,5 @@ def end_measurement(request):
         return HttpResponse(404)
 
     generate_results(measurement)
-    
+
     return HttpResponse(status=200)

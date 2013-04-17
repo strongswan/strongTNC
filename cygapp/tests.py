@@ -5,7 +5,6 @@ Unit tests for the django app cygnet are specified in this file
 """
 
 from django.test import TestCase
-from cygapp.policies import *
 from datetime import datetime, timedelta
 import cygapp.models as m
 import cygapp.views as v
