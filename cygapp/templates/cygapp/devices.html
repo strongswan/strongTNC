@@ -21,7 +21,7 @@
       <h4>{% trans "Device" %}</h4>
 	<table class="table table-hover">
     <tbody>
-      <tr><td><a class="btn" href="/devices/add">{% trans "Add Device" %}</a></td></tr>
+      <tr><td><a class="btn btn-primary" href="/devices/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add Device" %}</a></td></tr>
       {% for d in devices %}
       <tr><td><a href=/devices/{{ d.id }}>{{ d }}</a></td></tr>
       {% endfor %}
@@ -31,26 +31,32 @@
       
       <div class="span9" id="content">
     {% if device %}
-	<h4>Group Info</h4>
+	<h4>Device Info</h4>
   <form class="form-horizontal" method="POST" action="/devices/save" id="deviceform">
     {% csrf_token %}
 
-    <label class="control-label" for="id">{% trans "ID" %}</label>
-    <label class="control-label" for="description">{% trans "Description" %}</label>
-    
-    <div class="controls">
-      <input type="hidden" name="deviceId" value="{{device.id}}" />
-
-      <input type="text" id="value" name="value" placeholder="{% trans "ID" %}"
-        value="{{ device.value }}">
-        <a class="btn-small" href="#" rel="tooltip" title="{% trans "Device ID" %}">
-          <i class="icon-info-sign"></i></a>
-      <br>
-      <input type="text" id="description" name="description" placeholder="{% trans "Description" %}"
-      value="{{ device.description }}">
-      <a class="btn-small" href="#" rel="tooltip"
-        title="{% trans 'Device description' %}"><i class="icon-info-sign"></i></a>
+    <div class="control-group">
+      <label class="control-label" for="id">{% trans "ID" %}</label>
+      <div class="controls">
+	<input type="hidden" name="deviceId" value="{{device.id}}" />
+        <input type="text" id="value" name="value" placeholder="{% trans "ID" %}"
+          value="{{ device.value }}">
+          <a class="btn-small" href="#" rel="tooltip" title="{% trans "Device ID" %}">
+            <i class="icon-info-sign"></i></a>
+      </div>
     </div>
+    
+    <div class="control-group">
+      <label class="control-label" for="description">{% trans "Description" %}</label> 
+      <div class="controls">   
+        <input type="text" id="description" name="description" placeholder="{% trans "Description" %}"
+          value="{{ device.description }}">
+        <a class="btn-small" href="#" rel="tooltip"
+          title="{% trans 'Device description' %}"><i class="icon-info-sign"></i></a>
+      </div>
+    </div>
+    
+    <hr>
     
     <h4>{% trans "Assign Groups" %}</h4>
     <div class="row-fluid">
@@ -74,10 +80,18 @@
 
     </div>
   </form>
-        <hr>
-        <p><a class="btn" href="#" onclick="save_device()">{%trans "Save" %} &raquo;</a></p>
+  
+  <hr>
+
+  <div class="btn-toolbar" style="margin: 0;">
+    <div class="btn-group">
+      <a class="btn btn-success" href="#" onclick="save_device()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
+    </div><!-- /btn-group -->
   {% if device.id %}
-  <p><a class="btn" href="/devices/{{device.id}}/delete" >{%trans "Delete" %} &raquo;</a></p>
+    <div class="btn-group">
+      <a class="btn btn-danger" href="/devices/{{device.id}}/delete"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+    </div><!-- /btn-group -->
+  </div><!-- /btn-toolbar-->
   {% endif %}
   {% endif %}
 </div><!--content-->
