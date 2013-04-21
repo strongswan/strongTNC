@@ -50,11 +50,13 @@
         <select name="parent">
           <option value="" >Select one...</option>
           {% for g in groups %}
-            <option value={{ g.id }}
-            {% if group.parent.id == g.id %}
-              selected="selected"
+            {% if group.id != g.id %}
+              <option value={{ g.id }}
+              {% if group.parent.id == g.id %}
+                selected="selected"
+              {% endif %}
+              >{{ g }}</option>
             {% endif %}
-            >{{ g }}</option>
           {% endfor %}
         </select>
         <a class="btn-small" href="#" rel="tooltip" title="select a parental

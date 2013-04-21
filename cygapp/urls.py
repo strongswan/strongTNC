@@ -16,10 +16,17 @@ urlpatterns = patterns('',
 
         url(r'^groups/?$', views.groups, name='groups'),
         url(r'^groups/(?P<groupID>\d+)/?$', views.group, name='group'),
-        url(r'^groups/(?P<groupID>\d+)/delete/?$', views.group_delete,
-            name='group_delete'),
         url(r'^groups/add/?$', views.group_add, name='group_add'),
         url(r'^groups/save?$', views.group_save, name='group_save'),
+        url(r'^groups/(?P<groupID>\d+)/delete/?$', views.group_delete,
+            name='group_delete'),
+
+        url(r'^devices/?$', views.devices, name='devices'),
+        url(r'^devices/(?P<deviceID>\d+)/?$', views.device, name='device'),
+        url(r'^devices/add/?$', views.device_add, name='device_add'),
+        url(r'^devices/save?$', views.device_save, name='device_save'),
+        url(r'^devices/(?P<deviceID>\d+)/delete/?$', views.device_delete,
+            name='device_delete'),
 
         #==============================================
 
