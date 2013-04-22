@@ -28,6 +28,13 @@ urlpatterns = patterns('',
         url(r'^devices/(?P<deviceID>\d+)/delete/?$', views.device_delete,
             name='device_delete'),
 
+        url(r'^products/?$', views.products, name='products'),
+        url(r'^products/(?P<productID>\d+)/?$', views.product, name='product'),
+        url(r'^products/add/?$', views.product_add, name='product_add'),
+        url(r'^products/save?$', views.product_save, name='product_save'),
+        url(r'^products/(?P<productID>\d+)/delete/?$', views.product_delete,
+            name='product_delete'),
+        
         #==============================================
 
         #IMV API patterns

@@ -39,9 +39,9 @@
       <label class="control-label" for="id">{% trans "ID" %}</label>
       <div class="controls">
 	<input type="hidden" name="deviceId" value="{{device.id}}" />
-        <input type="text" id="value" name="value" placeholder="{% trans "ID" %}"
+        <input type="text" id="value" name="value" placeholder="{% trans 'ID' %}"
           value="{{ device.value }}">
-          <a class="btn-small" href="#" rel="tooltip" title="{% trans "Device ID" %}">
+          <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Device ID' %}">
             <i class="icon-info-sign"></i></a>
       </div>
     </div>
@@ -52,13 +52,13 @@
         <input type="text" id="description" name="description" placeholder="{% trans "Description" %}"
           value="{{ device.description }}">
         <a class="btn-small" href="#" rel="tooltip"
-          title="{% trans 'Device description' %}"><i class="icon-info-sign"></i></a>
+          title="{% trans 'evice description' %}"><i class="icon-info-sign"></i></a>
       </div>
     </div>
     
     <hr>
     
-    <h4>{% trans "Assign Groups" %}</h4>
+    <h4>{% trans "Assign Default Groups" %}</h4>
     <div class="row-fluid">
 
       <select size="5" name="selectionField" id="group_select" multiple="yes" >

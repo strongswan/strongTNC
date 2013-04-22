@@ -1,0 +1,123 @@
+
+
+{% extends "cygapp/base.html" %}
+
+{% load i18n %}
+{% block title %}{%trans "Product Management" %}{% endblock %}
+
+{% block hero %}
+<h1>{{ title }}</h1>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span3" style="
+      border-right-width:1px;
+      border-right-style:solid;
+      border-color:black;
+      padding-right:1em;
+      text-align:justify;">
+      <h4>{% trans "Product" %}</h4>
+      <table class="table table-hover">
+        <tbody>
+          <tr><td><a class="btn btn-primary" href="/products/add"><i class="icon-plus-sign
+                  icon-white"></i> {% trans "Add Product" %}</a></td></tr>
+          {% for p in products %}
+          <tr><td><a href=/products/{{ p.id }}>{{ p }}</a></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="span9" id="content">
+      {% if product %}
+      <h4>Product Info</h4>
+      <form class="form-horizontal" method="POST" action="/products/save" id="productform">
+        {% csrf_token %}
+        <input type="hidden" name="productId" value="{{ product.id }}" />
+
+        <div class="control-group">
+          <label class="control-label" for="name">{% trans "Name" %}</label> 
+          <div class="controls">   
+            <input type="text" id="name" name="name" placeholder="{% trans "Name" %}"
+            value="{{ product.name }}">
+            <a class="btn-small" href="#" rel="tooltip"
+              title="{% trans 'Product Name' %}"><i class="icon-info-sign"></i></a>
+          </div>
+        </div>
+
+        <hr>
+
+        <h4>{% trans "Assign Default Groups" %}
+          <a class="btn-small" href="#" rel="tooltip"
+            title="{% trans 'New devices connecting to the TNC server that have this product installed, will be assigned to these groups automatically' %}"><i class="icon-info-sign"></i></a>
+        </h4>
+        <div class="row-fluid">
+
+          <select size="5" name="selectionField" id="group_select" multiple="yes" >
+            {% for g in groups %}
+            <option value="{{ g.id }}">{{ g }}</option>
+            {% endfor %}
+          </select>
+
+          <div class="btn-group btn-group-vertical">
+            <button type="button" onclick="add_default()" class="btn"><i class="icon-forward"></i></button>
+            <button type="button" onclick="remove_default()" class="btn"><i class="icon-backward"></i></button>
+          </div>
+
+          <select size="5" name="selectionField" id="default_select" multiple="yes" >
+            {% for d in defaults %}
+            <option value="{{ d.id }}">{{ d }}</option>
+            {% endfor %}
+          </select>
+
+        </div>
+      </form>
+
+      <hr>
+
+      <div class="btn-toolbar" style="margin: 0;">
+        <div class="btn-group">
+          <a class="btn btn-success" href="#" onclick="save_product()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
+        </div><!-- /btn-group -->
+        {% if product.id %}
+        <div class="btn-group">
+          <a class="btn btn-danger" href="/products/{{product.id}}/delete"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+        </div><!-- /btn-group -->
+      </div><!-- /btn-toolbar-->
+      {% endif %}
+      {% endif %}
+    </div><!--content-->
+  </div><!--/row-->
+</div>
+<script type="text/javascript">
+  function save_product(){
+    $('<input />').attr('type', 'hidden').attr('name', 'defaultlist').attr('value',
+        $("#default_select option").map(function() {
+          return this.value;
+          }).get().join()).appendTo("#productform")
+    productform.submit()
+  }
+
+function add_default()
+{
+  $("#group_select > option:selected").each(function(index, elem){
+      $("#default_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
+      });
+  $("#group_select > option:selected").remove()
+}
+
+function remove_default()
+{
+  $("#default_select > option:selected").each(function(index, elem){
+      $("#group_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
+      });
+  $("#default_select > option:selected").remove()
+}
+
+</script>
+{% endblock %}
+
+
