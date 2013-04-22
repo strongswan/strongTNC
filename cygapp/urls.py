@@ -11,6 +11,8 @@ urlpatterns = patterns('',
 
         #Management CRUD views
         url(r'^$', views.overview, name='overview'),
+
+        url(r'^login/?$', views.login, name='login'),
         
         url(r'^overview/?$', views.overview, name='overview'),
 
