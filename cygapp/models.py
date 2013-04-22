@@ -83,8 +83,8 @@ class Device(models.Model):
 
         age = datetime.today() - last_meas.time
 
-        #See tannerli/cygnet-doc#35 for how previous results should be tested
-        if age.days >= enforcement.max_age: #or result.result != 0:
+        if age.days >= enforcement.max_age or (result.recommendation !=
+                Action.ALLOW):
             return True
 
         return False

@@ -213,8 +213,6 @@ class cygappTest(TestCase):
         self.assertEqual('FAIL', result.result)
         self.assertEqual(3, result.recommendation)
 
-        #TODO: According to tannerli/cygnet-doc#34, add testcases
-
     def test_imv_login(self):
         #This is no longer a simple test unit and dealt with in simIMV.py run
         # simIMV.run_test() to execute the test

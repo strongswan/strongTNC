@@ -411,7 +411,6 @@ def generate_results(measurement):
     workitems = measurement.workitems.all()
 
     for item in workitems:
-        #TODO: Result integrity check, see tannerli/cygnet-doc#34
         Result.objects.create(result=item.result, measurement=measurement,
                 policy=item.enforcement.policy,
                 recommendation=item.recommendation)
@@ -427,9 +426,6 @@ def generate_results(measurement):
 
 @require_safe
 def end_measurement(request):
-    if request.method not in ('HEAD','GET'):
-        return HttpResponse(status=405)
-
     deviceID = request.GET.get('deviceID', '')
     connectionID = request.GET.get('connectionID', '')
 
@@ -437,8 +433,9 @@ def end_measurement(request):
         measurement = Measurement.objects.get(device__value=deviceID,
                 connectionID=connectionID) 
     except Measurement.DoesNotExist:
-        return HttpResponse(404)
+        return HttpResponse(status=404)
 
     generate_results(measurement)
 
     return HttpResponse(status=200)
+
