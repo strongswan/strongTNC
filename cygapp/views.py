@@ -2,12 +2,12 @@ import re
 from datetime import datetime
 from django.http import HttpResponse
 from django.views.decorators.http import (require_GET, require_POST,
-        require_safe) # require_save == GET or HEAD
+        require_safe) # require_safe == GET or HEAD
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from models import (Group, Device, Product, Identity, Result, Measurement,
-        Action)
+        Action, Policy)
 
 class Message(object):
     types = {
@@ -139,7 +139,7 @@ def devices(request):
 def device(request, deviceID):
     try:
         device = Device.objects.get(pk=deviceID)
-    except Group.DoesNotExist:
+    except Device.DoesNotExist:
         device = None
         messages.error(request, _('Device not found!'))
 
@@ -230,7 +230,7 @@ def products(request):
 def product(request, productID):
     try:
         product = Product.objects.get(pk=productID)
-    except Group.DoesNotExist:
+    except Product.DoesNotExist:
         product = None
         messages.error(request, _('Product not found!'))
 
@@ -304,6 +304,53 @@ def product_delete(request, productID):
 
     messages.success(request, _('Product deleted!'))
     return redirect('/products')
+
+@require_GET
+def policies(request):
+    context = {}
+    context['title'] = _('Policies')
+    context['policies'] = Policy.objects.all().order_by('name')
+    return render(request, 'cygapp/policies.html', context)
+
+@require_GET
+def policy(request, policyID):
+    try:
+        policy = Policy.objects.get(pk=policyID)
+    except Policy.DoesNotExist:
+        policy = None
+        messages.error(request, _('Policy not found!'))
+
+    context = {}
+    context['policies'] = Policy.objects.all().order_by('name')
+    context['title'] = _('Policys')
+
+    if policy:
+        context['policy'] = policy
+        enforcements = policy.enforcements.all().order_by('id')
+        context['enforcements'] = enforcements
+
+        types = Policy.argument_funcs.keys()
+        context['types'] = types
+
+        groups = Group.objects.exclude(id__in = enforcements.values_list('id',
+            flat=True))
+        context['groups'] = groups
+        context['title'] = _('Policy ') + policy.name
+
+    return render(request, 'cygapp/policies.html', context)
+
+
+@require_GET
+def policy_add(request):
+    pass
+
+@require_POST
+def policy_save(request):
+    pass
+
+@require_GET
+def policy_delete(request):
+    pass
 
 @require_safe
 def start_measurement(request):

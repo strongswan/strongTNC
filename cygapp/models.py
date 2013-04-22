@@ -295,6 +295,19 @@ class Policy(models.Model):
     def __unicode__(self):
         return self.name
 
+    argument_funcs = {
+            'FileHash': lambda file: file.id,
+            'DirHash': lambda dir: dir.id,
+            'ListeningPort': lambda range: range,
+            'FileExist': lambda file: file.id,
+            'NotFileExist': lambda file: file.id,
+            'MissingUpdate': lambda: '',
+            'MissingSecurityUpdate': lambda: '',
+            'BlacklistedPackage': lambda: '',
+            'OSSettings': lambda: '',
+            'Deny': lambda: '',
+            }
+
     class Meta:
         db_table = u'policies'
         verbose_name_plural = 'Policies'

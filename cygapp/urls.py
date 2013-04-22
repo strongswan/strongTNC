@@ -35,6 +35,13 @@ urlpatterns = patterns('',
         url(r'^products/(?P<productID>\d+)/delete/?$', views.product_delete,
             name='product_delete'),
         
+        url(r'^policies/?$', views.policies, name='policies'),
+        url(r'^policies/(?P<policyID>\d+)/?$', views.policy, name='policy'),
+        url(r'^policies/add/?$', views.policy_add, name='policy_add'),
+        url(r'^policies/save?$', views.policy_save, name='policy_save'),
+        url(r'^policies/(?P<policyID>\d+)/delete/?$', views.policy_delete,
+            name='policy_delete'),
+        
         #==============================================
 
         #IMV API patterns

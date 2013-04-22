@@ -1,8 +1,9 @@
 
+
 {% extends "cygapp/base.html" %}
 
 {% load i18n %}
-{% block title %}{%trans "Device Management" %}{% endblock %}
+{% block title %}{%trans "Policy Management" %}{% endblock %}
 
 {% block hero %}
 <h1>{{ title }}</h1>
@@ -18,41 +19,44 @@
       border-color:black;
       padding-right:1em;
       text-align:justify;">
-      <h4>{% trans "Device" %}</h4>
+      <h4>{% trans "Policy" %}</h4>
 	<table class="table table-hover">
     <tbody>
-      <tr><td><a class="btn btn-primary" href="/devices/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add Device" %}</a></td></tr>
-      {% for d in devices %}
-      <tr><td><a href=/devices/{{ d.id }}>{{ d }}</a></td></tr>
+      <tr><td><a class="btn btn-primary" href="/policies/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add Policy" %}</a></td></tr>
+      {% for p in policies %}
+      <tr><td><a href=/policies/{{ p.id }}>{{ p }}</a></td></tr>
       {% endfor %}
     </tbody>
 	</table>
       </div>
       
       <div class="span9" id="content">
-    {% if device %}
-	<h4>Device Info</h4>
-  <form class="form-horizontal" method="POST" action="/devices/save" id="deviceform">
+    {% if policy %}
+	<h4>Policy Info</h4>
+  <form class="form-horizontal" method="POST" action="/policies/save" id="policyform">
     {% csrf_token %}
 
     <div class="control-group">
       <label class="control-label" for="id">{% trans "ID" %}</label>
       <div class="controls">
-	<input type="hidden" name="deviceId" value="{{device.id}}" />
-        <input type="text" id="value" name="value" placeholder="{% trans 'ID' %}"
-          value="{{ device.value }}">
-          <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Device ID' %}">
+	<input type="hidden" name="policyId" value="{{policy.id}}" />
+        <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}"
+          value="{{ policy.name }}">
+          <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Policy Name' %}">
             <i class="icon-info-sign"></i></a>
       </div>
     </div>
     
     <div class="control-group">
-      <label class="control-label" for="description">{% trans "Description" %}</label> 
+      <label class="control-label" for="description">{% trans "Type" %}</label> 
       <div class="controls">   
-        <input type="text" id="description" name="description" placeholder="{% trans "Description" %}"
-          value="{{ device.description }}">
+        <select id="type" name="type" placeholder="{% trans 'Type' %}">
+          {% for t in types %}
+          <option value="{{ t }}">{{ t }}</option>
+          {% endfor %}
+        </select>
         <a class="btn-small" href="#" rel="tooltip"
-          title="{% trans 'Device description' %}"><i class="icon-info-sign"></i></a>
+          title="{% trans 'Policy Type' %}"><i class="icon-info-sign"></i></a>
       </div>
     </div>
     
@@ -60,7 +64,7 @@
     
     <h4>{% trans "Assign Groups" %}
       <a class="btn-small" href="#" rel="tooltip"
-      title="{% trans 'When the device is member of a group, all policies enforced on the group are applied to the device upon login' %}"><i class="icon-info-sign"></i></a>
+      title="{% trans 'When the policy is member of a group, all policies enforced on the group are applied to the policy upon login' %}"><i class="icon-info-sign"></i></a>
     </h4>
   <div class="row-fluid">
 
@@ -88,11 +92,11 @@
 
   <div class="btn-toolbar" style="margin: 0;">
     <div class="btn-group">
-      <a class="btn btn-success" href="#" onclick="save_device()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
+      <a class="btn btn-success" href="#" onclick="save_policy()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
     </div><!-- /btn-group -->
-  {% if device.id %}
+  {% if policy.id %}
     <div class="btn-group">
-      <a class="btn btn-danger" href="/devices/{{device.id}}/delete"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+      <a class="btn btn-danger" href="/policies/{{policy.id}}/delete"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
     </div><!-- /btn-group -->
   </div><!-- /btn-toolbar-->
   {% endif %}
@@ -101,12 +105,12 @@
     </div><!--/row-->
   </div>
   <script type="text/javascript">
-    function save_device(){
+    function save_policy(){
       $('<input />').attr('type', 'hidden').attr('name', 'memberlist').attr('value',
           $("#member_select option").map(function() {
             return this.value;
-            }).get().join()).appendTo("#deviceform")
-      deviceform.submit()
+            }).get().join()).appendTo("#policyform")
+      policyform.submit()
     }
 
     function add_member()
