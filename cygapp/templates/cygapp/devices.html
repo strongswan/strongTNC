@@ -38,11 +38,11 @@
     <div class="control-group">
       <label class="control-label" for="id">{% trans "ID" %}</label>
       <div class="controls">
-	<input type="hidden" name="deviceId" value="{{device.id}}" />
+        <input type="hidden" name="deviceId" value="{{device.id}}" />
         <input type="text" id="value" name="value" placeholder="{% trans 'ID' %}"
-          value="{{ device.value }}">
-          <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Device ID' %}">
-            <i class="icon-info-sign"></i></a>
+        value="{{ device.value }}">
+        <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Device ID' %}">
+          <i class="icon-info-sign"></i></a>
       </div>
     </div>
     
@@ -56,6 +56,23 @@
       </div>
     </div>
     
+    <div class="control-group">
+      <label class="control-label" for="product">{% trans "Product" %}</label> 
+      <div class="controls">   
+        <select type="text" id="product" name="product" placeholder="{% trans "Product" %}">
+          <option value="">{% trans "Select one..." %}</option>
+          {% for p in products %}
+            <option value="{{ p.id }}"
+              {% if p.id == device.product.id %}
+                selected="selected"
+              {% endif %}
+            >{{ p }}</option>
+          {% endfor %}
+        </select>
+        <a class="btn-small" href="#" rel="tooltip"
+          title="{% trans 'Device product (operating system)' %}"><i class="icon-info-sign"></i></a>
+      </div>
+    </div>
     <hr>
     
     <h4>{% trans "Assign Groups" %}

@@ -155,6 +155,7 @@ def device(request, deviceID):
         context['device'] = device
         members = device.groups.all().order_by('name')
         context['members'] = members
+        context['products'] = Product.objects.all().order_by('name')
 
         groups = Group.objects.exclude(id__in = members.values_list('id',
             flat=True))
@@ -168,6 +169,7 @@ def device_add(request):
     context = {}
     context['title'] = _('New device')
     context['groups'] = Group.objects.all().order_by('name')
+    context['products'] = Product.objects.all().order_by('name')
     context['devices'] = Device.objects.all()
     context['device'] = Device()
     return render(request, 'cygapp/devices.html', context)
@@ -193,13 +195,24 @@ def device_save(request):
     description = request.POST['description']
     if not re.match(r'^[\S ]{0,50}$', description):
         return HttpResponse(status=400)
+    
+    productID = request.POST['product']
+    if not re.match(r'^\d+$', productID):
+        return HttpResponse(status=400)
+
+    try:
+        product = Product.objects.get(pk=productID)
+    except Product.DoesNotExist:
+        return HttpResponse(status=400)
 
     if deviceID == 'None':
-        device = Device.objects.create(value=value, description=description)
+        device = Device.objects.create(value=value, description=description,
+                product=product)
     else:
         device = get_object_or_404(Device, pk=deviceID)
         device.value = value
         device.description = description
+        device.product = product
         device.save()
 
     if members:
@@ -387,13 +400,13 @@ def start_measurement(request):
 
     id = Identity.objects.get_or_create(data=ar_id)[0]
 
-    measurement = Measurement.objects.create(time=datetime.today(), user=id,
+    measurement = Measurement.objects.create(time=datetime.today(), identity=id,
             device=device, connectionID=connectionID)
     device.create_work_items(measurement)
 
     return HttpResponse(content=None)
 
-@require_safe
+#NOT a view, does not need a decorator
 def generate_results(measurement):
     workitems = measurement.workitems.all()
 

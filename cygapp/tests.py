@@ -81,7 +81,7 @@ class cygappTest(TestCase):
         measurement.device = device
         measurement.time = datetime.today()
         measurement.connectionID = 123
-        measurement.user = user
+        measurement.identity = user
         measurement.save()
 
         device.create_work_items(measurement)
@@ -132,7 +132,7 @@ class cygappTest(TestCase):
         device = m.Device.objects.get(value='def')
 
         measurement = m.Measurement.objects.create(device=device,
-                time=datetime.today(), connectionID=123, user=user)
+                time=datetime.today(), connectionID=123, identity=user)
 
         device.create_work_items(measurement)
 
@@ -158,7 +158,7 @@ class cygappTest(TestCase):
 
         #Measurement yields no results for policy
         meas = m.Measurement.objects.create(device=device, time=datetime.today(),
-                connectionID=123, user=user)
+                connectionID=123, identity=user)
         self.assertEqual(True, device.is_due_for(e))
 
 
@@ -194,7 +194,7 @@ class cygappTest(TestCase):
         device = m.Device.objects.get(value='def')
         user = m.Identity.objects.create(type=1, data='foobar')
         measurement = m.Measurement.objects.create(device=device,
-                time=datetime.today(), connectionID=123, user=user)
+                time=datetime.today(), connectionID=123, identity=user)
         
         m.WorkItem.objects.create(measurement=measurement, argument='asdf',
                 fail=3, noresult=0, result='OK', recommendation=0, enforcement=e1,

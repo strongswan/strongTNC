@@ -126,7 +126,7 @@ class Group(models.Model):
     members = models.ManyToManyField(Device, related_name='groups',blank=True)
     product_defaults = models.ManyToManyField(Product, related_name='default_groups', blank=True)
     parent = models.ForeignKey('self', related_name='membergroups', null=True,
-            blank=True, on_delete=models.CASCADE)
+            blank=True, on_delete=models.CASCADE, db_column='parent')
 
     def __unicode__(self):
         return self.name
@@ -184,7 +184,7 @@ class Algorithm(models.Model):
     name = models.CharField(null=False, blank=False, max_length=20)
 
     def __unicode__(self):
-        return self.name
+        return self.name[14:] # name - 'PTS_MEAS_ALGO_'
 
     def __json__(self):
         return simplejson.dumps({
@@ -249,7 +249,7 @@ class Version(models.Model):
             db_column='product', on_delete=models.CASCADE)
     release = models.TextField()
     security = models.BooleanField(default=0)
-    time = models.DateTimeField(datetime.today())
+    time = models.DateTimeField()
     blacklist = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):
@@ -268,10 +268,11 @@ class Policy(models.Model):
     argument = models.TextField()
     fail = models.IntegerField(blank=True)
     noresult = models.IntegerField(blank=True)
-    file = models.ForeignKey(File, null=True, related_name='policies',
-            on_delete=models.PROTECT)
-    dir = models.ForeignKey(Directory, null=True, related_name='policies',
-            on_delete=models.PROTECT)
+    file = models.ForeignKey(File, null=True, blank=True,
+            related_name='policies', on_delete=models.PROTECT,
+            db_column='file')
+    dir = models.ForeignKey(Directory, null=True, blank=True,
+            related_name='policies', on_delete=models.PROTECT, db_column='dir')
 
     def create_work_item(self, enforcement, measurement):
         item = WorkItem()
@@ -318,9 +319,9 @@ class Enforcement(models.Model):
     """
     id = models.AutoField(primary_key=True)
     policy = models.ForeignKey(Policy, related_name='enforcements',
-            on_delete=models.CASCADE)
+            on_delete=models.CASCADE, db_column='policy')
     group = models.ForeignKey(Group, related_name='enforcements',
-            on_delete=models.CASCADE)
+            on_delete=models.CASCADE, db_column='group')
     max_age = models.IntegerField()
     fail = models.IntegerField(null=True,blank=True)
     noresult = models.IntegerField(null=True,blank=True)
@@ -334,7 +335,6 @@ class Enforcement(models.Model):
 
 class Identity(models.Model):
     id = models.AutoField(primary_key=True)
-    type = models.IntegerField()
     data = models.TextField()
 
     class Meta:
@@ -345,19 +345,21 @@ class Measurement(models.Model):
     id = models.AutoField(primary_key=True)
     connectionID = models.IntegerField()
     device = models.ForeignKey(Device, related_name='measurements',
-        on_delete=models.CASCADE)
-    user = models.ForeignKey(Identity, related_name='measurements',
-            on_delete=models.CASCADE)
+        on_delete=models.CASCADE, db_column='device')
+    identity = models.ForeignKey(Identity, related_name='measurements',
+            on_delete=models.CASCADE, db_column='identity')
     time = models.DateTimeField()
+    recommendation = models.IntegerField(null=True)
 
     class Meta:
         db_table = u'measurements'
 
 class WorkItem(models.Model):
     id = models.AutoField(primary_key=True)
-    enforcement = models.ForeignKey(Enforcement, on_delete=models.CASCADE)
-    measurement = models.ForeignKey(Measurement, related_name='workitems',
-            on_delete=models.CASCADE)
+    enforcement = models.ForeignKey(Enforcement, on_delete=models.CASCADE,
+            db_column='enforcement')
+    measurement = models.ForeignKey(Measurement, db_column='measurement',
+            related_name='workitems', on_delete=models.CASCADE)
     type = models.IntegerField(null=False, blank=False)
     argument = models.TextField()
     fail = models.IntegerField(null=True,blank=True)
@@ -370,8 +372,10 @@ class WorkItem(models.Model):
 
 class Result(models.Model):
     id = models.AutoField(primary_key=True)
-    measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
-    policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
+    measurement = models.ForeignKey(Measurement, db_column='measurement',
+            on_delete=models.CASCADE)
+    policy = models.ForeignKey(Policy, db_column='policy',
+            on_delete=models.CASCADE)
     result = models.TextField()
     recommendation = models.IntegerField()
 
