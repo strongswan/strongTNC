@@ -92,7 +92,7 @@
     </div><!-- /btn-group -->
   {% if device.id %}
     <div class="btn-group">
-      <a class="btn btn-danger" href="/devices/{{device.id}}/delete"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
     </div><!-- /btn-group -->
   </div><!-- /btn-toolbar-->
   {% endif %}
@@ -109,7 +109,7 @@
   </div>
   <div class="modal-footer">
     <a class="btn" data-dismiss="modal">Close</a>
-    <a class="btn btn-primary" href="/groups/{{group.id}}/delete">Delete group</a>
+    <a class="btn btn-primary" href="/devices/{{device.id}}/delete">Delete device</a>
   </div>
 </div>
 
