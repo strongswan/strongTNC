@@ -98,11 +98,27 @@
     </div><!-- /btn-group -->
   {% if group.id %}
     <div class="btn-group">
-      <a class="btn btn-danger" href="/groups/{{group.id}}/delete" ><i class="icon-remove icon-white"></i> Delete</a>
+      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> Delete</a>
     </div><!-- /btn-group -->
   </div><!-- /btn-toolbar-->	    
   {% endif %}
-  {% endif %}
+{% endif %}
+
+<div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3 id="myModalLabel">Are you shure to delete this group?</h3>
+  </div>
+  <div class="modal-body">
+    <h4>Warning</h4>
+    <p>If you delete this group the devices in it will be assigned to the default group.</p>
+  </div>
+  <div class="modal-footer">
+    <a class="btn" data-dismiss="modal">Close</a>
+    <a class="btn btn-primary" href="/groups/{{group.id}}/delete">Delete group</a>
+  </div>
+</div>
+
 </div><!--content-->
     </div><!--/row-->
   </div>
