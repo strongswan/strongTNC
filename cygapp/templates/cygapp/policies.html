@@ -11,175 +11,186 @@
 
 
 {% block content %}
-  <div class="container-fluid">
-    <div class="row-fluid">
-      <div class="span3" style="
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span3" style="
       border-right-width:1px;
       border-right-style:solid;
       border-color:black;
       padding-right:1em;
       text-align:justify;">
       <h4>{% trans "Policy" %}</h4>
-	<table class="table table-hover">
-    <tbody>
-      <tr><td><a class="btn btn-primary" href="/policies/add"><i class="icon-plus-sign
-              icon-white"></i> {% trans "Add Policy" %}</a></td></tr>
-      {% for p in policies %}
-      <tr><td><a href=/policies/{{ p.id }}>{{ p }}</a></td></tr>
-      {% endfor %}
-    </tbody>
-	</table>
-      </div>
-      
-      <div class="span9" id="content">
-    {% if policy %}
-	<h4>Policy Info</h4>
-  <form class="form-horizontal" method="POST" action="/policies/save" id="policyform">
-    {% csrf_token %}
-
-    <div class="control-group">
-      <label class="control-label" for="id">{% trans "ID" %}</label>
-      <div class="controls">
-	<input type="hidden" name="policyId" value="{{policy.id}}" />
-        <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}"
-          value="{{ policy.name }}">
-          <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Policy Name' %}">
-            <i class="icon-info-sign"></i></a>
-      </div>
-    </div>
-    
-    <div class="control-group">
-      <label class="control-label" for="description">{% trans "Type" %}</label> 
-      <div class="controls">   
-        <select id="type" name="type" placeholder="{% trans 'Type' %}">
-          <option value="">{% trans 'Select one...' %}</option>
-          {% for t in types %}
-          <option value="{{ forloop.counter0 }}"
-            {% if policy.type == forloop.counter0 %}
-            selected="selected"
-            {% endif %}
-            >
-          {{ t }}</option>
+      <table class="table table-hover">
+        <tbody>
+          <tr><td><a class="btn btn-primary" href="/policies/add"><i class="icon-plus-sign
+                  icon-white"></i> {% trans "Add Policy" %}</a></td></tr>
+          {% for p in policies %}
+          <tr><td><a href=/policies/{{ p.id }}>{{ p }}</a></td></tr>
           {% endfor %}
-        </select>
-        <a class="btn-small" href="#" rel="tooltip"
-          title="{% trans 'Policy Type' %}"><i class="icon-info-sign"></i></a>
-      </div>
+        </tbody>
+      </table>
     </div>
-    
-    <hr>
-    
-    <h4>{% trans "Enforcements" %}
-      <a class="btn-small" href="#" rel="tooltip"
-      title="{% trans 'The policy is enforced on all group- and subgroup-members' %}"><i class="icon-info-sign"></i></a>
-    </h4>
-    
-    <table>
-      <thead>
-        <tr>
-          <td>{% trans 'Group' %}</td>
-          <td>{% trans 'Max. age' %}</td>
-          <td>{% trans 'Fail-action' %}</td>
-          <td>{% trans 'Noresult-action' %}</td>
-        </tr>
-      </thead>
-      <tbody>
-        {% for e in enforcements %}
-          <tr>
-            <td><input type="text" name="enforcement_group" value="{{ e.group.name }}"/></td>
-            <td align="center"><input type="text" name="enforcement_group" value="{{ e.max_age }}"/></td>
-            <td>
-              <select>
-                <option value="">{% trans 'Select one...' %}</option>
-                {% for a in action %}
-                <option value={{ forloop.counter0 }}
-                  {% if e.fail == forloop.counter0 %}
-                    selected="selected"
-                  {% endif %}
-                  >{{ a }}</option>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <select>
-                <option value="">{% trans 'Select one...' %}</option>
-                {% for a in action %}
-                <option value={{ forloop.counter0 }}
-                  {% if e.noresult == forloop.counter0 %}
-                    selected="selected"
-                  {% endif %}
-                  >{{ a }}</option>
-                {% endfor %}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>{{ e.group.name }}</td>
-            <td>{{ e.max_age }}</td>
 
-            <!-- TODO: If possible, refactor with a custom templatetag filter -->
-            <td>
-              {% for a in action %}
-                {% if forloop.counter0 == e.fail %}
-                  {{ a }}
-                {% endif %}
+    <div class="span9" id="content">
+      {% if policy %}
+      <h4>{% trans "Policy Info"%}</h4>
+      <form class="form-horizontal" method="POST" action="/policies/save" id="policyform">
+        {% csrf_token %}
+
+        <div class="control-group">
+          <label class="control-label" for="id">{% trans "Name" %}</label>
+          <div class="controls">
+            <input type="hidden" name="policyId" value="{{policy.id}}" />
+            <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}"
+            value="{{ policy.name }}">
+            <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Policy Name' %}">
+              <i class="icon-info-sign"></i></a>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="description">{% trans "Type" %}</label> 
+          <div class="controls">   
+            <select id="type" name="type">
+              <option value="">{% trans 'Select one...' %}</option>
+              {% for t in types %}
+              <option value="{{ forloop.counter0 }}"
+              {% if policy.type == forloop.counter0 %}
+              selected="selected"
+              {% endif %}
+              >
+              {{ t }}</option>
               {% endfor %}
-            </td>
-            <td>
+            </select>
+            <a class="btn-small" href="#" rel="tooltip"
+              title="{% trans 'Policy Type' %}"><i class="icon-info-sign"></i></a>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="fail">{% trans "Fail-Action" %}</label> 
+          <div class="controls">   
+            <select id="fail" name="fail">
+              <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
-                {% if forloop.counter0 == e.noresult %}
-                  {{ a }}
-                {% endif %}
+              <option value="{{forloop.counter0}}"
+              {% if policy.fail == forloop.counter0 %}
+              selected="selected"
+              {% endif %} 
+              >{{ a }}</option>
               {% endfor %}
-            </td>
+            </select>
+            <a class="btn-small" href="#" rel="tooltip"
+              title="{% trans 'Recommendation when a client does not meet the policy requirement' %}"><i class="icon-info-sign"></i></a>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="noresult">{% trans "Noresult-Action" %}</label> 
+          <div class="controls">   
+            <select id="noresult" name="noresult">
+              <option value="">{% trans 'Select one...' %}</option>
+              {% for a in action %}
+              <option value="{{forloop.counter0}}"
+              {% if policy.noresult == forloop.counter0 %}
+              selected="selected"
+              {% endif %} 
+              >{{ a }}</option>
+              {% endfor %}
+            </select>
+            <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Recommendation when the policy does not apply to the client' %}"><i class="icon-info-sign"></i></a>
+          </div>
+        </div>
+      </form>
+
+      <div class="btn-toolbar" style="margin: 0;">
+        <div class="btn-group">
+          <a class="btn btn-success" href="#" onclick="policyform.submit()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
+        </div><!-- /btn-group -->
+        {% if policy.id %}
+        <div class="btn-group">
+          <a class="btn btn-danger" href="/policies/{{policy.id}}/delete"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+          {% endif %}
+        </div><!-- /btn-group -->
+      </div><!-- /btn-toolbar-->
+      <hr>
+
+      <h4>{% trans "Enforcements" %}
+        <a class="btn-small" href="#" rel="tooltip"
+          title="{% trans 'The policy is enforced on all group- and subgroup-members' %}"><i
+            class="icon-info-sign"></i></a>
+      </h4>
+      <table border="1" id="etable">
+        <thead>
+          <tr>
+            <td>{% trans 'Group' %}</td>
+            <td>{% trans 'Max. age' %}</td>
+            <td>{% trans 'Fail-action' %}</td>
+            <td>{% trans 'Noresult-action' %}</td>
           </tr>
+        </thead>
+        <tbody>
+          {% if enforcements %}
+          {% for e in enforcements %}
+          <tr>
+            <td><input class="input-small" type="text" name="group" value="{{ e.group.name }}"/></td>
+            <td><input class="input-mini" type="text" name="max_age" value="{{ e.max_age }}"/></td>
+            <td>
+              <select class="input-medium">
+                <option value="">{% trans 'Select one...' %}</option>
+                {% for a in action %}
+                <option value={{ forloop.counter0 }}
+                {% if e.fail == forloop.counter0 %}
+                selected="selected"
+                {% endif %}
+                >{{ a }}</option> {% endfor %}
+              </select>
+            </td>
+            <td>
+              <select class="input-medium">
+                <option value="">{% trans 'Select one...' %}</option>
+                {% for a in action %}
+                <option value={{ forloop.counter0 }}
+                {% if e.noresult == forloop.counter0 %}
+                selected="selected"
+                {% endif %}
+                >{{ a }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td><a class="btn" href="#">Edt</a></td>
+            <td><a class="btn" href="/enforcements/{{ e.id }}/delete">Del</a></td>
+          </tr>
+        </tbody>
         {% endfor %}
-      </tbody>
-    </table>
-  </form>
+        {% else %}
+        <tr><td>{% trans 'There are no enforcements' %}</td></tr>
+        {% endif %}
+      </table>
+      <a class="btn" href="#" onclick="add_enforcement()">Add</a>
+      {% endif %}
+
+      <hr>
+
+    </div><!--content-->
+  </div><!--/row-->
+</div>
+<script type="text/javascript">
+function add_enforcement(){
+  $("#etable > tbody ").append(enforcement_form());
+  }
+
+function enforcement_form(){
+  form = '<tr><td><input class="input-small" name="group" /></td>'
+  form += '<td><input class="input-mini" name="max_age"/></td>'
+  form += '<td><input type="checkbox" checked name="fail"/></td>'
+  form += '<td><input type="checkbox" checked name="noresult"/></td>'
+  form += '<td><a class="btn btn-success"><i class="icon-ok icon-white"/></a></td>'
+  form += '</tr>'
+  return form
+}
   
-  <hr>
-
-  <div class="btn-toolbar" style="margin: 0;">
-    <div class="btn-group">
-      <a class="btn btn-success" href="#" onclick="save_policy()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
-    </div><!-- /btn-group -->
-  {% if policy.id %}
-    <div class="btn-group">
-      <a class="btn btn-danger" href="/policies/{{policy.id}}/delete"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
-    </div><!-- /btn-group -->
-  </div><!-- /btn-toolbar-->
-  {% endif %}
-  {% endif %}
-</div><!--content-->
-    </div><!--/row-->
-  </div>
-  <script type="text/javascript">
-    function save_policy(){
-      $('<input />').attr('type', 'hidden').attr('name', 'memberlist').attr('value',
-          $("#member_select option").map(function() {
-            return this.value;
-            }).get().join()).appendTo("#policyform")
-      policyform.submit()
-    }
-
-    function add_member()
-    {
-      $("#group_select > option:selected").each(function(index, elem){
-            $("#member_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
-      });
-      $("#group_select > option:selected").remove()
-    }
-
-    function remove_member()
-    {
-      $("#member_select > option:selected").each(function(index, elem){
-            $("#group_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
-      });
-      $("#member_select > option:selected").remove()
-    }
-
-  </script>
+</script>
 {% endblock %}
 
 

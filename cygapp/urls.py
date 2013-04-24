@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import settings
 import group_views, device_views, product_views, policy_views
-import views
+import enforcement_views, views
 
 admin.autodiscover()
 
@@ -45,8 +45,14 @@ urlpatterns = patterns('',
         url(r'^policies/(?P<policyID>\d+)/delete/?$', policy_views.delete,
             name='delete'),
         
-        #==============================================
-
+        url(r'^enforcements/?$', enforcement_views.enforcements,
+            name='enforcements'),
+        url(r'^enforcements/(?P<enforcementID>\d+)/?$', enforcement_views.enforcement, name='enforcement'),
+        url(r'^enforcements/add/?$', enforcement_views.add, name='add'),
+        url(r'^enforcements/save?$', enforcement_views.save, name='save'),
+        url(r'^enforcements/(?P<enforcementID>\d+)/delete/?$', enforcement_views.delete,
+            name='delete'),
+        
         #IMV API patterns
         url(r'^cmd/start_measurement/?$', views.start_measurement,
             name='start_measurement'),
@@ -54,6 +60,7 @@ urlpatterns = patterns('',
         url(r'^cmd/end_measurement/?$', views.end_measurement,
             name='end_measurement'),
 
+        #==============================================
 
         #To enable built-in admin-interface:
         url(r'^admin/', include(admin.site.urls)),
