@@ -296,18 +296,40 @@ class Policy(models.Model):
     def __unicode__(self):
         return self.name
 
+    action = [
+            'NONE',
+            'ALLOW',
+            'ISOLATE',
+            'BLOCK',
+            ]
+
+    types = [
+            'FileHash',
+            'DirHash',
+            'ListeningPort',
+            'FileExist',
+            'NotFileExist',
+            'MissingUpdate',
+            'MissingSecurityUpdate',
+            'BlacklistedPackage',
+            'OSSettings',
+            'Deny',
+            ]
+
+    
     argument_funcs = {
             'FileHash': lambda file: file.id,
             'DirHash': lambda dir: dir.id,
-            'ListeningPort': lambda range: range,
+            'ListeningPort': '',
             'FileExist': lambda file: file.id,
             'NotFileExist': lambda file: file.id,
-            'MissingUpdate': lambda: '',
-            'MissingSecurityUpdate': lambda: '',
-            'BlacklistedPackage': lambda: '',
-            'OSSettings': lambda: '',
-            'Deny': lambda: '',
+            'MissingUpdate': '',
+            'MissingSecurityUpdate': '',
+            'BlacklistedPackage': '',
+            'OSSettings': '',
+            'Deny': '',
             }
+
 
     class Meta:
         db_table = u'policies'

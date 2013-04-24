@@ -22,7 +22,8 @@
       <h4>{% trans "Policy" %}</h4>
 	<table class="table table-hover">
     <tbody>
-      <tr><td><a class="btn btn-primary" href="/policies/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add Policy" %}</a></td></tr>
+      <tr><td><a class="btn btn-primary" href="/policies/add"><i class="icon-plus-sign
+              icon-white"></i> {% trans "Add Policy" %}</a></td></tr>
       {% for p in policies %}
       <tr><td><a href=/policies/{{ p.id }}>{{ p }}</a></td></tr>
       {% endfor %}
@@ -51,8 +52,14 @@
       <label class="control-label" for="description">{% trans "Type" %}</label> 
       <div class="controls">   
         <select id="type" name="type" placeholder="{% trans 'Type' %}">
+          <option value="">{% trans 'Select one...' %}</option>
           {% for t in types %}
-          <option value="{{ t }}">{{ t }}</option>
+          <option value="{{ forloop.counter0 }}"
+            {% if policy.type == forloop.counter0 %}
+            selected="selected"
+            {% endif %}
+            >
+          {{ t }}</option>
           {% endfor %}
         </select>
         <a class="btn-small" href="#" rel="tooltip"
@@ -62,30 +69,73 @@
     
     <hr>
     
-    <h4>{% trans "Assign Groups" %}
+    <h4>{% trans "Enforcements" %}
       <a class="btn-small" href="#" rel="tooltip"
-      title="{% trans 'When the policy is member of a group, all policies enforced on the group are applied to the policy upon login' %}"><i class="icon-info-sign"></i></a>
+      title="{% trans 'The policy is enforced on all group- and subgroup-members' %}"><i class="icon-info-sign"></i></a>
     </h4>
-  <div class="row-fluid">
+    
+    <table>
+      <thead>
+        <tr>
+          <td>{% trans 'Group' %}</td>
+          <td>{% trans 'Max. age' %}</td>
+          <td>{% trans 'Fail-action' %}</td>
+          <td>{% trans 'Noresult-action' %}</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in enforcements %}
+          <tr>
+            <td><input type="text" name="enforcement_group" value="{{ e.group.name }}"/></td>
+            <td align="center"><input type="text" name="enforcement_group" value="{{ e.max_age }}"/></td>
+            <td>
+              <select>
+                <option value="">{% trans 'Select one...' %}</option>
+                {% for a in action %}
+                <option value={{ forloop.counter0 }}
+                  {% if e.fail == forloop.counter0 %}
+                    selected="selected"
+                  {% endif %}
+                  >{{ a }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <select>
+                <option value="">{% trans 'Select one...' %}</option>
+                {% for a in action %}
+                <option value={{ forloop.counter0 }}
+                  {% if e.noresult == forloop.counter0 %}
+                    selected="selected"
+                  {% endif %}
+                  >{{ a }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>{{ e.group.name }}</td>
+            <td>{{ e.max_age }}</td>
 
-      <select size="5" name="selectionField" id="group_select" multiple="yes" >
-        {% for g in groups %}
-        <option value="{{ g.id }}">{{ g }}</option>
+            <!-- TODO: If possible, refactor with a custom templatetag filter -->
+            <td>
+              {% for a in action %}
+                {% if forloop.counter0 == e.fail %}
+                  {{ a }}
+                {% endif %}
+              {% endfor %}
+            </td>
+            <td>
+              {% for a in action %}
+                {% if forloop.counter0 == e.noresult %}
+                  {{ a }}
+                {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
         {% endfor %}
-      </select>
-
-      <div class="btn-group btn-group-vertical">
-        <button type="button" onclick="add_member()" class="btn"><i class="icon-forward"></i></button>
-        <button type="button" onclick="remove_member()" class="btn"><i class="icon-backward"></i></button>
-      </div>
-
-      <select size="5" name="selectionField" id="member_select" multiple="yes" >
-        {% for m in members %}
-        <option value="{{ m.id }}">{{ m }}</option>
-        {% endfor %}
-      </select>
-
-    </div>
+      </tbody>
+    </table>
   </form>
   
   <hr>

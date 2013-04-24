@@ -7,19 +7,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from models import (Group, Device, Product, Identity, Result, Measurement,
-        Action, Policy)
-
-class Message(object):
-    types = {
-            'ok':'message_ok',
-            'info':'message_info',
-            'warning':'message_warning',
-            'error':'message_error',
-            }
-
-    def __init__(self, type, text):
-        self.text = text
-        self.type = Message.types[type]
+        Policy)
 
 @require_GET
 def index(request):
@@ -345,9 +333,8 @@ def policy(request, policyID):
         context['policy'] = policy
         enforcements = policy.enforcements.all().order_by('id')
         context['enforcements'] = enforcements
-
-        types = Policy.argument_funcs.keys()
-        context['types'] = types
+        context['types'] = Policy.types
+        context['action'] = Policy.action
 
         groups = Group.objects.exclude(id__in = enforcements.values_list('id',
             flat=True))
@@ -379,11 +366,11 @@ def start_measurement(request):
     if not re.match(r'^[0-9]+$', connectionID):
         return HttpResponse(status=400)
 
-    ar_id = request.GET.get('ar_id', '')
-    if not re.match(r'^\S+$', ar_id):
+    arID = request.GET.get('arID', '')
+    if not re.match(r'^\S+$', arID):
         return HttpResponse(status=400)
 
-    OSVersion = request.GET['OSVersion']
+    OSVersion = request.GET['osVersion']
     product, new = Product.objects.get_or_create(name=OSVersion)
 
     if new:
@@ -398,7 +385,7 @@ def start_measurement(request):
 
         device.save()
 
-    id = Identity.objects.get_or_create(data=ar_id)[0]
+    id = Identity.objects.get_or_create(data=arID)[0]
 
     measurement = Measurement.objects.create(time=datetime.today(), identity=id,
             device=device, connectionID=connectionID)
