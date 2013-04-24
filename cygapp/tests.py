@@ -127,7 +127,7 @@ class cygappTest(TestCase):
         e2.noresult = 0
         e2.save()
 
-        user = m.Identity.objects.create(type=1, data='foobar')
+        user = m.Identity.objects.create(data='foobar')
         
         device = m.Device.objects.get(value='def')
 
@@ -149,7 +149,7 @@ class cygappTest(TestCase):
     def test_is_due_for(self):
         g = m.Group.objects.get(name='L1.3.1')
         p = m.Policy.objects.get(name='usrbin')
-        user = m.Identity.objects.create(type=1, data='foobar')
+        user = m.Identity.objects.create(data='foobar')
         device = m.Device.objects.get(value='def')
         e = m.Enforcement.objects.create(group=g, policy=p, max_age=2)
 
@@ -160,7 +160,6 @@ class cygappTest(TestCase):
         meas = m.Measurement.objects.create(device=device, time=datetime.today(),
                 connectionID=123, identity=user)
         self.assertEqual(True, device.is_due_for(e))
-
 
         #Measurement is too old
         m.Result.objects.create(policy=p, measurement=meas, result='OK',
@@ -192,7 +191,7 @@ class cygappTest(TestCase):
         e2 = m.Enforcement.objects.create(group=g, policy=p2, max_age=2)
 
         device = m.Device.objects.get(value='def')
-        user = m.Identity.objects.create(type=1, data='foobar')
+        user = m.Identity.objects.create(data='foobar')
         measurement = m.Measurement.objects.create(device=device,
                 time=datetime.today(), connectionID=123, identity=user)
         

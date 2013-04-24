@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from models import (Group, Device, Product, Identity, Result, Measurement,
-        Policy)
+        Policy, Action)
 
 @require_GET
 def index(request):
