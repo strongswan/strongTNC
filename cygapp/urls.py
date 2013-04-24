@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import settings
-import group_views, device_views, product_views, policy_views
+import group_views, device_views, product_views, policy_views, login_views
 import enforcement_views, views
 
 admin.autodiscover()

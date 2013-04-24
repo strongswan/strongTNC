@@ -42,6 +42,19 @@
         margin-bottom: 15px;
         padding: 7px 9px;
       }
+      
+      label.valid {
+        width: 24px;
+        height: 24px;
+        display: inline-block;
+        text-indent: -9999px;
+      }
+      label.error {
+        font-weight: bold;
+        color: blue;
+        padding: 2px 8px;
+        margin-top: 2px;
+      }
 
     </style>
 
@@ -63,7 +76,7 @@
         </div>
 
         <div class="span7">
-          <form class="form-signin">
+          <form class="form-signin" id=sign-form>
             <h2 class="form-signin-heading">Please sign in</h2>
             {% if errors %}
               <ul>
@@ -79,6 +92,40 @@
             </label>
             <button class="btn btn-large btn-primary" type="submit">Sign in</button>
           </form>
+          
+          <form action="" id="contact-form" class="form-horizontal">
+            <fieldset>
+              <legend>Sample Contact Form <small>(will not submit any information)</small></legend>
+                <div class="control-group">
+                  <label class="control-label" for="name">Your Name</label>
+                  <div class="controls">
+                    <input type="text" class="input-xlarge" name="name" id="name">
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="email">Email Address</label>
+                  <div class="controls">
+                    <input type="text" class="input-xlarge" name="email" id="email">
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="subject">Subject</label>
+                  <div class="controls">
+                    <input type="text" class="input-xlarge" name="subject" id="subject">
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="message">Your Message</label>
+                  <div class="controls">
+                    <textarea class="input-xlarge" name="message" id="message" rows="3"></textarea>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary btn-large">Submit</button>
+                  <button type="reset" class="btn">Cancel</button>
+                </div>
+              </fieldset>
+            </form>
 
         </div>
       </div>
@@ -88,7 +135,41 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.validate.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
-
+    <script type="text/javascript">
+    $(document).ready(function(){
+ 
+      $('#contact-form').validate(
+      {
+       rules: {
+         name: {
+           minlength: 2,
+           required: true
+         },
+         email: {
+           required: true,
+           email: true
+         },
+         subject: {
+           minlength: 2,
+           required: true
+         },
+         message: {
+           minlength: 2,
+           required: true
+         }
+       },
+       highlight: function(element) {
+         $(element).closest('.control-group').removeClass('success').addClass('error');
+       },
+       success: function(element) {
+         element
+         .text('OK!').addClass('valid')
+         .closest('.control-group').removeClass('error').addClass('success');
+       }
+      });
+     }); // end document.ready
+    </script>
   </body>
 </html>
