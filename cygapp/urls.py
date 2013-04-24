@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import settings
+import group_views, device_views, product_views, policy_views
 import views
 
 admin.autodiscover()
@@ -14,35 +15,35 @@ urlpatterns = patterns('',
 
         url(r'^login/?$', views.login, name='login'),
         
-        url(r'^overview/?$', views.overview, name='overview'),
+        url(r'^overviews/?$', views.overview, name='overview'),
 
-        url(r'^groups/?$', views.groups, name='groups'),
-        url(r'^groups/(?P<groupID>\d+)/?$', views.group, name='group'),
-        url(r'^groups/add/?$', views.group_add, name='group_add'),
-        url(r'^groups/save?$', views.group_save, name='group_save'),
-        url(r'^groups/(?P<groupID>\d+)/delete/?$', views.group_delete,
-            name='group_delete'),
+        url(r'^groups/?$', group_views.groups, name='groups'),
+        url(r'^groups/(?P<groupID>\d+)/?$', group_views.group, name='group'),
+        url(r'^groups/add/?$', group_views.add, name='add'),
+        url(r'^groups/save?$', group_views.save, name='save'),
+        url(r'^groups/(?P<groupID>\d+)/delete/?$', group_views.delete,
+            name='delete'),
 
-        url(r'^devices/?$', views.devices, name='devices'),
-        url(r'^devices/(?P<deviceID>\d+)/?$', views.device, name='device'),
-        url(r'^devices/add/?$', views.device_add, name='device_add'),
-        url(r'^devices/save?$', views.device_save, name='device_save'),
-        url(r'^devices/(?P<deviceID>\d+)/delete/?$', views.device_delete,
-            name='device_delete'),
+        url(r'^devices/?$', device_views.devices, name='devices'),
+        url(r'^devices/(?P<deviceID>\d+)/?$', device_views.device, name='device'),
+        url(r'^devices/add/?$', device_views.add, name='add'),
+        url(r'^devices/save?$', device_views.save, name='save'),
+        url(r'^devices/(?P<deviceID>\d+)/delete/?$', device_views.delete,
+            name='delete'),
 
-        url(r'^products/?$', views.products, name='products'),
-        url(r'^products/(?P<productID>\d+)/?$', views.product, name='product'),
-        url(r'^products/add/?$', views.product_add, name='product_add'),
-        url(r'^products/save?$', views.product_save, name='product_save'),
-        url(r'^products/(?P<productID>\d+)/delete/?$', views.product_delete,
-            name='product_delete'),
+        url(r'^products/?$', product_views.products, name='products'),
+        url(r'^products/(?P<productID>\d+)/?$', product_views.product, name='product'),
+        url(r'^products/add/?$', product_views.add, name='product_add'),
+        url(r'^products/save?$', product_views.save, name='product_save'),
+        url(r'^products/(?P<productID>\d+)/delete/?$', product_views.delete,
+            name='delete'),
         
-        url(r'^policies/?$', views.policies, name='policies'),
-        url(r'^policies/(?P<policyID>\d+)/?$', views.policy, name='policy'),
-        url(r'^policies/add/?$', views.policy_add, name='policy_add'),
-        url(r'^policies/save?$', views.policy_save, name='policy_save'),
-        url(r'^policies/(?P<policyID>\d+)/delete/?$', views.policy_delete,
-            name='policy_delete'),
+        url(r'^policies/?$', policy_views.policies, name='policies'),
+        url(r'^policies/(?P<policyID>\d+)/?$', policy_views.policy, name='policy'),
+        url(r'^policies/add/?$', policy_views.add, name='add'),
+        url(r'^policies/save?$', policy_views.save, name='save'),
+        url(r'^policies/(?P<policyID>\d+)/delete/?$', policy_views.delete,
+            name='delete'),
         
         #==============================================
 
