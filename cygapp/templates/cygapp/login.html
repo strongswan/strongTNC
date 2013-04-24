@@ -65,8 +65,15 @@
         <div class="span7">
           <form class="form-signin">
             <h2 class="form-signin-heading">Please sign in</h2>
-            <input type="text" class="input-block-level" placeholder="Email address">
-            <input type="password" class="input-block-level" placeholder="Password">
+            {% if errors %}
+              <ul>
+                {% for error in errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+            <input type="text" class="input-block-level" placeholder="Username" name="username">
+            <input type="password" class="input-block-level" placeholder="Password" name="password">
             <label class="checkbox">
               <input type="checkbox" value="remember-me"> Remember me
             </label>

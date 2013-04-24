@@ -11,10 +11,6 @@ def index(request):
     return HttpResponse(answer)
 
 @require_GET
-def login(request):
-    return render(request, 'cygapp/login.html')
-
-@require_GET
 def overview(request):
     return render(request, 'cygapp/overview.html')
 
