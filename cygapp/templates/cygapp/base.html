@@ -88,9 +88,11 @@
 	  <div class="row-fluid">
 	  {% if messages %}
 	    <div id="message_div">
-	    {% for message in messages %}
+	      <button type="button" class="close" data-dismiss="alert">&times;</button>
+	      {% for message in messages %}
 	    <div class="{{ message.tags }}">{{ message }}</div>  
-	    {% endfor %}
+	      {% endfor %}
+	
 	    </div>
 	    {% endif %}
 	    {% block content %}{% endblock %}
@@ -107,9 +109,22 @@
 
     </div><!--/.fluid-container-->
 
+    <!-- javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
+    <script src="{{ STATIC_URL }}js/validate_rules.js"></script>
     <script type="text/javascript">
       $(document).ready(function () {
         $("a").tooltip({
+          'selector': '',
+          'placement': 'right'
+        });
+	$("input").tooltip({
+          'selector': '',
+          'placement': 'right'
+        });
+	$("select").tooltip({
           'selector': '',
           'placement': 'right'
         });

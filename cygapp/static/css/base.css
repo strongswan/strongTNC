@@ -3,8 +3,13 @@ thead>tr>td { font-weight: bold}
 div.msg_success {
   float: none;
   clear; both;
-  background-color: RGB(200,255,200);
+  background-color: RGB(200,255,200);*/
   color: green;
+  padding-left: 20px;
+  padding-right: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
 }
 
 div.msg_info {
@@ -12,6 +17,10 @@ div.msg_info {
   clear; both;
   background-color: RGB(200,200,255);
   color: blue;
+  padding-left: 20px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
 }
 
 div.msg_warning {
@@ -19,6 +28,10 @@ div.msg_warning {
   clear; both;
   background-color: RGB(255,200,150);
   color: RGB(255,150,0);
+  padding-left: 20px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
 }
 
 div.msg_error {
@@ -26,10 +39,15 @@ div.msg_error {
   clear; both;
   background-color: RGB(255,200,200);
   color: red;
+  padding-left: 20px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
 }
 
 label.error {
   color: red;
+  padding: 2px 8px;
 }
 
 body {

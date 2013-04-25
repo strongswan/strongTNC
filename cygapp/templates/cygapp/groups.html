@@ -38,17 +38,16 @@
     <label class="control-label" for="name">Name</label>
       <div class="controls">
         <input type="hidden" name="groupId" value="{{group.id}}" />
-        <input type="text" id="name" name="name" placeholder="Name"
-          value="{{ group }}">
-        <a class="btn-small" href="#" rel="tooltip" title="enter the name of the
-          group"><i class="icon-info-sign"></i></a>
+	<input type="text" id="name" name="name" placeholder="Name"
+          value="{{ group }}" rel="tooltip" title="enter the name of the
+          group">
       </div>
     </div>
 
     <div class="control-group">
       <label class="control-label" for="parent">Parent Group</label>
       <div class="controls">
-        <select name="parent">
+        <select name="parent" rel="tooltip" title="select a parental group">
           <option value="" >Select one...</option>
           {% for g in groups %}
             {% if group.id != g.id %}
@@ -60,8 +59,6 @@
             {% endif %}
           {% endfor %}
         </select>
-        <a class="btn-small" href="#" rel="tooltip" title="select a parental
-          group"><i class="icon-info-sign"></i></a>
       </div>
     </div>
 
