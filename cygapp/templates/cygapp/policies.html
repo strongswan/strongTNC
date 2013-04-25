@@ -41,17 +41,16 @@
           <label class="control-label" for="id">{% trans "Name" %}</label>
           <div class="controls">
             <input type="hidden" name="policyId" value="{{policy.id}}" />
-            <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}"
+            <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}
+              rel="tooltip" title="{% trans 'Policy Name' %}""
             value="{{ policy.name }}">
-            <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Policy Name' %}">
-              <i class="icon-info-sign"></i></a>
           </div>
         </div>
 
         <div class="control-group">
           <label class="control-label" for="description">{% trans "Type" %}</label> 
           <div class="controls">   
-            <select id="type" name="type" onchange="type_change()">
+            <select id="type" name="type" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for t in types %}
               <option value="{{ forloop.counter0 }}"
@@ -62,15 +61,14 @@
               {{ t }}</option>
               {% endfor %}
             </select>
-            <a class="btn-small" href="#" rel="tooltip"
-              title="{% trans 'Policy Type' %}"><i class="icon-info-sign"></i></a>
           </div>
         </div>
 
         <div class="control-group">
           <label class="control-label" for="fail">{% trans "Fail-Action" %}</label> 
           <div class="controls">   
-            <select id="fail" name="fail">
+            <select id="fail" name="fail" rel="tooltip"
+              title="{% trans 'Recommendation when a client does not meet the policy requirement' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
               <option value="{{forloop.counter0}}"
@@ -80,15 +78,14 @@
               >{{ a }}</option>
               {% endfor %}
             </select>
-            <a class="btn-small" href="#" rel="tooltip"
-              title="{% trans 'Recommendation when a client does not meet the policy requirement' %}"><i class="icon-info-sign"></i></a>
           </div>
         </div>
 
         <div class="control-group">
           <label class="control-label" for="noresult">{% trans "Noresult-Action" %}</label> 
           <div class="controls">   
-            <select id="noresult" name="noresult">
+            <select id="noresult" name="noresult" rel="tooltip"
+              title="{% trans 'Recommendation when the policy does not apply to the client' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
               <option value="{{forloop.counter0}}"
@@ -98,10 +95,11 @@
               >{{ a }}</option>
               {% endfor %}
             </select>
-            <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Recommendation when the policy does not apply to the client' %}"><i class="icon-info-sign"></i></a>
           </div>
         </div>
       </form>
+
+      <hr>
 
       <div class="btn-toolbar" style="margin: 0;">
         <div class="btn-group">
@@ -114,7 +112,6 @@
         </div><!-- /btn-group -->
       </div><!-- /btn-toolbar-->
       <hr>
-
       <h4>{% trans "Enforcements" %}
         <a class="btn-small" href="#" rel="tooltip"
           title="{% trans 'The policy is enforced on all group- and subgroup-members' %}"><i

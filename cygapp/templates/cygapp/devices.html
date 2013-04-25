@@ -39,27 +39,25 @@
       <label class="control-label" for="id">{% trans "ID" %}</label>
       <div class="controls">
         <input type="hidden" name="deviceId" value="{{device.id}}" />
-        <input type="text" id="value" name="value" placeholder="{% trans 'ID' %}"
+        <input type="text" id="value" name="value" placeholder="{% trans 'ID' %} rel="tooltip" title="{% trans 'Device ID' %}"
         value="{{ device.value }}">
-        <a class="btn-small" href="#" rel="tooltip" title="{% trans 'Device ID' %}">
-          <i class="icon-info-sign"></i></a>
       </div>
     </div>
     
     <div class="control-group">
       <label class="control-label" for="description">{% trans "Description" %}</label> 
       <div class="controls">   
-        <input type="text" id="description" name="description" placeholder="{% trans "Description" %}"
+        <input type="text" id="description" name="description" placeholder="{% trans "Description" %} rel="tooltip"
+          title="{% trans 'Device description' %}""
           value="{{ device.description }}">
-        <a class="btn-small" href="#" rel="tooltip"
-          title="{% trans 'Device description' %}"><i class="icon-info-sign"></i></a>
       </div>
     </div>
     
     <div class="control-group">
       <label class="control-label" for="product">{% trans "Product" %}</label> 
       <div class="controls">   
-        <select type="text" id="product" name="product" placeholder="{% trans "Product" %}">
+        <select type="text" id="product" name="product" placeholder="{% trans "Product" %}" rel="tooltip"
+          title="{% trans 'Device product (operating system)' %}">
           <option value="">{% trans "Select one..." %}</option>
           {% for p in products %}
             <option value="{{ p.id }}"
@@ -69,8 +67,6 @@
             >{{ p }}</option>
           {% endfor %}
         </select>
-        <a class="btn-small" href="#" rel="tooltip"
-          title="{% trans 'Device product (operating system)' %}"><i class="icon-info-sign"></i></a>
       </div>
     </div>
     <hr>
