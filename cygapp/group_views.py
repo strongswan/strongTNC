@@ -10,6 +10,7 @@ from models import Group, Device
 def groups(request):
     context = {}
     context['groups'] = Group.objects.all().order_by('name')
+    context['grouptree'] = group_tree()
     context['title'] = _('Groups')
     return render(request, 'cygapp/groups.html', context)
 
@@ -23,6 +24,7 @@ def group(request, groupID):
 
     context = {}
     context['groups'] = Group.objects.all().order_by('name')
+    context['grouptree'] = group_tree()
     context['title'] = _('Groups')
     if group:
         context['group'] = group
@@ -42,6 +44,7 @@ def add(request):
     context = {}
     context['title'] = _('New group')
     context['groups'] = Group.objects.all().order_by('name')
+    context['grouptree'] = group_tree()
     context['group'] = Group()
     context['devices'] = Device.objects.all()
     return render(request, 'cygapp/groups.html', context)
@@ -103,4 +106,33 @@ def delete(request, groupID):
     messages.success(request, _('Group deleted!'))
     return redirect('/groups')
 
+def group_tree():
+    """Returns a tree-view of all groups as <dl>-Tag."""
 
+    dl = '<dl>\n'
+    roots = Group.objects.filter(parent=None)
+
+    for root in roots:
+        #dl += '<dt>%s</dt>' % root
+        dl += add_children(root)
+        
+    dl += '</dl>'
+
+    return dl
+
+def add_children(parent):
+    sub = ''
+    if parent.membergroups.all():
+        sub += '<dd><dl>\n'
+        sub += '<dt><a href="/groups/%d">%s</a></dt>\n' % (parent.id, parent)
+        for child in parent.membergroups.all():
+            sub += add_children(child)
+        sub += '</dl></dd>'
+    else:
+        sub += '<dd><a href="/groups/%d">%s</a></dd>\n' % (parent.id, parent)
+
+
+    return sub
+
+
+     

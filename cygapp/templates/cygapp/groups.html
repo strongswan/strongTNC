@@ -18,17 +18,14 @@
       padding-right:1em;
       text-align:justify;">
 	<h4>Group</h4>
-	<table class="table table-hover">
-    <tbody>
-      <tr><td><a class="btn btn-primary" href="/groups/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add Group" %}</a></td></tr>
-      {% for group in groups %}
-      <tr><td><a href=/groups/{{ group.id }}>{{ group }}</a></td></tr>
-      {% endfor %}
-    </tbody>
-	</table>
-      </div>
+  <a class="btn btn-primary" href="/groups/add">
+    <i class="icon-plus-sign icon-white"></i>
+    {% trans "Add Group" %}
+  </a>
+  {{grouptree|safe}}
+  </div>
       
-      <div class="span9" id="content">
+  <div class="span9" id="content">
     {% if group %}
 	<h4>Group Info</h4>
   <form class="form-horizontal" method="POST" action="/groups/save" id="groupform">
