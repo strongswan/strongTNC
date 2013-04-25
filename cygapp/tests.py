@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from cygapp.models import (File, WorkItem, Device, Group, Product, Measurement,
     Policy, Enforcement, Action, Package, Directory, Version, Identity, Result)
 from views import generate_results
+from policy_views import check_range
 
 
 
@@ -241,4 +242,26 @@ class cygappTest(TestCase):
         self.assertRaises(ProtectedError, dir.delete)
         policy.delete()
         dir.delete()
+
+    def test_check_range(self):
+        self.assertEqual(True, check_range('1'))
+        self.assertEqual(True, check_range('65535'))
+        self.assertEqual(True, check_range('1,2,3,4,5'))
+        self.assertEqual(True, check_range('1, 2, 3, 4, 5'))
+        self.assertEqual(True, check_range('0-65535'))
+        self.assertEqual(True, check_range('1-2,3-4,10000-20000'))
+        self.assertEqual(True, check_range('11000-12123,5-10'))
+        self.assertEqual(True, check_range('  11000 -  12123 ,    5-10'))
+
+        self.assertEqual(False, check_range(''))
+        self.assertEqual(False, check_range(','))
+        self.assertEqual(False, check_range('-'))
+        self.assertEqual(False, check_range(', ,'))
+        self.assertEqual(False, check_range('1-'))
+        self.assertEqual(False, check_range('1- '))
+        self.assertEqual(False, check_range('10-5'))
+        self.assertEqual(False, check_range('1,3,11-2'))
+        self.assertEqual(False, check_range('1,2,a,4'))
+        self.assertEqual(False, check_range('1-10, 25555-25000'))
+        self.assertEqual(False, check_range('1-65536'))
 

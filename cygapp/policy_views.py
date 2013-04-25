@@ -4,7 +4,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Policy, Group
+from models import Policy, Group, File, Directory
 
 @require_GET
 def policies(request):
@@ -31,6 +31,10 @@ def policy(request, policyID):
         context['enforcements'] = enforcements
         context['types'] = Policy.types
         context['action'] = Policy.action
+        files = File.objects.all().order_by('name')
+        context['files'] = ','.join('"%s"' % file for file in files)
+        dirs = Directory.objects.all().order_by('path')
+        context['dirs'] = ','.join('"%s"' % dir for dir in dirs)
 
         groups = Group.objects.exclude(id__in = enforcements.values_list('id',
             flat=True))
@@ -48,6 +52,10 @@ def add(request):
     context['types'] = Policy.types
     context['action'] = Policy.action
     context['policy'] = Policy()
+    files = File.objects.all().order_by('name')
+    context['files'] = ','.join('"%s"' % file for file in files)
+    dirs = Directory.objects.all().order_by('path')
+    context['dirs'] = ','.join('"%s"' % dir for dir in dirs)
     return render(request, 'cygapp/policies.html', context)
 
 @require_POST
@@ -61,6 +69,37 @@ def save(request):
     if not re.match(r'^\d+$', type) and int(type) in range(len(Policy.types)):
         raise ValueError
         return HttpResponse(status=400)
+
+    type = int(type)
+
+    fileID = request.POST.get('file','')
+    file = None
+    if not fileID == '':
+        if not re.match(r'^\d+$', fileID):
+            raise ValueError
+
+        try:
+            file = File.objects.get(pk=fileID)
+        except (File.DoesNotExist):
+            messages.warning(request, _('No such file'))
+
+    dirID = request.POST.get('dir','')
+    dir = None
+    if not dirID == '':
+        if not re.match(r'^\d+$', dirID):
+            raise ValueError
+
+        try:
+            dir = Directory.objects.get(pk=dirID)
+        except (Directory.DoesNotExist):
+            messages.warning(request, _('No such directory'))
+
+    argument = ''
+
+    ranges = request.POST.get('range','')
+    if not check_range(ranges):
+        raise ValueError
+    else: argument = ranges
 
     fail = request.POST['fail']
     if not re.match(r'^\d+$', fail) and int(fail) in range(len(Policy.action)):
@@ -80,11 +119,21 @@ def save(request):
 
     if policyID == 'None':
         policy = Policy.objects.create(name=name, type=type, fail=fail,
-                noresult=noresult)
+                noresult=noresult, file=file, dir=dir, argument=argument)
     else:
         policy = get_object_or_404(Policy, pk=policyID)
         policy.name = name
-        policy.save()
+        policy.type = type
+        policy.file = file
+        policy.dir = dir
+        policy.fail = fail
+        policy.noresult = noresult
+
+    policy.argument = argument
+    type_name = Policy.types[policy.type]
+    arg_func = Policy.argument_funcs[type_name]
+    policy.argument = arg_func(policy)
+    policy.save()
 
     messages.success(request, _('Policy saved!'))
     return redirect('/policies/%d' % policy.id)
@@ -97,4 +146,24 @@ def delete(request, policyID):
 
     messages.success(request, _('Policy deleted!'))
     return redirect('/policies')
+
+def check_range(ranges):
+    ranges = ranges.replace(' ','')
+    for r in ranges.split(','):
+        bounds = r.split('-', 1)
+        for b in bounds:
+            if not re.match('^\d+$', b):
+                return False
+
+        lower = int(bounds[0])
+        upper = int(bounds[1]) if len(bounds) > 1 else -1
+
+        if upper == -1:
+            if not 0 <= lower <= 65535:
+                return False
+        else:
+            if (not 0 <= upper <= 65535) or lower > upper:
+                    return False
+    return True
+
 

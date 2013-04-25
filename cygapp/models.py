@@ -318,16 +318,16 @@ class Policy(models.Model):
 
     
     argument_funcs = {
-            'FileHash': lambda file: file.id,
-            'DirHash': lambda dir: dir.id,
-            'ListeningPort': '',
-            'FileExist': lambda file: file.id,
-            'NotFileExist': lambda file: file.id,
-            'MissingUpdate': '',
-            'MissingSecurityUpdate': '',
-            'BlacklistedPackage': '',
-            'OSSettings': '',
-            'Deny': '',
+            'FileHash': lambda policy: policy.file.id if policy.file else '',
+            'DirHash': lambda policy: policy.dir.id if policy.dir else '',
+            'ListeningPort': lambda p: p.argument if p.argument else '',
+            'FileExist': lambda policy: policy.file.id if policy.file else '',
+            'NotFileExist': lambda policy: policy.file.id if policy.file else '',
+            'MissingUpdate': lambda policy: '',
+            'MissingSecurityUpdate':lambda policy:  '',
+            'BlacklistedPackage': lambda policy: '',
+            'OSSettings': lambda policy: '',
+            'Deny': lambda policy: '',
             }
 
 
