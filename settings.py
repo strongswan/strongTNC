@@ -1,4 +1,5 @@
 # Django settings for cygnet project.
+from django.contrib import messages
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -164,4 +165,12 @@ LOGGING = {
             'propagate': True,
         },
     }
+}
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'msg_debug',
+    messages.INFO: 'msg_info',
+    messages.SUCCESS: 'msg_success',
+    messages.WARNING: 'msg_warning',
+    messages.ERROR: 'msg_error',
 }

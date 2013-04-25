@@ -1,30 +1,34 @@
 thead>tr>td { font-weight: bold}
 
-div.success {
+div.msg_success {
   float: none;
   clear; both;
   background-color: RGB(200,255,200);
   color: green;
 }
 
-div.info {
+div.msg_info {
   float: none;
   clear; both;
   background-color: RGB(200,200,255);
   color: blue;
 }
 
-div.warning {
+div.msg_warning {
   float: none;
   clear; both;
   background-color: RGB(255,200,150);
   color: RGB(255,150,0);
 }
 
-div.error {
+div.msg_error {
   float: none;
   clear; both;
   background-color: RGB(255,200,200);
+  color: red;
+}
+
+label.error {
   color: red;
 }
 

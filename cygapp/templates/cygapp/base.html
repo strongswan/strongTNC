@@ -86,13 +86,13 @@
           </div>
 
 	  <div class="row-fluid">
-      {% if messages %}
-        <div id="message_div">
-        {% for message in messages %}
-          <div class="{{ message.tags }}">{{ message }}</div>  
-        {% endfor %}
-        </div>
-      {% endif %}
+	  {% if messages %}
+	    <div id="message_div">
+	    {% for message in messages %}
+	    <div class="{{ message.tags }}">{{ message }}</div>  
+	    {% endfor %}
+	    </div>
+	    {% endif %}
 	    {% block content %}{% endblock %}
 	  </div><!--/row-->
 	  
