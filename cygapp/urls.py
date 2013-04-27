@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import settings
 import group_views, device_views, product_views, policy_views, login_views
-import enforcement_views, views
+import enforcement_views, package_views, views
 
 admin.autodiscover()
 
@@ -31,6 +31,16 @@ urlpatterns = patterns('',
         url(r'^devices/(?P<deviceID>\d+)/delete/?$', device_views.delete,
             name='delete'),
 
+        url(r'^packages/?$', package_views.packages, name='packages'),
+        url(r'^packages/(?P<packageID>\d+)/?$', package_views.package, name='policy'),
+        url(r'^packages/add/?$', package_views.add, name='add'),
+        url(r'^packages/save?$', package_views.save, name='save'),
+        url(r'^packages/(?P<packageID>\d+)/delete/?$', package_views.delete,
+            name='delete'),
+
+        url(r'^versions/(?P<versionID>\d+)/toggle/?$',
+            package_views.toggle_version, name='toggle_version'),
+        
         url(r'^products/?$', product_views.products, name='products'),
         url(r'^products/(?P<productID>\d+)/?$', product_views.product, name='product'),
         url(r'^products/add/?$', product_views.add, name='product_add'),

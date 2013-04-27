@@ -244,7 +244,7 @@ class Version(models.Model):
     """
     id = models.AutoField(primary_key=True)
     package = models.ForeignKey(Package, db_column='package',
-            on_delete=models.CASCADE)
+            on_delete=models.CASCADE, related_name='versions')
     product = models.ForeignKey(Product, related_name='versions',
             db_column='product', on_delete=models.CASCADE)
     release = models.TextField()
