@@ -23,7 +23,7 @@ def policy(request, policyID):
 
     context = {}
     context['policies'] = Policy.objects.all().order_by('name')
-    context['title'] = _('Policys')
+    context['title'] = _('Policies')
 
     if policy:
         context['policy'] = policy

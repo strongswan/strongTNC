@@ -37,21 +37,22 @@
           <div class="nav-collapse collapse">
 	  <div class="pull-right">
             <ul class="nav pull-right">
-              <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Welcome, User <b class="caret"></b></a>
+              <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {%trans 'Welcome'%}<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="#"><i class="icon-cog"></i> Preferences</a></li>
-                  <li><a href="#"><i class="icon-envelope"></i> Contact</a></li>
-		  <li><a href='#'><i class="icon-question-sign"></i> Help</a></li>
+                  <li><a href="#"><i class="icon-cog"></i> {%trans 'Preferences' %}</a></li>
+                  <li><a href="#"><i class="icon-envelope"></i> {%trans 'Contact' %}</a></li>
+                  <li><a href='#'><i class="icon-question-sign"></i>{% trans 'Help' %}</a></li>
                   <li class="divider"></li>
-                  <li><a href="#"><i class="icon-off"></i> Logout</a></li>
+                  <li><a href="#"><i class="icon-off"></i>{% trans 'Logout' %}</a></li>
                 </ul>
               </li>
             </ul>
           </div>    
             <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
+              <li class="active"><a href="#">{% trans 'Home' %}</a></li>
+              <li><a href="#about">{% trans 'About' %}</a></li>
+              <li><a href="#contact">{% trans 'Contact' %}</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -65,16 +66,16 @@
             <ul class="nav nav-list">
 	      {% block sidebar %}
 	      <!-- <li class="nav-header">Sidebar</li> -->
-              <li><a href="/overview"><i class="icon-eye-open"></i> Overview</a></li>
-              <li class="nav-header">Configuration</li>
-              <li><a href="/groups"><i class="icon-user"></i> Groups</a></li>
-              <li><a href="/policies"><i class="icon-list-alt"></i> Policies</a></li>
-              <li><a href="/devices"><i class="icon-phone"></i> Devices</a></li>
-              <li class="nav-header">Data Views</li>
-              <li><a href="#"><i class="icon-tasks"></i> Statistics</a></li>
-              <li><a href="/packages"><i class="icon-gift"></i> Packages</a></li>
-              <li><a href="/products"><i class="icon-lock"></i> Products</a></li>
-	      <li><a href="files#"><i class="icon-folder-open"></i> Files</a></li>
+        <li><a href="/overview"><i class="icon-eye-open"></i>{% trans 'Overview' %}</a></li>
+        <li class="nav-header">{% trans 'Configuration' %}</li>
+        <li><a href="/groups"><i class="icon-user"></i>{% trans 'Groups' %}</a></li>
+        <li><a href="/policies"><i class="icon-list-alt"></i >{% trans 'Policies' %}</a></li>
+          <li><a href="/devices"><i class="icon-phone"></i> {% trans 'Devices' %}</a></li>
+          <li class="nav-header">{% trans 'Data Views' %}</li>
+          <li><a href="#"><i class="icon-tasks"></i>{% trans 'Statistics' %}</a></li>
+          <li><a href="/packages"><i class="icon-gift"></i>{% trans 'Packages' %}</a></li>
+          <li><a href="/products"><i class="icon-lock"></i>{% trans 'Products' %}</a></li>
+          <li><a href="files#"><i class="icon-folder-open"></i>{% trans 'Files' %}</a></li>
 	      {% endblock %}
             </ul>
           </div><!--/.well -->
