@@ -54,9 +54,7 @@ def save(request):
         return HttpResponse(status=400)
 
     blacklist = request.POST.get('blacklist')
-    print 'bl post: %s' % blacklist
     blacklist = True if blacklist=='blacklist' else False
-    print 'Blacklist: %s' % blacklist
 
     if packageID == 'None':
         package = Package.objects.create(name=name, blacklist=blacklist)
@@ -88,7 +86,7 @@ def delete(request, packageID):
 def toggle_version(request, versionID):
     version = get_object_or_404(Version, pk=versionID)
     if version.blacklist == None:
-        version.blacklist = 1 if version.package.blacklist == 0 else 1
+        version.blacklist = 1 if version.package.blacklist == 0 else 0
     else:
         version.blacklist = 1 if version.blacklist == 0 else 0
 
