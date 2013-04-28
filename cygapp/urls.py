@@ -12,10 +12,10 @@ urlpatterns = patterns('',
 
         #Management CRUD views
         url(r'^$', views.overview, name='overview'),
+        url(r'^overview/?$', views.overview, name='overview'),
 
         url(r'^login/?$', login_views.login, name='login'),
         
-        url(r'^overviews/?$', views.overview, name='overview'),
 
         url(r'^groups/?$', group_views.groups, name='groups'),
         url(r'^groups/(?P<groupID>\d+)/?$', group_views.group, name='group'),

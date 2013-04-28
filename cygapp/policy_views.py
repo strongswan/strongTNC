@@ -96,8 +96,8 @@ def save(request):
 
     argument = ''
 
-    ranges = request.POST.get('range','')
-    if not check_range(ranges):
+    ranges = request.POST.get('range',None)
+    if (not ranges is None) and not check_range(ranges):
         raise ValueError
     else: argument = ranges
 
@@ -118,7 +118,7 @@ def save(request):
         return HttpResponse(status=400)
 
     if policyID == 'None':
-        policy = Policy.objects.create(name=name, type=type, fail=fail,
+        policy = Policy(name=name, type=type, fail=fail,
                 noresult=noresult, file=file, dir=dir, argument=argument)
     else:
         policy = get_object_or_404(Policy, pk=policyID)

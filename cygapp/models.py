@@ -265,7 +265,7 @@ class Policy(models.Model):
     id = models.AutoField(primary_key=True)
     type = models.IntegerField()
     name = models.CharField(unique=True, max_length=100)
-    argument = models.TextField()
+    argument = models.TextField(null='True')
     fail = models.IntegerField(blank=True)
     noresult = models.IntegerField(blank=True)
     file = models.ForeignKey(File, null=True, blank=True,
