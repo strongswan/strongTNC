@@ -4,6 +4,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from models import Package, Version
 
 @require_GET
@@ -33,6 +34,22 @@ def package(request, packageID):
 
     return render(request, 'cygapp/packages.html', context)
 
+@require_GET
+def listing(request):
+    package_list = Packages.objects.all()
+    paginator = Paginator(package_list, 15) # Show 15 packages per page
+
+    page = request.GET.get('page')
+    try:
+        packages = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        packages = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        packages = paginator.page(paginator.num_pages)
+
+    return render_to_response('packages.html', {"packages": packages})
 
 @require_GET
 def add(request):
