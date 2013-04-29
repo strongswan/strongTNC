@@ -1,0 +1,159 @@
+
+{% extends "cygapp/base.html" %}
+
+{% load i18n %}
+{% block title %}{%trans "Enforcement Management" %}{% endblock %}
+
+{% block hero %}
+<h1>{{ title }}</h1>
+{% endblock %}
+
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span3" style="
+      border-right-width:1px;
+      border-right-style:solid;
+      border-color:black;
+      padding-right:1em;
+      text-align:justify;">
+      <h4>{% trans "Enforcement" %}</h4>
+	<table class="table table-hover">
+    <tbody>
+      <tr><td><a class="btn btn-primary" href="/enforcements/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add Enforcement" %}</a></td></tr>
+      {% for p in enforcements %}
+      <tr><td><a href=/enforcements/{{ p.id }}>{{ p }}</a></td></tr>
+      {% endfor %}
+    </tbody>
+	</table>
+      </div>
+      
+      <div class="span9" id="content">
+    {% if enforcement %}
+	<h4>Enforcement Info</h4>
+  <form class="form-horizontal" method="POST" action="/enforcements/save" id="enforcementform">
+    {% csrf_token %}
+
+    <div class="control-group">
+      <label class="control-label" for="policy">{% trans "Policy" %}</label>
+      <div class="controls">
+        <input type="hidden" name="enforcementId" value="{{enforcement.id}}" />
+        <select name="policy" id="policy">
+          {% for p in policies %}
+          <option value="{{ p.id }}" {% if p.id == enforcement.policy%} selected {% endif %}>
+          {{ p }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <label class="control-label" for="blacklist">{% trans "Blacklisted" %}</label> 
+      <div class="controls">   
+        <input type="checkbox" name="blacklist" value="blacklist" id="blacklist" rel="tooltip"
+        {{enforcement.blacklist|yesno:"checked,"}}/>
+      </div>
+    </div>
+    <hr>
+    
+    <h4>{% trans "Versions:" %}
+      <a class="btn-small" href="#" rel="tooltip"
+      title="{% trans 'All known versions of this enforcement' %}"><i class="icon-info-sign"></i></a>
+    </h4>
+  {% if versions %}
+  <div class="row-fluid">
+    <table id="versions" class="table table-hover">
+      <thead>
+        <tr>
+          <td>Version</td>
+          <td>OS</td>
+          <td>Security</td>
+          <td>Blacklisted</td>
+          <td>Registered on</td>
+          <td>Blacklist</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in versions %}
+        <tr id="version{{ v.id }}">
+          <td>{{v.release}}</td>
+          <td>{{v.product.name}}</td>
+          <!-- TODO: I18n for yesno -->
+          <td>{{v.security|yesno}}</td>
+          <td>{%if v.blacklist ==  None %}
+                {{enforcement.blacklist|yesno:_("Yes,No")}}
+              {%else%}
+              <!-- TODO : Highlight table cell to show override -->
+                {{v.blacklist|yesno:_("Yes,No")}}
+              {%endif%}
+          </td>
+          <td>{{v.time}}</td>
+          <td><a class="btn" onclick="toggle({{v.id}})">TOGGLE</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  {% endif %}
+  </form>
+  
+  <hr>
+
+  <div class="btn-toolbar" style="margin: 0;">
+    <div class="btn-group">
+      <a class="btn btn-success" href="#" onclick="save_enforcement()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
+    </div><!-- /btn-group -->
+  {% if enforcement.id %}
+    <div class="btn-group">
+      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+    </div><!-- /btn-group -->
+  </div><!-- /btn-toolbar-->
+  {% endif %}
+{% endif %}
+
+<div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3 id="deleteModalLabel">Are you sure to delete this enforcement?</h3>
+  </div>
+  <div class="modal-body">
+    <h4>Warning</h4>
+    <p>Are you sure to delete this enforcement?</p>
+  </div>
+  <div class="modal-footer">
+    <a class="btn" data-dismiss="modal">Cancel</a>
+    <a class="btn btn-danger" href="/enforcements/{{enforcement.id}}/delete">Delete enforcement</a>
+  </div>
+</div>
+
+</div><!--content-->
+    </div><!--/row-->
+  </div>
+  <script type="text/javascript">
+    function save_enforcement(){
+      blacklist = $("input:checkbox#blacklist").is(":checked")
+      if (blacklist != {{enforcement.blacklist|yesno:"true,false"}}){
+        $("#saveModal").modal('show')
+      }else{
+        enforcementform.submit()
+      }
+    }
+
+    function toggle(id){
+      $.ajax({
+        url : "/versions/" + id + "/toggle",
+        statusCode: {
+          200 : function(data, status, jqXHR){
+            query = "table#versions > tbody > tr#version" + id + " > td:nth-child(4)"
+            $(query).text(data)
+          },
+        }
+      })
+
+    }
+  </script>
+{% endblock %}
+
+

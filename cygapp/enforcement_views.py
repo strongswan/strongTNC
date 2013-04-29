@@ -4,45 +4,46 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Product, Group, Enforcement
+from models import Product, Group, Enforcement, Policy
 
 @require_GET
 def enforcements(request):
-    return redirect('/policies')
+    context = {}
+    context['enforcements'] = Enforcement.objects.all().order_by('policy')
+    context['title'] = _('Enforcements')
+    
+    return render(request, 'cygapp/enforcements.html', context)
 
 @require_GET
-def enforcement(request, productID):
+def enforcement(request, enforcementID):
     try:
-        product = Product.objects.get(pk=productID)
-    except Product.DoesNotExist:
-        product = None
-        messages.error(request, _('Product not found!'))
+        enforcement = Enforcement.objects.get(pk=enforcementID)
+    except Enforcement.DoesNotExist:
+        enforcement = None
+        messages.error(request, _('Enforcement not found!'))
 
     context = {}
-    context['products'] = Product.objects.all().order_by('name')
-    context['title'] = _('Products')
+    context['enforcements'] = Enforcement.objects.all().order_by('policy')
+    context['title'] = _('Enforcements')
 
-    if product:
-        context['product'] = product
-        defaults = product.default_groups.all().order_by('name')
-        context['defaults'] = defaults
-
-        groups = Group.objects.exclude(id__in = defaults.values_list('id',
-            flat=True))
+    if enforcement:
+        context['enforcement'] = enforcement
+        groups = Group.objects.all().order_by('name')
         context['groups'] = groups
-        context['title'] = _('Product ') + product.name
+        context['title'] = _('Enforcement ') + str(enforcement)
+        context['policies'] = Policy.objects.all().order_by('name')
 
-    return render(request, 'cygapp/products.html', context)
+    return render(request, 'cygapp/enforcements.html', context)
 
 
 @require_GET
 def add(request):
     context = {}
-    context['title'] = _('New product')
+    context['title'] = _('New enforcement')
     context['groups'] = Group.objects.all().order_by('name')
-    context['products'] = Product.objects.all().order_by('name')
-    context['product'] = Product()
-    return render(request, 'cygapp/products.html', context)
+    context['policies'] = Policy.objects.all().order_by('name')
+    context['enforcement'] = Enforcement()
+    return render(request, 'cygapp/enforcements.html', context)
 
 
 @require_POST
