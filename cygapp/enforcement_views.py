@@ -83,13 +83,11 @@ def save(request):
     if not re.match(r'^[0123]$', noresult):
         return HttpResponse(status=400)
 
-
     if enforcementID == 'None':
         enforcement = Enforcement.objects.create(group=group, policy=policy,
                 max_age=max_age, fail=fail, noresult=noresult)
     else:
-        enforcement = get_object_or_404(Product, pk=enforcementID)
-        assert False
+        enforcement = get_object_or_404(Enforcement, pk=enforcementID)
         enforcement.group = group
         enforcement.policy = policy
         enforcement.max_age = max_age

@@ -36,6 +36,7 @@
       <h4>{% trans "Policy Info"%}</h4>
       <form class="form-horizontal" method="POST" action="/policies/save" id="policyform">
         {% csrf_token %}
+        <input type="hidden" name="enforcementId" id="enforcementId" value="{{enforcement.id}}" />
 
         <div class="control-group">
           <label class="control-label" for="id">{% trans "Name" %}</label>
