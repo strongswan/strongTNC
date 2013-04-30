@@ -30,6 +30,7 @@ def enforcement(request, enforcementID):
         context['enforcement'] = enforcement
         groups = Group.objects.all().order_by('name')
         context['groups'] = groups
+        context['actions'] = Policy.action
         context['title'] = _('Enforcement ') + str(enforcement)
         context['policies'] = Policy.objects.all().order_by('name')
 
@@ -42,45 +43,62 @@ def add(request):
     context['title'] = _('New enforcement')
     context['groups'] = Group.objects.all().order_by('name')
     context['policies'] = Policy.objects.all().order_by('name')
-    context['enforcement'] = Enforcement()
+    context['enforcements'] = Enforcement.objects.all().order_by('policy')
+    enforcement = Enforcement()
+    enforcement.max_age = 0
+    context['enforcement'] = enforcement
+    context['actions'] = Policy.action
     return render(request, 'cygapp/enforcements.html', context)
 
 
 @require_POST
 def save(request):
-    productID = request.POST['productId']
-    if not (productID == 'None' or re.match(r'^\d+$', productID)):
+    enforcementID = request.POST['enforcementId']
+    if not (enforcementID == 'None' or re.match(r'^\d+$', enforcementID)):
         return HttpResponse(status=400)
 
-    defaults = []
-    if request.POST['defaultlist'] != '':
-        defaults = request.POST['defaultlist'].split(',')
-
-    for default in defaults:
-        if not re.match(r'^\d+$', default):
-            return HttpResponse(status=400)
-
-    name = request.POST['name']
-    if not re.match(r'^[\S ]+$', name):
+    max_age = request.POST['max_age']
+    if not re.match(r'^\d+$', max_age):
         return HttpResponse(status=400)
 
-    if productID == 'None':
-        product = Product.objects.create(name=name)
+    policyID = request.POST['policy']
+    if not re.match(r'^\d+$', policyID):
+        return HttpResponse(status=400)
+
+    groupID = request.POST['group']
+    if not re.match(r'^\d+$', groupID):
+        return HttpResponse(status=400)
+
+    try:
+        policy = Policy.objects.get(pk=policyID)
+        group = Group.objects.get(pk=groupID)
+    except (Policy.DoesNotExist, Group.DoesNotExist):
+        return HttpResponse(status=400)
+        
+    fail = request.POST['fail']
+    if not re.match(r'^[0123]$', fail):
+        return HttpResponse(status=400)
+
+    noresult = request.POST['noresult']
+    if not re.match(r'^[0123]$', noresult):
+        return HttpResponse(status=400)
+
+
+    if enforcementID == 'None':
+        enforcement = Enforcement.objects.create(group=group, policy=policy,
+                max_age=max_age, fail=fail, noresult=noresult)
     else:
-        product = get_object_or_404(Product, pk=productID)
-        product.name = name
-        product.save()
+        enforcement = get_object_or_404(Product, pk=enforcementID)
+        assert False
+        enforcement.group = group
+        enforcement.policy = policy
+        enforcement.max_age = max_age
+        enforcement.fail = fail
+        enforcement.noresult = noresult
+        enforcement.save()
 
-    if defaults:
-        product.default_groups.clear()
-        defaults = Group.objects.filter(id__in=defaults)
-        for default in defaults:
-            product.default_groups.add(default)
-
-        product.save()
-
-    messages.success(request, _('Product saved!'))
-    return redirect('/products/%d' % product.id)
+    messages.success(request, _('Enforcement saved!'))
+    return redirect('/enforcements/%d' % enforcement.id)
 
 @require_GET
 def delete(request, enforcementID):
