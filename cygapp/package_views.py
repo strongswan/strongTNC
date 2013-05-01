@@ -12,8 +12,8 @@ def packages(request):
     context = {}
     context['title'] = _('Packages')
     context['packages'] = Package.objects.all().order_by('name')
+    
     paginator = Paginator(context['packages'], 50) # Show 50 packages per page
-
     page = request.GET.get('page')
     try:
         packages = paginator.page(page)
@@ -23,8 +23,10 @@ def packages(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         packages = paginator.page(paginator.num_pages)
+    
+    context['packages'] = packages #TODO: noch sehr unschoen
 
-    return render(request, 'cygapp/packages.html', {"packages": packages})
+    return render(request, 'cygapp/packages.html', context)
 
 @require_GET
 def package(request, packageID):

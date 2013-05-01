@@ -29,19 +29,17 @@
 	</table>
 	<div class="pagination pagination-mini pagination-centered">
 	    <ul>
-	      <li>
-		{% if packages.has_previous %}
-		  <a href="?page={{ packages.previous_page_number }}">&laquo;</a>
-		{% endif %}
-	      </li>
-	      <li>
-		<a href="?page={{ packages.number }}">{{ packages.number }}</a> <!-- Page {{ packages.number }} of {{ packages.paginator.num_pages }} -->
-	      </li>
-	      <li>
-	      {% if packages.has_next %}
-		<a href="?page={{ packages.next_page_number }}">&raquo;</a>
+	      {% if packages.has_previous %}
+	      <li><a href="?page={{ packages.previous_page_number }}">&laquo;</a></li>
+	      {% else %}
+	      <li class="disabled"><a href="">&laquo;</a></li>
 	      {% endif %}
-	      </li>
+	      <li><a href="?page={{ packages.number }}">Page {{ packages.number }} of {{ packages.paginator.num_pages }}</a></li> <!-- Page {{ packages.number }} of {{ packages.paginator.num_pages }} -->
+	      {% if packages.has_next %}
+	      <li><a href="?page={{ packages.next_page_number }}">&raquo;</a></li>
+	      {% else %}
+	      <li class="disabled"><a href="">&raquo;</a></li>
+	      {% endif %}
 	    </ul>
 	</div>
       </div>

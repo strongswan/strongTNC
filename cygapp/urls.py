@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import settings
-import group_views, device_views, product_views, policy_views, login_views, page_views
+import group_views, device_views, product_views, policy_views, login_views
 import enforcement_views, package_views, file_views, views
 
 admin.autodiscover()
@@ -16,8 +16,6 @@ urlpatterns = patterns('',
 
         url(r'^login/?$', login_views.login, name='login'),
         
-        url(r'^pages/?$', page_views.pages, name='page'),
-
         url(r'^groups/?$', group_views.groups, name='groups'),
         url(r'^groups/(?P<groupID>\d+)/?$', group_views.group, name='group'),
         url(r'^groups/add/?$', group_views.add, name='add'),
