@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import settings
 import group_views, device_views, product_views, policy_views, login_views
-import enforcement_views, package_views, views
+import enforcement_views, package_views, file_views, views
 
 admin.autodiscover()
 
@@ -31,8 +31,15 @@ urlpatterns = patterns('',
         url(r'^devices/(?P<deviceID>\d+)/delete/?$', device_views.delete,
             name='delete'),
 
+        url(r'^files/?$', file_views.files, name='files'),
+        url(r'^files/(?P<fileID>\d+)/?$', file_views.file, name='file'),
+        url(r'^files/add/?$', file_views.add, name='add'),
+        url(r'^files/save?$', file_views.save, name='save'),
+        url(r'^files/(?P<fileID>\d+)/delete/?$', file_views.delete,
+            name='delete'),
+
         url(r'^packages/?$', package_views.packages, name='packages'),
-        url(r'^packages/(?P<packageID>\d+)/?$', package_views.package, name='policy'),
+        url(r'^packages/(?P<packageID>\d+)/?$', package_views.package, name='package'),
         url(r'^packages/add/?$', package_views.add, name='add'),
         url(r'^packages/save?$', package_views.save, name='save'),
         url(r'^packages/(?P<packageID>\d+)/delete/?$', package_views.delete,
