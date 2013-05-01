@@ -16,7 +16,7 @@ urlpatterns = patterns('',
 
         url(r'^login/?$', login_views.login, name='login'),
         
-        url(r'^pages/?$', page_views.listing, name='page'),
+        url(r'^pages/?$', page_views.pages, name='page'),
 
         url(r'^groups/?$', group_views.groups, name='groups'),
         url(r'^groups/(?P<groupID>\d+)/?$', group_views.group, name='group'),

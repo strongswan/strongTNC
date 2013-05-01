@@ -11,8 +11,20 @@ from models import Package, Version
 def packages(request):
     context = {}
     context['title'] = _('Packages')
-    context['packages'] = Package.objects.all().order_by('name')[:10]
-    return render(request, 'cygapp/packages.html', context)
+    context['packages'] = Package.objects.all().order_by('name')
+    paginator = Paginator(context['packages'], 50) # Show 50 packages per page
+
+    page = request.GET.get('page')
+    try:
+        packages = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        packages = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        packages = paginator.page(paginator.num_pages)
+
+    return render(request, 'cygapp/packages.html', {"packages": packages})
 
 @require_GET
 def package(request, packageID):
@@ -23,7 +35,7 @@ def package(request, packageID):
         messages.error(request, _('Package not found!'))
 
     context = {}
-    context['packages'] = Package.objects.all().order_by('name')[:10]
+    context['packages'] = Package.objects.all().order_by('name')[:50]
     context['title'] = _('Packages')
 
     if package:
@@ -38,7 +50,7 @@ def package(request, packageID):
 def add(request):
     context = {}
     context['title'] = _('New package')
-    context['packages'] = Package.objects.all().order_by('name')[:10]
+    context['packages'] = Package.objects.all().order_by('name')[:50]
     context['package'] = Package()
     return render(request, 'cygapp/packages.html', context)
 
