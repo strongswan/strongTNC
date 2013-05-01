@@ -20,34 +20,13 @@
       text-align:justify;">
       <h4>{% trans "Package" %}</h4>
 	<table class="table table-hover">
-	  <tbody>
-	    <tr><td><a class="btn btn-primary" href="/packages/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add Package" %}</a></td></tr>
-	    <form class="navbar-search pull-left">
-	      <input type="text" class="input-small search-query" placeholder="Search">
-	    </form>
-	    {% for p in packages %}
-	    <tr><td><a href=/packages/{{ p.id }}>{{ p }}</a></td></tr>
-	    {% endfor %}
-	  </tbody>
+    <tbody>
+      <tr><td><a class="btn btn-primary" href="/packages/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add Package" %}</a></td></tr>
+      {% for p in packages %}
+      <tr><td><a href=/packages/{{ p.id }}>{{ p }}</a></td></tr>
+      {% endfor %}
+    </tbody>
 	</table>
-	<div class="pagination pagination-mini pagination-centered">
-	  <ul>
-	    {% if packages.has_previous %}
-	    <li><a href="?page={{ packages.previous_page_number }}">&laquo;</a></li>
-	    <li><a href="?page={{ packages.previous_page_number }}">{{ packages.previous_page_number }}</a></li>
-	    {% else %}
-	    <li class="disabled"><a href="?page={{ packages.previous_page_number }}">&laquo;</a></li>
-	  {% endif %}
-	    <li class="active"><a href="#">1</a></li>
-	    {% if packages.has_next %}
-	    <li><a href="?page={{ packages.next_page_number }}">{{ packages.next_page_number }}</a></li>
-	    <li><a href="?page={{ packages.next_page_number }}">&raquo;</a></li>
-	    {% else %}
-	    <li class="disabled"><a href="?page={{ packages.next_page_number }}">&raquo;</a></li>
-	    {% endif %}
-	  </ul>
-	</div>
-
       </div>
       
       <div class="span9" id="content">
