@@ -73,10 +73,10 @@ class Device(models.Model):
 
     def is_due_for(self, enforcement):
         try:
-            last_meas = Measurement.objects.filter(device=self).latest('time')
-            result = Result.objects.get(measurement=last_meas,
+            last_meas = Session.objects.filter(device=self).latest('time')
+            result = Result.objects.get(session=last_meas,
                     policy=enforcement.policy)
-        except Measurement.DoesNotExist:
+        except Session.DoesNotExist:
             return True
         except Result.DoesNotExist:
             return True
@@ -89,7 +89,7 @@ class Device(models.Model):
 
         return False
 
-    def create_work_items(self, measurement):
+    def create_work_items(self, session):
 
         groups = self.get_group_set()
         enforcements = []
@@ -110,7 +110,7 @@ class Device(models.Model):
 
         for enforcement in minforcements:
             if self.is_due_for(enforcement):
-                enforcement.policy.create_work_item(enforcement, measurement)
+                enforcement.policy.create_work_item(enforcement, session)
 
         return groups
 
@@ -274,14 +274,14 @@ class Policy(models.Model):
     dir = models.ForeignKey(Directory, null=True, blank=True,
             related_name='policies', on_delete=models.PROTECT, db_column='dir')
 
-    def create_work_item(self, enforcement, measurement):
+    def create_work_item(self, enforcement, session):
         item = WorkItem()
         item.result = None
         item.type = self.type
         item.recommendation = None
         item.argument = self.argument
         item.enforcement = enforcement
-        item.measurement = measurement
+        item.session = session
         
         item.fail = self.fail
         if enforcement.fail is not None:
@@ -362,25 +362,25 @@ class Identity(models.Model):
     class Meta:
         db_table = u'identities'
 
-class Measurement(models.Model):
-    """Result of a TNC measurement."""
+class Session(models.Model):
+    """Result of a TNC session."""
     id = models.AutoField(primary_key=True)
     connectionID = models.IntegerField()
-    device = models.ForeignKey(Device, related_name='measurements',
+    device = models.ForeignKey(Device, related_name='sessions',
         on_delete=models.CASCADE, db_column='device')
-    identity = models.ForeignKey(Identity, related_name='measurements',
+    identity = models.ForeignKey(Identity, related_name='sessions',
             on_delete=models.CASCADE, db_column='identity')
     time = models.DateTimeField()
     recommendation = models.IntegerField(null=True)
 
     class Meta:
-        db_table = u'measurements'
+        db_table = u'sessions'
 
 class WorkItem(models.Model):
     id = models.AutoField(primary_key=True)
     enforcement = models.ForeignKey(Enforcement, on_delete=models.CASCADE,
             db_column='enforcement')
-    measurement = models.ForeignKey(Measurement, db_column='measurement',
+    session = models.ForeignKey(Session, db_column='session',
             related_name='workitems', on_delete=models.CASCADE)
     type = models.IntegerField(null=False, blank=False)
     argument = models.TextField()
@@ -394,7 +394,7 @@ class WorkItem(models.Model):
 
 class Result(models.Model):
     id = models.AutoField(primary_key=True)
-    measurement = models.ForeignKey(Measurement, db_column='measurement',
+    session = models.ForeignKey(Session, db_column='session',
             on_delete=models.CASCADE)
     policy = models.ForeignKey(Policy, db_column='policy',
             on_delete=models.CASCADE)

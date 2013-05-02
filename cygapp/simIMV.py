@@ -1,8 +1,8 @@
 import httplib,random
 import models as m
 
-start_url = '/cmd/start_measurement'
-end_url  = '/cmd/end_measurement'
+start_url = '/cmd/start_session'
+end_url  = '/cmd/end_session'
 
 def start_login(params):
     """Call start url to invoke cygnet workItem generation."""
@@ -43,22 +43,22 @@ def run_test():
         params = dict()
         params['connectionID'] = 314159
         params['deviceID'] = 'deadbeef'
-        params['OSVersion'] = 'Ubuntu%2012.04'
-        params['ar_id'] = 'tannerli'
+        params['osVersion'] = 'Ubuntu%2012.04'
+        params['arID'] = 'tannerli'
 
         start_login(params)
 
         #Simulate IMV, generate some random results
         device = m.Device.objects.get(value=params['deviceID'])
-        measurement = m.Measurement.objects.get(connectionID=params['connectionID'],
+        session = m.Session.objects.get(connectionID=params['connectionID'],
                 device=device)
         
-        for item in measurement.workitems.all():
+        for item in session.workitems.all():
             item.error = random.randint(0,1)
             item.recommendation = random.choice((item.fail, item.default))
             item.save()
 
         finish_login(params)
 
-        measurement.delete()
+        session.delete()
 

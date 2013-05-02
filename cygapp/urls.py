@@ -72,11 +72,11 @@ urlpatterns = patterns('',
             name='delete'),
         
         #IMV API patterns
-        url(r'^cmd/start_measurement/?$', views.start_measurement,
-            name='start_measurement'),
+        url(r'^cmd/start_session/?$', views.start_session,
+            name='start_session'),
 
-        url(r'^cmd/end_measurement/?$', views.end_measurement,
-            name='end_measurement'),
+        url(r'^cmd/end_session/?$', views.end_session,
+            name='end_session'),
 
         #==============================================
 

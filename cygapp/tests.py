@@ -6,7 +6,7 @@ Unit tests for the django app cygnet are specified in this file
 
 from django.test import TestCase
 from datetime import datetime, timedelta
-from cygapp.models import (File, WorkItem, Device, Group, Product, Measurement,
+from cygapp.models import (File, WorkItem, Device, Group, Product, Session,
     Policy, Enforcement, Action, Package, Directory, Version, Identity, Result)
 from views import generate_results
 from policy_views import check_range
@@ -80,16 +80,16 @@ class cygappTest(TestCase):
         
         device = Device.objects.get(value='def')
 
-        measurement = Measurement()
-        measurement.device = device
-        measurement.time = datetime.today()
-        measurement.connectionID = 123
-        measurement.identity = user
-        measurement.save()
+        session = Session()
+        session.device = device
+        session.time = datetime.today()
+        session.connectionID = 123
+        session.identity = user
+        session.save()
 
-        device.create_work_items(measurement)
+        device.create_work_items(session)
 
-        items = WorkItem.objects.filter(measurement=measurement)
+        items = WorkItem.objects.filter(session=session)
         self.assertEqual(2, len(items))
 
         item = items[0]
@@ -134,17 +134,17 @@ class cygappTest(TestCase):
         
         device = Device.objects.get(value='def')
 
-        measurement = Measurement.objects.create(device=device,
+        session = Session.objects.create(device=device,
                 time=datetime.today(), connectionID=123, identity=user)
 
-        device.create_work_items(measurement)
+        device.create_work_items(session)
 
-        item = WorkItem.objects.get(measurement=measurement, enforcement=e1)
+        item = WorkItem.objects.get(session=session, enforcement=e1)
         self.assertEqual(3, item.fail)
         self.assertEqual(0, item.noresult)
 
         
-        item = WorkItem.objects.get(measurement=measurement, enforcement=e2)
+        item = WorkItem.objects.get(session=session, enforcement=e2)
         self.assertEqual(3, item.fail)
         self.assertEqual(0, item.noresult)
 
@@ -156,16 +156,16 @@ class cygappTest(TestCase):
         device = Device.objects.get(value='def')
         e = Enforcement.objects.create(group=g, policy=p, max_age=2)
 
-        #No Measurement yet
+        #No Session yet
         self.assertEqual(True, device.is_due_for(e))
 
-        #Measurement yields no results for policy
-        meas = Measurement.objects.create(device=device, time=datetime.today(),
+        #Session yields no results for policy
+        meas = Session.objects.create(device=device, time=datetime.today(),
                 connectionID=123, identity=user)
         self.assertEqual(True, device.is_due_for(e))
 
-        #Measurement is too old
-        Result.objects.create(policy=p, measurement=meas, result='OK',
+        #Session is too old
+        Result.objects.create(policy=p, session=meas, result='OK',
                 recommendation = Action.ALLOW)
 
         meas.time -= timedelta(days=4)
@@ -195,23 +195,23 @@ class cygappTest(TestCase):
 
         device = Device.objects.get(value='def')
         user = Identity.objects.create(data='foobar')
-        measurement = Measurement.objects.create(device=device,
+        session = Session.objects.create(device=device,
                 time=datetime.today(), connectionID=123, identity=user)
         
-        WorkItem.objects.create(measurement=measurement, argument='asdf',
+        WorkItem.objects.create(session=session, argument='asdf',
                 fail=3, noresult=0, result='OK', recommendation=0, enforcement=e1,
                 type=1)
-        WorkItem.objects.create(measurement=measurement, argument='blubber',
+        WorkItem.objects.create(session=session, argument='blubber',
                 fail=3, noresult=0, result='FAIL', recommendation=3, enforcement=e2,
                 type=2)
 
-        generate_results(measurement)
+        generate_results(session)
 
-        result = Result.objects.get(measurement=measurement, policy=p1)
+        result = Result.objects.get(session=session, policy=p1)
         self.assertEqual('OK', result.result)
         self.assertEqual(0, result.recommendation)
 
-        result = Result.objects.get(measurement=measurement, policy=p2)
+        result = Result.objects.get(session=session, policy=p2)
         self.assertEqual('FAIL', result.result)
         self.assertEqual(3, result.recommendation)
 

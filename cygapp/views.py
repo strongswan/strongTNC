@@ -3,19 +3,14 @@ from datetime import datetime
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_safe
 from django.shortcuts import render
-from models import Measurement, Device, Product, Identity, Result, Action
-
-@require_GET
-def index(request):
-    answer='Select view:<br/><a href=./files>Files</a>'
-    return HttpResponse(answer)
+from models import Session, Device, Product, Identity, Result, Action
 
 @require_GET
 def overview(request):
     return render(request, 'cygapp/overview.html')
 
 @require_safe
-def start_measurement(request):
+def start_session(request):
     deviceID = request.GET.get('deviceID', '')
     if not re.match(r'^[a-f0-9]+$', deviceID):
         return HttpResponse(status=400)
@@ -45,42 +40,42 @@ def start_measurement(request):
 
     id = Identity.objects.get_or_create(data=arID)[0]
 
-    measurement = Measurement.objects.create(time=datetime.today(), identity=id,
+    session = Session.objects.create(time=datetime.today(), identity=id,
             device=device, connectionID=connectionID)
-    device.create_work_items(measurement)
+    device.create_work_items(session)
 
     return HttpResponse(content=None)
 
 #NOT a view, does not need a decorator
-def generate_results(measurement):
-    workitems = measurement.workitems.all()
+def generate_results(session):
+    workitems = session.workitems.all()
 
     for item in workitems:
-        Result.objects.create(result=item.result, measurement=measurement,
+        Result.objects.create(result=item.result, session=session,
                 policy=item.enforcement.policy,
                 recommendation=item.recommendation)
 
         if workitems:
-            measurement.recommendation = max(workitems, key = lambda x:
+            session.recommendation = max(workitems, key = lambda x:
                     x.recommendation)
     else:
-        measurement.recommendation = Action.ALLOW
+        session.recommendation = Action.ALLOW
 
     for item in workitems:
         item.delete()
 
 @require_safe
-def end_measurement(request):
+def end_session(request):
     deviceID = request.GET.get('deviceID', '')
     connectionID = request.GET.get('connectionID', '')
 
     try:
-        measurement = Measurement.objects.get(device__value=deviceID,
+        session = Session.objects.get(device__value=deviceID,
                 connectionID=connectionID) 
-    except Measurement.DoesNotExist:
+    except Session.DoesNotExist:
         return HttpResponse(status=404)
 
-    generate_results(measurement)
+    generate_results(session)
 
     return HttpResponse(status=200)
 
