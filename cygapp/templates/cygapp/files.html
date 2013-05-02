@@ -36,6 +36,15 @@
     {% csrf_token %}
 
     <div class="control-group">
+      <label class="control-label" for="description">{% trans "Directory" %}</label> 
+      <div class="controls">   
+        <input type="text" id="directory" name="directory"
+          placeholder="{% trans 'Directory'%}" rel="tooltip" title="{% trans 'Directory Name' %}""
+          value="{{ file.directory }}">
+      </div>
+    </div>
+    
+    <div class="control-group">
       <label class="control-label" for="id">{% trans "Name" %}</label>
       <div class="controls">
         <input type="hidden" name="packageId" value="{{file.id}}" />
