@@ -26,167 +26,167 @@
 	  </a>
 	</div>
       </h4>
-	<table class="table table-hover">
-    <tbody>
-      {% for p in packages %}
-      <tr><td><a href=/packages/{{ p.id }}>{{ p }}</a></td></tr>
-      {% endfor %}
-    </tbody>
-	</table>
-	<div class="pagination pagination-mini pagination-centered">
-	    <ul>
-	      {% if packages.has_previous %}
-	      <li><a href="?page={{ packages.previous_page_number }}">&laquo;</a></li>
-	      {% else %}
-	      <li class="disabled"><a href="">&laquo;</a></li>
-	      {% endif %}
-	      <li><a href="?page={{ packages.number }}">Page {{ packages.number }} of {{ packages.paginator.num_pages }}</a></li> <!-- Page {{ packages.number }} of {{ packages.paginator.num_pages }} -->
-	      {% if packages.has_next %}
-	      <li><a href="?page={{ packages.next_page_number }}">&raquo;</a></li>
-	      {% else %}
-	      <li class="disabled"><a href="">&raquo;</a></li>
-	      {% endif %}
-	    </ul>
+      <hr>
+      <div class="pagination pagination-mini pagination-centered">
+	  <ul>
+	    {% if packages.has_previous %}
+	    <li><a href="?page={{ packages.previous_page_number }}">&laquo;</a></li>
+	    {% else %}
+	    <li class="disabled"><a href="">&laquo;</a></li>
+	    {% endif %}
+	    <li><a href="?page={{ packages.number }}">Page {{ packages.number }} of {{ packages.paginator.num_pages }}</a></li> <!-- Page {{ packages.number }} of {{ packages.paginator.num_pages }} -->
+	    {% if packages.has_next %}
+	    <li><a href="?page={{ packages.next_page_number }}">&raquo;</a></li>
+	    {% else %}
+	    <li class="disabled"><a href="">&raquo;</a></li>
+	    {% endif %}
+	  </ul>
+      </div>
+      <table class="table table-hover">
+	<tbody>
+	{% for p in packages %}
+	  <tr><td><a href=/packages/{{ p.id }}>{{ p }}</a></td></tr>
+	{% endfor %}
+	</tbody>
+      </table>
+    </div>
+      
+    <div class="span9" id="content">
+      {% if package %}
+      <h4>Package Info</h4>
+      <form class="form-horizontal" method="POST" action="/packages/save" id="packageform">
+      {% csrf_token %}
+
+      <div class="control-group">
+	<label class="control-label" for="id">{% trans "Name" %}</label>
+	<div class="controls">
+	  <input type="hidden" name="packageId" value="{{package.id}}" />
+	  <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}" rel="tooltip"
+	  title="{% trans 'Package Name' %}"
+	  value="{{ package.name }}">
 	</div>
       </div>
       
-      <div class="span9" id="content">
-    {% if package %}
-	<h4>Package Info</h4>
-  <form class="form-horizontal" method="POST" action="/packages/save" id="packageform">
-    {% csrf_token %}
-
-    <div class="control-group">
-      <label class="control-label" for="id">{% trans "Name" %}</label>
-      <div class="controls">
-        <input type="hidden" name="packageId" value="{{package.id}}" />
-        <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}" rel="tooltip"
-        title="{% trans 'Package Name' %}"
-        value="{{ package.name }}">
+      <div class="control-group">
+	<label class="control-label" for="blacklist">{% trans "Blacklisted" %}</label> 
+	<div class="controls">   
+	  <input type="checkbox" name="blacklist" value="blacklist" id="blacklist" rel="tooltip"
+	  {{package.blacklist|yesno:"checked,"}}/>
+	</div>
       </div>
-    </div>
-    
-    <div class="control-group">
-      <label class="control-label" for="blacklist">{% trans "Blacklisted" %}</label> 
-      <div class="controls">   
-        <input type="checkbox" name="blacklist" value="blacklist" id="blacklist" rel="tooltip"
-        {{package.blacklist|yesno:"checked,"}}/>
+      <hr>
+      
+      <h4>{% trans "Versions:" %}
+	<a class="btn-small" href="#" rel="tooltip"
+	title="{% trans 'All known versions of this package' %}"><i class="icon-info-sign"></i></a>
+      </h4>
+      {% if versions %}
+      <div class="row-fluid">
+	<table id="versions" class="table table-hover table-striped">
+	  <thead>
+	    <tr>
+	      <td>{% trans 'Version' %}</td>
+	      <td>{% trans 'OS' %}</td>
+	      <td>{% trans 'Security' %}</td>
+	      <td>{% trans 'Blacklisted' %}</td>
+	      <td>{% trans 'Registered on' %}</td>
+	      <td>{% trans 'Blacklist' %}</td>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    {% for v in versions %}
+	    <tr id="version{{ v.id }}">
+	      <td>{{v.release}}</td>
+	      <td>{{v.product.name}}</td>
+	      <!-- TODO: I18n for yesno -->
+	      <td>{{v.security|yesno}}</td>
+	      <td>{%if v.blacklist ==  None %}
+		    {{package.blacklist|yesno:_("Yes,No")}}
+		  {%else%}
+		  <!-- TODO : Highlight table cell to show override -->
+		    {{v.blacklist|yesno:_("Yes,No")}}
+		  {%endif%}
+	      </td>
+	      <td>{{v.time}}</td>
+	      <td><a class="btn" onclick="toggle({{v.id}})">TOGGLE</a></td>
+	    </tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
+	</div>
+      {% endif %}
+      </form>
+
+      <hr>
+
+      <div class="btn-toolbar" style="margin: 0;">
+	<div class="btn-group">
+	  <a class="btn btn-success" href="#" onclick="save_package()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
+	</div><!-- /btn-group -->
+      {% if package.id %}
+	<div class="btn-group">
+	  <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+	</div><!-- /btn-group -->
+      </div><!-- /btn-toolbar-->
+      {% endif %}
+    {% endif %}
+
+      <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-header">
+	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	  <h3 id="deleteModalLabel">Are you sure to delete this package?</h3>
+	</div>
+	<div class="modal-body">
+	  <h4>Warning</h4>
+	  <p>Are you sure to delete this package?</p>
+	</div>
+	<div class="modal-footer">
+	  <a class="btn" data-dismiss="modal">Cancel</a>
+	  <a class="btn btn-danger" href="/packages/{{package.id}}/delete">Delete package</a>
+	</div>
       </div>
-    </div>
-    <hr>
-    
-    <h4>{% trans "Versions:" %}
-      <a class="btn-small" href="#" rel="tooltip"
-      title="{% trans 'All known versions of this package' %}"><i class="icon-info-sign"></i></a>
-    </h4>
-  {% if versions %}
-  <div class="row-fluid">
-    <table id="versions" class="table table-hover table-striped">
-      <thead>
-        <tr>
-          <td>{% trans 'Version' %}</td>
-          <td>{% trans 'OS' %}</td>
-          <td>{% trans 'Security' %}</td>
-          <td>{% trans 'Blacklisted' %}</td>
-          <td>{% trans 'Registered on' %}</td>
-          <td>{% trans 'Blacklist' %}</td>
-        </tr>
-      </thead>
-      <tbody>
-        {% for v in versions %}
-        <tr id="version{{ v.id }}">
-          <td>{{v.release}}</td>
-          <td>{{v.product.name}}</td>
-          <!-- TODO: I18n for yesno -->
-          <td>{{v.security|yesno}}</td>
-          <td>{%if v.blacklist ==  None %}
-                {{package.blacklist|yesno:_("Yes,No")}}
-              {%else%}
-              <!-- TODO : Highlight table cell to show override -->
-                {{v.blacklist|yesno:_("Yes,No")}}
-              {%endif%}
-          </td>
-          <td>{{v.time}}</td>
-          <td><a class="btn" onclick="toggle({{v.id}})">TOGGLE</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    </div>
-  {% endif %}
-  </form>
-  
-  <hr>
-
-  <div class="btn-toolbar" style="margin: 0;">
-    <div class="btn-group">
-      <a class="btn btn-success" href="#" onclick="save_package()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
-    </div><!-- /btn-group -->
-  {% if package.id %}
-    <div class="btn-group">
-      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
-    </div><!-- /btn-group -->
-  </div><!-- /btn-toolbar-->
-  {% endif %}
-{% endif %}
-
-<div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3 id="deleteModalLabel">Are you sure to delete this package?</h3>
-  </div>
-  <div class="modal-body">
-    <h4>Warning</h4>
-    <p>Are you sure to delete this package?</p>
-  </div>
-  <div class="modal-footer">
-    <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-danger" href="/packages/{{package.id}}/delete">Delete package</a>
-  </div>
-</div>
-
-<div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3 id="deleteModalLabel">Update packge</h3>
-  </div>
-  <div class="modal-body">
-    <h4>Warning</h4>
-    <p>You have changed the package's blacklist state, if you continue, this will override all
-    custom blacklist settings you may have made on this package's versions</p>
-  </div>
-  <div class="modal-footer">
-    <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-success" onclick="packageform.submit()" >Continue</a>
-  </div>
-</div>
-
-</div><!--content-->
-    </div><!--/row-->
-  </div>
-  <script type="text/javascript">
-    function save_package(){
-      blacklist = $("input:checkbox#blacklist").is(":checked")
-      if (blacklist != {{package.blacklist|yesno:"true,false"}}){
-        $("#saveModal").modal('show')
-      }else{
-        packageform.submit()
-      }
-    }
-
-    function toggle(id){
-      $.ajax({
-        url : "/versions/" + id + "/toggle",
-        statusCode: {
-          200 : function(data, status, jqXHR){
-            query = "table#versions > tbody > tr#version" + id + " > td:nth-child(4)"
-            $(query).text(data)
-          },
-        }
-      })
-
-    }
-  </script>
-{% endblock %}
-
-
+      
+      <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-header">
+	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	  <h3 id="deleteModalLabel">Update packge</h3>
+	</div>
+	<div class="modal-body">
+	  <h4>Warning</h4>
+	  <p>You have changed the package's blacklist state, if you continue, this will override all
+	  custom blacklist settings you may have made on this package's versions</p>
+	</div>
+	<div class="modal-footer">
+	  <a class="btn" data-dismiss="modal">Cancel</a>
+	  <a class="btn btn-success" onclick="packageform.submit()" >Continue</a>
+	</div>
+      </div>
+      
+      </div><!--content-->
+	  </div><!--/row-->
+	</div>
+	<script type="text/javascript">
+	  function save_package(){
+	    blacklist = $("input:checkbox#blacklist").is(":checked")
+	    if (blacklist != {{package.blacklist|yesno:"true,false"}}){
+	      $("#saveModal").modal('show')
+	    }else{
+	      packageform.submit()
+	    }
+	  }
+      
+	  function toggle(id){
+	    $.ajax({
+	      url : "/versions/" + id + "/toggle",
+	      statusCode: {
+		200 : function(data, status, jqXHR){
+		  query = "table#versions > tbody > tr#version" + id + " > td:nth-child(4)"
+		  $(query).text(data)
+		},
+	      }
+	    })
+      
+	  }
+	</script>
+      {% endblock %}
+      
