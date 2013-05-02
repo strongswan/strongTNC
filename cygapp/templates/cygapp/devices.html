@@ -18,10 +18,16 @@
       border-color:black;
       padding-right:1em;
       text-align:justify;">
-      <h4>{% trans "Device" %}</h4>
+      <h4>{% trans "Device" %}
+	<div class="pull-right">
+	  <a class="btn btn-primary btn-mini" href="/devices/add"
+	  value="addNew" rel="tooltip" title="add new">
+	    <i class="icon-plus-sign icon-white"></i>
+	  </a>
+	</div>
+      </h4>
 	<table class="table table-hover">
     <tbody>
-      <tr><td><a class="btn btn-primary" href="/devices/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add Device" %}</a></td></tr>
       {% for d in devices %}
       <tr><td><a href=/devices/{{ d.id }}>{{ d }}</a></td></tr>
       {% endfor %}

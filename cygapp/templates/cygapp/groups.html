@@ -17,13 +17,16 @@
       border-color:black;
       padding-right:1em;
       text-align:justify;">
-	<h4>Group</h4>
-  <a class="btn btn-primary" href="/groups/add">
-    <i class="icon-plus-sign icon-white"></i>
-    {% trans "Add Group" %}
-  </a>
-  {{grouptree|safe}}
-  </div>
+	<h4>Group
+	  <div class="pull-right">
+	    <a class="btn btn-primary btn-mini" href="/groups/add"
+	    value="addNew" rel="tooltip" title="add new">
+	      <i class="icon-plus-sign icon-white"></i>
+	    </a>
+	  </div>
+	</h4>
+	{{grouptree|safe}}
+      </div>
       
   <div class="span9" id="content">
     {% if group %}

@@ -18,10 +18,16 @@
       border-color:black;
       padding-right:1em;
       text-align:justify;">
-      <h4>{% trans "Package" %}</h4>
+      <h4>{% trans "Package" %}
+	<div class="pull-right">
+	  <a class="btn btn-primary btn-mini" href="/packages/add"
+	  value="addNew" rel="tooltip" title="add new">
+	    <i class="icon-plus-sign icon-white"></i>
+	  </a>
+	</div>
+      </h4>
 	<table class="table table-hover">
     <tbody>
-      <tr><td><a class="btn btn-primary" href="/packages/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add Package" %}</a></td></tr>
       {% for p in packages %}
       <tr><td><a href=/packages/{{ p.id }}>{{ p }}</a></td></tr>
       {% endfor %}
@@ -78,12 +84,12 @@
     <table id="versions" class="table table-hover">
       <thead>
         <tr>
-          <td>Version</td>
-          <td>OS</td>
-          <td>Security</td>
-          <td>Blacklisted</td>
-          <td>Registered on</td>
-          <td>Blacklist</td>
+          <td>{% trans 'Version' %}</td>
+          <td>{% trans 'OS' %}</td>
+          <td>{% trans 'Security' %}</td>
+          <td>{% trans 'Blacklisted' %}</td>
+          <td>{% trans 'Registered on' %}</td>
+          <td>{% trans 'Blacklist' %}</td>
         </tr>
       </thead>
       <tbody>

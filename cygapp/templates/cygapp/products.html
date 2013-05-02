@@ -19,11 +19,16 @@
       border-color:black;
       padding-right:1em;
       text-align:justify;">
-      <h4>{% trans "Product" %}</h4>
+      <h4>{% trans "Product" %}
+        <div class="pull-right">
+          <a class="btn btn-primary btn-mini" href="/products/add"
+          value="addNew" rel="tooltip" title="add new">
+            <i class="icon-plus-sign icon-white"></i>
+          </a>
+        </div>
+      </h4>
       <table class="table table-hover">
         <tbody>
-          <tr><td><a class="btn btn-primary" href="/products/add"><i class="icon-plus-sign
-                  icon-white"></i> {% trans "Add Product" %}</a></td></tr>
           {% for p in products %}
           <tr><td><a href=/products/{{ p.id }}>{{ p }}</a></td></tr>
           {% endfor %}

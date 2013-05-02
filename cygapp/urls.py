@@ -32,9 +32,11 @@ urlpatterns = patterns('',
 
         url(r'^files/?$', file_views.files, name='files'),
         url(r'^files/(?P<fileID>\d+)/?$', file_views.file, name='file'),
-        url(r'^files/add/?$', file_views.add, name='add'),
         url(r'^files/save?$', file_views.save, name='save'),
         url(r'^files/(?P<fileID>\d+)/delete/?$', file_views.delete,
+            name='delete'),
+
+        url(r'^file_hashes/(?P<file_hashID>\d+)/delete/?$', file_views.deleteHash,
             name='delete'),
 
         url(r'^packages/?$', package_views.packages, name='packages'),

@@ -4,7 +4,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import File
+from models import File, FileHash
 
 @require_GET
 def files(request):
@@ -27,18 +27,11 @@ def file(request,fileID):
 
     if file:
         context['file'] = file
-        context['title'] = _('File ') + file.name
+        context['title'] = _('File ') + file.name        
+        file_hashes = file.hashes.all().order_by('algorithm')
+        context['file_hashes'] = file_hashes
 
     return render(request, 'cygapp/files.html', context)
-
-@require_GET
-def add(request):
-    context = {}
-    context['title'] = _('New file')
-    context['files'] = File.objects.all().order_by('name')
-    context['file'] = File()
-    return render(request, 'cygapp/files.html', context)
-
 
 @require_POST
 def save(request):
@@ -59,4 +52,12 @@ def delete(request, fileID):
     file.delete()
 
     messages.success(request, _('File deleted!'))
+    return redirect('/files')
+
+@require_GET
+def deleteHash(request, file_hashID):
+    file_hash = get_object_or_404(FileHash, pk=file_hashID)
+    file_hash.delete()
+
+    messages.success(request, _('Hash deleted!'))
     return redirect('/files')

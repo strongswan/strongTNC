@@ -64,7 +64,6 @@
         <div class="span2">
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
-	      {% block sidebar %}
 	      <!-- <li class="nav-header">Sidebar</li> -->
 	      <li{% if request.path == '/overview' %} class="active"{% endif %}><a href="/overview"><i class="icon-eye-open"></i> {% trans 'Overview' %}</a></li>
 	      <li class="nav-header">{% trans 'Configuration' %}</li>
@@ -77,7 +76,6 @@
 	      <li{% if request.path == '/packages' %} class="active"{% endif %}><a href="/packages"><i class="icon-gift"></i> {% trans 'Packages' %}</a></li>
               <li{% if request.path == '/products' %} class="active"{% endif %}><a href="/products"><i class="icon-lock"></i> {% trans 'Products' %}</a></li>
               <li{% if request.path == '/files' %} class="active"{% endif %}><a href="/files"><i class="icon-folder-open"></i> {% trans 'Files' %}</a></li>
-	      {% endblock %}
             </ul>
           </div><!--/.well -->
         </div><!--/span-->

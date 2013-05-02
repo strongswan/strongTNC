@@ -20,54 +20,65 @@
       text-align:justify;">
       <h4>{% trans "File" %}</h4>
 	<table class="table table-hover">
-    <tbody>
-      <tr><td><a class="btn btn-primary" href="/files/add"><i class="icon-plus-sign icon-white"></i> {% trans "Add File" %}</a></td></tr>
-      {% for f in files %}
-      <tr><td><a href=/files/{{ f.id }}>{{ f }}</a></td></tr>
-      {% endfor %}
-    </tbody>
+	  <tbody>
+	    {% for f in files %}
+	    <tr><td><a href=/files/{{ f.id }}>{{ f }}</a></td></tr>
+	    {% endfor %}
+	  </tbody>
 	</table>
       </div>
       
       <div class="span9" id="content">
-    {% if file %}
+	{% if file %}
 	<h4>File Info</h4>
-  <form class="form-horizontal" method="POST" action="/files/save" id="fileform">
-    {% csrf_token %}
+	<form class="form-horizontal" method="POST" action="/files/save" id="fileform">
+	  {% csrf_token %}
 
-    <div class="control-group">
-      <label class="control-label" for="description">{% trans "Directory" %}</label> 
-      <div class="controls">   
-        <input type="text" id="directory" name="directory"
-          placeholder="{% trans 'Directory'%}" rel="tooltip" title="{% trans 'Directory Name' %}""
-          value="{{ file.directory }}">
-      </div>
-    </div>
+	<div class="control-group">
+	  <label class="control-label" for="name">Name</label>    
+	  <div class="controls controls-row">
+	    <label class="help-inline" style="margin-bottom: -5px"><strong>{{ file.directory }}</strong> / <strong>{{ file.name }}</strong></label>
+	  </div>
+	</div>
     
-    <div class="control-group">
-      <label class="control-label" for="id">{% trans "Name" %}</label>
-      <div class="controls">
-        <input type="hidden" name="packageId" value="{{file.id}}" />
-        <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}" rel="tooltip"
-        title="{% trans 'File Name' %}"
-        value="{{ file.name }}">
-      </div>
-    </div>
-    
-  </form>
-  
-  <hr>
+	<hr>
+	    
+	<div class="btn-toolbar" style="margin: 0;">
+	  {% if file.id %}
+          <div class="btn-group">
+	    <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+	  </div><!-- /btn-group -->
+	</div><!-- /btn-toolbar-->
+	{% endif %}
 
-  <div class="btn-toolbar" style="margin: 0;">
-    <div class="btn-group">
-      <a class="btn btn-success" href="#" onclick="save_file()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
-    </div><!-- /btn-group -->
-  {% if file.id %}
-    <div class="btn-group">
-      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
-    </div><!-- /btn-group -->
-  </div><!-- /btn-toolbar-->
+	<hr>
+	    
+	<h4>File Hashes</h4>
+      {% if file_hashes %}
+  <div class="row-fluid">
+    <table id="versions" class="table table-hover">
+      <thead>
+	<tr>
+	  <td>{% trans 'Hash' %}</td>
+	  <td>{% trans 'Algorithm' %}</td>
+	  <td>{% trans 'OS' %}</td>
+	</tr>
+      </thead>
+      <tbody>
+	{% for h in file_hashes %}
+	<tr>
+	  <td>{{h.hash}}</td>
+	  <td>{{h.algorithm}}</td>
+	  <td>{{h.product}}</td>
+	  <td><a class="btn btn-danger btn-mini" href="#delHashModal" data-toggle="modal"><i class="icon-remove icon-white"></i></a></td>
+	</tr>
+	{% endfor %}
+      </tbody>
+    </table>
+    </div>
   {% endif %}
+  </form>
+
 {% endif %}
 
 <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -82,6 +93,21 @@
   <div class="modal-footer">
     <a class="btn" data-dismiss="modal">Cancel</a>
     <a class="btn btn-danger" href="/files/{{file.id}}/delete">Delete file</a>
+  </div>
+</div>
+
+<div id="delHashModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3 id="deleteModalLabel">Are you sure to delete this hash?</h3>
+  </div>
+  <div class="modal-body">
+    <h4>Warning</h4>
+    <p>Are you sure to delete this hash?</p>
+  </div>
+  <div class="modal-footer">
+    <a class="btn" data-dismiss="modal">Cancel</a>
+    <a class="btn btn-danger" href="/file_hashes/{{ h.id }}/delete">Delete hash</a>
   </div>
 </div>
 
