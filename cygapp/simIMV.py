@@ -61,4 +61,5 @@ def run_test():
         finish_login(params)
 
         session.delete()
+        print 'OK'
 

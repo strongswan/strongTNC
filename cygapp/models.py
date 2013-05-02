@@ -1,5 +1,4 @@
 import base64
-import simplejson
 import binascii
 from datetime import datetime
 from django.db import models
@@ -39,12 +38,6 @@ class Product(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    def __json__(self):
-        return simplejson.dumps({
-            'id': self.id,
-            'name': self.name
-            })
 
     class Meta:
         db_table = u'products'
@@ -166,13 +159,6 @@ class File(models.Model):
     def __unicode__(self):
         return '%s/%s' % (self.directory.path, self.name)
 
-    def __json__(self):
-        return simplejson.dumps({
-            'id' : self.id,
-            'name' : self.name,
-            'dir' : self.directory.path,
-            })
-
     class Meta:
         db_table = u'files'
 
@@ -185,12 +171,6 @@ class Algorithm(models.Model):
 
     def __unicode__(self):
         return self.name[14:] # name - 'PTS_MEAS_ALGO_'
-
-    def __json__(self):
-        return simplejson.dumps({
-            'id' : self.id,
-            'name' : self.name,
-            })
 
     class Meta:
         db_table = u'algorithms'
@@ -213,16 +193,6 @@ class FileHash(models.Model):
 
     def __unicode__(self):
         return '%s (%s)' % (self.hash, self.algorithm)
-
-    def __json__(self):
-        return simplejson.dumps({
-            'file' : self.file.__json__(),
-            'product' : self.product.__json__(),
-            'key' : self.key,
-            'algo' : self.algorithm.__json__(),
-            'hash' : base64.encodestring(self.hash.__str__()),
-            })
-
 
 class Package(models.Model):
     """
