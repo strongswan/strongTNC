@@ -118,59 +118,6 @@
         </div><!-- /btn-group -->
       </div><!-- /btn-toolbar-->
       <hr>
-      <h4>{% trans "Enforcements" %}
-        <a class="btn-small" href="#" rel="tooltip"
-          title="{% trans 'The policy is enforced on all group- and subgroup-members' %}"><i
-            class="icon-info-sign"></i></a>
-      </h4>
-      <table border="1" id="etable">
-        <thead>
-          <tr>
-            <td>{% trans 'Group' %}</td>
-            <td>{% trans 'Max. age' %}</td>
-            <td>{% trans 'Fail-action' %}</td>
-            <td>{% trans 'Noresult-action' %}</td>
-          </tr>
-        </thead>
-        <tbody>
-          {% if enforcements %}
-          {% for e in enforcements %}
-          <tr>
-            <td><input class="input-small" type="text" name="group" value="{{ e.group.name }}"/></td>
-            <td><input class="input-mini" type="text" name="max_age" value="{{ e.max_age }}"/></td>
-            <td>
-              <select class="input-medium">
-                <option value="">{% trans 'Select one...' %}</option>
-                {% for a in action %}
-                <option value={{ forloop.counter0 }}
-                {% if e.fail == forloop.counter0 %}
-                selected="selected"
-                {% endif %}
-                >{{ a }}</option> {% endfor %}
-              </select>
-            </td>
-            <td>
-              <select class="input-medium">
-                <option value="">{% trans 'Select one...' %}</option>
-                {% for a in action %}
-                <option value={{ forloop.counter0 }}
-                {% if e.noresult == forloop.counter0 %}
-                selected="selected"
-                {% endif %}
-                >{{ a }}</option>
-                {% endfor %}
-              </select>
-            </td>
-            <td><a class="btn" href="#">Edt</a></td>
-            <td><a class="btn" href="/enforcements/{{ e.id }}/delete">Del</a></td>
-          </tr>
-        </tbody>
-        {% endfor %}
-        {% else %}
-        <tr><td>{% trans 'There are no enforcements' %}</td></tr>
-        {% endif %}
-      </table>
-      <a class="btn" href="#" onclick="add_enforcement()">Add</a>
       {% endif %}
 
       <hr>
