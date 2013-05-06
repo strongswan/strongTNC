@@ -55,7 +55,8 @@ def run_test():
         
         for item in session.workitems.all():
             item.error = random.randint(0,1)
-            item.recommendation = random.choice((item.fail, item.default))
+            item.recommendation = random.choice((item.fail, item.noresult))
+            item.result = ''
             item.save()
 
         finish_login(params)
