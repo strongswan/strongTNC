@@ -109,7 +109,14 @@
 		  {%endif%}
 	      </td>
 	      <td>{{v.time}}</td>
-	      <td><a class="btn btn-mini" id="toggle{{ v.id }}" data-toggle="button" onclick="toggle({{v.id}})">NO</a></td>
+	      <td><button type="button" class="btn btn-mini" id="togBlack" data-toggle="button" onclick="toggle({{v.id}})">
+		{%if v.blacklist ==  None %}
+		    {{package.blacklist|yesno:_("Yes,No")}}
+		  {%else%}
+		  <!-- TODO : Highlight table cell to show override -->
+		    {{v.blacklist|yesno:_("Yes,No")}}
+		  {%endif%}
+	      </button></td>
 	      <td>
 	    </tr>
 	    {% endfor %}
@@ -184,10 +191,11 @@
 		200 : function(data, status, jqXHR){
 		  query = "table#versions > tbody > tr#version" + id + " > td:nth-child(4)"
 		  $(query).text(data)
+		  query = "table#versions > tbody > tr#version" + id + " > td:nth-child(6) > button"
+		  $(query).text(data)
 		},
 	      }
-	    })
-      
+	    })     
 	  }
 	</script>
       {% endblock %}
