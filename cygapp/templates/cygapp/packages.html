@@ -74,6 +74,18 @@
 	  {{package.blacklist|yesno:"checked,"}}/>
 	</div>
       </div>
+      
+      <div class="btn-group" data-toggle="buttons-radio">
+
+          <button class="btn" id="test0">Mon</button>
+          <button class="btn" id="test1">Tue</button>
+          <button class="btn" id="test2">Wed</button>
+          <button class="btn" id="test3">Thu</button>
+          <button class="btn" id="test4">Fri</button>
+          <button class="btn" id="test5">Sat</button>
+          <button class="btn" id="test6">Sun</button>
+    </div>
+      
       <hr>
       
       <h4>{% trans "Versions:" %}
@@ -108,7 +120,8 @@
 		  {%endif%}
 	      </td>
 	      <td>{{v.time}}</td>
-	      <td><a class="btn" onclick="toggle({{v.id}})">TOGGLE</a></td>
+	      <td><a class="btn btn-mini" id="toggleBlacklist" data-toggle="button" onclick="toggle({{v.id}})">TOGGLE</a></td>
+	      <td>
 	    </tr>
 	    {% endfor %}
 	  </tbody>
@@ -170,6 +183,7 @@
 	    blacklist = $("input:checkbox#blacklist").is(":checked")
 	    if (blacklist != {{package.blacklist|yesno:"true,false"}}){
 	      $("#saveModal").modal('show')
+	      $(toggleBlacklist).button('toggle');
 	    }else{
 	      packageform.submit()
 	    }
