@@ -4,7 +4,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Product, Group, Enforcement, Policy
+from models import Group, Enforcement, Policy
 
 @require_GET
 def enforcements(request):
@@ -55,33 +55,46 @@ def add(request):
 def save(request):
     enforcementID = request.POST['enforcementId']
     if not (enforcementID == 'None' or re.match(r'^\d+$', enforcementID)):
+        raise ValueError
         return HttpResponse(status=400)
 
     max_age = request.POST['max_age']
     if not re.match(r'^\d+$', max_age):
+        raise ValueError
         return HttpResponse(status=400)
 
     policyID = request.POST['policy']
     if not re.match(r'^\d+$', policyID):
+        raise ValueError
         return HttpResponse(status=400)
 
     groupID = request.POST['group']
     if not re.match(r'^\d+$', groupID):
+        raise ValueError
         return HttpResponse(status=400)
 
     try:
         policy = Policy.objects.get(pk=policyID)
         group = Group.objects.get(pk=groupID)
     except (Policy.DoesNotExist, Group.DoesNotExist):
+        raise ValueError
         return HttpResponse(status=400)
         
-    fail = request.POST['fail']
-    if not re.match(r'^[0123]$', fail):
-        return HttpResponse(status=400)
+    fail = request.POST.get('fail',None)
+    if not fail == '':
+        if not re.match(r'^[0123]$', fail):
+            raise ValueError
+            return HttpResponse(status=400)
+    else:
+        fail = None
 
-    noresult = request.POST['noresult']
-    if not re.match(r'^[0123]$', noresult):
-        return HttpResponse(status=400)
+    noresult = request.POST.get('noresult', None)
+    if not noresult == '':
+        if not re.match(r'^[0123]$', noresult):
+            raise ValueError
+            return HttpResponse(status=400)
+    else:
+        noresult = None
 
     if enforcementID == 'None':
         enforcement = Enforcement.objects.create(group=group, policy=policy,
@@ -103,5 +116,6 @@ def delete(request, enforcementID):
     enforcement = get_object_or_404(Enforcement, pk=enforcementID)
     enforcement.delete()
 
-    return HttpResponse(status=200)
+    messages.success(request, _('Enforcement deleted!'))
+    return redirect('/enforcements')
 

@@ -57,7 +57,8 @@ def delete(request, fileID):
 @require_GET
 def deleteHash(request, file_hashID):
     file_hash = get_object_or_404(FileHash, pk=file_hashID)
+    file = file_hash.file
     file_hash.delete()
 
     messages.success(request, _('Hash deleted!'))
-    return redirect('/files')
+    return redirect('/files/%d' % file.id)

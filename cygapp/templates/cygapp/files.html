@@ -22,7 +22,7 @@
 	<table class="table table-hover">
 	  <tbody>
 	    {% for f in files %}
-	    <tr><td><a href=/files/{{ f.id }}>{{ f }}</a></td></tr>
+	    <tr><td><a href="/files/{{ f.id }}">{{ f }}</a></td></tr>
 	    {% endfor %}
 	  </tbody>
 	</table>
@@ -70,7 +70,7 @@
 	  <td>{{h.hash}}</td>
 	  <td>{{h.algorithm}}</td>
 	  <td>{{h.product}}</td>
-	  <td><a class="btn btn-danger btn-mini" href="#delHashModal" data-toggle="modal"><i class="icon-remove icon-white"></i></a></td>
+    <td><a class="btn btn-danger btn-mini" href="/file_hashes/{{ h.id }}/delete" data-toggle="modal"><i class="icon-remove icon-white"></i></a></td>
 	</tr>
 	{% endfor %}
       </tbody>
