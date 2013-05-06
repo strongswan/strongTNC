@@ -51,7 +51,7 @@ def run_test():
 
         start_login(params)
 
-        #Simulate IMV, generate some random results
+        #Simulate IMV, generate some random results   
         for item in session.workitems.all():
             item.error = random.randint(0,1)
             item.recommendation = random.choice((item.fail, item.noresult))

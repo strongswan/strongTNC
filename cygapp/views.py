@@ -8,7 +8,7 @@ from django.views.decorators.http import (require_GET, require_safe,
         require_http_methods)
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Session, Result, Action
+from models import Session, Device, Product, Identity, Result, Action
 
 @require_GET
 def overview(request):
