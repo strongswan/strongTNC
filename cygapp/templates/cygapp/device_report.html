@@ -13,64 +13,104 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <h4>{% trans 'Device Infos' %}</h4>
-    <table>
-      <tbody>
-        <tr>
-          <td>{% trans 'ID' %}</td>
-          <td>{{ device.value }}</td>
-        </tr>
-        <tr>
-          <td>{% trans 'Description' %}</td>
-          <td>{{ device.description }}</td>
-        </tr>
-        <tr>
-          <td>{% trans 'Last user' %}</td>
-          <td>{{ last_user }}</td>
-        </tr>
-        <tr>
-          <td>{% trans 'Last session' %}</td>
-          <td>{{ last_session }}</td>
-        </tr>
-        <tr>
-          <td>{% trans 'Last assessment' %}</td>
-          <td>{{ last_result }}</td>
-        </tr>
-        <tr>
-          <td>{% trans 'Total Sessions' %}</td>
-          <td>{{ session_count }}</td>
-        </tr>
-      </tbody>
-    </table>
+    
+    <!-- ...or table (with or without border) -->
+    <div class="row-fluid">
+      <div class="span6">
+        <table class="table" border="0">
+          <tbody>
+            <tr>
+              <td><strong>{% trans 'ID' %}</strong></td>
+              <td>{{ device.value }}</td>
+            </tr>
+            <tr>
+              <td><strong>{% trans 'Description' %}</strong></td>
+              <td>{{ device.description }}</td>
+            </tr>
+            <tr>
+              <td><strong>{% trans 'Last user' %}</strong></td>
+              <td>{{ last_user }}</td>
+            </tr>
+            <tr>
+              <td><strong>{% trans 'Last session' %}</strong></td>
+              <td>{{ last_session }}</td>
+            </tr>
+            <tr>
+              <td><strong>{% trans 'Last assessment' %}</strong></td>
+              <td>{{ last_result }}</td>
+            </tr>
+            <tr>
+              <td><strong>{% trans 'Total Sessions' %}</strong></td>
+              <td>{{ session_count }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div><!--/span5-->
+    </div><!--/row-->
 
-    <h4>{% trans 'Group memberships' %}
-      <div>
-        <h5>{% trans 'by definition' %}</h5>
-        <ul>
-        {% if not device.groups.all %}
-          {% trans 'None'%}
-        {% endif %}
-        {% for group in device.groups.all %}
-        <li><a href="/groups/{{ group.id }}">{{ group }}</a></li>
-        {% endfor %}
-        </ul>
-      </div>
-      <div>
-        <h5>{% trans 'by inheritance' %}</h5>
-        <ul>
-        {% if not device.group_set %}
-          {% trans 'None'%}
-        {% endif %}
-        {% for group in device.group_set %}
-          {% if group not in device.groups.all %}
-          <li><a href="/groups/{{ group.id }}">{{ group }}</a></li>
+    <!-- ...or list 
+    <dl class="dl-horizontal">
+      <dt>{% trans 'ID' %}</dt>
+      <dd>{{ device.value }}</dd>
+      
+      <dt>{% trans 'Description' %}</dt>
+      <dd>{{ device.description }}</dd>
+    
+    
+      <dt>{% trans 'Last user' %}</dt>
+      <dd>{{ last_user }}</dd>
+    
+    
+      <dt>{% trans 'Last session' %}</dt>
+      <dd>{{ last_session }}</dd>
+    
+    
+      <dt>{% trans 'Last assessment' %}</dt>
+      <dd>{{ last_result }}</dd>
+    
+    
+      <dt>{% trans 'Total Sessions' %}</dt>
+      <dd>{{ session_count }}</dd>
+    </dl>
+    -->
+    
+    <hr>
+    
+    <h4>{% trans 'Group memberships' %}</h4>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span4">
+          <h5>{% trans 'by definition' %}</h5>
+          <ul class="unstyled">
+          {% if not device.groups.all %}
+            <li>{% trans 'None'%}</li>
           {% endif %}
-        {% endfor %}
-        </ul>
+          {% for group in device.groups.all %}
+            <li><a href="/groups/{{ group.id }}">{{ group }}</a></li>
+          {% endfor %}
+          </ul>
+        </div>
+        <div class="span4">
+          <h5>{% trans 'by inheritance' %}</h5>
+          <ul class="unstyled">
+          {% if not device.group_set %}
+            <li>{% trans 'None'%}</li>
+          {% endif %}
+          {% for group in device.group_set %}
+            {% if group not in device.groups.all %}
+            <li><a href="/groups/{{ group.id }}">{{ group }}</a></li>
+            {% endif %}
+          {% endfor %}
+          </ul>
+        </div>
       </div>
-
+    </div>
+    
+    <hr>
+    
     {% if enforcements %}
     <h4>{% trans 'Enforcements' %}</h4>
-    <table>
+    <table class="table table-striped">
       <thead>
         <tr>
           <td>Enforcement</td>
@@ -91,5 +131,6 @@
     {% endif %}
   </div>
 </div>
+
 {% endblock %}
 
