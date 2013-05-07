@@ -8,7 +8,7 @@ from django.test import TestCase
 from datetime import datetime, timedelta
 from cygapp.models import (File, WorkItem, Device, Group, Product, Session,
     Policy, Enforcement, Action, Package, Directory, Version, Identity, Result)
-from views import generate_results
+from views import generate_results, purge_dead_sessions
 from policy_views import check_range
 
 
@@ -265,3 +265,31 @@ class cygappTest(TestCase):
         self.assertEqual(False, check_range('1-10, 25555-25000'))
         self.assertEqual(False, check_range('1-65536'))
 
+    def test_purge_dead_sessions(self):
+        device = Device.objects.get(pk=1)
+        id = Identity.objects.create(data='user')
+ 
+        time = datetime.today() - timedelta(days=20) 
+        Session.objects.create(device=device,identity=id,time=time,connectionID=1)
+
+        time = datetime.today() - timedelta(days=7) 
+        Session.objects.create(device=device,identity=id,time=time,connectionID=2)
+ 
+        time = datetime.today() - timedelta(days=3) 
+        Session.objects.create(device=device,identity=id,time=time,connectionID=3)
+ 
+        time = datetime.today() - timedelta(days=10) 
+        Session.objects.create(device=device,identity=id,time=time,connectionID=4,
+                recommendation=Action.BLOCK)
+ 
+        time = datetime.today() - timedelta(days=10) 
+        Session.objects.create(device=device,identity=id,time=time,connectionID=5,
+                recommendation=Action.ALLOW)
+ 
+        purge_dead_sessions()
+        sessions = Session.objects.all()
+ 
+        self.assertEqual(3, len(sessions))
+        for session in sessions:
+            self.assertTrue(session.id in (3,4,5))
+ 

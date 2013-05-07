@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_safe
 from django.shortcuts import render
@@ -11,6 +11,12 @@ def overview(request):
 
 @require_safe
 def start_session(request):
+    """
+    Initializes a new session and creates workitems according to policy
+    """
+
+    purge_dead_sessions()
+
     deviceID = request.GET.get('deviceID', '')
     if not re.match(r'^[a-f0-9]+$', deviceID):
         return HttpResponse(status=400)
@@ -61,7 +67,8 @@ def end_session(request):
 
     return HttpResponse(status=200)
 
-#NOT a view, does not need a decorator
+#NOT views, do not need decorators
+
 def generate_results(session):
     workitems = session.workitems.all()
 
@@ -79,3 +86,12 @@ def generate_results(session):
     for item in workitems:
         item.delete()
 
+
+def purge_dead_sessions():
+    MAX_AGE = 7 #days
+
+    deadline = datetime.today() - timedelta(days=MAX_AGE)
+    dead = Session.objects.filter(recommendation=None, time__lte=deadline)
+
+    for d in dead:
+        d.delete()

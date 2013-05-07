@@ -1,4 +1,3 @@
-import base64
 import binascii
 from datetime import datetime
 from django.db import models
