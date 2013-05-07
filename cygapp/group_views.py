@@ -62,7 +62,7 @@ def save(request):
     for member in members:
         if not re.match(r'^\d+$', member):
             return HttpResponse(status=400)
-
+    
     name = request.POST['name']
     if not re.match(r'^[\S ]{1,50}$', name):
         return HttpResponse(status=400)
@@ -86,13 +86,12 @@ def save(request):
         group.parent = parent
         group.save()
 
-    if members:
-        group.members.clear()
-        members = Device.objects.filter(id__in=members)
-        for member in members:
-            group.members.add(member)
+    group.members.clear()
+    members = Device.objects.filter(id__in=members)
+    for member in members:
+        group.members.add(member)
 
-        group.save()
+    group.save()
 
     messages.success(request, _('Group saved!'))
     return redirect('/groups/%d' % group.id)
