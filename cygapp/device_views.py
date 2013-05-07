@@ -4,7 +4,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Device, Group, Product
+from models import Device, Group, Product, Session, Result
 
 @require_GET
 def devices(request):
@@ -110,3 +110,39 @@ def delete(request, deviceID):
     return redirect('/devices')
 
 
+@require_GET
+def simulate(request, deviceID):
+    device = get_object_or_404(Device, pk=deviceID)
+    
+    context = {}
+    context['device'] = device
+    context['title'] = _('Simulation report for ') + str(device)
+
+    sessions = Session.objects.filter(device=device) 
+    context['session_count'] = len(sessions)
+    context['group_set'] = device.get_group_set()
+
+    if context['session_count'] > 0:
+        session = sessions.latest('time')
+        context['last_session'] = session.time
+        context['last_user'] = session.identity.data
+        context['last_result'] = session.recommendation
+    else:
+        context['last_session'] = _('Never')
+        context['last_user'] = _('No one')
+        context['last_result'] = _('N/A')
+
+    enforcements = []
+    for group in context['group_set']:
+        for e in group.enforcements.all():
+            try:
+                result =  Result.objects.filter(
+                        session__device=device,policy=e.policy).latest()
+                enforcements.append((e, result.recommendation,
+                    device.is_due_for(e)))
+            except Result.DoesNotExist:
+                enforcements.append((e, _('N/A'), device.is_due_for(e)))
+
+    context['enforcements'] = enforcements
+
+    return render(request, 'cygapp/device_report.html', context)

@@ -83,10 +83,12 @@ class Device(models.Model):
         return False
 
     def create_work_items(self, session):
+        """
+        Creates workitems for every policy that is due
+        """
 
-        groups = self.get_group_set()
         enforcements = []
-        for group in groups:
+        for group in self.get_group_set():
            enforcements += group.enforcements.all()
 
         minforcements=[]
@@ -104,8 +106,6 @@ class Device(models.Model):
         for enforcement in minforcements:
             if self.is_due_for(enforcement):
                 enforcement.policy.create_work_item(enforcement, session)
-
-        return groups
 
     class Meta:
         db_table = u'devices'
@@ -373,4 +373,5 @@ class Result(models.Model):
 
     class Meta:
         db_table = u'results'
+        get_latest_by = 'session__time'
 

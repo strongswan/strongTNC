@@ -30,6 +30,9 @@ urlpatterns = patterns('',
         url(r'^devices/(?P<deviceID>\d+)/delete/?$', device_views.delete,
             name='delete'),
 
+        url(r'^devices/(?P<deviceID>\d+)/simulate/?$', device_views.simulate,
+            name='simulate'),
+
         url(r'^files/?$', file_views.files, name='files'),
         url(r'^files/(?P<fileID>\d+)/?$', file_views.file, name='file'),
         url(r'^files/save?$', file_views.save, name='save'),

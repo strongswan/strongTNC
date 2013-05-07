@@ -1,0 +1,95 @@
+
+{% extends "cygapp/base.html" %}
+
+{% load i18n %}
+{% block title %}{%trans "Device Report" %}{% endblock %}
+
+{% block hero %}
+<h1>{{ title }}</h1>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row-fluid">
+    <h4>{% trans 'Device Infos' %}</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td>{% trans 'ID' %}</td>
+          <td>{{ device.value }}</td>
+        </tr>
+        <tr>
+          <td>{% trans 'Description' %}</td>
+          <td>{{ device.description }}</td>
+        </tr>
+        <tr>
+          <td>{% trans 'Last user' %}</td>
+          <td>{{ last_user }}</td>
+        </tr>
+        <tr>
+          <td>{% trans 'Last session' %}</td>
+          <td>{{ last_session }}</td>
+        </tr>
+        <tr>
+          <td>{% trans 'Last assessment' %}</td>
+          <td>{{ last_result }}</td>
+        </tr>
+        <tr>
+          <td>{% trans 'Total Sessions' %}</td>
+          <td>{{ session_count }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>{% trans 'Group memberships' %}
+      <div>
+        <h5>{% trans 'by definition' %}</h5>
+        <ul>
+        {% if not device.groups.all %}
+          {% trans 'None'%}
+        {% endif %}
+        {% for group in device.groups.all %}
+        <li><a href="/groups/{{ group.id }}">{{ group }}</a></li>
+        {% endfor %}
+        </ul>
+      </div>
+      <div>
+        <h5>{% trans 'by inheritance' %}</h5>
+        <ul>
+        {% if not device.group_set %}
+          {% trans 'None'%}
+        {% endif %}
+        {% for group in device.group_set %}
+          {% if group not in device.groups.all %}
+          <li><a href="/groups/{{ group.id }}">{{ group }}</a></li>
+          {% endif %}
+        {% endfor %}
+        </ul>
+      </div>
+
+    {% if enforcements %}
+    <h4>{% trans 'Enforcements' %}</h4>
+    <table>
+      <thead>
+        <tr>
+          <td>Enforcement</td>
+          <td>Last result</td>
+          <td>Will be tested</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in enforcements %}
+        <tr>
+          <td><a href="/enforcements/{{ e.0.id }}">{{ e.0 }}</a></td>
+          <td>{{ e.1 }}</td>
+          <td>{{ e.2|yesno:_("Yes,No") }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

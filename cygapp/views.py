@@ -46,6 +46,21 @@ def start_session(request):
 
     return HttpResponse(content=None)
 
+@require_safe
+def end_session(request):
+    deviceID = request.GET.get('deviceID', '')
+    connectionID = request.GET.get('connectionID', '')
+
+    try:
+        session = Session.objects.get(device__value=deviceID,
+                connectionID=connectionID) 
+    except Session.DoesNotExist:
+        return HttpResponse(status=404)
+
+    generate_results(session)
+
+    return HttpResponse(status=200)
+
 #NOT a view, does not need a decorator
 def generate_results(session):
     workitems = session.workitems.all()
@@ -63,19 +78,4 @@ def generate_results(session):
 
     for item in workitems:
         item.delete()
-
-@require_safe
-def end_session(request):
-    deviceID = request.GET.get('deviceID', '')
-    connectionID = request.GET.get('connectionID', '')
-
-    try:
-        session = Session.objects.get(device__value=deviceID,
-                connectionID=connectionID) 
-    except Session.DoesNotExist:
-        return HttpResponse(status=404)
-
-    generate_results(session)
-
-    return HttpResponse(status=200)
 
