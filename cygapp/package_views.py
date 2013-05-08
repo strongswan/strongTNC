@@ -2,12 +2,14 @@ import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from models import Package, Version
 
 @require_GET
+@login_required
 def packages(request):
     context = {}
     context['title'] = _('Packages')
@@ -29,6 +31,7 @@ def packages(request):
     return render(request, 'cygapp/packages.html', context)
 
 @require_GET
+@login_required
 def package(request, packageID):
     try:
         package = Package.objects.get(pk=packageID)
@@ -62,6 +65,7 @@ def package(request, packageID):
     return render(request, 'cygapp/packages.html', context)
 
 @require_GET
+@login_required
 def add(request):
     context = {}
     context['title'] = _('New package')
@@ -71,6 +75,7 @@ def add(request):
 
 
 @require_POST
+@login_required
 def save(request):
     packageID = request.POST['packageId']
     if not (packageID == 'None' or re.match(r'^\d+$', packageID)):
@@ -102,6 +107,7 @@ def save(request):
     return redirect('/packages/%d' % package.id)
 
 @require_GET
+@login_required
 def delete(request, packageID):
     package = get_object_or_404(Package, pk=packageID)
     package.delete()
@@ -110,6 +116,7 @@ def delete(request, packageID):
     return redirect('/packages')
 
 @require_GET
+@login_required
 def toggle_version(request, versionID):
     version = get_object_or_404(Version, pk=versionID)
     if version.blacklist == None:
@@ -121,6 +128,7 @@ def toggle_version(request, versionID):
     return HttpResponse(_('Yes' if version.blacklist else 'No'))
 
 @require_GET
+@login_required
 def search(request):
     context = {}
     context['title'] = _('Packages')
