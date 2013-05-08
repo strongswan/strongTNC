@@ -100,3 +100,11 @@ body {
 .logo-swanicon {
   background-position: 0      0;
 }
+
+div#line {
+  border-right-width:1px;
+  border-right-style:solid;
+  border-color:black;
+  padding-right:1em;
+  text-align:justify;
+}
