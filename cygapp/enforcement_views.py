@@ -2,11 +2,13 @@ import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from models import Group, Enforcement, Policy
 
 @require_GET
+@login_required
 def enforcements(request):
     context = {}
     context['enforcements'] = Enforcement.objects.all().order_by('policy')
@@ -15,6 +17,7 @@ def enforcements(request):
     return render(request, 'cygapp/enforcements.html', context)
 
 @require_GET
+@login_required
 def enforcement(request, enforcementID):
     try:
         enforcement = Enforcement.objects.get(pk=enforcementID)
@@ -38,6 +41,7 @@ def enforcement(request, enforcementID):
 
 
 @require_GET
+@login_required
 def add(request):
     context = {}
     context['title'] = _('New enforcement')
@@ -52,6 +56,7 @@ def add(request):
 
 
 @require_POST
+@login_required
 def save(request):
     enforcementID = request.POST['enforcementId']
     if not (enforcementID == 'None' or re.match(r'^\d+$', enforcementID)):
@@ -112,6 +117,7 @@ def save(request):
     return redirect('/enforcements/%d' % enforcement.id)
 
 @require_GET
+@login_required
 def delete(request, enforcementID):
     enforcement = get_object_or_404(Enforcement, pk=enforcementID)
     enforcement.delete()

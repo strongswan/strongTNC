@@ -2,11 +2,13 @@ import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from models import File, FileHash
 
 @require_GET
+@login_required
 def files(request):
     context = {}
     context['title'] = _('Files')
@@ -14,6 +16,7 @@ def files(request):
     return render(request, 'cygapp/files.html', context)
 
 @require_GET
+@login_required
 def file(request,fileID):
     try:
         file = File.objects.get(pk=fileID)
@@ -34,6 +37,7 @@ def file(request,fileID):
     return render(request, 'cygapp/files.html', context)
 
 @require_POST
+@login_required
 def save(request):
     fileID = request.POST['fileId']
     if not (fileID == 'None' or re.match(r'^\d+$', fileID)):
@@ -47,6 +51,7 @@ def save(request):
     return redirect('/files/%d' % file.id)
 
 @require_GET
+@login_required
 def delete(request, fileID):
     file = get_object_or_404(File, pk=fileID)
     file.delete()
@@ -55,6 +60,7 @@ def delete(request, fileID):
     return redirect('/files')
 
 @require_GET
+@login_required
 def deleteHash(request, file_hashID):
     file_hash = get_object_or_404(FileHash, pk=file_hashID)
     file = file_hash.file

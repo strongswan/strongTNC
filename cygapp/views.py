@@ -1,8 +1,13 @@
 import re
 from datetime import datetime, timedelta
 from django.http import HttpResponse
-from django.views.decorators.http import require_GET, require_safe
-from django.shortcuts import render
+from django.contrib import messages
+from django.contrib.auth import (authenticate, login as django_login, logout as
+        django_logout)
+from django.views.decorators.http import (require_GET, require_safe,
+        require_http_methods)
+from django.shortcuts import render, redirect
+from django.utils.translation import ugettext_lazy as _
 from models import Session, Device, Product, Identity, Result, Action
 
 @require_GET
@@ -50,7 +55,7 @@ def start_session(request):
             device=device, connectionID=connectionID)
     device.create_work_items(session)
 
-    return HttpResponse(content=None)
+    return HttpResponse(content='')
 
 @require_safe
 def end_session(request):
@@ -58,14 +63,42 @@ def end_session(request):
     connectionID = request.GET.get('connectionID', '')
 
     try:
-        session = Session.objects.get(device__value=deviceID,
-                connectionID=connectionID) 
+        session = Session.objects.filter(device__value=deviceID,
+                connectionID=connectionID).latest('time')
     except Session.DoesNotExist:
         return HttpResponse(status=404)
 
     generate_results(session)
 
     return HttpResponse(status=200)
+
+@require_http_methods(('GET','POST'))
+def login(request):
+    if request.method == 'POST':
+        password = request.POST.get('password', None)
+        user = authenticate(username='cygnet-user', password=password)
+        if user is not None and user.is_active:
+                django_login(request, user)
+                next = request.POST.get('next_url', None)
+                if next is not None:
+                    return redirect(next)
+                else:
+                    return redirect('/overview')
+        else:
+            messages.error(request, _('Bad password!'))
+
+    if request.user.is_authenticated():
+        return redirect('/overview')
+
+    context = {'next_url': request.GET.get('next', '')}
+    return render(request, 'cygapp/login.html', context)
+
+def logout(request):
+    django_logout(request)
+    messages.success(request, _('Logout successful!'))
+
+    return render(request, 'cygapp/login.html')
+    
 
 #NOT views, do not need decorators
 

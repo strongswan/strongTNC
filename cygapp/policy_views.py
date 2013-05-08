@@ -2,11 +2,13 @@ import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from models import Policy, Group, File, Directory
 
 @require_GET
+@login_required
 def policies(request):
     context = {}
     context['title'] = _('Policies')
@@ -14,6 +16,7 @@ def policies(request):
     return render(request, 'cygapp/policies.html', context)
 
 @require_GET
+@login_required
 def policy(request, policyID):
     try:
         policy = Policy.objects.get(pk=policyID)
@@ -45,6 +48,7 @@ def policy(request, policyID):
 
 
 @require_GET
+@login_required
 def add(request):
     context = {}
     context['policies'] = Policy.objects.all().order_by('name')
@@ -59,6 +63,7 @@ def add(request):
     return render(request, 'cygapp/policies.html', context)
 
 @require_POST
+@login_required
 def save(request):
     policyID = request.POST['policyId']
     if not (policyID == 'None' or re.match(r'^\d+$', policyID)):
@@ -140,6 +145,7 @@ def save(request):
 
 
 @require_GET
+@login_required
 def delete(request, policyID):
     policy = get_object_or_404(Policy, pk=policyID)
     policy.delete()

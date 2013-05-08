@@ -2,11 +2,13 @@ import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from models import Product, Group
 
 @require_GET
+@login_required
 def products(request):
     context = {}
     context['title'] = _('Products')
@@ -14,6 +16,7 @@ def products(request):
     return render(request, 'cygapp/products.html', context)
 
 @require_GET
+@login_required
 def product(request, productID):
     try:
         product = Product.objects.get(pk=productID)
@@ -39,6 +42,7 @@ def product(request, productID):
 
 
 @require_GET
+@login_required
 def add(request):
     context = {}
     context['title'] = _('New product')
@@ -49,6 +53,7 @@ def add(request):
 
 
 @require_POST
+@login_required
 def save(request):
     productID = request.POST['productId']
     if not (productID == 'None' or re.match(r'^\d+$', productID)):
@@ -85,6 +90,7 @@ def save(request):
     return redirect('/products/%d' % product.id)
 
 @require_GET
+@login_required
 def delete(request, productID):
     product = get_object_or_404(Product, pk=productID)
     product.delete()

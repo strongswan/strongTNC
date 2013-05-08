@@ -53,24 +53,20 @@
           the BYOD Malware DB Management Tool</p>
         </div>
         <div class="span7">
-          <form class="form-signin" id=signform>
-            <h2 class="form-signin-heading">Please sign in</h2>
-            {% if errors %}
-              <ul>
-                {% for error in errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-              </ul>
+          <form class="form-signin" action="login" method="post" id=signform>
+            {% csrf_token %}
+            {% if next_url %}
+            <input type="hidden" name="next_url" value="{{ next_url }}" />
             {% endif %}
-            <!--
-            <input type="text" class="input-block-level" placeholder="Username" name="username1">
-            <input type="password" class="input-block-level" placeholder="Password" name="password1">
-            -->
-            <div class="control-group">
-              <div class="controls">
-                <input type="text" class="input-block-level" placeholder="Username" name="username">
+            <h2 class="form-signin-heading">Please sign in</h2>
+            {% if messages %}
+              <div id="message_div">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {% for message in messages %}
+              <div class="{{ message.tags }}">{{ message }}</div>  
+                {% endfor %}
               </div>
-            </div>
+            {% endif %}
             <div class="control-group">
               <div class="controls">
                 <input type="password" class="input-block-level" placeholder="Password" name="password">

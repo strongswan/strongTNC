@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import settings
-import group_views, device_views, product_views, policy_views, login_views
+import group_views, device_views, product_views, policy_views
 import enforcement_views, package_views, file_views, views
 
 admin.autodiscover()
@@ -10,11 +10,11 @@ urlpatterns = patterns('',
         url(r'^media/(?P<path>.*)$','django.views.static.serve',
             {'document_root': settings.MEDIA_ROOT}),
 
-        #Management CRUD views
         url(r'^$', views.overview, name='overview'),
         url(r'^overview/?$', views.overview, name='overview'),
 
-        url(r'^login/?$', login_views.login, name='login'),
+        url(r'^login/?$', views.login, name='login'),
+        url(r'^logout/?$', views.logout, name='logout'),
         
         url(r'^groups/?$', group_views.groups, name='groups'),
         url(r'^groups/(?P<groupID>\d+)/?$', group_views.group, name='group'),

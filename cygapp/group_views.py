@@ -2,11 +2,13 @@ import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from models import Group, Device
 
 @require_GET
+@login_required
 def groups(request):
     context = {}
     context['groups'] = Group.objects.all().order_by('name')
@@ -15,6 +17,7 @@ def groups(request):
     return render(request, 'cygapp/groups.html', context)
 
 @require_GET
+@login_required
 def group(request, groupID):
     try:
         group = Group.objects.get(pk=groupID)
@@ -40,6 +43,7 @@ def group(request, groupID):
     return render(request, 'cygapp/groups.html', context)
 
 @require_GET
+@login_required
 def add(request):
     context = {}
     context['title'] = _('New group')
@@ -50,6 +54,7 @@ def add(request):
     return render(request, 'cygapp/groups.html', context)
 
 @require_POST
+@login_required
 def save(request):
     groupID = request.POST['groupId']
     if not (groupID == 'None' or re.match(r'^\d+$', groupID)):
@@ -98,6 +103,7 @@ def save(request):
 
 
 @require_GET
+@login_required
 def delete(request, groupID):
     group = get_object_or_404(Group, pk=groupID)
     group.delete()

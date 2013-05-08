@@ -1,12 +1,14 @@
 import re
 from django.http import HttpResponse
-from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
+from django.views.decorators.http import require_GET, require_POST
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from models import Device, Group, Product, Session, Result
 
 @require_GET
+@login_required
 def devices(request):
     context = {}
     context['title'] = _('Devices')
@@ -14,6 +16,7 @@ def devices(request):
     return render(request, 'cygapp/devices.html', context)
 
 @require_GET
+@login_required
 def device(request, deviceID):
     try:
         device = Device.objects.get(pk=deviceID)
@@ -39,6 +42,7 @@ def device(request, deviceID):
     return render(request, 'cygapp/devices.html', context)
 
 @require_GET
+@login_required
 def add(request):
     context = {}
     context['title'] = _('New device')
@@ -49,6 +53,7 @@ def add(request):
     return render(request, 'cygapp/devices.html', context)
 
 @require_POST
+@login_required
 def save(request):
     deviceID = request.POST['deviceId']
     if not (deviceID == 'None' or re.match(r'^\d+$', deviceID)):
@@ -102,6 +107,7 @@ def save(request):
 
 
 @require_GET
+@login_required
 def delete(request, deviceID):
     device = get_object_or_404(Device, pk=deviceID)
     device.delete()
@@ -111,6 +117,7 @@ def delete(request, deviceID):
 
 
 @require_GET
+@login_required
 def simulate(request, deviceID):
     device = get_object_or_404(Device, pk=deviceID)
     
