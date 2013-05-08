@@ -27,6 +27,11 @@
 	</div>
       </h4>
       <hr>
+      <form class="form-search" action="/packages/search" method="get">
+        <input type="text" class="input input-small search-query" name="q">
+	<button type="submit" class="btn btn-mini" value="search"><i class="icon-search"></i></button>
+      </form>
+      <hr>
       <div class="pagination pagination-mini pagination-centered">
 	  <ul>
 	    {% if packages.has_previous %}
@@ -42,6 +47,7 @@
 	    {% endif %}
 	  </ul>
       </div>
+      {% if packages %}      
       <table class="table table-hover">
 	<tbody>
 	{% for p in packages %}
@@ -49,6 +55,9 @@
 	{% endfor %}
 	</tbody>
       </table>
+      {% else %}
+	<p><small>No packages matched your search criteria.</small></p>
+      {% endif %}    
     </div>
       
     <div class="span9" id="content">

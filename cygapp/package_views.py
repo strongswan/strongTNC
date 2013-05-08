@@ -24,7 +24,7 @@ def packages(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         packages = paginator.page(paginator.num_pages)
     
-    context['packages'] = packages #TODO: noch sehr unschoen
+    context['packages'] = packages
 
     return render(request, 'cygapp/packages.html', context)
 
@@ -37,8 +37,21 @@ def package(request, packageID):
         messages.error(request, _('Package not found!'))
 
     context = {}
-    context['packages'] = Package.objects.all().order_by('name')[:50]
+    context['packages'] = Package.objects.all().order_by('name')
     context['title'] = _('Packages')
+
+    paginator = Paginator(context['packages'], 50) # Show 50 packages per page
+    page = request.GET.get('page')
+    try:
+        packages = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        packages = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        packages = paginator.page(paginator.num_pages)
+    
+    context['packages'] = packages
 
     if package:
         context['package'] = package
@@ -106,3 +119,29 @@ def toggle_version(request, versionID):
 
     version.save()
     return HttpResponse(_('Yes' if version.blacklist else 'No'))
+
+@require_GET
+def search(request):
+    context = {}
+    context['title'] = _('Packages')
+    context['packages'] = Package.objects.all().order_by('name')
+    
+    if 'q' in request.GET:
+        q = request.GET['q']
+        if q:
+            context['query'] = q
+            context['packages'] = Package.objects.filter(name__icontains=q)
+
+    paginator = Paginator(context['packages'], 50) # Show 50 packages per page
+    page = request.GET.get('page')
+    try:
+        packages = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        packages = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        packages = paginator.page(paginator.num_pages)
+    
+    context['packages'] = packages
+    return render(request, 'cygapp/packages.html', context)

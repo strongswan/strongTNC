@@ -41,13 +41,14 @@ urlpatterns = patterns('',
 
         url(r'^file_hashes/(?P<file_hashID>\d+)/delete/?$', file_views.deleteHash,
             name='delete'),
-
+    
         url(r'^packages/?$', package_views.packages, name='packages'),
         url(r'^packages/(?P<packageID>\d+)/?$', package_views.package, name='package'),
         url(r'^packages/add/?$', package_views.add, name='add'),
         url(r'^packages/save?$', package_views.save, name='save'),
         url(r'^packages/(?P<packageID>\d+)/delete/?$', package_views.delete,
             name='delete'),
+        url(r'^packages/search/?$', package_views.search, name='search'),
 
         url(r'^versions/(?P<versionID>\d+)/toggle/?$',
             package_views.toggle_version, name='toggle_version'),
