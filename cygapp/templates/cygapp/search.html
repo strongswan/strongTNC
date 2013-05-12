@@ -1,0 +1,99 @@
+
+{% extends "cygapp/base.html" %}
+
+{% load i18n %}
+{% block title %}{%trans "Search Results" %}{% endblock %}
+
+{% block hero %}
+<h1>{%trans "Search Results" %}</h1>
+{% endblock %}
+
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span12">
+        <form class="form-search" action="/search/" method="get">
+          <input type="text" class="input search-query" name="q" value="{{ query }}" autofocus>
+          <input type="submit" class="btn btn-small" value="Search">
+        </form>
+        <!-- TODO packages + products + files
+        <p><small>Found <strong>{{ packages|length }}</strong> results.</small></p>
+        -->
+
+        {% if groups %}
+        <h4>{{ group_title }}</h4>
+        <p><small>Found <strong>{{ groups|length }}</strong> group{{ groups|pluralize }}.</small></p>
+        <ul>
+          {% for group in groups %}
+          <li>{{ group.name }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        
+        {% if policies %}
+        <hr>
+        <h4>{{ policy_title }}</h4>
+        <p><small>Found <strong>{{ policies|length }}</strong> policy{{ policies|pluralize }}.</small></p>
+        <ul>
+          {% for policy in policies %}
+          <li>{{ policy.name }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        
+        {% if devices %}
+        <hr>
+        <h4>{{ device_title }}</h4>
+        <p><small>Found <strong>{{ devices|length }}</strong> device{{ devices|pluralize }}.</small></p>
+        <ul>
+          {% for device in devices %}
+          <li>{{ device.value }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+         
+        {% if packages %}
+        <hr>
+        <h4>{{ package_title }}</h4>
+        <p><small>Found <strong>{{ packages|length }}</strong> package{{ packages|pluralize }}.</small></p>
+        <ul>
+          {% for package in packages %}
+          <li>{{ package.name }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        
+        {% if products %}
+        <hr>
+        <h4>{{ product_title }}</h4>
+        <p><small>Found <strong>{{ products|length }}</strong> product{{ products|pluralize }}.</small></p>
+        <ul>
+          {% for product in products %}
+          <li>{{ product.name }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        
+        {% if files %}
+        <hr>
+        <h4>{{ file_title }}</h4>
+        <p><small>Found <strong>{{ files|length }}</strong> file{{ files|pluralize }}.</small></p>
+        <ul>
+          {% for file in files %}
+          <li>{{ file.name }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        
+        {% if not groups and not policies and not devices and not packages and not products and not files %}
+        <p>No results matched your search criteria.</p>
+        {% endif %}
+ 
+    </div>
+      
+
+    </div><!--/row-->
+  </div>
+{% endblock %}
+      

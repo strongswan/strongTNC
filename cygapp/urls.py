@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import settings
 import group_views, device_views, product_views, policy_views
-import enforcement_views, package_views, file_views, views
+import enforcement_views, package_views, file_views, search_views, views
 
 admin.autodiscover()
 
@@ -15,6 +15,8 @@ urlpatterns = patterns('',
 
         url(r'^login/?$', views.login, name='login'),
         url(r'^logout/?$', views.logout, name='logout'),
+        
+        url(r'^search/?$', search_views.search, name='search'),
         
         url(r'^groups/?$', group_views.groups, name='groups'),
         url(r'^groups/(?P<groupID>\d+)/?$', group_views.group, name='group'),
