@@ -108,7 +108,7 @@
         </div><!-- /btn-group -->
         {% if policy.id %}
         <div class="btn-group">
-          <a class="btn btn-danger" href="/policies/{{policy.id}}/delete"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> Delete</a>
           {% endif %}
         </div><!-- /btn-group -->
       </div><!-- /btn-toolbar-->
@@ -116,6 +116,24 @@
 
     </div><!--content-->
   </div><!--/row-->
+</div>
+
+<div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3 id="deleteModalLabel">Are you sure to delete this policy?</h3>
+  </div>
+  <div class="modal-body">
+    <h4>Warning</h4>
+    <p>Are you sure you want to delete this policy?</p>
+  </div>
+  <form method="POST" action="/policies/{{ policy.id }}/delete" id="deleteform">
+    {% csrf_token %}
+  </form>
+  <div class="modal-footer">
+    <a class="btn" data-dismiss="modal">Cancel</a>
+    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete policy</a>
+  </div>
 </div>
 <script type="text/javascript">
 

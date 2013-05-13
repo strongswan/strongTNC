@@ -89,7 +89,7 @@ def save(request):
     messages.success(request, _('Product saved!'))
     return redirect('/products/%d' % product.id)
 
-@require_GET
+@require_POST
 @login_required
 def delete(request, productID):
     product = get_object_or_404(Product, pk=productID)

@@ -49,7 +49,7 @@
       <label class="control-label" for="description">{% trans "Description" %}</label> 
       <div class="controls">   
         <input type="text" id="description" name="description"
-          placeholder="{% trans 'Description'%}" rel="tooltip" title="{% trans 'Device description' %}""
+          placeholder="{% trans 'Description'%}" rel="tooltip" title="{% trans 'Device description' %}"
           value="{{ device.description }}">
       </div>
     </div>
@@ -121,9 +121,12 @@
     <h4>Warning</h4>
     <p>If you remove this device, it will appear in the list with default settings.</p>
   </div>
+  <form method="POST" action="/devices/{{ device.id }}/delete" id="deleteform">
+    {% csrf_token %}
+  </form>
   <div class="modal-footer">
     <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-danger" href="/devices/{{device.id}}/delete">Delete device</a>
+    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete device</a>
   </div>
 </div>
 

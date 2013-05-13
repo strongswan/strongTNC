@@ -50,7 +50,7 @@ def save(request):
     messages.success(request, _('File saved!'))
     return redirect('/files/%d' % file.id)
 
-@require_GET
+@require_POST
 @login_required
 def delete(request, fileID):
     file = get_object_or_404(File, pk=fileID)

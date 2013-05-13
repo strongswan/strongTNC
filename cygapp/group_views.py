@@ -102,7 +102,7 @@ def save(request):
     return redirect('/groups/%d' % group.id)
 
 
-@require_GET
+@require_POST
 @login_required
 def delete(request, groupID):
     group = get_object_or_404(Group, pk=groupID)

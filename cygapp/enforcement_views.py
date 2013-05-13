@@ -116,7 +116,7 @@ def save(request):
     messages.success(request, _('Enforcement saved!'))
     return redirect('/enforcements/%d' % enforcement.id)
 
-@require_GET
+@require_POST
 @login_required
 def delete(request, enforcementID):
     enforcement = get_object_or_404(Enforcement, pk=enforcementID)

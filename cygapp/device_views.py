@@ -106,7 +106,7 @@ def save(request):
     return redirect('/devices/%d' % device.id)
 
 
-@require_GET
+@require_POST
 @login_required
 def delete(request, deviceID):
     device = get_object_or_404(Device, pk=deviceID)

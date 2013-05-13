@@ -85,9 +85,12 @@
     <h4>Warning</h4>
     <p>Are you sure to delete this file?</p>
   </div>
+  <form method="POST" action="/files/{{ file.id }}/delete" id="deleteform">
+    {% csrf_token %}
+  </form>
   <div class="modal-footer">
     <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-danger" href="/files/{{file.id}}/delete">Delete file</a>
+    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete file</a>
   </div>
 </div>
 

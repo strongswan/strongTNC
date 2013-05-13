@@ -106,7 +106,7 @@ def save(request):
     messages.success(request, _('Package saved!'))
     return redirect('/packages/%d' % package.id)
 
-@require_GET
+@require_POST
 @login_required
 def delete(request, packageID):
     package = get_object_or_404(Package, pk=packageID)

@@ -126,9 +126,12 @@
     <h4>Warning</h4>
     <p>Are you sure to delete this enforcement?</p>
   </div>
+  <form method="POST" action="/enforcements/{{ enforcement.id }}/delete" id="deleteform">
+    {% csrf_token %}
+  </form>
   <div class="modal-footer">
     <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-danger" href="/enforcements/{{enforcement.id}}/delete">Delete enforcement</a>
+    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete enforcement</a>
   </div>
 </div>
 

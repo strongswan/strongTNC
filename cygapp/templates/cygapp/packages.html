@@ -153,10 +153,13 @@
 	  <h4>Warning</h4>
 	  <p>Are you sure to delete this package?</p>
 	</div>
-	<div class="modal-footer">
-	  <a class="btn" data-dismiss="modal">Cancel</a>
-	  <a class="btn btn-danger" href="/packages/{{package.id}}/delete">Delete package</a>
-	</div>
+  <form method="POST" action="/packages/{{ package.id }}/delete" id="deleteform">
+    {% csrf_token %}
+  </form>
+  <div class="modal-footer">
+    <a class="btn" data-dismiss="modal">Cancel</a>
+    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete package</a>
+  </div>
       </div>
       
       <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">

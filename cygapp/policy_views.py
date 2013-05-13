@@ -144,7 +144,7 @@ def save(request):
     return redirect('/policies/%d' % policy.id)
 
 
-@require_GET
+@require_POST
 @login_required
 def delete(request, policyID):
     policy = get_object_or_404(Policy, pk=policyID)

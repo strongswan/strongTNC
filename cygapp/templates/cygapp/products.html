@@ -1,5 +1,3 @@
-
-
 {% extends "cygapp/base.html" %}
 
 {% load i18n %}
@@ -84,7 +82,7 @@
         </div><!-- /btn-group -->
         {% if product.id %}
         <div class="btn-group">
-          <a class="btn btn-danger" href="/products/{{product.id}}/delete"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+          <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
         </div><!-- /btn-group -->
       </div><!-- /btn-toolbar-->
       {% endif %}
@@ -92,6 +90,24 @@
     </div><!--content-->
   </div><!--/row-->
 </div>
+
+<div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-header">
+	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	  <h3 id="deleteModalLabel">Are you sure to delete this product?</h3>
+	</div>
+	<div class="modal-body">
+	  <h4>Warning</h4>
+	  <p>Are you sure to delete this product?</p>
+	</div>
+  <form method="POST" action="/products/{{ product.id }}/delete" id="deleteform">
+    {% csrf_token %}
+  </form>
+  <div class="modal-footer">
+    <a class="btn" data-dismiss="modal">Cancel</a>
+    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete product</a>
+  </div>
+      </div>
 <script type="text/javascript">
   function save_product(){
     $('<input />').attr('type', 'hidden').attr('name', 'defaultlist').attr('value',

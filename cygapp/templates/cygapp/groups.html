@@ -105,9 +105,12 @@
     <h4>Warning</h4>
     <p>If you delete this group the devices in it will be assigned to the default group.</p>
   </div>
+  <form method="POST" action="/groups/{{ group.id }}/delete" id="deleteform">
+    {% csrf_token %}
+  </form>
   <div class="modal-footer">
     <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-danger" href="/groups/{{group.id}}/delete">Delete group</a>
+    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete group</a>
   </div>
 </div>
 
