@@ -17,83 +17,145 @@
           <input type="text" class="input search-query" name="q" value="{{ query }}" autofocus>
           <input type="submit" class="btn btn-small" value="Search">
         </form>
-        <!-- TODO packages + products + files
+        <!-- TODO packages + products + files etc.
         <p><small>Found <strong>{{ packages|length }}</strong> results.</small></p>
         -->
+        
+        <div class="accordion" id="accordion2">
+          {% if groups %}
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                {{ group_title }}
+                <span class="badge pull-right">{{ groups|length }}</span>
+              </a>
+            </div>
+            <div id="collapseOne" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <p><small>Found <strong>{{ groups|length }}</strong> group{{ groups|pluralize }}.</small></p>
+                <ul class="unstyled">
+                  {% for group in groups %}
+                  <li><a href="/groups/{{ group.id }}">{{ group.name }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          
+          {% if policies %}
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                {{ policy_title }}
+                <span class="badge pull-right">{{ policies|length }}</span>
+              </a>
+            </div>
+            <div id="collapseTwo" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <p><small>Found <strong>{{ policies|length }}</strong> policy{{ policies|pluralize }}.</small></p>
+                <ul class="unstyled">
+                  {% for policy in policies %}
+                  <li><a href="/policies/{{ policy.id }}">{{ policy.name }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        
+          {% if devices %}
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+                {{ device_title }}
+                <span class="badge pull-right">{{ devices|length }}</span>
+              </a>
+            </div>
+            <div id="collapseThree" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <p><small>Found <strong>{{ devices|length }}</strong> device{{ devices|pluralize }}.</small></p>
+                <ul class="unstyled">
+                  {% for device in devices %}
+                  <li><a href="/devices/{{ device.id }}">{{ device.value }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endif %}
 
-        {% if groups %}
-        <h4>{{ group_title }}</h4>
-        <p><small>Found <strong>{{ groups|length }}</strong> group{{ groups|pluralize }}.</small></p>
-        <ul>
-          {% for group in groups %}
-          <li>{{ group.name }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-        
-        {% if policies %}
-        <hr>
-        <h4>{{ policy_title }}</h4>
-        <p><small>Found <strong>{{ policies|length }}</strong> policy{{ policies|pluralize }}.</small></p>
-        <ul>
-          {% for policy in policies %}
-          <li>{{ policy.name }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-        
-        {% if devices %}
-        <hr>
-        <h4>{{ device_title }}</h4>
-        <p><small>Found <strong>{{ devices|length }}</strong> device{{ devices|pluralize }}.</small></p>
-        <ul>
-          {% for device in devices %}
-          <li>{{ device.value }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-         
-        {% if packages %}
-        <hr>
-        <h4>{{ package_title }}</h4>
-        <p><small>Found <strong>{{ packages|length }}</strong> package{{ packages|pluralize }}.</small></p>
-        <ul>
-          {% for package in packages %}
-          <li>{{ package.name }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-        
-        {% if products %}
-        <hr>
-        <h4>{{ product_title }}</h4>
-        <p><small>Found <strong>{{ products|length }}</strong> product{{ products|pluralize }}.</small></p>
-        <ul>
-          {% for product in products %}
-          <li>{{ product.name }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-        
-        {% if files %}
-        <hr>
-        <h4>{{ file_title }}</h4>
-        <p><small>Found <strong>{{ files|length }}</strong> file{{ files|pluralize }}.</small></p>
-        <ul>
-          {% for file in files %}
-          <li>{{ file.name }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
+          {% if packages %}
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseFour">
+                {{ package_title }}
+                <span class="badge pull-right">{{ packages|length }}</span>
+              </a>
+            </div>
+            <div id="collapseFour" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <p><small>Found <strong>{{ packages|length }}</strong> package{{ packages|pluralize }}.</small></p>
+                <ul class="unstyled">
+                  {% for package in packages %}
+                  <li><a href="/packages/{{ package.id }}">{{ package.name }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          
+          {% if products %}
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseFive">
+                {{ product_title }}
+                <span class="badge pull-right">{{ products|length }}</span>
+              </a>
+            </div>
+            <div id="collapseFive" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <p><small>Found <strong>{{ products|length }}</strong> product{{ products|pluralize }}.</small></p>
+                <ul class="unstyled">
+                  {% for product in products %}
+                  <li><a href="/products/{{ product.id }}">{{ product.name }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          
+          {% if files %}
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSix">
+                {{ file_title }}
+                <span class="badge pull-right">{{ files|length }}</span>
+              </a>
+            </div>
+            <div id="collapseSix" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <p><small>Found <strong>{{ files|length }}</strong> file{{ files|pluralize }}.</small></p>
+                <ul class="unstyled">
+                  {% for file in files %}
+                  <li><a href="/files/{{ file.id }}">{{ file.name }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endif %}          
+          
+        </div>
         
         {% if not groups and not policies and not devices and not packages and not products and not files %}
-        <p>No results matched your search criteria.</p>
+        <p class="text-error">No results matched your search criteria.</p>
         {% endif %}
  
-    </div>
-      
-
+      </div><!--/span-->
     </div><!--/row-->
-  </div>
+  </div><!--/container-->
 {% endblock %}
       
