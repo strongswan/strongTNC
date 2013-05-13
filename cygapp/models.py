@@ -53,7 +53,10 @@ class Device(models.Model):
 
 
     def __unicode__(self):
-        return '%s (%s)' % (self.description, self.value[:10])
+        if self.description:
+            return '%s (%s)' % (self.description, self.value[:10])
+        else:
+            return self.value
 
     def get_group_set(self):
         groups = []
