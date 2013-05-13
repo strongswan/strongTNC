@@ -47,8 +47,9 @@ class Device(models.Model):
     """
     id = models.AutoField(primary_key=True)
     value = models.TextField()
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
     product = models.ForeignKey(Product, related_name='devices')
+    created = models.DateTimeField(null=True,blank=True)
 
 
     def __unicode__(self):

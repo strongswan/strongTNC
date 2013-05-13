@@ -1,5 +1,6 @@
 import httplib,random
-import models as m
+from datetime import datetime
+from models import Session, Device, Identity
 
 start_url = '/cmd/start_session'
 end_url  = '/cmd/end_session'
@@ -40,19 +41,17 @@ def finish_login(params):
         raise AssertionError('Expceted empty body, got: %s' % body)
 
 def run_test():
-        params = dict()
-        params['connectionID'] = 314159
-        params['deviceID'] = 'deadbeef'
-        params['osVersion'] = 'Ubuntu%2012.04'
-        params['arID'] = 'tannerli'
+        device = Device.objects.get(value='deadbeef')
+        identity = Identity.objects.get(data='tannerli')
+        session = Session.objects.create(connectionID=1234, device=device,
+                time=datetime.today(), identity=identity)
+
+        params = {}
+        params['sessionID'] = session.id
 
         start_login(params)
 
         #Simulate IMV, generate some random results
-        device = m.Device.objects.get(value=params['deviceID'])
-        session = m.Session.objects.get(connectionID=params['connectionID'],
-                device=device)
-        
         for item in session.workitems.all():
             item.error = random.randint(0,1)
             item.recommendation = random.choice((item.fail, item.noresult))

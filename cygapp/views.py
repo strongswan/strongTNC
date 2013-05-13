@@ -8,7 +8,7 @@ from django.views.decorators.http import (require_GET, require_safe,
         require_http_methods)
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Session, Device, Product, Identity, Result, Action
+from models import Session, Result, Action
 
 @require_GET
 def overview(request):
@@ -22,49 +22,39 @@ def start_session(request):
 
     purge_dead_sessions()
 
-    deviceID = request.GET.get('deviceID', '')
-    if not re.match(r'^[a-f0-9]+$', deviceID):
+    sessionID = request.GET.get('sessionID', '')
+    if not re.match(r'^[0-9]+$', sessionID):
         return HttpResponse(status=400)
 
-    connectionID = request.GET.get('connectionID', '')
-    if not re.match(r'^[0-9]+$', connectionID):
-        return HttpResponse(status=400)
+    try:
+        session = Session.objects.get(pk=sessionID)
+    except Session.DoesNotExist:
+        return HttpResponse(status=404)
 
-    arID = request.GET.get('arID', '')
-    if not re.match(r'^\S+$', arID):
-        return HttpResponse(status=400)
+    device = session.device
 
-    OSVersion = request.GET['osVersion']
-    product, new = Product.objects.get_or_create(name=OSVersion)
+    if not device.created:
+        #This is a new device
+        device.created = datetime.today()
 
-    if new:
         # TODO: Add entry for default group
         pass
 
-    device, new = Device.objects.get_or_create(value=deviceID, product=product)
-
-    if new:
         for group in device.product.default_groups.all():
             device.groups.add(group)
 
         device.save()
 
-    id = Identity.objects.get_or_create(data=arID)[0]
-
-    session = Session.objects.create(time=datetime.today(), identity=id,
-            device=device, connectionID=connectionID)
     device.create_work_items(session)
 
     return HttpResponse(content='')
 
 @require_safe
 def end_session(request):
-    deviceID = request.GET.get('deviceID', '')
-    connectionID = request.GET.get('connectionID', '')
+    sessionID = request.GET.get('sessionID', -1)
 
     try:
-        session = Session.objects.filter(device__value=deviceID,
-                connectionID=connectionID).latest('time')
+        session = Session.objects.get(pk=sessionID)
     except Session.DoesNotExist:
         return HttpResponse(status=404)
 
