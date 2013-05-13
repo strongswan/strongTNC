@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from django.http import HttpResponse
 from django.contrib import messages
 from django.views.decorators.http import require_GET, require_POST
@@ -86,7 +87,7 @@ def save(request):
 
     if deviceID == 'None':
         device = Device.objects.create(value=value, description=description,
-                product=product)
+                product=product, created=datetime.today())
     else:
         device = get_object_or_404(Device, pk=deviceID)
         device.value = value
