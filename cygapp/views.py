@@ -4,13 +4,15 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import (authenticate, login as django_login, logout as
         django_logout)
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import (require_GET, require_safe,
         require_http_methods)
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Session, Device, Product, Identity, Result, Action
+from models import Session, Result, Action
 
 @require_GET
+@login_required
 def overview(request):
     return render(request, 'cygapp/overview.html')
 
