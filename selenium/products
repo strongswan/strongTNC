@@ -71,6 +71,196 @@
 	<td>link=Delete</td>
 	<td></td>
 </tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Groups</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - GROUP MANAGEMENT</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//a[@value='addNew']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - GROUP MANAGEMENT</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=name</td>
+	<td>TEST GROUP</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - GROUP MANAGEMENT</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//a[@value='addNew']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - GROUP MANAGEMENT</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=name</td>
+	<td>TEST GROUP 2</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=parent</td>
+	<td>label=TEST GROUP</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - GROUP MANAGEMENT</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Products</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Product Management</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Fedora Linux</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Product Management</td>
+	<td></td>
+</tr>
+<tr>
+	<td>addSelection</td>
+	<td>id=group_select</td>
+	<td>label=TEST GROUP</td>
+</tr>
+<tr>
+	<td>addSelection</td>
+	<td>id=group_select</td>
+	<td>label=TEST GROUP 2</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=div.btn-group.btn-group-vertical &gt; button.btn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Product Management</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Cancel</td>
+	<td></td>
+</tr>
+<tr>
+	<td>addSelection</td>
+	<td>id=default_select</td>
+	<td>label=TEST GROUP</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//button[@type='button'])[4]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Delete product</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Product Management</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.close</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Groups</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - GROUP MANAGEMENT</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=TEST GROUP</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - GROUP MANAGEMENT</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=i.icon-remove.icon-white</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Delete group</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - GROUP MANAGEMENT</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.close</td>
+	<td></td>
+</tr>
 
 </tbody></table>
 </body>

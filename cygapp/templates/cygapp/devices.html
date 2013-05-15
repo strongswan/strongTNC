@@ -97,7 +97,7 @@
 
     </div>
   </form>
-  <a href="/devices/{{ device.id }}/simulate">View device report</a>
+  {% if device.id %}<a href="/devices/{{ device.id }}/simulate">View device report</a>{% endif %}
   
   <hr>
 

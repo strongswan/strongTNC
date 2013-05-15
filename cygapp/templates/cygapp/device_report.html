@@ -67,13 +67,11 @@
         <div class="span4">
           <h5>{% trans 'by inheritance' %}</h5>
           <ul class="unstyled">
-          {% if not device.group_set %}
+          {% if not inherit_set %}
             <li>{% trans 'None'%}</li>
           {% endif %}
-          {% for group in device.group_set %}
-            {% if group not in device.groups.all %}
+          {% for group in inherit_set %}
             <li><a href="/groups/{{ group.id }}">{{ group }}</a></li>
-            {% endif %}
           {% endfor %}
           </ul>
         </div>

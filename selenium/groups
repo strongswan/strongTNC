@@ -39,12 +39,7 @@
 <tr>
 	<td>type</td>
 	<td>id=name</td>
-	<td>asdf</td>
-</tr>
-<tr>
-	<td>select</td>
-	<td>id=parent</td>
-	<td>label=DEFAULT</td>
+	<td>TEST GROUP</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -54,11 +49,136 @@
 <tr>
 	<td>assertValue</td>
 	<td>id=name</td>
-	<td>asdf</td>
+	<td>TEST GROUP</td>
 </tr>
 <tr>
 	<td>assertVisible</td>
 	<td>link=Delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>css=i.icon-plus-sign.icon-white</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertValue</td>
+	<td>id=name</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertValue</td>
+	<td>id=parent</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>link=Delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=name</td>
+	<td>TEST GROUP 2</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=parent</td>
+	<td>label=TEST GROUP</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertValue</td>
+	<td>id=name</td>
+	<td>TEST GROUP 2</td>
+</tr>
+<tr>
+	<td>assertVisible</td>
+	<td>link=Delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/devices</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>css=i.icon-plus-sign.icon-white</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=value</td>
+	<td>123abcdfe</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=description</td>
+	<td>TEST DEVICE</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=product</td>
+	<td>label=Ubuntu 10.04</td>
+</tr>
+<tr>
+	<td>addSelection</td>
+	<td>id=group_select</td>
+	<td>label=TEST GROUP 2</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=div.btn-group.btn-group-vertical &gt; button.btn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Device Management</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=View device report</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Device Report</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=div.span4&nbsp;&nbsp;h5:contains('definition') + ul li a:contains('TEST GROUP 2')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=div.span4&nbsp;&nbsp;h5:contains('inheritance') + ul li a:contains('TEST GROUP')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/groups</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=TEST GROUP</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - GROUP MANAGEMENT</td>
 	<td></td>
 </tr>
 <tr>
@@ -72,26 +192,40 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertLocation</td>
-	<td>http://localhost:8000/groups</td>
-	<td></td>
-</tr>
-<tr>
 	<td>open</td>
-	<td>/groups/add</td>
+	<td>/devices</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertValue</td>
-	<td>id=name</td>
+	<td>clickAndWait</td>
+	<td>link=TEST DEVICE (123abcdfe)</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertValue</td>
-	<td>id=parent</td>
+	<td>assertTitle</td>
+	<td>cygnet - Device Management</td>
 	<td></td>
 </tr>
-<!--TODO: Clientside validation-->
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>css=#member_select option</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Delete device</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Device Management</td>
+	<td></td>
+</tr>
 <!---->
 </tbody></table>
 </body>

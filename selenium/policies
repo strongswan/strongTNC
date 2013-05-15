@@ -58,7 +58,7 @@
 </tr>
 <tr>
 	<td>assertVisible</td>
-	<td>#file</td>
+	<td>css=#file</td>
 	<td></td>
 </tr>
 <tr>
@@ -67,28 +67,28 @@
 	<td>label=DirHash</td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>#dir</td>
+	<td>assertVisible</td>
+	<td>css=#dir</td>
 	<td></td>
 </tr>
 <tr>
 	<td>select</td>
 	<td>id=type</td>
-	<td>label=ListentingPortUDP</td>
+	<td>label=ListeningPortUDP</td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>#range</td>
+	<td>assertVisible</td>
+	<td>css=#range</td>
 	<td></td>
 </tr>
 <tr>
 	<td>select</td>
 	<td>id=type</td>
-	<td>label=ListentingPortTCP</td>
+	<td>label=ListeningPortTCP</td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>#range</td>
+	<td>assertVisible</td>
+	<td>css=#range</td>
 	<td></td>
 </tr>
 <tr>
@@ -97,18 +97,18 @@
 	<td>label=MissingSecurityUpdate</td>
 </tr>
 <tr>
-	<td>assertElementNotPresent</td>
-	<td>#file</td>
+	<td>assertNotVisible</td>
+	<td>css=#file</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementNotPresent</td>
-	<td>#dir</td>
+	<td>assertNotVisible</td>
+	<td>css=#dir</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementNotPresent</td>
-	<td>#range </td>
+	<td>assertNotVisible</td>
+	<td>css=#range </td>
 	<td></td>
 </tr>
 <tr>

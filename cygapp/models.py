@@ -67,6 +67,14 @@ class Device(models.Model):
         groups = set(groups)
         return groups
 
+    def get_inherit_set(self):
+        group_set = self.get_group_set()
+        for group in (group_set & set(self.groups.all())):
+            group_set.remove(group)
+
+        return group_set
+
+
     def is_due_for(self, enforcement):
         try:
             last_meas = Session.objects.filter(device=self).latest('time')

@@ -128,7 +128,8 @@ def simulate(request, deviceID):
 
     sessions = Session.objects.filter(device=device) 
     context['session_count'] = len(sessions)
-    context['group_set'] = device.get_group_set()
+    context['definition_set'] = device.groups.all()
+    context['inherit_set'] = device.get_inherit_set()
 
     if context['session_count'] > 0:
         session = sessions.latest('time')
@@ -141,7 +142,7 @@ def simulate(request, deviceID):
         context['last_result'] = _('N/A')
 
     enforcements = []
-    for group in context['group_set']:
+    for group in context['definition_set']:
         for e in group.enforcements.all():
             try:
                 result =  Result.objects.filter(
