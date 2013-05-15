@@ -163,11 +163,11 @@ function type_change(){
   type = $("select#type option:selected").attr("value")
   type ++; //Because empty defaults to 0
 
-  if (type == 1 || type == 4 || type == 5)
+  if (type == 1 || type == 5 || type == 6)
     show_file_selector()
   else if (type == 2)
     show_dir_selector()
-  else if (type == 3)
+  else if (type == 3 || type == 4)
     show_range_input()
 
 }
