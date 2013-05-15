@@ -13,21 +13,9 @@ from models import Package, Version
 def packages(request):
     context = {}
     context['title'] = _('Packages')
-    context['packages'] = Package.objects.all().order_by('name')
+    packages = Package.objects.all().order_by('name')
     
-    paginator = Paginator(context['packages'], 50) # Show 50 packages per page
-    page = request.GET.get('page')
-    try:
-        packages = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        packages = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        packages = paginator.page(paginator.num_pages)
-    
-    context['packages'] = packages
-
+    context['packages'] = paginate(packages, request)
     return render(request, 'cygapp/packages.html', context)
 
 @require_GET
@@ -40,21 +28,10 @@ def package(request, packageID):
         messages.error(request, _('Package not found!'))
 
     context = {}
-    context['packages'] = Package.objects.all().order_by('name')
     context['title'] = _('Packages')
-
-    paginator = Paginator(context['packages'], 50) # Show 50 packages per page
-    page = request.GET.get('page')
-    try:
-        packages = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        packages = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        packages = paginator.page(paginator.num_pages)
+    packages = Package.objects.all().order_by('name')
     
-    context['packages'] = packages
+    context['packages'] = paginate(packages, request)
 
     if package:
         context['package'] = package
@@ -132,16 +109,20 @@ def toggle_version(request, versionID):
 def search(request):
     context = {}
     context['title'] = _('Packages foo')
-    context['packages'] = Package.objects.all().order_by('name')
+    packages = Package.objects.all().order_by('name')
     
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
-        context['packages'] = Package.objects.filter(name__icontains=q)
+        packages = Package.objects.filter(name__icontains=q)
     else:
         return redirect('/packages')
+    
+    context['packages'] = paginate(packages, request)
+    return render(request, 'cygapp/packages.html', context)
 
-    paginator = Paginator(context['packages'], 50) # Show 50 packages per page
+def paginate(items, request):
+    paginator = Paginator(items, 50) # Show 50 packages per page
     page = request.GET.get('page')
     try:
         packages = paginator.page(page)
@@ -152,5 +133,4 @@ def search(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         packages = paginator.page(paginator.num_pages)
     
-    context['packages'] = packages
-    return render(request, 'cygapp/packages.html', context)
+    return packages
