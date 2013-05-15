@@ -102,9 +102,11 @@ def save(request):
     argument = ''
 
     ranges = request.POST.get('range',None)
-    if (not ranges is None) and not check_range(ranges):
-        raise ValueError
-    else: argument = ranges
+    if ranges != '':
+        if not check_range(ranges):
+            raise ValueError
+        else:
+           argument = ranges
 
     fail = request.POST['fail']
     if not re.match(r'^\d+$', fail) and int(fail) in range(len(Policy.action)):

@@ -1,5 +1,3 @@
-
-
 {% extends "cygapp/base.html" %}
 
 {% load i18n %}
@@ -52,14 +50,10 @@
           <label class="control-label" for="description">{% trans "Type" %}</label> 
           <div class="controls">   
             <select id="type" name="type" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
-              <option value="">{% trans 'Select one...' %}</option>
+              <option value="-1">{% trans 'Select one...' %}</option>
               {% for t in types %}
               <option value="{{ forloop.counter0 }}"
-              {% if policy.type == forloop.counter0 %}
-              selected="selected"
-              {% endif %}
-              >
-              {{ t }}</option>
+              {% if policy.type == forloop.counter0 %} selected {% endif %}>{{ t }}</option>
               {% endfor %}
             </select>
           </div>
@@ -72,7 +66,7 @@
               title="{% trans 'File to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for f in files %}
-              <option value="{{forloop.counter0}}" {% if policy.file == forloop.counter0 %} selected {% endif %}>{{ f }}</option>
+              <option value="{{ f.id }}" {% if policy.file.id == f.id %} selected {% endif %}>{{ f }}</option>
               {% endfor %}
             </select>
           </div>
@@ -85,11 +79,7 @@
               title="{% trans 'Directory to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for d in dirs %}
-              <option value="{{forloop.counter0}}"
-              {% if policy.directory == forloop.counter0 %}
-              selected="selected"
-              {% endif %} 
-              >{{ d }}</option>
+              <option value="{{ d.id }}"{% if policy.dir.id == d.id %} selected {% endif %}>{{ d }}</option>
               {% endfor %}
             </select>
           </div>
@@ -100,8 +90,7 @@
           <div class="controls">   
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
               rel="tooltip" title="{% trans 'Comma separated range(s) of ports, f.e: 5,10-1024,2450-4000' %}"
-              value="{%if not policy.file%}{%if not policy.dir%}{{policy.argument|default:""}}{%endif%}{%endif%}">
-            </select>
+              value="{{policy.argument}}">
           </div>
         </div>
 
