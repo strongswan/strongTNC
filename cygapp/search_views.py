@@ -26,16 +26,15 @@ def search(request):
     context['products'] = Product.objects.all().order_by('name')
     context['files'] = File.objects.all().order_by('name')
     
-    if 'q' in request.GET:
-        q = request.GET['q']
-        if q:
-            context['query'] = q
-            context['groups'] = Group.objects.filter(name__icontains=q)
-            context['policies'] = Policy.objects.filter(name__icontains=q)
-            context['devices'] = Device.objects.filter(value__icontains=q)
-            context['packages'] = Package.objects.filter(name__icontains=q)
-            context['products'] = Product.objects.filter(name__icontains=q)
-            context['files'] = File.objects.filter(name__icontains=q)
+    q = request.GET.get('q', '')
+    if q != '':
+        context['query'] = q
+        context['groups'] = Group.objects.filter(name__icontains=q)
+        context['policies'] = Policy.objects.filter(name__icontains=q)
+        context['devices'] = Device.objects.filter(value__icontains=q)
+        context['packages'] = Package.objects.filter(name__icontains=q)
+        context['products'] = Product.objects.filter(name__icontains=q)
+        context['files'] = File.objects.filter(name__icontains=q)
 
     groups = Group.objects.filter(name__icontains=q)
     policies = Policy.objects.filter(name__icontains=q)
@@ -43,7 +42,5 @@ def search(request):
     packages = Package.objects.filter(name__icontains=q)
     products = Product.objects.filter(name__icontains=q)
     files = File.objects.filter(name__icontains=q)
-    context['packages'] = packages
-    context['products'] = products
-    context['files'] = files
+    
     return render(request, 'cygapp/search.html', context)

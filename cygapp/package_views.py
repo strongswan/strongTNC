@@ -131,14 +131,15 @@ def toggle_version(request, versionID):
 @login_required
 def search(request):
     context = {}
-    context['title'] = _('Packages')
+    context['title'] = _('Packages foo')
     context['packages'] = Package.objects.all().order_by('name')
     
-    if 'q' in request.GET:
-        q = request.GET['q']
-        if q:
-            context['query'] = q
-            context['packages'] = Package.objects.filter(name__icontains=q)
+    q = request.GET.get('q', None)
+    if q != '':
+        context['query'] = q
+        context['packages'] = Package.objects.filter(name__icontains=q)
+    else:
+        return redirect('/packages')
 
     paginator = Paginator(context['packages'], 50) # Show 50 packages per page
     page = request.GET.get('page')
