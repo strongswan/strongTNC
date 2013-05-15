@@ -35,9 +35,9 @@ def policy(request, policyID):
         context['types'] = Policy.types
         context['action'] = Policy.action
         files = File.objects.all().order_by('name')
-        context['files'] = ','.join('"%s"' % file for file in files)
+        context['files'] = files
         dirs = Directory.objects.all().order_by('path')
-        context['dirs'] = ','.join('"%s"' % dir for dir in dirs)
+        context['dirs'] = dirs
 
         groups = Group.objects.exclude(id__in = enforcements.values_list('id',
             flat=True))
@@ -57,9 +57,9 @@ def add(request):
     context['action'] = Policy.action
     context['policy'] = Policy()
     files = File.objects.all().order_by('name')
-    context['files'] = ','.join('"%s"' % file for file in files)
+    context['files'] = files
     dirs = Directory.objects.all().order_by('path')
-    context['dirs'] = ','.join('"%s"' % dir for dir in dirs)
+    context['dirs'] = dirs
     return render(request, 'cygapp/policies.html', context)
 
 @require_POST
