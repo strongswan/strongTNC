@@ -90,7 +90,7 @@
           <div class="controls">   
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
               rel="tooltip" title="{% trans 'Comma separated range(s) of ports, f.e: 5,10-1024,2450-4000' %}"
-              value="{{policy.argument}}">
+              value="{{ policy.argument|default:'' }}">
           </div>
         </div>
 

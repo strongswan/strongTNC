@@ -10,6 +10,9 @@
 <tr><td><b>Test Suite</b></td></tr>
 <tr><td><a href="login">login</a></td></tr>
 <tr><td><a href="groups">groups</a></td></tr>
+<tr><td><a href="policies">policies</a></td></tr>
+<tr><td><a href="enforcements">enforcements</a></td></tr>
+<tr><td><a href="products">products</a></td></tr>
 </tbody></table>
 </body>
 </html>
