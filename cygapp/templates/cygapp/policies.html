@@ -141,20 +141,6 @@ $(document).ready(function() {
     type_change();
 });
 
-function add_enforcement(){
-  $("#etable > tbody ").append(enforcement_form());
-  }
-
-function enforcement_form(){
-  form = '<tr><td><input class="input-small" name="group" /></td>'
-  form += '<td><input class="input-mini" name="max_age"/></td>'
-  form += '<td><input type="checkbox" checked name="fail"/></td>'
-  form += '<td><input type="checkbox" checked name="noresult"/></td>'
-  form += '<td><a class="btn btn-success"><i class="icon-ok icon-white"/></a></td>'
-  form += '</tr>'
-  return form
-}
-  
 function type_change(){
   hide_file_selector()
   hide_dir_selector()
@@ -178,7 +164,7 @@ function show_file_selector(){
   select = '<div class="control-group">'
   select += '<label class="control-label" for="file">{% trans "File" %}</label>' 
   select += '<div class="controls">'
-  select += '<select id="file" name="file">'
+  select += '<select id="file" name="file" rel="tooltip" title="{% trans 'File to check' %}">'
   select += '<option value="">{% trans 'Select one...' %}</option>'
 
   for (file in files){
@@ -192,10 +178,9 @@ function show_file_selector(){
   }
 
   select += '</select>'
-  select += '<a class="btn-small" href="#" rel="tooltip" title="{% trans 'File to check' %}"><i class="icon-info-sign"></i></a>'
   select += '</div>'
-  select += '</div>'
-
+  select += '</div>' 
+  
   $("div.control-group").has("#type").after(select)
 }
 
@@ -205,7 +190,7 @@ function show_dir_selector(){
   select = '<div class="control-group">'
   select += '<label class="control-label" for="dir">{% trans "Directory" %}</label>' 
   select += '<div class="controls">'
-  select += '<select id="dir" name="dir">'
+  select += '<select id="dir" name="dir" rel="tooltip" title="{% trans 'Directory to check' %}">'
   select += '<option value="">{% trans 'Select one...' %}</option>'
 
   for (dir in dirs){
@@ -219,10 +204,9 @@ function show_dir_selector(){
   }
 
   select += '</select>'
-  select += '<a class="btn-small" href="#" rel="tooltip" title="{% trans 'Directory to check' %}"><i class="icon-info-sign"></i></a>'
   select += '</div>'
   select += '</div>'
-
+  
   $("div.control-group").has("#type").after(select)
 }
 
@@ -232,10 +216,10 @@ function show_range_input(){
   select += '<label class="control-label" for="range">{% trans "Port Range" %}</label>' 
   select += '<div class="controls">'
   select += '<input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"'
-  select += 'value="{%if not policy.file%}{%if not policy.dir%}{{policy.argument}}{%endif%}{%endif%}">'
-  select += '<a class="btn-small" href="#" rel="tooltip" title="'
+  select += 'value="{%if not policy.file%}{%if not policy.dir%}{{policy.argument}}{%endif%}{%endif%}"'
+  select += 'rel="tooltip" title="'
   select += '{% trans 'Comma separated range(s) of ports, f.e: 5,10-1024,2450-4000' %}"'
-  select += '><i class="icon-info-sign"></i></a>'
+  select += '></input>'
   select += '</div>'
   select += '</div>'
 
