@@ -66,10 +66,10 @@
         </div>
         
         <div class="control-group hide" id="file">
-          <label class="control-label" for="file2">{% trans "File" %}</label> 
+          <label class="control-label" for="file">{% trans "File" %}</label> 
           <div class="controls">   
-            <select id="file2" name="file2" rel="tooltip"
-              title="{% trans 'File to check #2' %}">
+            <select id="file" name="file" rel="tooltip"
+              title="{% trans 'File to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for f in files %}
               <option value="{{forloop.counter0}}" {% if policy.file == forloop.counter0 %} selected {% endif %}>{{ f }}</option>
@@ -79,10 +79,10 @@
         </div>
         
         <div class="control-group hide" id="dir">
-          <label class="control-label" for="dir2">{% trans "Directory" %}</label> 
+          <label class="control-label" for="dir">{% trans "Directory" %}</label> 
           <div class="controls">   
-            <select id="dir2" name="dir2" rel="tooltip"
-              title="{% trans 'Directory to check #2' %}">
+            <select id="dir" name="dir" rel="tooltip"
+              title="{% trans 'Directory to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for d in dirs %}
               <option value="{{forloop.counter0}}"
@@ -96,11 +96,11 @@
         </div>        
         
         <div class="control-group hide" id="port">
-          <label class="control-label" for="range2">{% trans "Port Range" %}</label> 
+          <label class="control-label" for="range">{% trans "Port Range" %}</label> 
           <div class="controls">   
-            <input type="text" id="range2" name="range2" placeholder="{% trans 'Port Range' %}"
+            <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
               rel="tooltip" title="{% trans 'Comma separated range(s) of ports, f.e: 5,10-1024,2450-4000' %}"
-              value="{%if not policy.file%}{%if not policy.dir%}{{policy.argument}}{%endif%}{%endif%}">
+              value="{%if not policy.file%}{%if not policy.dir%}{{policy.argument|default:""}}{%endif%}{%endif%}">
             </select>
           </div>
         </div>
@@ -153,7 +153,7 @@
         </div><!-- /btn-group -->
       </div><!-- /btn-toolbar-->
       {% endif %}
-
+    
     </div><!--content-->
   </div><!--/row-->
 </div>
@@ -177,48 +177,25 @@
 </div>
 <script type="text/javascript">
 
-$(document).ready(function() {
-    type_change();
-});
+$(document).ready(function () {
+  type_change();
+})
 
 function type_change(){
-  hide_file_selector()
-  hide_dir_selector()
-  hide_range_input()
+  $(document.getElementById('file')).hide();
+  $(document.getElementById('dir')).hide();
+  $(document.getElementById('port')).hide();
 
   type = $("select#type option:selected").attr("value")
-  type ++; //Because empty defaults to 0
+  console.log(type);
+  //type ++; //Because empty defaults to 0
 
-  if (type == 1 || type == 5 || type == 6)
-    show_file_selector()
-  else if (type == 2)
-    show_dir_selector()
-  else if (type == 3 || type == 4)
-    show_range_input()
-}
-
-function show_file_selector(){
-  $(document.getElementById('file')).show();
-}
-
-function show_dir_selector(){
-  $(document.getElementById('dir')).show();
-}
-
-function show_range_input(){ 
-  $(document.getElementById('port')).show();
-}
-
-function hide_file_selector(){
-  $(document.getElementById('port')).hide();
-}
-
-function hide_dir_selector(){
-  $(document.getElementById('dir')).hide();
-}
-
-function hide_range_input(){
-  $(document.getElementById('file')).hide();
+  if (type == 0 || type == 4 || type == 5)
+    $(document.getElementById('file')).show();
+  else if (type == 1)
+    $(document.getElementById('dir')).show();
+  else if (type == 2 || type == 3)
+    $(document.getElementById('port')).show();
 }
 
 </script>
