@@ -84,21 +84,23 @@ def save(request):
     except (Policy.DoesNotExist, Group.DoesNotExist):
         raise ValueError
         return HttpResponse(status=400)
-        
-    fail = request.POST.get('fail',None)
-    if not fail == '':
-        if not re.match(r'^[0123]$', fail):
-            raise ValueError
-            return HttpResponse(status=400)
-    else:
+
+    fail = request.POST.get('fail', None)
+    if not (re.match(r'^-?\d+$', fail) and int(fail) in range(-1,
+        len(Policy.action))):
+        raise ValueError
+        return HttpResponse(status=400)
+
+    if fail == -1:
         fail = None
 
-    noresult = request.POST.get('noresult', None)
-    if not noresult == '':
-        if not re.match(r'^[0123]$', noresult):
-            raise ValueError
-            return HttpResponse(status=400)
-    else:
+    noresult = request.POST.get('noresult', -1)
+    if not (re.match(r'^-?\d+$', noresult) and int(noresult) in range(-1,
+        len(Policy.action))):
+        raise ValueError
+        return HttpResponse(status=400)
+
+    if noresult == -1:
         noresult = None
 
     if enforcementID == 'None':

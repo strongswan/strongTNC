@@ -77,7 +77,7 @@
       <label class="control-label" for="fail">{% trans "Fail Action" %}</label>
       <div class="controls">
         <select name="fail" id="fail" rel="tooltip" title="{% trans 'Action if requirements are not met'%}">
-          <option value=''>{% trans 'Select one...' %}</option>
+          <option value="-1">{% trans 'Inherit from policy' %}</option>
           {% for a in actions %}
           <option value="{{ forloop.counter0 }}" {% if forloop.counter0 == enforcement.fail %} selected {% endif %}>
           {{ a }}
@@ -91,7 +91,7 @@
       <label class="control-label" for="noresult">{% trans "Noresult Action" %}</label>
       <div class="controls">
         <select name="noresult" id="noresult" rel="tooltip" title="{% trans 'Action if policy does not apply'%}">
-          <option value=''>{% trans 'Select one...' %}</option>
+          <option value="-1"> {%trans 'Inherit from policy' %}</option>
           {% for a in actions %}
           <option value="{{ forloop.counter0 }}" {% if forloop.counter0 == enforcement.noresult %} selected {% endif %}>
           {{ a }}
