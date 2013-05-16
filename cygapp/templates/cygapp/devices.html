@@ -21,14 +21,44 @@
 	  </a>
 	</div>
       </h4>
-	<table class="table table-hover">
-    <tbody>
-      {% for d in devices %}
-      <tr><td><a href=/devices/{{ d.id }}>{{ d }}</a></td></tr>
-      {% endfor %}
-    </tbody>
-	</table>
+      <hr>
+      <div class="row-fluid">
+	<form class="form-search pull-center" action="/devices/search" method="get">
+	  <div class="input-append">
+	    <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
+	    <button type="submit" class="btn"><i class="icon-search"></i></button>
+	  </div>
+	</form>
+	{% if devices|length >= 50 %}
+	<div class="pagination pagination-mini pagination-centered">
+	  <ul>
+	    {% if devices.has_previous %}
+	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ devices.previous_page_number }}">&laquo;</a></li>
+	    {% else %}
+	    <li class="disabled"><a href="">&laquo;</a></li>
+	    {% endif %}
+	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ devices.number }}">Page {{ packages.number }} of {{ packages.paginator.num_pages }}</a></li>
+	    {% if devices.has_next %}
+	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ devices.next_page_number }}">&raquo;</a></li>
+	    {% else %}
+	    <li class="disabled"><a href="">&raquo;</a></li>
+	    {% endif %}
+	  </ul>
+	</div>
+	{% endif %}
       </div>
+      {% if devices %}
+      <table class="table table-hover">
+        <tbody>
+        {% for d in devices %}
+          <tr><td><a href=/devices/{{ d.id }}>{{ d }}</a></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+    <p><small>No devices matched your search criteria.</small></p>
+    {% endif %}    
+    </div>
       
       <div class="span9" id="content">
     {% if device %}

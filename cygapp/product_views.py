@@ -31,7 +31,7 @@ def product(request, productID):
     context['title'] = _('Products')
     products = Product.objects.all().order_by('name')
 
-    context['products'] = paginate(packages, request)
+    context['products'] = paginate(products, request)
 
     if product:
         context['product'] = product

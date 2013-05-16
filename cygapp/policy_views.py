@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from models import Policy, Group, File, Directory
 
 @require_GET
@@ -12,7 +13,9 @@ from models import Policy, Group, File, Directory
 def policies(request):
     context = {}
     context['title'] = _('Policies')
-    context['policies'] = Policy.objects.all().order_by('name')
+    policies = Policy.objects.all().order_by('name')
+
+    context['policies'] = paginate(policies, request)
     return render(request, 'cygapp/policies.html', context)
 
 @require_GET
@@ -25,8 +28,10 @@ def policy(request, policyID):
         messages.error(request, _('Policy not found!'))
 
     context = {}
-    context['policies'] = Policy.objects.all().order_by('name')
     context['title'] = _('Policies')
+    policies = Policy.objects.all().order_by('name')
+
+    context['policies'] = paginate(policies, request)
 
     if policy:
         context['policy'] = policy
@@ -174,4 +179,33 @@ def check_range(ranges):
                     return False
     return True
 
+@require_GET
+@login_required
+def search(request):
+    context = {}
+    context['title'] = _('Policies')
+    policies = Policy.objects.all().order_by('name')
+    
+    q = request.GET.get('q', None)
+    if q != '':
+        context['query'] = q
+        policies = Policy.objects.filter(name__icontains=q)
+    else:
+        return redirect('/policies')
+    
+    context['policies'] = paginate(policies, request)
+    return render(request, 'cygapp/policies.html', context)
 
+def paginate(items, request):
+    paginator = Paginator(items, 50) # Show 50 policies per page
+    page = request.GET.get('page')
+    try:
+        policies = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        policies = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        policies = paginator.page(paginator.num_pages)
+    
+    return policies

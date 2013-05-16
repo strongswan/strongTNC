@@ -20,13 +20,43 @@
           </a>
         </div>
       </h4>
+      <hr>
+      <div class="row-fluid">
+	<form class="form-search pull-center" action="/policies/search" method="get">
+	  <div class="input-append">
+	    <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
+	    <button type="submit" class="btn"><i class="icon-search"></i></button>
+	  </div>
+	</form>
+	{% if policies|length >= 50 %}
+	<div class="pagination pagination-mini pagination-centered">
+	  <ul>
+	    {% if policies.has_previous %}
+	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ policies.previous_page_number }}">&laquo;</a></li>
+	    {% else %}
+	    <li class="disabled"><a href="">&laquo;</a></li>
+	    {% endif %}
+	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ policies.number }}">Page {{ policies.number }} of {{ policies.paginator.num_pages }}</a></li>
+	    {% if policies.has_next %}
+	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ policies.next_page_number }}">&raquo;</a></li>
+	    {% else %}
+	    <li class="disabled"><a href="">&raquo;</a></li>
+	    {% endif %}
+	  </ul>
+	</div>
+	{% endif %}
+      </div>
+      {% if policies %}
       <table class="table table-hover">
-        <tbody>
-          {% for p in policies %}
-          <tr><td><a href=/policies/{{ p.id }}>{{ p }}</a></td></tr>
-          {% endfor %}
-        </tbody>
+	<tbody>
+	{% for p in policies %}
+	  <tr><td><a href=/policies/{{ p.id }}>{{ p }}</a></td></tr>
+	{% endfor %}
+	</tbody>
       </table>
+      {% else %}
+    <p><small>No packages matched your search criteria.</small></p>
+    {% endif %}    
     </div>
 
     <div class="span9" id="content">

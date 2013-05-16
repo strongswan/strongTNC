@@ -21,19 +21,42 @@
         </div>
       </h4>
       <hr>
-      <form class="form-search pull-center" action="/products/search" method="get">
-        <div class="input-append">
-          <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
-          <button type="submit" class="btn"><i class="icon-search"></i></button>
-        </div>
-      </form>
+      <div class="row-fluid">
+        <form class="form-search pull-center" action="/products/search" method="get">
+          <div class="input-append">
+            <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+          </div>
+        </form>
+	{% if products|length >= 50 %}
+	<div class="pagination pagination-mini pagination-centered">
+	  <ul>
+	    {% if products.has_previous %}
+	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ products.previous_page_number }}">&laquo;</a></li>
+	    {% else %}
+	    <li class="disabled"><a href="">&laquo;</a></li>
+	    {% endif %}
+	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ products.number }}">Page {{ products.number }} of {{ products.paginator.num_pages }}</a></li>
+	    {% if products.has_next %}
+	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ products.next_page_number }}">&raquo;</a></li>
+	    {% else %}
+	    <li class="disabled"><a href="">&raquo;</a></li>
+	    {% endif %}
+	  </ul>
+	</div>
+      {% endif %}
+      </div>
+      {% if products %}
       <table class="table table-hover">
-        <tbody>
+	<tbody>
           {% for p in products %}
           <tr><td><a href=/products/{{ p.id }}>{{ p }}</a></td></tr>
           {% endfor %}
-        </tbody>
+	</tbody>
       </table>
+      {% else %}
+    <p><small>No products matched your search criteria.</small></p>
+    {% endif %}    
     </div>
 
     <div class="span9" id="content">

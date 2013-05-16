@@ -6,6 +6,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from models import Device, Group, Product, Session, Result
 
 @require_GET
@@ -13,7 +14,9 @@ from models import Device, Group, Product, Session, Result
 def devices(request):
     context = {}
     context['title'] = _('Devices')
-    context['devices'] = Device.objects.all()
+    devices = Device.objects.all().order_by('description')
+    
+    context['devices'] = paginate(devices, request)
     return render(request, 'cygapp/devices.html', context)
 
 @require_GET
@@ -26,8 +29,10 @@ def device(request, deviceID):
         messages.error(request, _('Device not found!'))
 
     context = {}
-    context['devices'] = Device.objects.all().order_by('description')
     context['title'] = _('Devices')
+    devices = Device.objects.all().order_by('description')
+
+    context['devices'] = paginate(devices, request)
 
     if device:
         context['device'] = device
@@ -106,7 +111,6 @@ def save(request):
     messages.success(request, _('Device saved!'))
     return redirect('/devices/%d' % device.id)
 
-
 @require_POST
 @login_required
 def delete(request, deviceID):
@@ -116,6 +120,36 @@ def delete(request, deviceID):
     messages.success(request, _('Device deleted!'))
     return redirect('/devices')
 
+@require_GET
+@login_required
+def search(request):
+    context = {}
+    context['title'] = _('Devices')
+    devices = Device.objects.all().order_by('description')
+    
+    q = request.GET.get('q', None)
+    if q != '':
+        context['query'] = q
+        devices = Device.objects.filter(description__icontains=q)
+    else:
+        return redirect('/devices')
+    
+    context['devices'] = paginate(devices, request)
+    return render(request, 'cygapp/devices.html', context)
+
+def paginate(items, request):
+    paginator = Paginator(items, 50) # Show 50 devices per page
+    page = request.GET.get('page')
+    try:
+        devices = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        devices = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        devices = paginator.page(paginator.num_pages)
+    
+    return devices
 
 @require_GET
 @login_required
