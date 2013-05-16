@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from models import File, FileHash
 
 @require_GET
@@ -12,7 +13,9 @@ from models import File, FileHash
 def files(request):
     context = {}
     context['title'] = _('Files')
-    context['files'] = File.objects.all().order_by('name')
+    files = File.objects.all().order_by('name')
+    
+    context['files'] = paginate(files, request)
     return render(request, 'cygapp/files.html', context)
 
 @require_GET
@@ -25,8 +28,10 @@ def file(request,fileID):
         messages.error(request, _('File not found!'))
 
     context = {}
-    context['files'] = File.objects.all().order_by('name')
     context['title'] = _('Files')
+    files = File.objects.all().order_by('name')
+
+    context['files'] = paginate(files, request)
 
     if file:
         context['file'] = file
@@ -68,3 +73,34 @@ def deleteHash(request, file_hashID):
 
     messages.success(request, _('Hash deleted!'))
     return redirect('/files/%d' % file.id)
+
+@require_GET
+@login_required
+def search(request):
+    context = {}
+    context['title'] = _('Files')
+    files = File.objects.all().order_by('name')
+    
+    q = request.GET.get('q', None)
+    if q != '':
+        context['query'] = q
+        files = File.objects.filter(name__icontains=q)
+    else:
+        return redirect('/files')
+    
+    context['files'] = paginate(files, request)
+    return render(request, 'cygapp/files.html', context)
+
+def paginate(items, request):
+    paginator = Paginator(items, 50) # Show 50 packages per page
+    page = request.GET.get('page')
+    try:
+        files = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        files = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        files = paginator.page(paginator.num_pages)
+    
+    return files

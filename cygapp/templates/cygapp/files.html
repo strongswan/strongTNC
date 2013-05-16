@@ -13,17 +13,48 @@
   <div class="container-fluid">
     <div class="row-fluid">
       <div class="span3" id="line">
-      <h4>{% trans "File" %}</h4>
-	<table class="table table-hover">
-	  <tbody>
-	    {% for f in files %}
-	    <tr><td><a href="/files/{{ f.id }}">{{ f }}</a></td></tr>
-	    {% endfor %}
-	  </tbody>
-	</table>
-      </div>
+		<h4>{% trans "File" %}</h4>
+		<hr>
+		<div class="row-fluid">
+		  <form class="form-search pull-center" action="/files/search" method="get">
+			<div class="input-append">
+			  <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
+			  <button type="submit" class="btn"><i class="icon-search"></i></button>
+			</div>
+		  </form>
+		  {% if files|length >= 50 %}
+		  <div class="pagination pagination-mini pagination-centered">
+			<ul>
+			  {% if files.has_previous %}
+			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ files.previous_page_number }}">&laquo;</a></li>
+			  {% else %}
+			  <li class="disabled"><a href="">&laquo;</a></li>
+			  {% endif %}
+			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ files.number }}">Page {{ files.number }} of {{ files.paginator.num_pages }}</a></li>
+			  {% if files.has_next %}
+			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ files.next_page_number }}">&raquo;</a></li>
+			  {% else %}
+			  <li class="disabled"><a href="">&raquo;</a></li>
+			  {% endif %}
+			</ul>
+		  </div>
+		  {% endif %}
+		</div>
+		{% if files %}
+		<table class="table table-hover">
+		  <tbody>
+			{% for f in files %}
+			<tr><td><a href="/files/{{ f.id }}">{{ f }}</a></td></tr>
+			{% endfor %}
+		  </tbody>
+		</table>
+		{% else %}
+	  </div>
+	  <p><small>No files matched your search criteria.</small></p>
+	  {% endif %}
+	</div>
       
-      <div class="span9" id="content">
+    <div class="span9" id="content">
 	{% if file %}
 	<h4>File Info</h4>
 	<form class="form-horizontal" method="POST" action="/files/save" id="fileform">

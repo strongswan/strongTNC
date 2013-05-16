@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from models import Product, Group
 
 @require_GET
@@ -12,7 +13,9 @@ from models import Product, Group
 def products(request):
     context = {}
     context['title'] = _('Products')
-    context['products'] = Product.objects.all().order_by('name')
+    products = Product.objects.all().order_by('name')
+    
+    context['products'] = paginate(products, request)
     return render(request, 'cygapp/products.html', context)
 
 @require_GET
@@ -25,14 +28,15 @@ def product(request, productID):
         messages.error(request, _('Product not found!'))
 
     context = {}
-    context['products'] = Product.objects.all().order_by('name')
     context['title'] = _('Products')
+    products = Product.objects.all().order_by('name')
+
+    context['products'] = paginate(packages, request)
 
     if product:
         context['product'] = product
         defaults = product.default_groups.all().order_by('name')
         context['defaults'] = defaults
-
         groups = Group.objects.exclude(id__in = defaults.values_list('id',
             flat=True))
         context['groups'] = groups
@@ -98,3 +102,33 @@ def delete(request, productID):
     messages.success(request, _('Product deleted!'))
     return redirect('/products')
 
+@require_GET
+@login_required
+def search(request):
+    context = {}
+    context['title'] = _('Product')
+    products = Product.objects.all().order_by('name')
+    
+    q = request.GET.get('q', None)
+    if q != '':
+        context['query'] = q
+        products = Product.objects.filter(name__icontains=q)
+    else:
+        return redirect('/products')
+    
+    context['products'] = paginate(products, request)
+    return render(request, 'cygapp/products.html', context)
+
+def paginate(items, request):
+    paginator = Paginator(items, 50) # Show 50 products per page
+    page = request.GET.get('page')
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        products = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        products = paginator.page(paginator.num_pages)
+    
+    return products

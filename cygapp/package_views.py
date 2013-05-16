@@ -108,7 +108,7 @@ def toggle_version(request, versionID):
 @login_required
 def search(request):
     context = {}
-    context['title'] = _('Packages foo')
+    context['title'] = _('Packages')
     packages = Package.objects.all().order_by('name')
     
     q = request.GET.get('q', None)

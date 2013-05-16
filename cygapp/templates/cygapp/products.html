@@ -20,6 +20,13 @@
           </a>
         </div>
       </h4>
+      <hr>
+      <form class="form-search pull-center" action="/products/search" method="get">
+        <div class="input-append">
+          <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
+          <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+      </form>
       <table class="table table-hover">
         <tbody>
           {% for p in products %}
