@@ -33,13 +33,13 @@
 	<div class="pagination pagination-mini pagination-centered">
 	  <ul>
 	    {% if packages.has_previous %}
-	    <li><a href="?page={{ packages.previous_page_number }}">&laquo;</a></li>
+	    <li><a href="?q={{ query }}&page={{ packages.previous_page_number }}">&laquo;</a></li>
 	    {% else %}
 	    <li class="disabled"><a href="">&laquo;</a></li>
 	    {% endif %}
 	    <li><a href="?q={{ query }}&page={{ packages.number }}">Page {{ packages.number }} of {{ packages.paginator.num_pages }}</a></li> <!-- Page {{ packages.number }} of {{ packages.paginator.num_pages }} -->
 	    {% if packages.has_next %}
-	    <li><a href="?q={{ query }}&page={{ packages.next_page_number }}">&raquo;</a></li>
+	    <li><a href="?{% if query %}q={{query}}&{% endif %}page={{ packages.next_page_number }}">&raquo</a></li>
 	    {% else %}
 	    <li class="disabled"><a href="">&raquo;</a></li>
 	    {% endif %}
