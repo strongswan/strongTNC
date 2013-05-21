@@ -13,6 +13,7 @@ from models import Policy, Group, File, Directory
 def policies(request):
     context = {}
     context['title'] = _('Policies')
+    context['count'] = Policy.objects.count()
     policies = Policy.objects.all().order_by('name')
 
     context['policies'] = paginate(policies, request)
@@ -29,6 +30,7 @@ def policy(request, policyID):
 
     context = {}
     context['title'] = _('Policies')
+    context['count'] = Policy.objects.count()
     policies = Policy.objects.all().order_by('name')
 
     context['policies'] = paginate(policies, request)
@@ -58,6 +60,7 @@ def add(request):
     context = {}
     context['policies'] = Policy.objects.all().order_by('name')
     context['title'] = _('New policy')
+    context['count'] = Policy.objects.count()
     context['types'] = Policy.types
     context['action'] = Policy.action
     context['policy'] = Policy()
@@ -181,9 +184,16 @@ def check_range(ranges):
 
 @require_GET
 @login_required
+def getAll(request):
+    return Policy.count()
+
+
+@require_GET
+@login_required
 def search(request):
     context = {}
     context['title'] = _('Policies')
+    context['count'] = Policy.objects.count()
     policies = Policy.objects.all().order_by('name')
     
     q = request.GET.get('q', None)

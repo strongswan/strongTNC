@@ -23,12 +23,14 @@
       </h4>
       <hr>
       <div class="row-fluid">
+      	{% if count > 0 %}
 	<form class="form-search pull-center" action="/devices/search" method="get">
 	  <div class="input-append">
 	    <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
 	    <button type="submit" class="btn"><i class="icon-search"></i></button>
 	  </div>
 	</form>
+	{% endif %}
 	{% if devices|length >= 50 %}
 	<div class="pagination pagination-mini pagination-centered">
 	  <ul>
@@ -55,7 +57,9 @@
         {% endfor %}
         </tbody>
       </table>
-      {% else %}
+      {% elif count == 0 %}
+    <p><small>There are no entries.</small></p>
+      {% elif query %}
     <p><small>No devices matched your search criteria.</small></p>
     {% endif %}    
     </div>

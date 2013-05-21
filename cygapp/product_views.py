@@ -13,6 +13,7 @@ from models import Product, Group
 def products(request):
     context = {}
     context['title'] = _('Products')
+    context['count'] = Product.objects.count()
     products = Product.objects.all().order_by('name')
     
     context['products'] = paginate(products, request)
@@ -29,6 +30,7 @@ def product(request, productID):
 
     context = {}
     context['title'] = _('Products')
+    context['count'] = Product.objects.count()
     products = Product.objects.all().order_by('name')
 
     context['products'] = paginate(products, request)
@@ -50,6 +52,7 @@ def product(request, productID):
 def add(request):
     context = {}
     context['title'] = _('New product')
+    context['count'] = Product.objects.count()
     context['groups'] = Group.objects.all().order_by('name')
     context['products'] = Product.objects.all().order_by('name')
     context['product'] = Product()
@@ -107,6 +110,7 @@ def delete(request, productID):
 def search(request):
     context = {}
     context['title'] = _('Product')
+    context['count'] = Product.objects.count()
     products = Product.objects.all().order_by('name')
     
     q = request.GET.get('q', None)

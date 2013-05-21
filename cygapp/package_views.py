@@ -13,6 +13,7 @@ from models import Package, Version
 def packages(request):
     context = {}
     context['title'] = _('Packages')
+    context['count'] = Package.objects.count()
     packages = Package.objects.all().order_by('name')
     
     context['packages'] = paginate(packages, request)
@@ -29,6 +30,7 @@ def package(request, packageID):
 
     context = {}
     context['title'] = _('Packages')
+    context['count'] = Package.objects.count()
     packages = Package.objects.all().order_by('name')
     
     context['packages'] = paginate(packages, request)
@@ -46,6 +48,7 @@ def package(request, packageID):
 def add(request):
     context = {}
     context['title'] = _('New package')
+    context['count'] = Package.objects.count()
     context['packages'] = Package.objects.all().order_by('name')[:50]
     context['package'] = Package()
     return render(request, 'cygapp/packages.html', context)
@@ -109,6 +112,7 @@ def toggle_version(request, versionID):
 def search(request):
     context = {}
     context['title'] = _('Packages')
+    context['count'] = Package.objects.count()
     packages = Package.objects.all().order_by('name')
     
     q = request.GET.get('q', None)

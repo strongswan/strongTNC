@@ -13,6 +13,7 @@ from models import File, FileHash
 def files(request):
     context = {}
     context['title'] = _('Files')
+    context['count'] = File.objects.count()
     files = File.objects.all().order_by('name')
     
     context['files'] = paginate(files, request)
@@ -29,6 +30,7 @@ def file(request,fileID):
 
     context = {}
     context['title'] = _('Files')
+    context['count'] = File.objects.count()
     files = File.objects.all().order_by('name')
 
     context['files'] = paginate(files, request)
@@ -79,6 +81,7 @@ def deleteHash(request, file_hashID):
 def search(request):
     context = {}
     context['title'] = _('Files')
+    context['count'] = File.objects.count()
     files = File.objects.all().order_by('name')
     
     q = request.GET.get('q', None)

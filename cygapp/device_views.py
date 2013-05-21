@@ -14,6 +14,7 @@ from models import Device, Group, Product, Session, Result
 def devices(request):
     context = {}
     context['title'] = _('Devices')
+    context['count'] = Device.objects.count()
     devices = Device.objects.all().order_by('description')
     
     context['devices'] = paginate(devices, request)
@@ -30,6 +31,7 @@ def device(request, deviceID):
 
     context = {}
     context['title'] = _('Devices')
+    context['count'] = Device.objects.count()
     devices = Device.objects.all().order_by('description')
 
     context['devices'] = paginate(devices, request)
@@ -52,6 +54,7 @@ def device(request, deviceID):
 def add(request):
     context = {}
     context['title'] = _('New device')
+    context['count'] = Device.objects.count()
     context['groups'] = Group.objects.all().order_by('name')
     context['products'] = Product.objects.all().order_by('name')
     context['devices'] = Device.objects.all()
@@ -125,6 +128,7 @@ def delete(request, deviceID):
 def search(request):
     context = {}
     context['title'] = _('Devices')
+    context['count'] = Device.objects.count()
     devices = Device.objects.all().order_by('description')
     
     q = request.GET.get('q', None)
