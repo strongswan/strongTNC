@@ -109,12 +109,17 @@ def save(request):
 
     argument = ''
 
-    ranges = request.POST.get('range',None)
+    ranges = request.POST.get('range', None)
+    flip = int(request.POST.get('flip', 0))
     if ranges != '':
         if not check_range(ranges):
             raise ValueError
         else:
-           argument = ranges
+            if flip:
+                ranges = invert_range(ranges)
+
+
+            argument = ranges
 
     fail = request.POST['fail']
     if not re.match(r'^\d+$', fail) and int(fail) in range(len(Policy.action)):
@@ -162,26 +167,6 @@ def delete(request, policyID):
 
     messages.success(request, _('Policy deleted!'))
     return redirect('/policies')
-
-def check_range(ranges):
-    ranges = ranges.replace(' ','')
-    for r in ranges.split(','):
-        bounds = r.split('-', 1)
-        for b in bounds:
-            if not re.match('^\d+$', b):
-                return False
-
-        lower = int(bounds[0])
-        upper = int(bounds[1]) if len(bounds) > 1 else -1
-
-        if upper == -1:
-            if not 0 <= lower <= 65535:
-                return False
-        else:
-            if (not 0 <= upper <= 65535) or lower > upper:
-                    return False
-    return True
-
 @require_GET
 @login_required
 def getAll(request):
@@ -205,6 +190,75 @@ def search(request):
     
     context['policies'] = paginate(policies, request)
     return render(request, 'cygapp/policies.html', context)
+
+def check_range(ranges):
+    if ranges == '': return True
+
+    ranges = ranges.replace(' ','')
+    for r in ranges.split(','):
+        bounds = r.split('-', 1)
+        for b in bounds:
+            if not re.match('^\d+$', b):
+                return False
+
+        lower = int(bounds[0])
+        upper = int(bounds[1]) if len(bounds) > 1 else -1
+
+        if upper == -1:
+            if not 0 <= lower <= 65536:
+                return False
+        else:
+            if (not 0 <= upper <= 65536) or lower > upper:
+                    return False
+    return True
+
+def invert_range(ranges):
+    ranges = ranges.replace(' ','')
+
+    #Very special cases
+    if ranges == '0-65536': return ''
+    if ranges == '': return '0-65536'
+
+    doubles = []
+    for r in ranges.split(','):
+        bounds = r.split('-', 1)
+        lower = int(bounds[0])
+        upper = int(bounds[1]) if len(bounds) > 1 else -1
+
+        if upper != -1:
+            doubles.append((lower, upper))
+        else:
+            doubles.append((lower,lower))
+
+    doubles.sort(reverse=True)
+    ranges = []
+
+    while len(doubles) > 0:
+        d = doubles.pop()
+        lower = int(d[0])
+        upper = int(d[1])
+
+        if len(ranges) == 0 and lower != 0:
+            if lower != 1:
+                ranges.append('0-%d' % (lower - 1))
+            else:
+                ranges.append('0')
+
+        while len(doubles) > 0 and upper >= int(doubles[-1][0]) :
+            d2 = doubles.pop()
+            if int(d2[1]) > upper:
+               upper = int(d2[1])
+
+        if len(doubles) > 0:
+            if (upper + 1) != (doubles[-1][0] - 1):
+                ranges.append('%d-%d' % (upper + 1, doubles[-1][0] - 1))
+            else:
+                ranges.append('%d' % (upper + 1))
+        else:
+            if upper != 65536:
+                ranges.append('%d-65536' % (upper + 1))
+
+    return ','.join(ranges)
 
 def paginate(items, request):
     paginator = Paginator(items, 50) # Show 50 policies per page
