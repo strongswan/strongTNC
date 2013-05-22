@@ -100,40 +100,39 @@
         </select>
       </div>
     </div>
-
-  </form>
   
-  <hr>
-
-  <div class="btn-toolbar" style="margin: 0;">
-    <div class="btn-group">
-      <a class="btn btn-success" href="#" onclick="enforcementform.submit()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
-    </div><!-- /btn-group -->
-  {% if enforcement.id %}
-    <div class="btn-group">
-      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
-    </div><!-- /btn-group -->
-  </div><!-- /btn-toolbar-->
+    <hr>
+  
+    <div class="btn-toolbar" style="margin: 0;">
+      <div class="btn-group">
+	<button class="btn btn-success" type="submit"><i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
+      </div><!-- /btn-group -->
+    {% if enforcement.id %}
+      <div class="btn-group">
+	<a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+      </div><!-- /btn-group -->
+    </div><!-- /btn-toolbar-->
+    {% endif %}
   {% endif %}
-{% endif %}
-
-<div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3 id="deleteModalLabel">Are you sure to delete this enforcement?</h3>
-  </div>
-  <div class="modal-body">
-    <h4>Warning</h4>
-    <p>Are you sure to delete this enforcement?</p>
-  </div>
-  <form method="POST" action="/enforcements/{{ enforcement.id }}/delete" id="deleteform">
-    {% csrf_token %}
   </form>
-  <div class="modal-footer">
-    <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete enforcement</a>
+
+  <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3 id="deleteModalLabel">Are you sure to delete this enforcement?</h3>
+    </div>
+    <div class="modal-body">
+      <h4>Warning</h4>
+      <p>Are you sure to delete this enforcement?</p>
+    </div>
+    <form method="POST" action="/enforcements/{{ enforcement.id }}/delete" id="deleteform">
+      {% csrf_token %}
+    </form>
+    <div class="modal-footer">
+      <a class="btn" data-dismiss="modal">Cancel</a>
+      <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete enforcement</a>
+    </div>
   </div>
-</div>
 
 </div><!--content-->
 </div><!--/row-->

@@ -42,6 +42,27 @@ $(document).ready(function(){
     }
   });
 
+  $('#enforcementform').validate({
+    rules: {
+      policy: {
+	required: true,
+      },
+      group: {
+	required: true,
+      },
+      max_age: {
+	required: true,
+	range: [0, 9223372036854775] // sqlite max value 
+      }
+    },
+    highlight: function(element) {
+      $(element).closest('.control-group').removeClass('success').addClass('error');
+    },
+    success: function(element) {
+      element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
+    }
+  });
+  
   $('#deviceform').validate({
     rules: {
       value: {
