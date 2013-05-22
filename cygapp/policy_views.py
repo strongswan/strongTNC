@@ -244,7 +244,7 @@ def invert_range(ranges):
             else:
                 ranges.append('0')
 
-        while len(doubles) > 0 and upper >= int(doubles[-1][0]) :
+        while len(doubles) > 0 and upper >= int(doubles[-1][0] - 1) :
             d2 = doubles.pop()
             if int(d2[1]) > upper:
                upper = int(d2[1])

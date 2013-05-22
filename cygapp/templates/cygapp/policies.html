@@ -119,9 +119,20 @@
           </div>
         </div>        
         
-        <div class="control-group hide" id="port">
-          <label class="control-label" for="range">{% trans "Port Range" %}</label> 
+        <div class="control-group hide" id="range-flip">
+          <label class="control-label" for="flip">{% trans "All ports" %}</label> 
           <div class="controls">   
+            <input type="radio" id="flip" name="flip" value="0" checked>can be open...<br>
+          </div>
+          <div class="controls">   
+            <input type="radio" id="flip" name="flip" value="1">have to be closed...<br>
+          </div>
+        </div>
+
+        <div class="control-group hide" id="port">
+          <label class="control-label" for="range">{% trans "...except" %}</label> 
+          <div class="controls">   
+            
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
               rel="tooltip" title="{% trans 'Comma separated range(s) of ports, f.e: 5,10-1024,2450-4000' %}"
               value="{{ policy.argument|default:'' }}">
@@ -208,6 +219,7 @@ function type_change(){
   $(document.getElementById('file')).hide();
   $(document.getElementById('dir')).hide();
   $(document.getElementById('port')).hide();
+  $(document.getElementById('range-flip')).hide();
 
   type = $("select#type option:selected").attr("value")
   console.log(type);
@@ -217,8 +229,10 @@ function type_change(){
     $(document.getElementById('file')).show();
   else if (type == 1)
     $(document.getElementById('dir')).show();
-  else if (type == 2 || type == 3)
+  else if (type == 2 || type == 3){
     $(document.getElementById('port')).show();
+    $(document.getElementById('range-flip')).show();
+  }
 }
 
 </script>

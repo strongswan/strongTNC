@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from cygapp.models import (File, WorkItem, Device, Group, Product, Session,
     Policy, Enforcement, Action, Package, Directory, Version, Identity, Result)
 from views import generate_results, purge_dead_sessions
-from policy_views import check_range
+from policy_views import check_range, invert_range
 
 
 
@@ -245,15 +245,15 @@ class cygappTest(TestCase):
 
     def test_check_range(self):
         self.assertEqual(True, check_range('1'))
-        self.assertEqual(True, check_range('65535'))
+        self.assertEqual(True, check_range('65536'))
         self.assertEqual(True, check_range('1,2,3,4,5'))
         self.assertEqual(True, check_range('1, 2, 3, 4, 5'))
         self.assertEqual(True, check_range('0-65535'))
         self.assertEqual(True, check_range('1-2,3-4,10000-20000'))
         self.assertEqual(True, check_range('11000-12123,5-10'))
         self.assertEqual(True, check_range('  11000 -  12123 ,    5-10'))
+        self.assertEqual(True, check_range(''))
 
-        self.assertEqual(False, check_range(''))
         self.assertEqual(False, check_range(','))
         self.assertEqual(False, check_range('-'))
         self.assertEqual(False, check_range(', ,'))
@@ -263,7 +263,47 @@ class cygappTest(TestCase):
         self.assertEqual(False, check_range('1,3,11-2'))
         self.assertEqual(False, check_range('1,2,a,4'))
         self.assertEqual(False, check_range('1-10, 25555-25000'))
-        self.assertEqual(False, check_range('1-65536'))
+        self.assertEqual(False, check_range('1-65537'))
+
+    def test_invert_range(self):
+        tests = {
+                #default cases
+                '5-10': '0-4,11-65536',
+                '100-1000': '0-99,1001-65536',
+                '9': '0-8,10-65536',
+                '9,50,1001': '0-8,10-49,51-1000,1002-65536',
+                '9,50,90-500,1001': '0-8,10-49,51-89,501-1000,1002-65536',
+
+                #edge cases
+                '0-5': '6-65536',
+                '0-65536': '',
+                '0-100,60000-65536': '101-59999',
+                '0-4,11-65536': '5-10',
+                }
+
+        over = {
+                #unsorted
+                '90-500,9,50,1001': '0-8,10-49,51-89,501-1000,1002-65536',
+                '100,50,20': '0-19,21-49,51-99,101-65536',
+
+                #overlapping ranges
+                '9,10,11': '0-8,12-65536',
+                '5-10,9-20': '0-4,21-65536',
+                '5-50,10-15': '0-4,51-65536',
+                '1-1000,500,600,499': '0,1001-65536',
+                '10-100,50-200,150-500,450-10000': '0-9,10001-65536',
+                }
+        
+        for test in tests.keys():
+            self.assertEqual(tests[test], invert_range(test))
+
+        for test in over.keys():
+            self.assertEqual(over[test], invert_range(test))
+
+            #Double reversion should yield test again IF there are no
+            #overlapping ranges, and no sorting done
+        for test in tests.keys():
+            self.assertEqual(test, invert_range(invert_range(test)))
 
     def test_purge_dead_sessions(self):
         device = Device.objects.get(pk=1)

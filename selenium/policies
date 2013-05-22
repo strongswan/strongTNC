@@ -151,7 +151,116 @@
 	<td>css=button.close</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>clickAndWait</td>
+	<td>//a[@value='addNew']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Policy Management</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=name</td>
+	<td>No webservers allowed</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=type</td>
+	<td>label=ListeningPortTCP</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=range</td>
+	<td>80,443,8080</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=fail</td>
+	<td>label=ALLOW</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#fail &gt; option[value=&quot;1&quot;]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=noresult</td>
+	<td>label=BLOCK</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Policy Management</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=name</td>
+	<td>Only webservers allowed</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//input[@id='flip'])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Policy Management</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertValue</td>
+	<td>id=range</td>
+	<td>0-79,81-442,444-8079,8081-65536</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//input[@id='flip'])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Policy Management</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertValue</td>
+	<td>id=range</td>
+	<td>80,443,8080</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Delete policy</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>cygnet - Policy Management</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>
