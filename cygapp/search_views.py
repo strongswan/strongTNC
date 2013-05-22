@@ -1,12 +1,8 @@
-import re
-from django.http import HttpResponse
-from django.views.decorators.http import require_GET, require_POST
-from django.contrib import messages
+from django.views.decorators.http import require_GET
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render, redirect 
+from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from models import Group, Policy, Enforcement, Device, Package, Product, File
+from models import Group, Policy, Device, Package, Product, File
 
 @require_GET
 @login_required
@@ -36,11 +32,4 @@ def search(request):
         context['products'] = Product.objects.filter(name__icontains=q)
         context['files'] = File.objects.filter(name__icontains=q)
 
-    groups = Group.objects.filter(name__icontains=q)
-    policies = Policy.objects.filter(name__icontains=q)
-    devices = Device.objects.filter(value__icontains=q)
-    packages = Package.objects.filter(name__icontains=q)
-    products = Product.objects.filter(name__icontains=q)
-    files = File.objects.filter(name__icontains=q)
-    
     return render(request, 'cygapp/search.html', context)
