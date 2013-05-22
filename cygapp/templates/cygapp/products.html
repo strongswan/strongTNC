@@ -74,9 +74,7 @@
           <label class="control-label" for="name">{% trans "Name" %}</label> 
           <div class="controls">   
             <input type="text" id="name" name="name" placeholder="{% trans "Name" %}"
-            value="{{ product.name }}">
-            <a class="btn-small" href="#" rel="tooltip"
-              title="{% trans 'Product Name' %}"><i class="icon-info-sign"></i></a>
+              rel="tooltip" title="{% trans 'Product Name' %}" value="{{ product.name }}">
           </div>
         </div>
 
@@ -106,21 +104,21 @@
           </select>
 
         </div>
+
+        <hr>
+  
+        <div class="btn-toolbar" style="margin: 0;">
+          <div class="btn-group">
+            <button class="btn btn-success" type="submit" onclick="save_product()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
+          </div><!-- /btn-group -->
+          {% if product.id %}
+          <div class="btn-group">
+            <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+          </div><!-- /btn-group -->
+        </div><!-- /btn-toolbar-->
+        {% endif %}
+      {% endif %}
       </form>
-
-      <hr>
-
-      <div class="btn-toolbar" style="margin: 0;">
-        <div class="btn-group">
-          <a class="btn btn-success" href="#" onclick="save_product()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
-        </div><!-- /btn-group -->
-        {% if product.id %}
-        <div class="btn-group">
-          <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
-        </div><!-- /btn-group -->
-      </div><!-- /btn-toolbar-->
-      {% endif %}
-      {% endif %}
     </div><!--content-->
   </div><!--/row-->
 </div>
@@ -134,13 +132,13 @@
 	  <h4>Warning</h4>
 	  <p>Are you sure to delete this product?</p>
 	</div>
-  <form method="POST" action="/products/{{ product.id }}/delete" id="deleteform">
-    {% csrf_token %}
-  </form>
-  <div class="modal-footer">
-    <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete product</a>
-  </div>
+        <form method="POST" action="/products/{{ product.id }}/delete" id="deleteform">
+          {% csrf_token %}
+        </form>
+        <div class="modal-footer">
+          <a class="btn" data-dismiss="modal">Cancel</a>
+          <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete product</a>
+        </div>
       </div>
 <script type="text/javascript">
   function save_product(){
@@ -148,7 +146,6 @@
         $("#default_select option").map(function() {
           return this.value;
           }).get().join()).appendTo("#productform")
-    productform.submit()
   }
 
 function add_default()

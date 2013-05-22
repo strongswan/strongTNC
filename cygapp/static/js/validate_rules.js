@@ -46,15 +46,29 @@ $(document).ready(function(){
     rules: {
       name: {
 	required: true,
-	maxlength: 10
+	maxlength: 50
       }
     },
     highlight: function(element) {
-      $(element).closest('.control-group').removeClass('success-field').addClass('error');
+      $(element).closest('.control-group').removeClass('success').addClass('error');
     },
     success: function(element) {
       element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
     }
   });
   
+  $('#productform').validate({
+    rules: {
+      name: {
+	required: true,
+	maxlength: 50
+      }
+    },
+    highlight: function(element) {
+      $(element).closest('.control-group').removeClass('success').addClass('error');
+    },
+    success: function(element) {
+      element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
+    }
+  });  
 }); // end document.ready
