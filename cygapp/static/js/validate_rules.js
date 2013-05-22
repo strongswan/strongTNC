@@ -5,33 +5,12 @@ $(document).ready(function(){
   // http://docs.jquery.com/Plugins/Validation/
   // http://docs.jquery.com/Plugins/Validation/validate#toptions
 
-  $('#signform').validate({
-    rules: {
-      username: {
-	minlength: 2,
-	required: true
-      },
-      password: {
-	minlength: 2,
-	required: true
-      }
-    },
-    highlight: function(element) {
-	    $(element).closest('.control-group').removeClass('success').addClass('error');
-    },
-    success: function(element) {
-	    element
-	    .addClass('valid')
-	    .closest('.control-group').removeClass('error').addClass('success');
-    }
-  });
-
   $('#groupform').validate({
     debug: true,
     rules: {
       name: {
-	maxlength: 50,
-	required: true
+	required: true,
+	maxlength: 50
       }
     },
     highlight: function(element) {
@@ -42,13 +21,42 @@ $(document).ready(function(){
     }
   });
 
+  $('#policyform').validate({
+    rules: {
+      name: {
+	required: true,
+	maxlength: 50
+      },
+      type: {
+	regex: "^[0-9]+$",
+      },
+      fail: {
+	required: true
+      },
+      noresult: {
+	required: true
+      }
+    },
+    messages: {
+      type: {
+	regex: "This field is required."
+      }
+    },
+    highlight: function(element) {
+      $(element).closest('.control-group').removeClass('success').addClass('error');
+    },
+    success: function(element) {
+      element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
+    }
+  });  
+  
   $('#enforcementform').validate({
     rules: {
       policy: {
-	required: true,
+	required: true
       },
       group: {
-	required: true,
+	required: true
       },
       max_age: {
 	required: true,

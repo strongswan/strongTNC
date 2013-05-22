@@ -172,21 +172,21 @@
             </select>
           </div>
         </div>
-      </form>
 
       <hr>
 
-      <div class="btn-toolbar" style="margin: 0;">
-        <div class="btn-group">
-          <a class="btn btn-success" href="#" onclick="policyform.submit()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
-        </div><!-- /btn-group -->
-        {% if policy.id %}
-        <div class="btn-group">
-      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> Delete</a>
-          {% endif %}
-        </div><!-- /btn-group -->
-      </div><!-- /btn-toolbar-->
+        <div class="btn-toolbar" style="margin: 0;">
+          <div class="btn-group">
+            <button class="btn btn-success" type="submit"><i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
+          </div><!-- /btn-group -->
+          {% if policy.id %}
+          <div class="btn-group">
+        <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> Delete</a>
+            {% endif %}
+          </div><!-- /btn-group -->
+        </div><!-- /btn-toolbar-->
       {% endif %}
+      </form>
     
     </div><!--content-->
   </div><!--/row-->
