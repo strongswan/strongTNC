@@ -35,12 +35,25 @@ $(document).ready(function(){
       }
     },
     highlight: function(element) {
-	    $(element).closest('.control-group').removeClass('success').addClass('error');
+      $(element).closest('.control-group').removeClass('success').addClass('error');
     },
     success: function(element) {
-	    element
-	    .addClass('valid')
-	    .closest('.control-group').removeClass('error').addClass('success');
+      element.addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+    }
+  });
+  
+  $('#packageform').validate({
+    rules: {
+      name: {
+	required: true,
+	maxlength: 10
+      }
+    },
+    highlight: function(element) {
+      $(element).closest('.control-group').removeClass('success-field').addClass('error');
+    },
+    success: function(element) {
+      element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
     }
   });
   

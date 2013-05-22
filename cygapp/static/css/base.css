@@ -14,7 +14,7 @@ div.msg_success {
 
 div.msg_info {
   float: none;
-  clear; both;
+  clear: both;
   background-color: RGB(200,200,255);
   color: blue;
   padding-left: 20px;
@@ -25,7 +25,7 @@ div.msg_info {
 
 div.msg_warning {
   float: none;
-  clear; both;
+  clear: both;
   background-color: RGB(255,200,150);
   color: RGB(255,150,0);
   padding-left: 20px;
@@ -36,7 +36,7 @@ div.msg_warning {
 
 div.msg_error {
   float: none;
-  clear; both;
+  clear: both;
   background-color: RGB(255,200,200);
   color: red;
   padding-left: 20px;
@@ -45,9 +45,17 @@ div.msg_error {
   margin-bottom: 16px;
 }
 
+
 label.error {
   color: red;
-  padding: 2px 8px;
+}
+
+label.valid {
+  margin-bottom: 0px;
+}
+
+label.invisiblevalid {
+  display: none !important;
 }
 
 body {

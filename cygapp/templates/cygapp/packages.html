@@ -70,7 +70,7 @@
       <form class="form-horizontal" method="POST" action="/packages/save" id="packageform">
       {% csrf_token %}
 
-      <div class="control-group">
+      <div class="control-group" id="name-group">
 	<label class="control-label" for="id">{% trans "Name" %}</label>
 	<div class="controls">
 	  <input type="hidden" name="packageId" value="{{package.id}}" />
@@ -137,13 +137,12 @@
 	</table>
 	</div>
       {% endif %}
-      </form>
 
       <hr>
 
       <div class="btn-toolbar" style="margin: 0;">
 	<div class="btn-group">
-	  <a class="btn btn-success" href="#" onclick="save_package()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
+	  <button class="btn btn-success" type="submit" onclick="save_package()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
 	</div><!-- /btn-group -->
       {% if package.id %}
 	<div class="btn-group">
@@ -151,7 +150,8 @@
 	</div><!-- /btn-group -->
       </div><!-- /btn-toolbar-->
       {% endif %}
-    {% endif %}
+      {% endif %}
+      </form>
 
       <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
 	<div class="modal-header">
@@ -162,13 +162,13 @@
 	  <h4>Warning</h4>
 	  <p>Are you sure to delete this package?</p>
 	</div>
-  <form method="POST" action="/packages/{{ package.id }}/delete" id="deleteform">
-    {% csrf_token %}
-  </form>
-  <div class="modal-footer">
-    <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete package</a>
-  </div>
+	<form method="POST" action="/packages/{{ package.id }}/delete" id="deleteform">
+	  {% csrf_token %}
+	</form>
+	<div class="modal-footer">
+	  <a class="btn" data-dismiss="modal">Cancel</a>
+	  <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete package</a>
+	</div>
       </div>
       
       <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -195,8 +195,6 @@
 	    blacklist = $("input:checkbox#blacklist").is(":checked")
 	    if (blacklist != {{package.blacklist|yesno:"true,false"}}){
 	      $("#saveModal").modal('show')
-	    }else{
-	      packageform.submit()
 	    }
 	  }
       
