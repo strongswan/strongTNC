@@ -110,7 +110,8 @@
       <a class="btn-small" href="#" rel="tooltip"
       title="{% trans 'When the device is member of a group, all policies enforced on the group are applied to the device upon login' %}"><i class="icon-info-sign"></i></a>
     </h4>
-  <div class="row-fluid">
+    
+    <div class="row-fluid">
 
       <select size="5" name="selectionField" id="group_select" multiple="yes" >
         {% for g in groups %}
@@ -130,40 +131,41 @@
       </select>
 
     </div>
-  </form>
-  {% if device.id %}<a href="/devices/{{ device.id }}/simulate">View device report</a>{% endif %}
+
+    {% if device.id %}<a href="/devices/{{ device.id }}/simulate">View device report</a>{% endif %}
+    
+    <hr>
   
-  <hr>
-
-  <div class="btn-toolbar" style="margin: 0;">
-    <div class="btn-group">
-      <a class="btn btn-success" href="#" onclick="save_device()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
-    </div><!-- /btn-group -->
-  {% if device.id %}
-    <div class="btn-group">
-      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
-    </div><!-- /btn-group -->
-  </div><!-- /btn-toolbar-->
+    <div class="btn-toolbar" style="margin: 0;">
+      <div class="btn-group">
+	<button class="btn btn-success" type="submit" onclick="save_device()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
+      </div><!-- /btn-group -->
+    {% if device.id %}
+      <div class="btn-group">
+	<a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+      </div><!-- /btn-group -->
+    </div><!-- /btn-toolbar-->
+    {% endif %}
   {% endif %}
-{% endif %}
-
-<div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3 id="deleteModalLabel">Are you sure to delete this device?</h3>
-  </div>
-  <div class="modal-body">
-    <h4>Warning</h4>
-    <p>If you remove this device, it will appear in the list with default settings.</p>
-  </div>
-  <form method="POST" action="/devices/{{ device.id }}/delete" id="deleteform">
-    {% csrf_token %}
   </form>
-  <div class="modal-footer">
-    <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete device</a>
+
+  <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3 id="deleteModalLabel">Are you sure to delete this device?</h3>
+    </div>
+    <div class="modal-body">
+      <h4>Warning</h4>
+      <p>If you remove this device, it will appear in the list with default settings.</p>
+    </div>
+    <form method="POST" action="/devices/{{ device.id }}/delete" id="deleteform">
+      {% csrf_token %}
+    </form>
+    <div class="modal-footer">
+      <a class="btn" data-dismiss="modal">Cancel</a>
+      <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete device</a>
+    </div>
   </div>
-</div>
 
 </div><!--content-->
     </div><!--/row-->
@@ -174,7 +176,6 @@
           $("#member_select option").map(function() {
             return this.value;
             }).get().join()).appendTo("#deviceform")
-      deviceform.submit()
     }
 
     function add_member()
