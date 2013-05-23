@@ -58,7 +58,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=Save</td>
+	<td>css=button.btn.btn-success</td>
 	<td></td>
 </tr>
 <tr>
@@ -173,7 +173,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=Save</td>
+	<td>css=button.btn.btn-success</td>
 	<td></td>
 </tr>
 <tr>
@@ -261,7 +261,6 @@
 	<td>css=button.close</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

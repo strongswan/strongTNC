@@ -138,7 +138,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=Save</td>
+	<td>css=button.btn.btn-success</td>
 	<td></td>
 </tr>
 <tr>

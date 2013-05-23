@@ -205,10 +205,10 @@ def check_range(ranges):
         upper = int(bounds[1]) if len(bounds) > 1 else -1
 
         if upper == -1:
-            if not 0 <= lower <= 65536:
+            if not 0 <= lower <= 65535:
                 return False
         else:
-            if (not 0 <= upper <= 65536) or lower > upper:
+            if (not 0 <= upper <= 65535) or lower > upper:
                     return False
     return True
 
@@ -216,8 +216,8 @@ def invert_range(ranges):
     ranges = ranges.replace(' ','')
 
     #Very special cases
-    if ranges == '0-65536': return ''
-    if ranges == '': return '0-65536'
+    if ranges == '0-65535': return ''
+    if ranges == '': return '0-65535'
 
     doubles = []
     for r in ranges.split(','):
@@ -255,8 +255,8 @@ def invert_range(ranges):
             else:
                 ranges.append('%d' % (upper + 1))
         else:
-            if upper != 65536:
-                ranges.append('%d-65536' % (upper + 1))
+            if upper != 65535:
+                ranges.append('%d-65535' % (upper + 1))
 
     return ','.join(ranges)
 
