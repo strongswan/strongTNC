@@ -9,7 +9,7 @@ from django.views.decorators.http import (require_GET, require_safe,
         require_http_methods)
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Session, Result, Action
+from models import Session, Result, Action, Device
 
 @require_GET
 @login_required
@@ -63,6 +63,15 @@ def end_session(request):
     generate_results(session)
 
     return HttpResponse(status=200)
+
+@require_GET
+def statistics(request):
+    context = {}
+    context['title'] = _('Statistics')
+    context['sessions'] = Session.objects.count()
+    context['results'] = Result.objects.count()
+    context['devices'] = Device.objects.count()
+    return render(request, 'cygapp/statistics.html', context)
 
 @require_http_methods(('GET','POST'))
 def login(request):
