@@ -91,7 +91,7 @@
       
       <h4>{% trans "Versions:" %}
 	<a class="btn-small" href="#" rel="tooltip"
-	title="{% trans 'All known versions of this package' %}"><i class="icon-info-sign"></i></a>
+	title="{% trans 'All versions of this package' %}"><i class="icon-info-sign"></i></a>
       </h4>
       {% if versions %}
       <div class="row-fluid">
@@ -121,7 +121,9 @@
 		  {%endif%}
 	      </td>
 	      <td>{{v.time}}</td>
-	      <td><button type="button" class="btn btn-mini" id="togBlack" data-toggle="button" onclick="toggle({{v.id}})">
+        <td><button type="button" class="btn btn-mini {% if v.blacklist == None %}
+            {{package.blacklist|yesno:"active,"}} {% else %} {{v.blacklist|yesno:"active,"}}
+            {% endif %} " id="togBlack" data-toggle="button" onclick="toggle({{v.id}})">
 		{%if v.blacklist ==  None %}
 		    {{package.blacklist|yesno:_("Yes,No")}}
 		  {%else%}
@@ -190,6 +192,10 @@
 	  </div><!--/row-->
 	</div>
 	<script type="text/javascript">
+    $(document).ready(function () {
+      
+    });
+
 	  function save_package(){
 	    blacklist = $("input:checkbox#blacklist").is(":checked")
 	    if (blacklist != {{package.blacklist|yesno:"true,false"}}){
