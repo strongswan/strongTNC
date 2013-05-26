@@ -28,7 +28,12 @@ $(document).ready(function(){
 	maxlength: 50
       },
       type: {
-	regex: "^[0-9]+$",
+	required: true,
+	regex: /^[0-9]+$/
+      },
+      range: {
+	required: true,
+	regex: /^\s*\d*\s*(-*\s*\d*\s*)?( *,*(\s*\d*\s*)( *-*\s*\d*\s*)?)*$/
       },
       fail: {
 	required: true
@@ -76,7 +81,7 @@ $(document).ready(function(){
       value: {
 	required: true,
 	maxlength: 50,
-	regex: "^[a-f0-9]+$"
+	regex: /^[a-f0-9]+$/
       },
       description: {
 	required: true

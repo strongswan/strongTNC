@@ -64,16 +64,16 @@
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
 	      <!-- <li class="nav-header">Sidebar</li> -->
-        <li{% if request.path|slice:":9" == '/overview' %} class="active"{% endif %}><a href="/overview"><i class="icon-eye-open"></i> {% trans 'Overview' %}</a></li>
+	      <li{% if request.path|slice:":9" == '/overview' %} class="active"{% endif %}><a href="/overview"><i class="icon-eye-open"></i> {% trans 'Overview' %}</a></li>
 	      <li class="nav-header">{% trans 'Configuration' %}</li>
-        <li{% if request.path|slice:":7" == '/groups' %} class="active"{% endif %}><a href="/groups"><i class="icon-user"></i> {% trans 'Groups' %}</a></li>
-	      <li{% if request.path|slice:":9" == '/policies' %} class="active"{% endif %}><a href="/policies"><i class="icon-list-alt"></i> {% trans 'Policies' %}</a></li>
+	      <li{% if request.path|slice:":7" == '/groups' %} class="active"{% endif %}><a href="/groups"><i class="icon-user"></i> {% trans 'Groups' %}</a></li>
+	      <li{% if request.path|slice:":9" == '/policies' %} class="active"{% endif %}><a href="/policies"><i class="icon-warning-sign"></i> {% trans 'Policies' %}</a></li>
 	      <li{% if request.path|slice:":13" == '/enforcements' %} class="active"{% endif %}><a href="/enforcements"><i class="icon-list-alt"></i> {% trans 'Enforcements' %}</a></li>
 	      <li{% if request.path|slice:":8" == '/devices' %} class="active"{% endif %}><a href="/devices"><i class="icon-phone"></i> {% trans 'Devices' %}</a></li>
 	      <li class="nav-header">{% trans 'Data Views' %}</li>
 	      <li{% if request.path|slice:":12" == '/statistics' %} class="active"{% endif %}><a href="#"><i class="icon-tasks"></i> {% trans 'Statistics' %}</a></li>
 	      <li{% if request.path|slice:":9" == '/packages' %} class="active"{% endif %}><a href="/packages"><i class="icon-gift"></i> {% trans 'Packages' %}</a></li>
-              <li{% if request.path|slice:":9" == '/products' %} class="active"{% endif %}><a href="/products"><i class="icon-lock"></i> {% trans 'Products' %}</a></li>
+              <li{% if request.path|slice:":9" == '/products' %} class="active"{% endif %}><a href="/products"><i class="icon-briefcase"></i> {% trans 'Products' %}</a></li>
               <li{% if request.path|slice:":6" == '/files' %} class="active"{% endif %}><a href="/files"><i class="icon-folder-open"></i> {% trans 'Files' %}</a></li>
             </ul>
           </div><!--/.well -->
