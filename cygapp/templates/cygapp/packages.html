@@ -101,9 +101,8 @@
 	      <td>{% trans 'Version' %}</td>
 	      <td>{% trans 'OS' %}</td>
 	      <td>{% trans 'Security' %}</td>
-	      <td>{% trans 'Blacklisted' %}</td>
 	      <td>{% trans 'Registered on' %}</td>
-	      <td>{% trans 'Blacklist' %}</td>
+	      <td>{% trans 'Blacklisted' %}</td>
 	    </tr>
 	  </thead>
 	  <tbody>
@@ -111,15 +110,7 @@
 	    <tr id="version{{ v.id }}">
 	      <td>{{v.release}}</td>
 	      <td>{{v.product.name}}</td>
-	      <!-- TODO: I18n for yesno -->
-	      <td>{{v.security|yesno}}</td>
-	      <td>{%if v.blacklist ==  None %}
-		    {{package.blacklist|yesno:_("Yes,No")}}
-		  {%else%}
-		  <!-- TODO : Highlight table cell to show override -->
-		    {{v.blacklist|yesno:_("Yes,No")}}
-		  {%endif%}
-	      </td>
+	      <td>{{v.security|yesno:_("Yes,No")}}</td>
 	      <td>{{v.time}}</td>
         <td><button type="button" class="btn btn-mini {% if v.blacklist == None %}
             {{package.blacklist|yesno:"active,"}} {% else %} {{v.blacklist|yesno:"active,"}}
@@ -192,10 +183,6 @@
 	  </div><!--/row-->
 	</div>
 	<script type="text/javascript">
-    $(document).ready(function () {
-      
-    });
-
 	  function save_package(){
 	    blacklist = $("input:checkbox#blacklist").is(":checked")
 	    if (blacklist != {{package.blacklist|yesno:"true,false"}}){
@@ -208,9 +195,7 @@
 	      url : "/versions/" + id + "/toggle",
 	      statusCode: {
 		200 : function(data, status, jqXHR){
-		  query = "table#versions > tbody > tr#version" + id + " > td:nth-child(4)"
-		  $(query).text(data)
-		  query = "table#versions > tbody > tr#version" + id + " > td:nth-child(6) > button"
+		  query = "table#versions > tbody > tr#version" + id + " > td:nth-child(5) > button"
 		  $(query).text(data)
 		},
 	      }
