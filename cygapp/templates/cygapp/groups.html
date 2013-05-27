@@ -62,7 +62,7 @@
     <h4>Assign Devices</h4>
     <div class="row-fluid">
 
-      <select size="5" name="selectionField" id="device_select" multiple="yes" >
+      <select class="input-xlarge" size="5" name="selectionField" id="device_select" multiple="yes" >
         {% for d in devices %}
         <option value="{{ d.id }}">{{ d }}</option>
         {% endfor %}
@@ -73,7 +73,7 @@
         <button type="button" onclick="remove_member()" class="btn"><i class="icon-backward"></i></button>
       </div>
 
-      <select size="5" name="selectionField" id="member_select" multiple="yes" >
+      <select class="input-xlarge" size="5" name="selectionField" id="member_select" multiple="yes" >
         {% for m in members %}
         <option value="{{ m.id }}">{{ m }}</option>
         {% endfor %}

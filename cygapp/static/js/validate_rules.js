@@ -33,7 +33,7 @@ $(document).ready(function(){
       },
       range: {
 	required: true,
-	regex: /^\s*\d*\s*(-*\s*\d*\s*)?( *,*(\s*\d*\s*)( *-*\s*\d*\s*)?)*$/
+	regex: /^\s*\d+\s*(-*\s*\d+\s*)?( *,*(\s*\d+\s*)( *-*\s*\d+\s*)?)*$/
       },
       fail: {
 	required: true

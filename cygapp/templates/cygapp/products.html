@@ -86,7 +86,7 @@
         </h4>
         <div class="row-fluid">
 
-          <select size="5" name="selectionField" id="group_select" multiple="yes" >
+          <select class="input-xlarge" size="5" name="selectionField" id="group_select" multiple="yes" >
             {% for g in groups %}
             <option value="{{ g.id }}">{{ g }}</option>
             {% endfor %}
@@ -97,7 +97,7 @@
             <button type="button" onclick="remove_default()" class="btn"><i class="icon-backward"></i></button>
           </div>
 
-          <select size="5" name="selectionField" id="default_select" multiple="yes" >
+          <select class="input-xlarge" size="5" name="selectionField" id="default_select" multiple="yes" >
             {% for d in defaults %}
             <option value="{{ d.id }}">{{ d }}</option>
             {% endfor %}
