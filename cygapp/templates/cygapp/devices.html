@@ -140,13 +140,13 @@
       <div class="btn-group">
 	<button class="btn btn-success" type="submit" onclick="save_device()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
       </div><!-- /btn-group -->
-    {% if device.id %}
+      {% if device.id %}
       <div class="btn-group">
 	<a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
       </div><!-- /btn-group -->
+      {% endif %}
     </div><!-- /btn-toolbar-->
     {% endif %}
-  {% endif %}
   </form>
 
   <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
