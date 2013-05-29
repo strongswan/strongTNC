@@ -43,7 +43,7 @@ def finish_login(params):
 def run_test():
         device = Device.objects.get(value='deadbeef')
         identity = Identity.objects.get(data='tannerli')
-        session = Session.objects.create(connectionID=1234, device=device,
+        session = Session.objects.create(connectionID=random.randint(1,65535), device=device,
                 time=datetime.today(), identity=identity)
 
         params = {}
@@ -60,6 +60,5 @@ def run_test():
 
         finish_login(params)
 
-        session.delete()
         print 'OK'
 

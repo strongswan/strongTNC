@@ -260,6 +260,8 @@ class Policy(models.Model):
         item.result = None
         item.type = self.type
         item.recommendation = None
+        item.file = self.file
+        item.dir = self.dir
         item.argument = self.argument
         item.enforcement = enforcement
         item.session = session
@@ -300,12 +302,12 @@ class Policy(models.Model):
 
     
     argument_funcs = {
-            'FileHash': lambda policy: policy.file.id if policy.file else '',
-            'DirHash': lambda policy: policy.dir.id if policy.dir else '',
+            'FileHash': lambda policy: '',
+            'DirHash': lambda policy: '',
             'ListeningPortTCP': lambda p: p.argument if p.argument else '',
             'ListeningPortUDP': lambda p: p.argument if p.argument else '',
-            'FileExist': lambda policy: policy.file.id if policy.file else '',
-            'NotFileExist': lambda policy: policy.file.id if policy.file else '',
+            'FileExist': lambda policy: '',
+            'NotFileExist': lambda policy: '',
             'MissingUpdate': lambda policy: '',
             'MissingSecurityUpdate':lambda policy:  '',
             'BlacklistedPackage': lambda policy: '',
@@ -371,6 +373,10 @@ class WorkItem(models.Model):
     noresult = models.IntegerField(null=True,blank=True)
     result = models.TextField(null=True)
     recommendation = models.IntegerField(null=True,blank=True)
+
+    #Foreign Keys for FileHash, DirHash, FileExist, FileNotExist
+    file = models.ForeignKey(File, null=True, on_delete=models.DO_NOTHING)
+    dir = models.ForeignKey(Directory, null=True, on_delete=models.DO_NOTHING)
 
     class Meta:
         db_table = u'workitems'

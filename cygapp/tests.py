@@ -15,6 +15,10 @@ from policy_views import check_range, invert_range
 
 class cygappTest(TestCase):
     def setUp(self):
+        user = Identity.objects.create(data='Test User')
+        user.type = 1
+        user.save()
+        
         p = Product.objects.create(name='Fancy OS 3.14')
         device = Device.objects.create(value='def', description='Test Device', product=p)
         
@@ -64,6 +68,7 @@ class cygappTest(TestCase):
         self.assertEqual(7, len(groups))
 
     def test_create_work_items(self):
+        user = Identity.objects.get(pk=1)
 
         g = Group.objects.get(name='B1.1.1')
         p = Policy.objects.get(name='bash')
@@ -73,19 +78,10 @@ class cygappTest(TestCase):
         p = Policy.objects.get(name='usrbin')
         Enforcement.objects.create(group=g, policy=p, max_age=2)
 
-        user = Identity()
-        user.type = 1
-        user.data = 'foobar'
-        user.save()
-        
         device = Device.objects.get(value='def')
 
-        session = Session()
-        session.device = device
-        session.time = datetime.today()
-        session.connectionID = 123
-        session.identity = user
-        session.save()
+        session = Session.objects.create(device=device, time=datetime.today(),
+                connectionID=123, identity=user)
 
         device.create_work_items(session)
 
