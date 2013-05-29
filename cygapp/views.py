@@ -98,13 +98,16 @@ def generate_results(session):
     workitems = session.workitems.all()
 
     for item in workitems:
-        Result.objects.create(result=item.result, session=session,
-                policy=item.enforcement.policy,
-                recommendation=item.recommendation)
+        rec = item.recommendation
+        if rec is None:
+            rec = Action.NONE
 
-        if workitems:
-            session.recommendation = max(workitems, key = lambda x:
-                    x.recommendation)
+        Result.objects.create(result=item.result, session=session,
+                policy=item.enforcement.policy, recommendation=rec)
+
+    if workitems:
+        session.recommendation = max(workitems, key = lambda x:
+                x.recommendation)
     else:
         session.recommendation = Action.ALLOW
 

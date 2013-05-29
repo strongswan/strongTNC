@@ -193,27 +193,37 @@ class cygappTest(TestCase):
         p2 = Policy.objects.get(name='usrbin')
         e2 = Enforcement.objects.create(group=g, policy=p2, max_age=2)
 
+        p3 = Policy.objects.get(name='ports')
+        e3 = Enforcement.objects.create(group=g, policy=p3, max_age=4)
+
         device = Device.objects.get(value='def')
         user = Identity.objects.create(data='foobar')
         session = Session.objects.create(device=device,
                 time=datetime.today(), connectionID=123, identity=user)
         
         WorkItem.objects.create(session=session, argument='asdf',
-                fail=3, noresult=0, result='OK', recommendation=0, enforcement=e1,
+                fail=3, noresult=0, result='OK', recommendation=1, enforcement=e1,
                 type=1)
         WorkItem.objects.create(session=session, argument='blubber',
                 fail=3, noresult=0, result='FAIL', recommendation=3, enforcement=e2,
+                type=2)
+        WorkItem.objects.create(session=session, argument='sauce',
+                fail=3, noresult=0, result='', enforcement=e3,
                 type=2)
 
         generate_results(session)
 
         result = Result.objects.get(session=session, policy=p1)
         self.assertEqual('OK', result.result)
-        self.assertEqual(0, result.recommendation)
+        self.assertEqual(1, result.recommendation)
 
         result = Result.objects.get(session=session, policy=p2)
         self.assertEqual('FAIL', result.result)
         self.assertEqual(3, result.recommendation)
+
+        result = Result.objects.get(session=session, policy=p3)
+        self.assertEqual('', result.result)
+        self.assertEqual(0, result.recommendation)
 
     def test_imv_login(self):
         #This is no longer a simple test unit and dealt with in simIMV.py run
