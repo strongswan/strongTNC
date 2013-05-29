@@ -91,6 +91,7 @@ def save(request):
         raise ValueError
         return HttpResponse(status=400)
 
+    fail = int(fail)
     if fail == -1:
         fail = None
 
@@ -100,6 +101,7 @@ def save(request):
         raise ValueError
         return HttpResponse(status=400)
 
+    noresult = int(noresult)
     if noresult == -1:
         noresult = None
 
