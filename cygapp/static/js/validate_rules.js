@@ -25,7 +25,17 @@ $(document).ready(function(){
     rules: {
       name: {
 	required: true,
-	maxlength: 50
+	maxlength: 50,
+	remote: {
+	  url: "/policies/check/" + $("#policyId").val(),
+	  type: "post",
+	  data: {
+	    name: function() {
+	      return $("#name").val()
+	    },
+	    csrfmiddlewaretoken: csrftoken,
+	  }
+	}
       },
       type: {
 	required: true,
@@ -43,6 +53,9 @@ $(document).ready(function(){
       }
     },
     messages: {
+      name: {
+	remote: "Already exists!"
+      },
       type: {
 	regex: "This field is required."
       }
@@ -98,13 +111,13 @@ $(document).ready(function(){
     }
   });
 
-  $('#packageformAdd').validate({
+  $('#packageform').validate({
     rules: {
       name: {
 	required: true,
 	maxlength: 50,
 	remote: {
-	  url: "/packages/check/",
+	  url: "/packages/check/" + $("#packageId").val(),
 	  type: "post",
 	  data: {
 	    name: function() {
@@ -118,21 +131,6 @@ $(document).ready(function(){
     messages: {
       name: {
 	remote: "Already exists!"
-      }
-    },
-    highlight: function(element) {
-      $(element).closest('.control-group').removeClass('success').addClass('error');
-    },
-    success: function(element) {
-      element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
-    }
-  });
-  
-    $('#packageform').validate({
-    rules: {
-      name: {
-	required: true,
-	maxlength: 50,
       }
     },
     highlight: function(element) {

@@ -89,19 +89,25 @@ def save(request):
 @require_POST
 @login_required
 def check(request):
-  response_str = "false"
-  if request.is_ajax():
-    typed_name = request.POST['name']
-    #current = request.POST['blacklist']
-    #print(value)
-    if typed_name:
-        p = Package.objects.filter(name=typed_name).count()
-        if p != 0:
-            response_str = "false"
-        else:
-            response_str = "true"
+    response_str = "false"
+    if request.is_ajax():
+        typed_name = request.POST['name']
+        if typed_name:
+            url_id = request.path[16:]
+            p = Package.objects.filter(name=typed_name).count()
+            if p != 0:
+                if url_id != 'None':
+                    package_byid = Package.objects.get(pk=url_id)
+                    if package_byid.name != typed_name:
+                        response_str = "false"
+                    else:
+                        response_str = "true"
+                else:
+                    response_str = "false"
+            else:
+                response_str = "true"
 
-  return HttpResponse("%s" % response_str)
+    return HttpResponse("%s" % response_str)
 
 @require_POST
 @login_required

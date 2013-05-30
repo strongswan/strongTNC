@@ -158,6 +158,28 @@ def save(request):
     messages.success(request, _('Policy saved!'))
     return redirect('/policies/%d' % policy.id)
 
+@require_POST
+@login_required
+def check(request):
+    response_str = "false"
+    if request.is_ajax():
+        typed_name = request.POST['name']
+        if typed_name:
+            url_id = request.path[16:]
+            p = Policy.objects.filter(name=typed_name).count()
+            if p != 0:
+                if url_id != 'None':
+                    policy_byid = Policy.objects.get(pk=url_id)
+                    if policy_byid.name != typed_name:
+                        response_str = "false"
+                    else:
+                        response_str = "true"
+                else:
+                    response_str = "false"
+            else:
+                response_str = "true"
+
+    return HttpResponse("%s" % response_str)
 
 @require_POST
 @login_required
