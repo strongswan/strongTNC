@@ -128,9 +128,38 @@
           'selector': '',
           'placement': 'right'
         });
+
+	$('#packageform').validate({
+	  rules: {
+	    name: {
+	      required: true,
+	      maxlength: 50,
+	      remote: {
+		url: "/packages/check/",
+		type: "post",
+		data: {
+		  name: function() {
+		    return $("#name").val()
+		  },
+		  csrfmiddlewaretoken: '{{ csrf_token }}'
+		}
+	      }
+	    }
+	  },
+	  messages: {
+	    name: {
+	      remote: "Already exists!"
+	    }
+	  },
+	  highlight: function(element) {
+	    $(element).closest('.control-group').removeClass('success').addClass('error');
+	  },
+	  success: function(element) {
+	    element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
+	  }
+	});
       });
       $('.dropdown-toggle').dropdown();
-      
     </script>
   </body>
 </html>

@@ -88,6 +88,21 @@ def save(request):
 
 @require_POST
 @login_required
+def check(request):
+  response_str = "false"
+  if request.is_ajax():
+    typed_name = request.POST['name']
+    if typed_name:
+        p = Package.objects.filter(name=typed_name).count()
+        if p != 0:
+            response_str = "false"
+        else:
+            response_str = "true"
+
+  return HttpResponse("%s" % response_str)
+
+@require_POST
+@login_required
 def delete(request, packageID):
     package = get_object_or_404(Package, pk=packageID)
     package.delete()

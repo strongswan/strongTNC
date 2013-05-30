@@ -55,6 +55,7 @@ urlpatterns = patterns('',
         url(r'^packages/(?P<packageID>\d+)/delete/?$', package_views.delete,
             name='delete'),
         url(r'^packages/search/?$', package_views.search, name='search'),
+        url(r'^packages/check/?$', package_views.check, name='check'),
 
         url(r'^versions/(?P<versionID>\d+)/toggle/?$',
             package_views.toggle_version, name='toggle_version'),

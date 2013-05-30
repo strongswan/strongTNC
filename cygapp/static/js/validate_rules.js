@@ -97,12 +97,22 @@ $(document).ready(function(){
       element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
     }
   });
-  
+/*  
   $('#packageform').validate({
     rules: {
       name: {
 	required: true,
-	maxlength: 50
+	maxlength: 50,
+	remote: {
+	  url: "/packages/name/check/",
+	  type: "post",
+	  data: {
+	    name: function() {
+	      return $("#name").val
+	    //csrfmiddlewaretoken: '{{ csrf_token }}'
+	    }
+	  }
+	}
       }
     },
     highlight: function(element) {
@@ -112,12 +122,12 @@ $(document).ready(function(){
       element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
     }
   });
-  
+*/  
   $('#productform').validate({
     rules: {
       name: {
 	required: true,
-	maxlength: 50
+	maxlength: 50,
       }
     },
     highlight: function(element) {
@@ -129,11 +139,11 @@ $(document).ready(function(){
   });
   
   $.validator.addMethod("regex",
-        function(value, element, regexp) {
-            var re = new RegExp(regexp);
-            return this.optional(element) || re.test(value);
-        },
-        "Please check your input."
+    function(value, element, regexp) {
+	var re = new RegExp(regexp);
+	return this.optional(element) || re.test(value);
+    },
+    "Please check your input."
   );
-  
+
 }); // end document.ready
