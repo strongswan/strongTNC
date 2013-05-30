@@ -92,6 +92,8 @@ def check(request):
   response_str = "false"
   if request.is_ajax():
     typed_name = request.POST['name']
+    #current = request.POST['blacklist']
+    #print(value)
     if typed_name:
         p = Package.objects.filter(name=typed_name).count()
         if p != 0:

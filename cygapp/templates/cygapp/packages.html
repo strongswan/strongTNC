@@ -67,7 +67,7 @@
     <div class="span9" id="content">
       {% if package %}
       <h4>Package Info</h4>
-      <form class="form-horizontal" method="POST" action="/packages/save" id="packageform">
+      <form class="form-horizontal" method="POST" action="/packages/save" id="packageform{{package.id|yesno:_(",Add")}}">
       {% csrf_token %}
 
       <div class="control-group" id="name-group">

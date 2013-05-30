@@ -97,22 +97,27 @@ $(document).ready(function(){
       element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
     }
   });
-/*  
-  $('#packageform').validate({
+
+  $('#packageformAdd').validate({
     rules: {
       name: {
 	required: true,
 	maxlength: 50,
 	remote: {
-	  url: "/packages/name/check/",
+	  url: "/packages/check/",
 	  type: "post",
 	  data: {
 	    name: function() {
-	      return $("#name").val
-	    //csrfmiddlewaretoken: '{{ csrf_token }}'
-	    }
+	      return $("#name").val()
+	    },
+	    csrfmiddlewaretoken: csrftoken,
 	  }
 	}
+      }
+    },
+    messages: {
+      name: {
+	remote: "Already exists!"
       }
     },
     highlight: function(element) {
@@ -122,7 +127,22 @@ $(document).ready(function(){
       element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
     }
   });
-*/  
+  
+    $('#packageform').validate({
+    rules: {
+      name: {
+	required: true,
+	maxlength: 50,
+      }
+    },
+    highlight: function(element) {
+      $(element).closest('.control-group').removeClass('success').addClass('error');
+    },
+    success: function(element) {
+      element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
+    }
+  });
+  
   $('#productform').validate({
     rules: {
       name: {
@@ -142,8 +162,7 @@ $(document).ready(function(){
     function(value, element, regexp) {
 	var re = new RegExp(regexp);
 	return this.optional(element) || re.test(value);
-    },
-    "Please check your input."
+    }, "Please check your input."
   );
 
 }); // end document.ready
