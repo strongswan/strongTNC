@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Product Management</td>
+	<td>cygnet - Products</td>
 	<td></td>
 </tr>
 <tr>
@@ -28,7 +28,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Product Management</td>
+	<td>cygnet - Products</td>
 	<td></td>
 </tr>
 <tr>
@@ -38,12 +38,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Product Management</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>cygnet - Product Management</td>
+	<td>cygnet - New product</td>
 	<td></td>
 </tr>
 <tr>
@@ -78,7 +73,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - GROUP MANAGEMENT</td>
+	<td>cygnet - Groups</td>
 	<td></td>
 </tr>
 <tr>
@@ -88,7 +83,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - GROUP MANAGEMENT</td>
+	<td>cygnet - New group</td>
 	<td></td>
 </tr>
 <tr>
@@ -103,7 +98,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - GROUP MANAGEMENT</td>
+	<td>cygnet - Group TEST GROUP</td>
 	<td></td>
 </tr>
 <tr>
@@ -113,7 +108,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - GROUP MANAGEMENT</td>
+	<td>cygnet - New group</td>
 	<td></td>
 </tr>
 <tr>
@@ -133,7 +128,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - GROUP MANAGEMENT</td>
+	<td>cygnet - Group TEST GROUP 2</td>
 	<td></td>
 </tr>
 <tr>
@@ -143,7 +138,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Product Management</td>
+	<td>cygnet - Products</td>
 	<td></td>
 </tr>
 <tr>
@@ -153,7 +148,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Product Management</td>
+	<td>cygnet - Product Fedora Linux</td>
 	<td></td>
 </tr>
 <tr>
@@ -178,7 +173,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Product Management</td>
+	<td>cygnet - Product Fedora Linux</td>
 	<td></td>
 </tr>
 <tr>
@@ -213,7 +208,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Product Management</td>
+	<td>cygnet - Products</td>
 	<td></td>
 </tr>
 <tr>
@@ -228,7 +223,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - GROUP MANAGEMENT</td>
+	<td>cygnet - Groups</td>
 	<td></td>
 </tr>
 <tr>
@@ -238,7 +233,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - GROUP MANAGEMENT</td>
+	<td>cygnet - Group TEST GROUP</td>
 	<td></td>
 </tr>
 <tr>
@@ -253,7 +248,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - GROUP MANAGEMENT</td>
+	<td>cygnet - Groups</td>
 	<td></td>
 </tr>
 <tr>
