@@ -35,8 +35,11 @@ urlpatterns = patterns('',
             name='delete'),
         url(r'^devices/search/?$', device_views.search, name='search'),
 
-        url(r'^devices/(?P<deviceID>\d+)/simulate/?$', device_views.simulate,
-            name='simulate'),
+        url(r'^devices/(?P<deviceID>\d+)/report/?$', device_views.report,
+            name='report'),
+
+        url(r'^sessions/(?P<sessionID>\d+)/?$', device_views.session,
+            name='session'),
 
         url(r'^files/?$', file_views.files, name='files'),
         url(r'^files/(?P<fileID>\d+)/?$', file_views.file, name='file'),

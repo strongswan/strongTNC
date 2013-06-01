@@ -157,7 +157,7 @@ def paginate(items, request):
 
 @require_GET
 @login_required
-def simulate(request, deviceID):
+def report(request, deviceID):
     device = get_object_or_404(Device, pk=deviceID)
     
     context = {}
@@ -199,3 +199,19 @@ def simulate(request, deviceID):
     context['enforcements'] = enforcements
 
     return render(request, 'cygapp/device_report.html', context)
+
+@require_GET
+@login_required
+def session(request, sessionID):
+    session = get_object_or_404(Session, pk=sessionID)
+    
+    context = {}
+    context['session'] = session
+    context['title'] = _('Session details')
+    context['recommendation'] = Policy.action[session.recommendation]
+
+    context['results'] = []
+    for result in session.results.all():
+        context['results'].append((result, Policy.action[result.recommendation]))
+
+    return render(request, 'cygapp/session.html', context)

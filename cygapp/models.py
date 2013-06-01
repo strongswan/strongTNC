@@ -384,7 +384,7 @@ class WorkItem(models.Model):
 class Result(models.Model):
     id = models.AutoField(primary_key=True)
     session = models.ForeignKey(Session, db_column='session',
-            on_delete=models.CASCADE)
+            on_delete=models.CASCADE, related_name='results')
     policy = models.ForeignKey(Policy, db_column='policy',
             on_delete=models.CASCADE)
     result = models.TextField()
