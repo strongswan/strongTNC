@@ -134,7 +134,7 @@
 
       <div class="btn-toolbar" style="margin: 0;">
 	<div class="btn-group">
-	  <button class="btn btn-success" type="submit" onclick="save_package()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
+	  <a class="btn btn-success" type="submit" onclick="save_package()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
 	</div><!-- /btn-group -->
       {% if package.id %}
 	<div class="btn-group">
@@ -184,9 +184,11 @@
 	</div>
 	<script type="text/javascript">
 	  function save_package(){
-	    blacklist = $("input:checkbox#blacklist").is(":checked")
+	    blacklist = $("input:checkbox#blacklist").is(":checked");
 	    if (blacklist != {{package.blacklist|yesno:"true,false"}}){
-	      $("#saveModal").modal('show')
+	      $("#saveModal").modal('show');
+	    } else {
+	      packageform.submit();
 	    }
 	  }
       
