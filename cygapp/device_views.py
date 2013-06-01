@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from models import Device, Group, Product, Session, Result
+from models import Device, Group, Product, Session, Result, Policy
 
 @require_GET
 @login_required
@@ -166,21 +166,21 @@ def simulate(request, deviceID):
 
     sessions = Session.objects.filter(device=device) 
     context['session_count'] = len(sessions)
-    context['definition_set'] = device.groups.all()
-    context['inherit_set'] = device.get_inherit_set()
+    context['definition_set'] = list(device.groups.all())
+    context['inherit_set'] = list(device.get_inherit_set())
 
     if context['session_count'] > 0:
         session = sessions.latest('time')
         context['last_session'] = session.time
         context['last_user'] = session.identity.data
-        context['last_result'] = session.recommendation
+        context['last_result'] = Policy.action[session.recommendation]
     else:
         context['last_session'] = _('Never')
         context['last_user'] = _('No one')
         context['last_result'] = _('N/A')
 
     enforcements = []
-    for group in context['definition_set']:
+    for group in context['definition_set'] + context['inherit_set']:
         for e in group.enforcements.all():
             try:
                 result =  Result.objects.filter(

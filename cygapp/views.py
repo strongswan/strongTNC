@@ -125,6 +125,8 @@ def generate_results(session):
     else:
         session.recommendation = Action.ALLOW
 
+    session.save()
+
     for item in workitems:
         item.delete()
 
