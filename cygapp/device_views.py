@@ -162,14 +162,20 @@ def simulate(request, deviceID):
     
     context = {}
     context['device'] = device
-    context['title'] = _('Simulation report for ') + str(device)
+    context['title'] = _('Report for ') + str(device)
 
-    sessions = Session.objects.filter(device=device) 
+    sessions = Session.objects.filter(device=device).order_by('-time') 
     context['session_count'] = len(sessions)
+    print len(sessions)
     context['definition_set'] = list(device.groups.all())
     context['inherit_set'] = list(device.get_inherit_set())
 
     if context['session_count'] > 0:
+        context['sessions'] = []
+        for session in sessions[:50]:
+            context['sessions'].append((session,
+                Policy.action[session.recommendation]))
+
         session = sessions.latest('time')
         context['last_session'] = session.time
         context['last_user'] = session.identity.data
@@ -185,7 +191,7 @@ def simulate(request, deviceID):
             try:
                 result =  Result.objects.filter(
                         session__device=device,policy=e.policy).latest()
-                enforcements.append((e, result.recommendation,
+                enforcements.append((e, Policy.action[result.recommendation],
                     device.is_due_for(e)))
             except Result.DoesNotExist:
                 enforcements.append((e, _('N/A'), device.is_due_for(e)))

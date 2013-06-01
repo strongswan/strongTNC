@@ -84,9 +84,9 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <td>Enforcement</td>
-          <td>Last result</td>
-          <td>Will be tested</td>
+          <td>{% trans "Enforcement" %}</td>
+          <td>{% trans "Last result" %}</td>
+          <td>{% trans "Will be tested" %}</td>
         </tr>
       </thead>
       <tbody>
@@ -95,6 +95,27 @@
           <td><a href="/enforcements/{{ e.0.id }}">{{ e.0 }}</a></td>
           <td>{{ e.1 }}</td>
           <td>{{ e.2|yesno:_("Yes,No") }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    {% if sessions %}
+    <hr>
+    <h4>{% trans 'Last 50 Sessions' %}</h4>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <td>{% trans "Time" %}</td>
+          <td>{% trans "Result" %}</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in sessions %}
+        <tr>
+          <td><a href="/sessions/{{ s.0.id }}">{{ s.0.time }}</a></td>
+          <td>{{ s.1 }}</td>
         </tr>
         {% endfor %}
       </tbody>
