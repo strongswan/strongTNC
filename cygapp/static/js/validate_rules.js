@@ -71,14 +71,48 @@ $(document).ready(function(){
   $('#enforcementform').validate({
     rules: {
       policy: {
-	required: true
+	required: true,
+	remote: {
+	  url: "/enforcements/check/" + $("#enforcementId").val(),
+	  type: "post",
+	  data: {
+	    policy: function() {
+	      return $("#policy").val()
+	    },
+	    group: function() {
+	      return $("#group").val()
+	    },
+	    csrfmiddlewaretoken: csrftoken,
+	  }
+	}
       },
       group: {
-	required: true
+	required: true,
+	remote: {
+	  url: "/enforcements/check/" + $("#enforcementId").val(),
+	  type: "post",
+	  data: {
+	    policy: function() {
+	      return $("#policy").val()
+	    },
+	    group: function() {
+	      return $("#group").val()
+	    },
+	    csrfmiddlewaretoken: csrftoken,
+	  }
+	}
       },
       max_age: {
 	required: true,
 	range: [0, 9223372036854775] // sqlite max value 
+      }
+    },
+    messages: {
+      group: {
+	remote: "Already exists!"
+      },
+      policy: {
+	remote: "Already exists!"
       }
     },
     highlight: function(element) {

@@ -35,7 +35,7 @@
 	<h4>Enforcement Info</h4>
   <form class="form-horizontal" method="POST" action="/enforcements/save" id="enforcementform">
     {% csrf_token %}
-    <input type="hidden" name="enforcementId" value="{{enforcement.id}}" />
+    <input type="hidden" id="enforcementId" name="enforcementId" value="{{enforcement.id}}" />
 
     <div class="control-group">
       <label class="control-label" for="policy">{% trans "Policy" %}</label>

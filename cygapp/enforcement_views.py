@@ -122,6 +122,31 @@ def save(request):
 
 @require_POST
 @login_required
+def check(request):
+    response_str = "false"
+    if request.is_ajax():
+        selected_policy = request.POST['policy']
+        selected_group = request.POST['group']
+        if selected_group:
+            url_id = request.path[20:]
+            policy = Enforcement.objects.filter(policy=selected_policy)
+            group = policy.filter(group=selected_group).count()
+            if group != 0:
+                if url_id != 'None':
+                    group_byid = Group.objects.get(pk=url_id)
+                    if group_byid.name != selected_group:
+                        response_str = "false"
+                    else:
+                        response_str = "true"
+                else:
+                    response_str = "false"
+            else:
+                response_str = "true"
+
+    return HttpResponse("%s" % response_str)
+
+@require_POST
+@login_required
 def delete(request, enforcementID):
     enforcement = get_object_or_404(Enforcement, pk=enforcementID)
     enforcement.delete()
