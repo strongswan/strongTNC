@@ -91,7 +91,7 @@
     <div class="control-group">
       <label class="control-label" for="product">{% trans "Product" %}</label> 
       <div class="controls">   
-        <select type="text" id="product" name="product" placeholder="{% trans "Product" %}" rel="tooltip"
+        <select type="text" id="product" name="product" class="chzn-select" placeholder="{% trans "Product" %}" rel="tooltip"
           title="{% trans 'Device product (operating system)' %}">
           <option value="">{% trans "Select one..." %}</option>
           {% for p in products %}
@@ -111,6 +111,26 @@
       title="{% trans 'When the device is member of a group, all policies enforced on the group are applied to the device upon login' %}"><i class="icon-info-sign"></i></a>
     </h4>
     
+    <div class="control-group">
+      <label class="control-label" for="groupselect">{% trans "Groups" %}</label> 
+      <div class="controls"> 
+	<select data-placeholder="Click to add a group..." id="group_select2" multiple class="chzn-select-deselect input-xlarge" tabindex="8">
+	  <option value=""></option>
+	  <optgroup label="NFC EAST">
+	    <option>test</option>
+	  </optgroup>
+	  {% for g in groups %}
+	  <option value="{{ g.id }}">{{ g }}</option>
+	  {% endfor %}
+	  {% for m in members %}
+	  <option selected value="{{ m.id }}">{{ m }}</option>
+	  {% endfor %}
+	</select>
+      </div>
+    </div>
+    
+    <hr>
+    
     <div class="row-fluid">
 
       <select class="input-xlarge" size="5" name="selectionField" id="group_select" multiple="yes" >
@@ -123,13 +143,13 @@
         <button type="button" onclick="add_member()" class="btn"><i class="icon-forward"></i></button>
         <button type="button" onclick="remove_member()" class="btn"><i class="icon-backward"></i></button>
       </div>
-
+      
       <select class="input-xlarge" size="5" name="selectionField" id="member_select" multiple="yes" >
         {% for m in members %}
         <option value="{{ m.id }}">{{ m }}</option>
         {% endfor %}
       </select>
-
+      
     </div>
 
     {% if device.id %}<a href="/devices/{{ device.id }}/report">View device report</a>{% endif %}
@@ -193,7 +213,7 @@
       });
       $("#member_select > option:selected").remove()
     }
-
+    $("#group_select2").trigger("liszt:updated");
   </script>
 {% endblock %}
 
