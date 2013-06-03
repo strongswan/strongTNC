@@ -40,7 +40,7 @@
     <div class="control-group">
       <label class="control-label" for="policy">{% trans "Policy" %}</label>
       <div class="controls">
-        <select name="policy" id="policy" rel="tooltip" title="{% trans 'Policy to enforce'%}">
+        <select name="policy" id="policy" class="chzn-select" rel="tooltip" title="{% trans 'Policy to enforce'%}">
           <option value=''>{% trans 'Select one...' %}</option>
           {% for p in policies %}
           <option value="{{ p.id }}" {% if p.id == enforcement.policy.id %} selected {% endif %}>
@@ -54,7 +54,7 @@
     <div class="control-group">
       <label class="control-label" for="group">{% trans "Group" %}</label>
       <div class="controls">
-        <select name="group" id="group" rel="tooltip" title="{% trans 'Group to enforce policy on'%}">
+        <select name="group" id="group" class="chzn-select" rel="tooltip" title="{% trans 'Group to enforce policy on'%}">
           <option value=''>{% trans 'Select one...' %}</option>
           {% for g in groups %}
           <option value="{{ g.id }}" {% if g.id == enforcement.group.id %} selected {% endif %}>
@@ -76,7 +76,7 @@
     <div class="control-group">
       <label class="control-label" for="fail">{% trans "Fail Action" %}</label>
       <div class="controls">
-        <select name="fail" id="fail" rel="tooltip" title="{% trans 'Action if requirements are not met'%}">
+        <select name="fail" id="fail" class="chzn-select" rel="tooltip" title="{% trans 'Action if requirements are not met'%}">
           <option value="-1">{% trans 'Inherit from policy' %}</option>
           {% for a in actions %}
           <option value="{{ forloop.counter0 }}" {% if forloop.counter0 == enforcement.fail %} selected {% endif %}>
@@ -90,7 +90,7 @@
     <div class="control-group">
       <label class="control-label" for="noresult">{% trans "Noresult Action" %}</label>
       <div class="controls">
-        <select name="noresult" id="noresult" rel="tooltip" title="{% trans 'Action if policy does not apply'%}">
+        <select name="noresult" id="noresult" class="chzn-select" rel="tooltip" title="{% trans 'Action if policy does not apply'%}">
           <option value="-1"> {%trans 'Inherit from policy' %}</option>
           {% for a in actions %}
           <option value="{{ forloop.counter0 }}" {% if forloop.counter0 == enforcement.noresult %} selected {% endif %}>
