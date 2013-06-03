@@ -102,8 +102,9 @@
             >{{ p }}</option>
           {% endfor %}
         </select>
-      </div>
+      </div>  
     </div>
+    
     <hr>
     
     <h4>{% trans "Assign Groups" %}
@@ -114,11 +115,8 @@
     <div class="control-group">
       <label class="control-label" for="groupselect">{% trans "Groups" %}</label> 
       <div class="controls"> 
-	<select data-placeholder="Click to add a group..." id="group_select2" multiple class="chzn-select-deselect input-xlarge" tabindex="8">
-	  <option value=""></option>
-	  <optgroup label="NFC EAST">
-	    <option>test</option>
-	  </optgroup>
+	<select data-placeholder="Click to add a group..." id="group_select2" multiple class="chzn-select-deselect" tabindex="8"
+	rel="tooltip" title="{% trans 'Click into the field to add groups or close them to remove.' %}">
 	  {% for g in groups %}
 	  <option value="{{ g.id }}">{{ g }}</option>
 	  {% endfor %}
@@ -128,32 +126,7 @@
 	</select>
       </div>
     </div>
-    
-    <hr>
-    
-    <div class="row-fluid">
-
-      <select class="input-xlarge" size="5" name="selectionField" id="group_select" multiple="yes" >
-        {% for g in groups %}
-        <option value="{{ g.id }}">{{ g }}</option>
-        {% endfor %}
-      </select>
-
-      <div class="btn-group btn-group-vertical">
-        <button type="button" onclick="add_member()" class="btn"><i class="icon-forward"></i></button>
-        <button type="button" onclick="remove_member()" class="btn"><i class="icon-backward"></i></button>
-      </div>
-      
-      <select class="input-xlarge" size="5" name="selectionField" id="member_select" multiple="yes" >
-        {% for m in members %}
-        <option value="{{ m.id }}">{{ m }}</option>
-        {% endfor %}
-      </select>
-      
-    </div>
-
-    {% if device.id %}<a href="/devices/{{ device.id }}/report">View device report</a>{% endif %}
-    
+        
     <hr>
   
     <div class="btn-toolbar" style="margin: 0;">
@@ -164,6 +137,9 @@
       <div class="btn-group">
 	<a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
       </div><!-- /btn-group -->
+      <div class="btn-group">
+	<a href="/devices/{{ device.id }}/report" class="btn btn-primary"><i class="icon-file icon-white"></i> {%trans "View device report"%}</a>
+      </div>
       {% endif %}
     </div><!-- /btn-toolbar-->
     {% endif %}
@@ -193,27 +169,10 @@
   <script type="text/javascript">
     function save_device(){
       $('<input />').attr('type', 'hidden').attr('name', 'memberlist').attr('value',
-          $("#member_select option").map(function() {
+          $("#group_select2 option:selected").map(function() {
             return this.value;
             }).get().join()).appendTo("#deviceform")
     }
-
-    function add_member()
-    {
-      $("#group_select > option:selected").each(function(index, elem){
-            $("#member_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
-      });
-      $("#group_select > option:selected").remove()
-    }
-
-    function remove_member()
-    {
-      $("#member_select > option:selected").each(function(index, elem){
-            $("#group_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
-      });
-      $("#member_select > option:selected").remove()
-    }
-    $("#group_select2").trigger("liszt:updated");
   </script>
 {% endblock %}
 

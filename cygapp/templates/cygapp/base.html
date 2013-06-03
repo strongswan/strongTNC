@@ -159,24 +159,23 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script type="text/javascript">
+      $(".chzn-select").chosen({disable_search_threshold: 25});
+      //$(".chzn-select").chosen();
+      $(".chzn-select-deselect").chosen({allow_single_deselect:true});
       $(document).ready(function () {
     	csrftoken = '{{ csrf_token }}';
-        $("a").tooltip({
-          'selector': '',
-          'placement': 'right'
-        });
-	$("input").tooltip({
-          'selector': '',
-          'placement': 'right'
-        });
-	$("select").tooltip({
-          'selector': '',
-          'placement': 'right'
-        });
+	$(function () {
+	  $("[rel='tooltip']").tooltip({
+	    'selector': '',
+	    'placement': 'right'
+	  });
+	});
+	$().tooltip({
+          template: '<select class="tooltip chzn-select">'
+	});
       });
       $('.dropdown-toggle').dropdown();
-      $(".chzn-select").chosen();
-      $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+
     </script>
     <script src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
     <script src="{{ STATIC_URL }}js/validate_rules.js"></script>

@@ -84,25 +84,20 @@
           <a class="btn-small" href="#" rel="tooltip"
             title="{% trans 'New devices connecting to the TNC server that have this product installed, will be assigned to these groups automatically' %}"><i class="icon-info-sign"></i></a>
         </h4>
-        <div class="row-fluid">
-
-          <select class="input-xlarge" size="5" name="selectionField" id="group_select" multiple="yes" >
-            {% for g in groups %}
-            <option value="{{ g.id }}">{{ g }}</option>
-            {% endfor %}
-          </select>
-
-          <div class="btn-group btn-group-vertical">
-            <button type="button" onclick="add_default()" class="btn"><i class="icon-forward"></i></button>
-            <button type="button" onclick="remove_default()" class="btn"><i class="icon-backward"></i></button>
+        
+        <div class="control-group">
+          <label class="control-label" for="groupselect">{% trans "Groups" %}</label> 
+          <div class="controls"> 
+            <select data-placeholder="Click to add a group..." id="group_select" multiple class="chzn-select-deselect" tabindex="8"
+            rel="tooltip" title="{% trans 'Click into the field to add groups or close them to remove.' %}">
+              {% for g in groups %}
+              <option value="{{ g.id }}">{{ g }}</option>
+              {% endfor %}
+              {% for d in defaults %}
+              <option selected value="{{ d.id }}">{{ d }}</option>
+              {% endfor %}
+            </select>
           </div>
-
-          <select class="input-xlarge" size="5" name="selectionField" id="default_select" multiple="yes" >
-            {% for d in defaults %}
-            <option value="{{ d.id }}">{{ d }}</option>
-            {% endfor %}
-          </select>
-
         </div>
 
         <hr>
@@ -144,27 +139,10 @@
 <script type="text/javascript">
   function save_product(){
     $('<input />').attr('type', 'hidden').attr('name', 'defaultlist').attr('value',
-        $("#default_select option").map(function() {
+        $("#group_select option:selected").map(function() {
           return this.value;
           }).get().join()).appendTo("#productform")
   }
-
-function add_default()
-{
-  $("#group_select > option:selected").each(function(index, elem){
-      $("#default_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
-      });
-  $("#group_select > option:selected").remove()
-}
-
-function remove_default()
-{
-  $("#default_select > option:selected").each(function(index, elem){
-      $("#group_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
-      });
-  $("#default_select > option:selected").remove()
-}
-
 </script>
 {% endblock %}
 

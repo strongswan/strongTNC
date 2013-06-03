@@ -83,7 +83,7 @@
         <div class="control-group">
           <label class="control-label" for="description">{% trans "Type" %}</label> 
           <div class="controls">   
-            <select id="type" name="type" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
+            <select id="type" name="type" class="chzn-select" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
               <option value="-1">{% trans 'Select one...' %}</option>
               {% for t in types %}
               <option value="{{ forloop.counter0 }}"
@@ -93,10 +93,10 @@
           </div>
         </div>
         
-        <div class="control-group hide" id="file">
+        <div class="control-group" id="file">
           <label class="control-label" for="file">{% trans "File" %}</label> 
           <div class="controls">   
-            <select id="file" name="file" rel="tooltip"
+            <select id="file" name="file" class="chzn-select" rel="tooltip"
               title="{% trans 'File to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for f in files %}
@@ -106,10 +106,10 @@
           </div>
         </div>
         
-        <div class="control-group hide" id="dir">
+        <div class="control-group" id="dir">
           <label class="control-label" for="dir">{% trans "Directory" %}</label> 
           <div class="controls">   
-            <select id="dir" name="dir" rel="tooltip"
+            <select id="dir" name="dir" class="chzn-select" rel="tooltip"
               title="{% trans 'Directory to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for d in dirs %}
@@ -142,7 +142,7 @@
         <div class="control-group">
           <label class="control-label" for="fail">{% trans "Fail-Action" %}</label> 
           <div class="controls">   
-            <select id="fail" name="fail" rel="tooltip"
+            <select id="fail" name="fail" class="chzn-select" rel="tooltip"
               title="{% trans 'Recommendation when a client does not meet the policy requirement' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
@@ -159,7 +159,7 @@
         <div class="control-group">
           <label class="control-label" for="noresult">{% trans "Noresult-Action" %}</label> 
           <div class="controls">   
-            <select id="noresult" name="noresult" rel="tooltip"
+            <select id="noresult" name="noresult" class="chzn-select" rel="tooltip"
               title="{% trans 'Recommendation when the policy does not apply to the client' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
