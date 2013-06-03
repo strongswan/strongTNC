@@ -43,7 +43,7 @@ $(document).ready(function(){
       },
       range: {
 	required: true,
-	regex: /^\s*\d+\s*(-*\s*\d+\s*)?( *,*(\s*\d+\s*)( *-*\s*\d+\s*)?)*$/
+	regex: /^ *\d+ *(- *\d+ *)?( *,*( *\d+ *)( *- *\d+ *)?)*$/
       },
       fail: {
 	required: true
