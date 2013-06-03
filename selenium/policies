@@ -34,7 +34,7 @@
 <tr>
 	<td>select</td>
 	<td>id=type</td>
-	<td>label=MissingSecurityUpdate</td>
+	<td>label=Missing Security Update</td>
 </tr>
 <tr>
 	<td>assertElementNotPresent</td>
@@ -54,7 +54,7 @@
 <tr>
 	<td>select</td>
 	<td>id=type</td>
-	<td>label=FileHash</td>
+	<td>label=File Hash</td>
 </tr>
 <tr>
 	<td>assertVisible</td>
@@ -64,7 +64,7 @@
 <tr>
 	<td>select</td>
 	<td>id=type</td>
-	<td>label=DirHash</td>
+	<td>label=Dir Hash</td>
 </tr>
 <tr>
 	<td>assertVisible</td>
@@ -74,7 +74,7 @@
 <tr>
 	<td>select</td>
 	<td>id=type</td>
-	<td>label=ListeningPortUDP</td>
+	<td>label=Listening Port UDP</td>
 </tr>
 <tr>
 	<td>assertVisible</td>
@@ -84,7 +84,7 @@
 <tr>
 	<td>select</td>
 	<td>id=type</td>
-	<td>label=ListeningPortTCP</td>
+	<td>label=Listening Port TCP</td>
 </tr>
 <tr>
 	<td>assertVisible</td>
@@ -94,7 +94,7 @@
 <tr>
 	<td>select</td>
 	<td>id=type</td>
-	<td>label=MissingSecurityUpdate</td>
+	<td>label=Missing Security Update</td>
 </tr>
 <tr>
 	<td>assertNotVisible</td>
@@ -169,7 +169,7 @@
 <tr>
 	<td>select</td>
 	<td>id=type</td>
-	<td>label=ListeningPortTCP</td>
+	<td>label=Listening Port TCP</td>
 </tr>
 <tr>
 	<td>type</td>

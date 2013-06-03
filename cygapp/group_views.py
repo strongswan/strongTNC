@@ -106,9 +106,14 @@ def save(request):
 @login_required
 def delete(request, groupID):
     group = get_object_or_404(Group, pk=groupID)
-    group.delete()
 
-    messages.success(request, _('Group deleted!'))
+    if int(groupID) != 1:
+        group.delete()
+        messages.success(request, _('Group deleted!'))
+    else:
+        messages.error(request,
+            _('Sorry, this is the default group and cannot be deleted'))
+
     return redirect('/groups')
 
 def group_tree():

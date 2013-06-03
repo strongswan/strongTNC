@@ -130,6 +130,8 @@ def check(request):
         group_id = request.POST['group']
         group_id = int(group_id) if group_id != '' else -1
         enforcement_id = request.POST['enforcement']
+        if enforcement_id == 'None':
+            enforcement_id = ''
         enforcement_id = int(enforcement_id) if enforcement_id != '' else -1
 
         try:

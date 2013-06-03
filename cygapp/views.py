@@ -9,7 +9,7 @@ from django.views.decorators.http import (require_GET, require_safe,
         require_http_methods)
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Session, Result, Action, Device
+from models import Session, Result, Action, Device, Group
 
 @require_GET
 @login_required
@@ -44,11 +44,12 @@ def start_session(request):
         #This is a new device
         device.created = datetime.today()
 
-        # TODO: Add entry for default group
-        pass
-
-        for group in device.product.default_groups.all():
-            device.groups.add(group)
+        if device.product.default_groups.all():
+            for group in device.product.default_groups.all():
+                device.groups.add(group)
+        else:
+            #If no default groups for OS are specified
+            device.groups.add(Group.objects.get(pk=1))
 
         device.save()
 

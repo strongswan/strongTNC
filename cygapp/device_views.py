@@ -166,7 +166,6 @@ def report(request, deviceID):
 
     sessions = Session.objects.filter(device=device).order_by('-time') 
     context['session_count'] = len(sessions)
-    print len(sessions)
     context['definition_set'] = list(device.groups.all())
     context['inherit_set'] = list(device.get_inherit_set())
 
