@@ -40,6 +40,8 @@ def policy(request, policyID):
         enforcements = policy.enforcements.all().order_by('id')
         context['enforcements'] = enforcements
         context['types'] = Policy.types
+        for typ in context['types']:
+            typ = _(typ)
         context['action'] = Policy.action
         files = File.objects.all().order_by('name')
         context['files'] = files

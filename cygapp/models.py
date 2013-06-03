@@ -287,31 +287,31 @@ class Policy(models.Model):
             ]
 
     types = [
-            'FileHash',
-            'DirHash',
-            'ListeningPortTCP',
-            'ListeningPortUDP',
-            'FileExist',
-            'NotFileExist',
-            'MissingUpdate',
-            'MissingSecurityUpdate',
-            'BlacklistedPackage',
-            'OSSettings',
+            'File Hash',
+            'Dir Hash',
+            'Listening Port TCP',
+            'Listening Port UDP',
+            'File Exist',
+            'Not File Exist',
+            'Missing Update',
+            'Missing Security Update',
+            'Blacklisted Package',
+            'OS Settings',
             'Deny',
             ]
 
     
     argument_funcs = {
-            'FileHash': lambda policy: '',
-            'DirHash': lambda policy: '',
-            'ListeningPortTCP': lambda p: p.argument if p.argument else '',
-            'ListeningPortUDP': lambda p: p.argument if p.argument else '',
-            'FileExist': lambda policy: '',
-            'NotFileExist': lambda policy: '',
-            'MissingUpdate': lambda policy: '',
-            'MissingSecurityUpdate':lambda policy:  '',
-            'BlacklistedPackage': lambda policy: '',
-            'OSSettings': lambda policy: '',
+            'File Hash': lambda policy: '',
+            'Dir Hash': lambda policy: '',
+            'Listening Port TCP': lambda p: p.argument if p.argument else '',
+            'Listening Port UDP': lambda p: p.argument if p.argument else '',
+            'File Exist': lambda policy: '',
+            'Not File Exist': lambda policy: '',
+            'Missing Update': lambda policy: '',
+            'Missing Security Update':lambda policy:  '',
+            'Blacklisted Package': lambda policy: '',
+            'OS Settings': lambda policy: '',
             'Deny': lambda policy: '',
             }
 
