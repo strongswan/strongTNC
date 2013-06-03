@@ -73,7 +73,7 @@ $(document).ready(function(){
       policy: {
 	required: true,
 	remote: {
-	  url: "/enforcements/check/",
+	  url: "/enforcements/check",
 	  type: "post",
 	  data: {
 	    policy: function() {
@@ -92,7 +92,7 @@ $(document).ready(function(){
       group: {
 	required: true,
 	remote: {
-	  url: "/enforcements/check/",
+	  url: "/enforcements/check",
 	  type: "post",
 	  data: {
 	    policy: function() {
@@ -115,17 +115,27 @@ $(document).ready(function(){
     },
     messages: {
       group: {
-	remote: "Already exists!"
+	remote: "Enforcement already exists!"
       },
       policy: {
-	remote: "Already exists!"
+	remote: "Enforcement already exists!"
       }
+    },
+    groups: {
+	    policy_group: "policy group"
     },
     highlight: function(element) {
       $(element).closest('.control-group').removeClass('success').addClass('error');
     },
     success: function(element) {
       element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
+    },
+    errorPlacement: function(error, element) {
+	    if(element.attr("id") == "policy"){
+		    error.insertAfter("#group");
+	    } else {
+		    error.insertAfter(element);
+	    }
     }
   });
   
