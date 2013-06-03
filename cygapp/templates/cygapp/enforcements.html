@@ -40,7 +40,7 @@
     <div class="control-group">
       <label class="control-label" for="policy">{% trans "Policy" %}</label>
       <div class="controls">
-        <select name="policy" id="policy" class="chzn-select" rel="tooltip" title="{% trans 'Policy to enforce'%}">
+        <select name="policy" id="policy" rel="tooltip" title="{% trans 'Policy to enforce'%}">
           <option value=''>{% trans 'Select one...' %}</option>
           {% for p in policies %}
           <option value="{{ p.id }}" {% if p.id == enforcement.policy.id %} selected {% endif %}>
@@ -54,7 +54,7 @@
     <div class="control-group">
       <label class="control-label" for="group">{% trans "Group" %}</label>
       <div class="controls">
-        <select name="group" id="group" class="chzn-select" rel="tooltip" title="{% trans 'Group to enforce policy on'%}">
+        <select name="group" id="group" rel="tooltip" title="{% trans 'Group to enforce policy on'%}">
           <option value=''>{% trans 'Select one...' %}</option>
           {% for g in groups %}
           <option value="{{ g.id }}" {% if g.id == enforcement.group.id %} selected {% endif %}>
