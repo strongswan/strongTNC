@@ -131,6 +131,14 @@
 	    {% block hero %}{% endblock %}
           </div>
 
+          <noscript>
+            <div id="noscript" class="msg_error">
+              {% blocktrans %}This site relies heavily on JavaScript. It seems you have JavaScript
+              disabled in your browser, you may experience difficulties while using this site.
+              {% endblocktrans %}
+            </div>
+          </noscript>
+
 	  <div class="row-fluid">
 	  {% if messages %}
 	    <div id="message_div">
