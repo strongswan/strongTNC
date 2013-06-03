@@ -73,7 +73,7 @@ $(document).ready(function(){
       policy: {
 	required: true,
 	remote: {
-	  url: "/enforcements/check/" + $("#enforcementId").val(),
+	  url: "/enforcements/check/",
 	  type: "post",
 	  data: {
 	    policy: function() {
@@ -81,6 +81,9 @@ $(document).ready(function(){
 	    },
 	    group: function() {
 	      return $("#group").val()
+	    },
+	    enforcement: function() {
+	      return $("#enforcementId").val()
 	    },
 	    csrfmiddlewaretoken: csrftoken,
 	  }
@@ -89,7 +92,7 @@ $(document).ready(function(){
       group: {
 	required: true,
 	remote: {
-	  url: "/enforcements/check/" + $("#enforcementId").val(),
+	  url: "/enforcements/check/",
 	  type: "post",
 	  data: {
 	    policy: function() {
@@ -97,6 +100,9 @@ $(document).ready(function(){
 	    },
 	    group: function() {
 	      return $("#group").val()
+	    },
+	    enforcement: function() {
+	      return $("#enforcementId").val()
 	    },
 	    csrfmiddlewaretoken: csrftoken,
 	  }

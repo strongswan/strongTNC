@@ -123,27 +123,24 @@ def save(request):
 @require_POST
 @login_required
 def check(request):
-    response_str = "false"
+    response = "false"
     if request.is_ajax():
-        selected_policy = request.POST['policy']
-        selected_group = request.POST['group']
-        if selected_group:
-            url_id = request.path[20:]
-            policy = Enforcement.objects.filter(policy=selected_policy)
-            group = policy.filter(group=selected_group).count()
-            if group != 0:
-                if url_id != 'None':
-                    group_byid = Group.objects.get(pk=url_id)
-                    if group_byid.name != selected_group:
-                        response_str = "false"
-                    else:
-                        response_str = "true"
-                else:
-                    response_str = "false"
-            else:
-                response_str = "true"
+        policy_id = request.POST['policy']
+        policy_id = int(policy_id) if policy_id != '' else -1
+        group_id = request.POST['group']
+        group_id = int(group_id) if group_id != '' else -1
+        enforcement_id = request.POST['enforcement']
+        enforcement_id = int(enforcement_id) if enforcement_id != '' else -1
 
-    return HttpResponse("%s" % response_str)
+        try:
+            e = Enforcement.objects.get(policy=policy_id, group=group_id)
+
+            if e.id == enforcement_id:
+                response = "true"
+        except Enforcement.DoesNotExist:
+            response =  "true"
+
+    return HttpResponse("%s" % response)
 
 @require_POST
 @login_required
