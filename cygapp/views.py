@@ -16,11 +16,6 @@ from models import Session, Result, Action, Device, Group
 def overview(request):
     return render(request, 'cygapp/overview.html')
 
-@require_GET
-@login_required
-def help(request):
-    return render(request, 'cygapp/help.html')
-
 @require_safe
 def start_session(request):
     """

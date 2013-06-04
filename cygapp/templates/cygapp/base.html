@@ -39,16 +39,7 @@
           <div class="nav-collapse collapse">
 	    <div class="pull-right">
 	      <ul class="nav pull-right">
-		<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
-		  {%trans 'Welcome'%}<b class="caret"></b></a>
-		  <ul class="dropdown-menu">
-		    <li><a href="/help"><i class="icon-question-sign"></i> {%trans 'Help' %}</a></li>
-		    <li><a href="#"><i class="icon-envelope"></i> {%trans 'Contact' %}</a></li>
-		    <li><a href='#'><i class="icon-cog"></i> {% trans 'Change Password' %}</a></li>
-		    <li class="divider"></li>
-		    <li><a href="/logout"><i class="icon-off"></i> {% trans 'Logout' %}</a></li>
-		  </ul>
-		</li>
+		<li><a href="/logout" id="logout" rel="tooltip" title="{% trans 'Logout'%}"><i class="icon-off icon-white"></i></a></li>
 	      </ul>
 	    </div>    
 	    <form class="navbar-search pull-right" action="/search" method="get">
@@ -123,8 +114,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script type="text/javascript">
-      //$(".chzn-select").chosen({disable_search_threshold: 25});
-      $(".chzn-select").chosen();
+      $(".chzn-select").chosen({disable_search_threshold: 15});
       $(".chzn-select-deselect").chosen({allow_single_deselect:true});
       $(document).ready(function () {
     	csrftoken = '{{ csrf_token }}';
@@ -134,9 +124,12 @@
 	    'placement': 'right'
 	  });
 	});
+        $("#logout").tooltip({
+          'selector': '',
+          'placement': 'bottom'
+     	});
       });
       $('.dropdown-toggle').dropdown();
-
     </script>
     <script src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
     <script src="{{ STATIC_URL }}js/validate_rules.js"></script>

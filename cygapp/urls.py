@@ -13,7 +13,6 @@ urlpatterns = patterns('',
         url(r'^$', views.overview, name='overview'),
         url(r'^overview/?$', views.overview, name='overview'),
         url(r'^statistics/?$', views.statistics, name='statistics'),
-        url(r'^help/?$', views.help, name='help'),
 
         url(r'^login/?$', views.login, name='login'),
         url(r'^logout/?$', views.logout, name='logout'),
