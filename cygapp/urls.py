@@ -25,6 +25,7 @@ urlpatterns = patterns('',
         url(r'^groups/save?$', group_views.save, name='save'),
         url(r'^groups/(?P<groupID>\d+)/delete/?$', group_views.delete,
             name='delete'),
+        url(r'^groups/check/?$', group_views.check, name='check'),
 
         url(r'^devices/?$', device_views.devices, name='devices'),
         url(r'^devices/(?P<deviceID>\d+)/?$', device_views.device, name='device'),

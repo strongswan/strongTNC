@@ -101,6 +101,31 @@ def save(request):
     messages.success(request, _('Group saved!'))
     return redirect('/groups/%d' % group.id)
 
+@require_POST
+@login_required
+def check(request):
+    response = "false"
+    if request.is_ajax():
+        group_name = request.POST['name']
+        group_id = request.POST['group']
+        if group_id == 'None':
+            group_id = ''
+        group_id = int(group_id) if group_id != '' else -1
+        
+        g = Group.objects.filter(name=group_name).count()
+        if g != 0:
+            if group_id != '':
+                group_byid = Group.objects.get(pk=group_id)
+                if group_byid.name != group_name:
+                    response = "false"
+                else:
+                    response = "true"
+            else:
+                response = "false"
+        else:
+            response = "true"
+
+    return HttpResponse("%s" % response)
 
 @require_POST
 @login_required

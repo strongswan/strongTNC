@@ -10,7 +10,25 @@ $(document).ready(function(){
     rules: {
       name: {
 	required: true,
-	maxlength: 50
+	maxlength: 50,
+	remote: {
+	  url: "/groups/check",
+	  type: "post",
+	  data: {
+	    group: function() {
+	      return $('#groupId').val()
+	    },
+	    name: function() {
+	      return $("#name").val()
+	    },
+	    csrfmiddlewaretoken: csrftoken,
+	  }
+	}
+      }
+    },
+    messages: {
+      name: {
+	remote: "Already exists!"
       }
     },
     highlight: function(element) {
