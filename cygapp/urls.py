@@ -71,6 +71,7 @@ urlpatterns = patterns('',
         url(r'^products/(?P<productID>\d+)/delete/?$', product_views.delete,
             name='delete'),
         url(r'^products/search/?$', product_views.search, name='search'),
+        url(r'^products/check/?$', product_views.check, name='check'),
         
         url(r'^policies/?$', policy_views.policies, name='policies'),
         url(r'^policies/(?P<policyID>\d+)/?$', policy_views.policy, name='policy'),

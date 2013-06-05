@@ -110,7 +110,6 @@ def check(request):
         group_id = request.POST['group']
         if group_id == 'None':
             group_id = ''
-        group_id = int(group_id) if group_id != '' else -1
         
         g = Group.objects.filter(name=group_name).count()
         if g != 0:

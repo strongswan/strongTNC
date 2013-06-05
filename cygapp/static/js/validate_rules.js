@@ -214,6 +214,24 @@ $(document).ready(function(){
       name: {
 	required: true,
 	maxlength: 50,
+	remote: {
+	  url: "/products/check",
+	  type: "post",
+	  data: {
+	    product: function() {
+	      return $('#productId').val()
+	    },
+	    name: function() {
+	      return $("#name").val()
+	    },
+	    csrfmiddlewaretoken: csrftoken,
+	  }
+	}
+      }
+    },
+    messages: {
+      name: {
+	remote: "Already exists!"
       }
     },
     highlight: function(element) {

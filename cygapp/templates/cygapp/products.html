@@ -68,7 +68,7 @@
       <h4>Product Info</h4>
       <form class="form-horizontal" method="POST" action="/products/save" id="productform">
         {% csrf_token %}
-        <input type="hidden" name="productId" value="{{ product.id }}" />
+        <input type="hidden" id="productId" name="productId" value="{{ product.id }}" />
 
         <div class="control-group">
           <label class="control-label" for="name">{% trans "Name" %}</label> 

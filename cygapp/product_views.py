@@ -98,6 +98,31 @@ def save(request):
 
 @require_POST
 @login_required
+def check(request):
+    response = "false"
+    if request.is_ajax():
+        product_name = request.POST['name']
+        product_id = request.POST['product']
+        if product_id == 'None':
+            product_id = ''
+        
+        p = Product.objects.filter(name=product_name).count()
+        if p != 0:
+            if product_id != '':
+                product_byid = Product.objects.get(pk=product_id)
+                if product_byid.name != product_name:
+                    response = "false"
+                else:
+                    response = "true"
+            else:
+                response = "false"
+        else:
+            response = "true"
+
+    return HttpResponse("%s" % response)
+
+@require_POST
+@login_required
 def delete(request, productID):
     product = get_object_or_404(Product, pk=productID)
     product.delete()
