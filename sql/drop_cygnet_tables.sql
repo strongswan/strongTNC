@@ -1,9 +1,0 @@
-DROP TABLE algorithm;
-DROP TABLE device_infos;
-DROP TABLE devices;
-DROP TABLE directory;
-DROP TABLE file_hashes;
-DROP TABLE files;
-DROP TABLE packages;
-DROP TABLE products;
-DROP TABLE versions;
