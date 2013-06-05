@@ -40,10 +40,10 @@
           <div class="nav-collapse collapse">
 	    <div class="pull-right">
 	      <ul class="nav pull-right">
-	    <form class="navbar-search" action="/search" method="get">
-	      <input type="text" class="search-query" name="q" placeholder="Search">
-	    </form>
-		<li><a href="/logout" id="logout" rel="tooltip" title="{% trans 'Logout'%}"><i class="icon-off icon-white"></i></a></li>
+		<form class="navbar-search" action="/search" method="get">
+		  <input type="text" class="search-query" name="q" placeholder="Search">
+		</form>
+		<li><a href="#logoutModal" data-toggle="modal" id="logout" rel="tooltip" title="{% trans 'Logout'%}"><i class="icon-off icon-white"></i></a></li>
 	      </ul>
 	    </div>
             
@@ -109,6 +109,21 @@
         <p>&copy; ITA 2013</p>
       </footer>
 
+      <div id="logoutModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+	<div class="modal-header">
+	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	  <h3 id="logoutModalLabel">Are you sure to logout?</h3>
+	</div>
+	<div class="modal-body">
+	  <h4>You're about to sign out from the system.</h4>
+	  <p>Are you sure to logout from CYGNET?</p>
+	</div>
+	<div class="modal-footer">
+	  <a class="btn" data-dismiss="modal">Cancel</a>
+	  <a class="btn btn-danger" href="/logout"><i class="icon-off icon-white"></i> Logout</a>
+	</div>
+      </div>
+      
     </div><!--/.fluid-container-->
 
     <!-- javascript
