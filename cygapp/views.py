@@ -2,6 +2,7 @@ import re
 from datetime import datetime, timedelta
 from django.http import HttpResponse
 from django.contrib import messages
+from django.db.models import Count
 from django.contrib.auth import (authenticate, login as django_login, logout as
         django_logout)
 from django.contrib.auth.decorators import login_required
@@ -9,7 +10,7 @@ from django.views.decorators.http import (require_GET, require_safe,
         require_http_methods)
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Session, Result, Action, Device, Group
+from models import Session, Result, Action, Device, Group, Product
 
 @require_GET
 @login_required
@@ -72,6 +73,10 @@ def statistics(request):
     context['sessions'] = Session.objects.count()
     context['results'] = Result.objects.count()
     context['devices'] = Device.objects.count()
+    context['OSranking'] = Product.objects.annotate(num=
+            Count('devices__id')).order_by('-num')
+    #context['rec_count_session'] = Session.objects.values(
+            #'recommendation').annotate(num='recommendation')
     return render(request, 'cygapp/statistics.html', context)
 
 @require_http_methods(('GET','POST'))

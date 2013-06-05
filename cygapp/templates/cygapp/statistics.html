@@ -8,13 +8,8 @@
 {% endblock %}
 
 {% block content %}
+<h4>{% trans "Overview" %}</h4>
 <table>
-  <thead>
-    <tr>
-      <td>Key</td>
-      <td>Value</td>
-    </tr>
-  </thead>
   <tbody>
     <tr>
       <td>Sessions:</td>
@@ -31,4 +26,27 @@
   </tbody>
 </table>
 
+<h4> OS Ranking </h3>
+<table>
+  <tr><td>OS</td><td>Devices</td></tr>
+  {% for os in OSranking %}
+  <tr>
+    <td>{{ os }}</td>
+    <td>{{ os.num }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+
+<h4>Recommendation by session </h4>
+<table>
+  <tr><td>OS</td><td>Devices</td></tr>
+  {% for r in rec_count_session %}
+  <tr>
+    <td>{{ r }}</td>
+    <td>{{ r.num }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</table>
 {% endblock %}
