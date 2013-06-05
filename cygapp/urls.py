@@ -85,6 +85,7 @@ urlpatterns = patterns('',
         url(r'^enforcements/save?$', enforcement_views.save, name='save'),
         url(r'^enforcements/(?P<enforcementID>\d+)/delete/?$', enforcement_views.delete,
             name='delete'),
+        url(r'^enforcements/search/?$', policy_views.search, name='search'),
         url(r'^enforcements/check/?$', enforcement_views.check, name='check'),
         
         #IMV API patterns

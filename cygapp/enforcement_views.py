@@ -5,14 +5,16 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from models import Group, Enforcement, Policy
 
 @require_GET
 @login_required
 def enforcements(request):
     context = {}
-    context['enforcements'] = Enforcement.objects.all().order_by('policy')
     context['title'] = _('Enforcements')
+    enforcements = Enforcement.objects.all().order_by('policy')
+    context['enforcements'] = paginate(enforcements, request)
     
     return render(request, 'cygapp/enforcements.html', context)
 
@@ -26,8 +28,9 @@ def enforcement(request, enforcementID):
         messages.error(request, _('Enforcement not found!'))
 
     context = {}
-    context['enforcements'] = Enforcement.objects.all().order_by('policy')
     context['title'] = _('Enforcements')
+    enforcements = Enforcement.objects.all().order_by('policy')   
+    context['enforcements'] = paginate(enforcements, request)
 
     if enforcement:
         context['enforcement'] = enforcement
@@ -47,7 +50,8 @@ def add(request):
     context['title'] = _('New enforcement')
     context['groups'] = Group.objects.all().order_by('name')
     context['policies'] = Policy.objects.all().order_by('name')
-    context['enforcements'] = Enforcement.objects.all().order_by('policy')
+    enforcements = Enforcement.objects.all().order_by('policy')
+    context['enforcements'] = paginate(enforcements, request)
     enforcement = Enforcement()
     enforcement.max_age = 0
     context['enforcement'] = enforcement
@@ -153,3 +157,16 @@ def delete(request, enforcementID):
     messages.success(request, _('Enforcement deleted!'))
     return redirect('/enforcements')
 
+def paginate(items, request):
+    paginator = Paginator(items, 50) # Show 50 packages per page
+    page = request.GET.get('page')
+    try:
+        enforcements = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        enforcements = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        enforcements = paginator.page(paginator.num_pages)
+    
+    return enforcements
