@@ -57,7 +57,8 @@ def add(request):
     context['count'] = Device.objects.count()
     context['groups'] = Group.objects.all().order_by('name')
     context['products'] = Product.objects.all().order_by('name')
-    context['devices'] = Device.objects.all()
+    devices = Device.objects.all().order_by('name')
+    context['devices'] = paginate(devices, request)
     context['device'] = Device()
     return render(request, 'cygapp/devices.html', context)
 

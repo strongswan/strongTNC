@@ -54,7 +54,8 @@ def add(request):
     context['title'] = _('New product')
     context['count'] = Product.objects.count()
     context['groups'] = Group.objects.all().order_by('name')
-    context['products'] = Product.objects.all().order_by('name')
+    products = Product.objects.all().order_by('name')
+    context['products'] = paginate(products, request)
     context['product'] = Product()
     return render(request, 'cygapp/products.html', context)
 

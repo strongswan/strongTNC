@@ -31,7 +31,8 @@
 	  </div>
 	</form>
 	{% endif %}
-	{% if devices|length >= 50 %}
+	{% if device|length >= 50 %}
+        {% if devices.paginator.num_pages > 1 %}
 	<div class="pagination pagination-mini pagination-centered">
 	  <ul>
 	    {% if devices.has_previous %}
@@ -47,6 +48,7 @@
 	    {% endif %}
 	  </ul>
 	</div>
+	{% endif %}
 	{% endif %}
       </div>
       {% if devices %}

@@ -60,7 +60,8 @@ def policy(request, policyID):
 @login_required
 def add(request):
     context = {}
-    context['policies'] = Policy.objects.all().order_by('name')
+    policies = Policy.objects.all().order_by('name')
+    context['policies'] = paginate(packages, request)
     context['title'] = _('New policy')
     context['count'] = Policy.objects.count()
     context['types'] = Policy.types

@@ -30,7 +30,8 @@
           </div>
         </form>
         {% endif %}
-	{% if products|length >= 50 %}
+	{% if product|length >= 50 %}
+        {% if products.paginator.num_pages > 1 %}
 	<div class="pagination pagination-mini pagination-centered">
 	  <ul>
 	    {% if products.has_previous %}
@@ -46,7 +47,8 @@
 	    {% endif %}
 	  </ul>
 	</div>
-      {% endif %}
+        {% endif %}
+        {% endif %}
       </div>
       {% if products %}
       <table class="table table-hover">

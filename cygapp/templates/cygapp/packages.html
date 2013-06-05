@@ -31,7 +31,8 @@
 	  </div>
 	</form>
 	{% endif %}
-	{% if packages|length >= 50 %}
+	{% if package|length >= 50 %}
+	{% if packages.paginator.num_pages > 1 %}
 	<div class="pagination pagination-mini pagination-centered">
 	  <ul>
 	    {% if packages.has_previous %}
@@ -47,6 +48,7 @@
 	    {% endif %}
 	  </ul>
 	</div>
+	{% endif %}
 	{% endif %}
       </div>
       {% if packages %}

@@ -30,7 +30,8 @@
 	  </div>
 	</form>
         {% endif %}
-	{% if policies|length >= 50 %}
+	{% if policy|length >= 50 %}
+        {% if policies.paginator.num_pages > 1 %}
 	<div class="pagination pagination-mini pagination-centered">
 	  <ul>
 	    {% if policies.has_previous %}
@@ -47,6 +48,7 @@
 	  </ul>
 	</div>
 	{% endif %}
+        {% endif %}
       </div>
       {% if policies %}
       <table class="table table-hover">

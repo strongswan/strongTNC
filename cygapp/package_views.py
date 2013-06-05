@@ -31,8 +31,7 @@ def package(request, packageID):
     context = {}
     context['title'] = _('Packages')
     context['count'] = Package.objects.count()
-    packages = Package.objects.all().order_by('name')
-    
+    packages = Package.objects.all().order_by('name')   
     context['packages'] = paginate(packages, request)
 
     if package:
@@ -49,7 +48,8 @@ def add(request):
     context = {}
     context['title'] = _('New package')
     context['count'] = Package.objects.count()
-    context['packages'] = Package.objects.all().order_by('name')[:50]
+    packages = Package.objects.all().order_by('name')   
+    context['packages'] = paginate(packages, request)
     context['package'] = Package()
     return render(request, 'cygapp/packages.html', context)
 
