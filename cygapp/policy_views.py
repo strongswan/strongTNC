@@ -61,7 +61,7 @@ def policy(request, policyID):
 def add(request):
     context = {}
     policies = Policy.objects.all().order_by('name')
-    context['policies'] = paginate(packages, request)
+    context['policies'] = paginate(policies, request)
     context['title'] = _('New policy')
     context['count'] = Policy.objects.count()
     context['types'] = Policy.types
