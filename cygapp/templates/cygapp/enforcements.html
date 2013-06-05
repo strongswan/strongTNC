@@ -21,6 +21,7 @@
 	  </a>
 	</div>
       </h4>
+      <hr>
       <div class="row-fluid">
       	{% if count > 0 %}
 	<form class="form-search pull-center" action="/enforcements/search" method="get">
@@ -50,13 +51,19 @@
 	{% endif %}
 	{% endif %}
       </div>
+	{% if enforcements %}
 	<table class="table table-hover">
 	  <tbody>
-	    {% for p in enforcements %}
-	    <tr><td><a href=/enforcements/{{ p.id }}>{{ p }}</a></td></tr>
-	    {% endfor %}
+	  {% for e in enforcements %}
+	    <tr><td><a href=/enforcements/{{ e.id }}>{{ e }}</a></td></tr>
+	  {% endfor %}
 	  </tbody>
 	</table>
+	{% elif count == 0 %}
+      <p><small>There are no entries.</small></p>
+	{% elif query %}
+      <p><small>No enforcements matched your search criteria.</small></p>
+      {% endif %}    
       </div>
       
       <div class="span9" id="content">

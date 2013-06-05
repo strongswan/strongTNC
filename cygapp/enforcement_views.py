@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 from models import Group, Enforcement, Policy
 
 @require_GET
@@ -13,6 +14,7 @@ from models import Group, Enforcement, Policy
 def enforcements(request):
     context = {}
     context['title'] = _('Enforcements')
+    context['count'] = Enforcement.objects.count()
     enforcements = Enforcement.objects.all().order_by('policy')
     context['enforcements'] = paginate(enforcements, request)
     
@@ -29,6 +31,7 @@ def enforcement(request, enforcementID):
 
     context = {}
     context['title'] = _('Enforcements')
+    context['count'] = Enforcement.objects.count()
     enforcements = Enforcement.objects.all().order_by('policy')   
     context['enforcements'] = paginate(enforcements, request)
 
@@ -48,6 +51,7 @@ def enforcement(request, enforcementID):
 def add(request):
     context = {}
     context['title'] = _('New enforcement')
+    context['count'] = Enforcement.objects.count()
     context['groups'] = Group.objects.all().order_by('name')
     context['policies'] = Policy.objects.all().order_by('name')
     enforcements = Enforcement.objects.all().order_by('policy')
@@ -156,6 +160,24 @@ def delete(request, enforcementID):
 
     messages.success(request, _('Enforcement deleted!'))
     return redirect('/enforcements')
+
+@require_GET
+@login_required
+def search(request):
+    context = {}
+    context['title'] = _('Enforcements')
+    context['count'] = Enforcement.objects.count()
+    enforcements = Enforcement.objects.all().order_by('policy')
+    
+    q = request.GET.get('q', None)
+    if q != '':
+        context['query'] = q
+        enforcements = Enforcement.objects.filter(Q(policy__name__icontains=q)|Q(group__name__icontains=q))
+    else:
+        return redirect('/enforcements')
+    
+    context['enforcements'] = paginate(enforcements, request)
+    return render(request, 'cygapp/enforcements.html', context)
 
 def paginate(items, request):
     paginator = Paginator(items, 50) # Show 50 packages per page

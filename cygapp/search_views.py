@@ -2,7 +2,8 @@ from django.views.decorators.http import require_GET
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
-from models import Group, Policy, Device, Package, Product, File
+from django.db.models import Q
+from models import Group, Policy, Enforcement, Device, Package, Product, File
 
 @require_GET
 @login_required
@@ -10,6 +11,7 @@ def search(request):
     context = {}
     context['group_title'] = _('Groups')
     context['policy_title'] = _('Policies')
+    context['enforcement_title'] = _('Enforcements')
     context['device_title'] = _('Devices')
     context['package_title'] = _('Packages')
     context['product_title'] = _('Products')
@@ -17,6 +19,7 @@ def search(request):
     
     context['groups'] = Group.objects.all().order_by('name')
     context['policies'] = Policy.objects.all().order_by('name')
+    context['enforcements'] = Enforcement.objects.all().order_by('policy')
     context['devices'] = Device.objects.all().order_by('value')
     context['packages'] = Package.objects.all().order_by('name')
     context['products'] = Product.objects.all().order_by('name')
@@ -27,6 +30,7 @@ def search(request):
         context['query'] = q
         context['groups'] = Group.objects.filter(name__icontains=q)
         context['policies'] = Policy.objects.filter(name__icontains=q)
+        context['enforcements'] = Enforcement.objects.filter(Q(policy__name__icontains=q)|Q(group__name__icontains=q))
         context['devices'] = Device.objects.filter(value__icontains=q)
         context['packages'] = Package.objects.filter(name__icontains=q)
         context['products'] = Product.objects.filter(name__icontains=q)
