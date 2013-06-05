@@ -45,9 +45,12 @@ $(document).ready(function(){
 	required: true,
 	maxlength: 50,
 	remote: {
-	  url: "/policies/check/" + $("#policyId").val(),
+	  url: "/policies/check",
 	  type: "post",
 	  data: {
+	    policy: function() {
+	      return $('#policyId').val()
+	    },
 	    name: function() {
 	      return $("#name").val()
 	    },
@@ -185,9 +188,12 @@ $(document).ready(function(){
 	required: true,
 	maxlength: 50,
 	remote: {
-	  url: "/packages/check/" + $("#packageId").val(),
+	  url: "/packages/check",
 	  type: "post",
 	  data: {
+	    package: function() {
+	      return $('#packageId').val()
+	    },
 	    name: function() {
 	      return $("#name").val()
 	    },
