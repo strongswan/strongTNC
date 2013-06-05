@@ -1,10 +1,7 @@
-from django.conf.urls import patterns, include, url
-from django.contrib import admin
 import settings
+from django.conf.urls import patterns, url
 import group_views, device_views, product_views, policy_views
 import enforcement_views, package_views, file_views, search_views, views
-
-admin.autodiscover()
 
 urlpatterns = patterns('',
         url(r'^media/(?P<path>.*)$','django.views.static.serve',
@@ -96,9 +93,4 @@ urlpatterns = patterns('',
 
         url(r'^cmd/end_session/?$', views.end_session,
             name='end_session'),
-
-        #==============================================
-
-        #To enable built-in admin-interface:
-        url(r'^admin/', include(admin.site.urls)),
-        )
+    )
