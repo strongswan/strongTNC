@@ -23,7 +23,7 @@ def group(request, groupID):
         group = Group.objects.get(pk=groupID)
     except Group.DoesNotExist:
         group = None
-        messages.msg_error(request, _('Group not found!'))
+        messages.error(request, _('Group not found!'))
 
     context = {}
     context['groups'] = Group.objects.all().order_by('name')
