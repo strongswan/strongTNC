@@ -38,15 +38,25 @@
 </table>
 
 
-<h4>Recommendation by session </h4>
+<h4>Recommendations by session </h4>
 <table>
   <tr><td>OS</td><td>Devices</td></tr>
   {% for r in rec_count_session %}
   <tr>
-    <td>{{ r }}</td>
+    <td>{{ r.recommendation }}</td>
     <td>{{ r.num }}</td>
   </tr>
   {% endfor %}
 </table>
+
+<h4>Recommendations by Result </h4>
+<table>
+  <tr><td>OS</td><td>Devices</td></tr>
+  {% for r in rec_count_result %}
+  <tr>
+    <td>{{ r.recommendation }}</td>
+    <td>{{ r.num }}</td>
+  </tr>
+  {% endfor %}
 </table>
 {% endblock %}

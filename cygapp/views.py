@@ -10,7 +10,7 @@ from django.views.decorators.http import (require_GET, require_safe,
         require_http_methods)
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Session, Result, Action, Device, Group, Product
+from models import Session, Result, Action, Device, Group, Product, Policy
 
 @require_GET
 @login_required
@@ -75,8 +75,19 @@ def statistics(request):
     context['devices'] = Device.objects.count()
     context['OSranking'] = Product.objects.annotate(num=
             Count('devices__id')).order_by('-num')
-    #context['rec_count_session'] = Session.objects.values(
-            #'recommendation').annotate(num='recommendation')
+
+    context['rec_count_session'] = Session.objects.values('recommendation').annotate(
+            num=Count('recommendation')).order_by('-num')
+
+    for item in context['rec_count_session']:
+        item['recommendation'] = Policy.action[item['recommendation']]
+
+    context['rec_count_result'] = Result.objects.values('recommendation').annotate(
+            num=Count('recommendation')).order_by('-num')
+
+    for item in context['rec_count_result']:
+        item['recommendation'] = Policy.action[item['recommendation']]
+
     return render(request, 'cygapp/statistics.html', context)
 
 @require_http_methods(('GET','POST'))
