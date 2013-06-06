@@ -176,9 +176,6 @@ class cygappTest(TestCase):
         meas.save()
         self.assertEqual(False, device.is_due_for(e))
 
-        #TODO: Insert test cases for when last result wasn't OK, see
-        #tannerli/cygnet-doc#35 for more info
-
     def test_generate_results(self):
 
         g = Group.objects.get(name='B1.1.1')
