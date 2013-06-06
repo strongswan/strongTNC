@@ -10,7 +10,7 @@ from django.views.decorators.http import (require_GET, require_safe,
         require_http_methods)
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
-from models import Session, Result, Action, Device, Group, Product, Policy
+from models import Session, Result, Action, Enforcement, Device, Group, Package, Product, Policy
 
 @require_GET
 @login_required
@@ -72,7 +72,10 @@ def statistics(request):
     context['title'] = _('Statistics')
     context['sessions'] = Session.objects.count()
     context['results'] = Result.objects.count()
+    context['enforcements'] = Enforcement.objects.count()
     context['devices'] = Device.objects.count()
+    context['packages'] = Package.objects.count()
+    context['products'] = Product.objects.count()
     context['OSranking'] = Product.objects.annotate(num=
             Count('devices__id')).order_by('-num')
 

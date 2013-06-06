@@ -1,9 +1,10 @@
 {% extends "cygapp/base.html" %}
 
-{% block title %}Overview{% endblock %}
+{% load i18n %}
+{% block title %}{%trans "Overview" %}{% endblock %}
 
 {% block hero %}
-  <h1>Welcome to Cygnet!</h1>
+  <h1>{% trans "Welcome to Cygnet!" %}</h1>
   <p class="lead">Cygnet is an extension for the StrongSwan VPN-Client and the corresponding server. It allows
   the definition and enforcement of policies that apply to all VPN clients and must be achieved 
   in every connection attempt.</p>
@@ -25,7 +26,7 @@
 			<div class="label">
 			  <p>Overview</p>
 			</div>
-			<img src="/static/img/overview.png">   
+			<img src="/static/img/overview.png" alt="Overview">   
           </a>  
         </li>
       </ul>
@@ -179,7 +180,7 @@ Deny
 	  <div class="page-header">
 		<h2>Manual</h2>
 		<p>Head to the docs for more <strong>information</strong> and <strong>examples</strong>.</p>
-		<!--TODO--><p><a href="manual.pdf" targe="_blank" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+		<!--TODO--><p><a href="manual.pdf" target="_blank" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
 	  </div>
 	  
 	<div id="overviewModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -188,7 +189,7 @@ Deny
 		<h3 id="deleteModalLabel">Overview</h3>
 	  </div>
 	  <div class="modal-body">
-		<img src="/static/img/overview.png" class="img-rounded">
+		<img src="/static/img/overview.png" alt="Overview" class="img-rounded">
 	  </div>
 	</div>
   </div><!--/span-->
