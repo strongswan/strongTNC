@@ -24,8 +24,8 @@
 			</div>
 		  </form>
 		  {% endif %}
-		  {% if files|length >= 50 %}
-		  {% if file.paginator.num_pages > 1 %}
+		  {% if file|length >= 50 %}
+		  {% if files.paginator.num_pages > 1 %}
 		  <div class="pagination pagination-mini pagination-centered">
 			<ul>
 			  {% if files.has_previous %}
