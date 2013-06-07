@@ -60,12 +60,12 @@
             {% endif %}
             <h2 class="form-signin-heading">Please sign in</h2>
             {% if messages %}
-              <div id="message_div">
+              {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} fade in">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {% for message in messages %}
-              <div class="{{ message.tags }}">{{ message }}</div>  
-                {% endfor %}
+                <strong>{{ message }}</strong>
               </div>
+              {% endfor %}
             {% endif %}
             <div class="control-group">
               <div class="controls">

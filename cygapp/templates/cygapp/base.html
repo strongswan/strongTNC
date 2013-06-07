@@ -84,7 +84,7 @@
           </div>
 
           <noscript>
-            <div id="noscript" class="msg_error">
+            <div id="noscript" class="alert alert-error fade in">
               {% blocktrans %}This site relies heavily on JavaScript. It seems you have JavaScript
               disabled in your browser, you may experience difficulties while using this site.
               {% endblocktrans %}
@@ -93,15 +93,14 @@
 
 	  <div class="row-fluid">
 	  {% if messages %}
-	    <div id="message_div">
-	      <button type="button" class="close" data-dismiss="alert">&times;</button>
-	      {% for message in messages %}
-	    <div class="{{ message.tags }}">{{ message }}</div>  
-	      {% endfor %}
-	
-	    </div>
-	    {% endif %}
-	    {% block content %}{% endblock %}
+		{% for message in messages %}
+		<div class="alert alert-{{ message.tags }} fade in">
+		  <button type="button" class="close" data-dismiss="alert">&times;</button>
+		  <strong>{{ message }}</strong>
+		</div>
+		{% endfor %}
+	  {% endif %}
+	  {% block content %}{% endblock %}
 	  </div><!--/row-->
 	  
         </div><!--/span-->

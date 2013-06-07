@@ -171,9 +171,9 @@ LOGGING = {
 }
 
 MESSAGE_TAGS = {
-    messages.DEBUG: 'msg_debug',
-    messages.INFO: 'msg_info',
-    messages.SUCCESS: 'msg_success',
-    messages.WARNING: 'msg_warning',
-    messages.ERROR: 'msg_error',
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'error',
 }
