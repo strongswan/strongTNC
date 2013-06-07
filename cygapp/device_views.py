@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 from models import Device, Group, Product, Session, Result, Policy
 
 @require_GET
@@ -135,7 +136,7 @@ def search(request):
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
-        devices = Device.objects.filter(description__icontains=q)
+        devices = Device.objects.filter(Q(description__icontains=q)|Q(value__icontains=q))
     else:
         return redirect('/devices')
     
