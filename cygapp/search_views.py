@@ -34,6 +34,8 @@ def search(request):
         context['devices'] = Device.objects.filter(value__icontains=q)
         context['packages'] = Package.objects.filter(name__icontains=q)
         context['products'] = Product.objects.filter(name__icontains=q)
-        context['files'] = File.objects.filter(name__icontains=q)
+        q1 = Q(name__icontains=q)
+        q2 = Q(directory__path__icontains=q)
+        context['files'] = File.objects.filter(q1 | q2)
 
     return render(request, 'cygapp/search.html', context)
