@@ -1,3 +1,7 @@
+"""
+Defines regular expressions for URL's that are served by cygnet
+"""
+
 import settings
 from django.conf.urls import patterns, url
 import group_views, device_views, product_views, policy_views

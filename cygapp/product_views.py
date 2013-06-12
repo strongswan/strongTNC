@@ -1,3 +1,7 @@
+"""
+Provides CRUD for products
+"""
+
 import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
@@ -11,6 +15,9 @@ from models import Product, Group
 @require_GET
 @login_required
 def products(request):
+    """
+    All products
+    """
     context = {}
     context['title'] = _('Products')
     context['count'] = Product.objects.count()
@@ -22,6 +29,9 @@ def products(request):
 @require_GET
 @login_required
 def product(request, productID):
+    """
+    Product detail view
+    """
     try:
         product = Product.objects.get(pk=productID)
     except Product.DoesNotExist:
@@ -50,6 +60,9 @@ def product(request, productID):
 @require_GET
 @login_required
 def add(request):
+    """
+    Add new Product
+    """
     context = {}
     context['title'] = _('New product')
     context['count'] = Product.objects.count()
@@ -63,6 +76,9 @@ def add(request):
 @require_POST
 @login_required
 def save(request):
+    """
+    Insert/update a product
+    """
     productID = request.POST['productId']
     if not (productID == 'None' or re.match(r'^\d+$', productID)):
         return HttpResponse(status=400)
@@ -100,31 +116,30 @@ def save(request):
 @require_POST
 @login_required
 def check(request):
-    response = "false"
+    """
+    Check if product name is unique
+    """
+    response = False
     if request.is_ajax():
         product_name = request.POST['name']
         product_id = request.POST['product']
         if product_id == 'None':
             product_id = ''
         
-        p = Product.objects.filter(name=product_name).count()
-        if p != 0:
-            if product_id != '':
-                product_byid = Product.objects.get(pk=product_id)
-                if product_byid.name != product_name:
-                    response = "false"
-                else:
-                    response = "true"
-            else:
-                response = "false"
-        else:
-            response = "true"
+        try:
+            product = Product.objects.get(name=product_name)
+            response = (product.id == product_id)
+        except Product.DoesNotExist:
+            response = True
 
-    return HttpResponse("%s" % response)
+    return HttpResponse(("%s" % response).lower())
 
 @require_POST
 @login_required
 def delete(request, productID):
+    """
+    Delete a product
+    """
     product = get_object_or_404(Product, pk=productID)
     product.delete()
 
@@ -134,6 +149,9 @@ def delete(request, productID):
 @require_GET
 @login_required
 def search(request):
+    """
+    Filter products
+    """
     context = {}
     context['title'] = _('Product')
     context['count'] = Product.objects.count()
@@ -150,6 +168,9 @@ def search(request):
     return render(request, 'cygapp/products.html', context)
 
 def paginate(items, request):
+    """
+    Paginated browsing
+    """
     paginator = Paginator(items, 50) # Show 50 products per page
     page = request.GET.get('page')
     try:

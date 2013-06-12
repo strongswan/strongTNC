@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+"""
+Used to dump all data in ipsec.config.db into sql statements
+"""
+
 import sqlite3
 
 con = sqlite3.connect('ipsec.config.db')

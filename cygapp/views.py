@@ -1,3 +1,6 @@
+"""
+General views like overview and site-wide search
+"""
 import re
 from datetime import datetime, timedelta
 from django.http import HttpResponse
@@ -15,6 +18,9 @@ from models import Session, Result, Action, Enforcement, Device, Group, Package,
 @require_GET
 @login_required
 def overview(request):
+    """
+    Main page
+    """
     return render(request, 'cygapp/overview.html')
 
 @require_safe
@@ -55,6 +61,9 @@ def start_session(request):
 
 @require_safe
 def end_session(request):
+    """
+    End session and process results
+    """
     sessionID = request.GET.get('sessionID', -1)
 
     try:
@@ -68,6 +77,9 @@ def end_session(request):
 
 @require_GET
 def statistics(request):
+    """
+    Statistics view
+    """
     context = {}
     context['title'] = _('Statistics')
     context['sessions'] = Session.objects.count()
@@ -95,6 +107,9 @@ def statistics(request):
 
 @require_http_methods(('GET','POST'))
 def login(request):
+    """
+    Login view
+    """
     if request.method == 'POST':
         password = request.POST.get('password', None)
         user = authenticate(username='cygnet-user', password=password)
@@ -115,6 +130,9 @@ def login(request):
     return render(request, 'cygapp/login.html', context)
 
 def logout(request):
+    """
+    Logout and redirect to login view
+    """
     django_logout(request)
     messages.success(request, _('Logout successful!'))
 
@@ -124,6 +142,9 @@ def logout(request):
 #NOT views, do not need decorators
 
 def generate_results(session):
+    """
+    Generates result from the sessions workitems and removes the workitems
+    """
     workitems = session.workitems.all()
 
     for item in workitems:
@@ -147,6 +168,9 @@ def generate_results(session):
 
 
 def purge_dead_sessions():
+    """
+    Removes sessions that have not been ended after 7 days
+    """
     MAX_AGE = 7 #days
 
     deadline = datetime.today() - timedelta(days=MAX_AGE)

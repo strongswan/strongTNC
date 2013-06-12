@@ -1,3 +1,8 @@
+"""
+A module to simulate a StrongSwan IMV used for testing workitem generation
+and session handling of cygnet. Invoke by calling run_test()
+"""
+
 import httplib,random
 from datetime import datetime
 from models import Session, Device, Identity
@@ -41,24 +46,27 @@ def finish_login(params):
         raise AssertionError('Expceted empty body, got: %s' % body)
 
 def run_test():
-        device = Device.objects.get(value='deadbeef')
-        identity = Identity.objects.get(data='tannerli')
-        session = Session.objects.create(connectionID=random.randint(1,65535), device=device,
-                time=datetime.today(), identity=identity)
+    """
+    Run the test-case
+    """
+    device = Device.objects.get(value='deadbeef')
+    identity = Identity.objects.get(data='tannerli')
+    session = Session.objects.create(connectionID=random.randint(1,65535), device=device,
+            time=datetime.today(), identity=identity)
 
-        params = {}
-        params['sessionID'] = session.id
+    params = {}
+    params['sessionID'] = session.id
 
-        start_login(params)
+    start_login(params)
 
-        #Simulate IMV, generate some random results   
-        for item in session.workitems.all():
-            item.error = random.randint(0,1)
-            item.recommendation = random.choice((item.fail, item.noresult))
-            item.result = ''
-            item.save()
+    #Simulate IMV, generate some random results   
+    for item in session.workitems.all():
+        item.error = random.randint(0,1)
+        item.recommendation = random.choice((item.fail, item.noresult))
+        item.result = ''
+        item.save()
 
-        finish_login(params)
+    finish_login(params)
 
-        print 'OK'
+    print 'OK'
 

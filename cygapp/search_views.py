@@ -1,3 +1,7 @@
+"""
+Defines backend-views for site-wide search
+"""
+
 from django.views.decorators.http import require_GET
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -8,6 +12,9 @@ from models import Group, Policy, Enforcement, Device, Package, Product, File
 @require_GET
 @login_required
 def search(request):
+    """
+    Global search view
+    """
     context = {}
     context['group_title'] = _('Groups')
     context['policy_title'] = _('Policies')

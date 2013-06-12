@@ -1,3 +1,7 @@
+"""
+Provides CRUD for packages
+"""
+
 import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
@@ -11,6 +15,9 @@ from models import Package, Version
 @require_GET
 @login_required
 def packages(request):
+    """
+    All packages
+    """
     context = {}
     context['title'] = _('Packages')
     context['count'] = Package.objects.count()
@@ -22,6 +29,9 @@ def packages(request):
 @require_GET
 @login_required
 def package(request, packageID):
+    """
+    Package detail view
+    """
     try:
         package = Package.objects.get(pk=packageID)
     except Package.DoesNotExist:
@@ -45,6 +55,9 @@ def package(request, packageID):
 @require_GET
 @login_required
 def add(request):
+    """
+    Add a package
+    """
     context = {}
     context['title'] = _('New package')
     context['count'] = Package.objects.count()
@@ -57,6 +70,9 @@ def add(request):
 @require_POST
 @login_required
 def save(request):
+    """
+    Insert/update a package
+    """
     packageID = request.POST['packageId']
     if not (packageID == 'None' or re.match(r'^\d+$', packageID)):
         return HttpResponse(status=400)
@@ -89,31 +105,30 @@ def save(request):
 @require_POST
 @login_required
 def check(request):
-    response = "false"
+    """
+    Check if package name is unique
+    """
+    response = False
     if request.is_ajax():
         package_name = request.POST['name']
         package_id = request.POST['package']
         if package_id == 'None':
             package_id = ''
         
-        p = Package.objects.filter(name=package_name).count()
-        if p != 0:
-            if package_id != '':
-                package_byid = Package.objects.get(pk=package_id)
-                if package_byid.name != package_name:
-                    response = "false"
-                else:
-                    response = "true"
-            else:
-                response = "false"
-        else:
-            response = "true"
+        try:
+            package = Package.objects.get(name=package_name)
+            response = (package.id == package_id)
+        except Package.DoesNotExist:
+            response = True
 
-    return HttpResponse("%s" % response)
+    return HttpResponse(("%s" % response).lower())
 
 @require_POST
 @login_required
 def delete(request, packageID):
+    """
+    Delete a package
+    """
     package = get_object_or_404(Package, pk=packageID)
     package.delete()
 
@@ -123,6 +138,9 @@ def delete(request, packageID):
 @require_GET
 @login_required
 def toggle_version(request, versionID):
+    """
+    Toggle the blacklist state of a package version
+    """
     version = get_object_or_404(Version, pk=versionID)
     if version.blacklist == None:
         version.blacklist = 1 if version.package.blacklist == 0 else 0
@@ -135,6 +153,9 @@ def toggle_version(request, versionID):
 @require_GET
 @login_required
 def search(request):
+    """
+    Filter packages
+    """
     context = {}
     context['title'] = _('Packages')
     context['count'] = Package.objects.count()
@@ -151,6 +172,9 @@ def search(request):
     return render(request, 'cygapp/packages.html', context)
 
 def paginate(items, request):
+    """
+    Paginated browsing
+    """
     paginator = Paginator(items, 50) # Show 50 packages per page
     page = request.GET.get('page')
     try:
@@ -163,3 +187,4 @@ def paginate(items, request):
         packages = paginator.page(paginator.num_pages)
     
     return packages
+

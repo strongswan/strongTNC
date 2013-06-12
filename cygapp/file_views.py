@@ -1,3 +1,7 @@
+"""
+Provides CRUD for files
+"""
+
 import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
@@ -12,6 +16,9 @@ from models import File, FileHash
 @require_GET
 @login_required
 def files(request):
+    """
+    All files
+    """
     context = {}
     context['title'] = _('Files')
     context['count'] = File.objects.count()
@@ -23,6 +30,9 @@ def files(request):
 @require_GET
 @login_required
 def file(request,fileID):
+    """
+    File detail view
+    """
     try:
         file = File.objects.get(pk=fileID)
     except File.DoesNotExist:
@@ -47,6 +57,9 @@ def file(request,fileID):
 @require_POST
 @login_required
 def save(request):
+    """
+    Insert/update view
+    """
     fileID = request.POST['fileId']
     if not (fileID == 'None' or re.match(r'^\d+$', fileID)):
         return HttpResponse(status=400)
@@ -61,6 +74,9 @@ def save(request):
 @require_POST
 @login_required
 def delete(request, fileID):
+    """
+    Delete a file
+    """
     file = get_object_or_404(File, pk=fileID)
     file.delete()
 
@@ -70,9 +86,12 @@ def delete(request, fileID):
 @require_GET
 @login_required
 def deleteHash(request, file_hashID):
-    file_hash = get_object_or_404(FileHash, pk=file_hashID)
-    file = file_hash.file
-    file_hash.delete()
+    """
+    Delete a file hash
+    """
+    hash = get_object_or_404(FileHash, pk=file_hashID)
+    file = hash.file
+    hash.delete()
 
     messages.success(request, _('Hash deleted!'))
     return redirect('/files/%d' % file.id)
@@ -80,6 +99,9 @@ def deleteHash(request, file_hashID):
 @require_GET
 @login_required
 def search(request):
+    """
+    Filter files
+    """
     context = {}
     context['title'] = _('Files')
     context['count'] = File.objects.count()
@@ -98,6 +120,9 @@ def search(request):
     return render(request, 'cygapp/files.html', context)
 
 def paginate(items, request):
+    """
+    Paginated browsing
+    """
     paginator = Paginator(items, 50) # Show 50 packages per page
     page = request.GET.get('page')
     try:
@@ -110,3 +135,4 @@ def paginate(items, request):
         files = paginator.page(paginator.num_pages)
     
     return files
+

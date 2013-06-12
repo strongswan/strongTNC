@@ -1,3 +1,7 @@
+"""
+Provides CRUD for enforcements
+"""
+
 import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
@@ -12,6 +16,9 @@ from models import Group, Enforcement, Policy
 @require_GET
 @login_required
 def enforcements(request):
+    """
+    All enforcements
+    """
     context = {}
     context['title'] = _('Enforcements')
     context['count'] = Enforcement.objects.count()
@@ -23,6 +30,9 @@ def enforcements(request):
 @require_GET
 @login_required
 def enforcement(request, enforcementID):
+    """
+    Enforcement detail view
+    """
     try:
         enforcement = Enforcement.objects.get(pk=enforcementID)
     except Enforcement.DoesNotExist:
@@ -49,6 +59,9 @@ def enforcement(request, enforcementID):
 @require_GET
 @login_required
 def add(request):
+    """
+    Add new enforcement
+    """
     context = {}
     context['title'] = _('New enforcement')
     context['count'] = Enforcement.objects.count()
@@ -66,6 +79,9 @@ def add(request):
 @require_POST
 @login_required
 def save(request):
+    """
+    Insert/udpate an enforcement
+    """
     enforcementID = request.POST['enforcementId']
     if not (enforcementID == 'None' or re.match(r'^\d+$', enforcementID)):
         raise ValueError
@@ -131,7 +147,10 @@ def save(request):
 @require_POST
 @login_required
 def check(request):
-    response = "false"
+    """
+    Check enforcement for uniqueness
+    """
+    response = False
     if request.is_ajax():
         policy_id = request.POST['policy']
         policy_id = int(policy_id) if policy_id != '' else -1
@@ -145,16 +164,18 @@ def check(request):
         try:
             e = Enforcement.objects.get(policy=policy_id, group=group_id)
 
-            if e.id == enforcement_id:
-                response = "true"
+            response = e.id == enforcement_id
         except Enforcement.DoesNotExist:
-            response =  "true"
+            response = False
 
-    return HttpResponse("%s" % response)
+    return HttpResponse(("%s" % response).lower())
 
 @require_POST
 @login_required
 def delete(request, enforcementID):
+    """
+    Delete an enforcement
+    """
     enforcement = get_object_or_404(Enforcement, pk=enforcementID)
     enforcement.delete()
 
@@ -164,6 +185,9 @@ def delete(request, enforcementID):
 @require_GET
 @login_required
 def search(request):
+    """
+    Filter enforcements
+    """
     context = {}
     context['title'] = _('Enforcements')
     context['count'] = Enforcement.objects.count()
@@ -180,6 +204,9 @@ def search(request):
     return render(request, 'cygapp/enforcements.html', context)
 
 def paginate(items, request):
+    """
+    Paginated browsing
+    """
     paginator = Paginator(items, 50) # Show 50 packages per page
     page = request.GET.get('page')
     try:
@@ -192,3 +219,4 @@ def paginate(items, request):
         enforcements = paginator.page(paginator.num_pages)
     
     return enforcements
+

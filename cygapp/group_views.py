@@ -1,3 +1,7 @@
+"""
+Provides CRUD for groups
+"""
+
 import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
@@ -10,6 +14,9 @@ from models import Group, Device
 @require_GET
 @login_required
 def groups(request):
+    """
+    All groups
+    """
     context = {}
     context['groups'] = Group.objects.all().order_by('name')
     context['grouptree'] = group_tree()
@@ -19,6 +26,9 @@ def groups(request):
 @require_GET
 @login_required
 def group(request, groupID):
+    """
+    Group detail view
+    """
     try:
         group = Group.objects.get(pk=groupID)
     except Group.DoesNotExist:
@@ -45,6 +55,9 @@ def group(request, groupID):
 @require_GET
 @login_required
 def add(request):
+    """
+    Add new group
+    """
     context = {}
     context['title'] = _('New group')
     context['groups'] = Group.objects.all().order_by('name')
@@ -56,6 +69,9 @@ def add(request):
 @require_POST
 @login_required
 def save(request):
+    """
+    Insert/update a group
+    """
     groupID = request.POST['groupId']
     if not (groupID == 'None' or re.match(r'^\d+$', groupID)):
         return HttpResponse(status=400)
@@ -104,31 +120,30 @@ def save(request):
 @require_POST
 @login_required
 def check(request):
-    response = "false"
+    """
+    Check if group name is unique
+    """
+    response = False
     if request.is_ajax():
         group_name = request.POST['name']
         group_id = request.POST['group']
         if group_id == 'None':
             group_id = ''
         
-        g = Group.objects.filter(name=group_name).count()
-        if g != 0:
-            if group_id != '':
-                group_byid = Group.objects.get(pk=group_id)
-                if group_byid.name != group_name:
-                    response = "false"
-                else:
-                    response = "true"
-            else:
-                response = "false"
-        else:
-            response = "true"
+        try:
+            group = Group.objects.get(name=group_name)
+            response = (group.id == group_id)
+        except Group.DoesNotExist:
+            response = True
 
-    return HttpResponse("%s" % response)
+    return HttpResponse(("%s" % response).lower())
 
 @require_POST
 @login_required
 def delete(request, groupID):
+    """
+    Delete a group
+    """
     group = get_object_or_404(Group, pk=groupID)
 
     if int(groupID) != 1:
@@ -141,7 +156,9 @@ def delete(request, groupID):
     return redirect('/groups')
 
 def group_tree():
-    """Returns a tree-view of all groups as <dl>-Tag."""
+    """
+    Returns a tree-view of all groups as <dl>-Tag.
+    """
 
     dl = '<dl>\n'
     roots = Group.objects.filter(parent=None)
@@ -155,6 +172,9 @@ def group_tree():
     return dl
 
 def add_children(parent):
+    """
+    Recursion method for group_tree()
+    """
     sub = ''
     if parent.membergroups.all():
         sub += '<dd><dl>\n'
@@ -165,8 +185,5 @@ def add_children(parent):
     else:
         sub += '<dd><a href="/groups/%d">%s</a></dd>\n' % (parent.id, parent)
 
-
     return sub
 
-
-     

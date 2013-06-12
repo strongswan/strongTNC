@@ -1,3 +1,7 @@
+"""
+Provides CRUD for policies
+"""
+
 import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
@@ -11,6 +15,9 @@ from models import Policy, Group, File, Directory
 @require_GET
 @login_required
 def policies(request):
+    """
+    All policies
+    """
     context = {}
     context['title'] = _('Policies')
     context['count'] = Policy.objects.count()
@@ -22,6 +29,9 @@ def policies(request):
 @require_GET
 @login_required
 def policy(request, policyID):
+    """
+    Policy detail view
+    """
     try:
         policy = Policy.objects.get(pk=policyID)
     except Policy.DoesNotExist:
@@ -59,6 +69,9 @@ def policy(request, policyID):
 @require_GET
 @login_required
 def add(request):
+    """
+    Add new policy
+    """
     context = {}
     policies = Policy.objects.all().order_by('name')
     context['policies'] = paginate(policies, request)
@@ -76,15 +89,16 @@ def add(request):
 @require_POST
 @login_required
 def save(request):
+    """
+    Insert/update a policy
+    """
     policyID = request.POST['policyId']
     if not (policyID == 'None' or re.match(r'^\d+$', policyID)):
         raise ValueError
-        return HttpResponse(status=400)
 
     type = request.POST['type']
     if not re.match(r'^\d+$', type) and int(type) in range(len(Policy.types)):
         raise ValueError
-        return HttpResponse(status=400)
 
     type = int(type)
 
@@ -127,19 +141,16 @@ def save(request):
     fail = request.POST['fail']
     if not re.match(r'^\d+$', fail) and int(fail) in range(len(Policy.action)):
         raise ValueError
-        return HttpResponse(status=400)
 
     noresult = request.POST['noresult']
     if not (re.match(r'^\d+$', noresult) and int(noresult) in
             range(len(Policy.action))):
         raise ValueError
-        return HttpResponse(status=400)
 
     name = request.POST['name']
     if not re.match(r'^[\S ]+$', name):
         raise ValueError
-        return HttpResponse(status=400)
-
+    
     if policyID == 'None':
         policy = Policy(name=name, type=type, fail=fail,
                 noresult=noresult, file=file, dir=dir, argument=argument)
@@ -164,45 +175,42 @@ def save(request):
 @require_POST
 @login_required
 def check(request):
-    response = "false"
+    """
+    Check if policy name is unique
+    """
+    response = False
     if request.is_ajax():
         policy_name = request.POST['name']
         policy_id = request.POST['policy']
         if policy_id == 'None':
             policy_id = ''
         
-        p = Policy.objects.filter(name=policy_name).count()
-        if p != 0:
-            if policy_id != '':
-                policy_byid = Policy.objects.get(pk=policy_id)
-                if policy_byid.name != policy_name:
-                    response = "false"
-                else:
-                    response = "true"
-            else:
-                response = "false"
-        else:
-            response = "true"
+        try:
+            policy = Policy.objects.get(name=policy_name)
+            response = (policy.id == policy_id)
+        except Policy.DoesNotExist:
+            response = True
 
-    return HttpResponse("%s" % response)
+    return HttpResponse(("%s" % response).lower())
 
 @require_POST
 @login_required
 def delete(request, policyID):
+    """
+    Delete a policy
+    """
     policy = get_object_or_404(Policy, pk=policyID)
     policy.delete()
 
     messages.success(request, _('Policy deleted!'))
     return redirect('/policies')
-@require_GET
-@login_required
-def getAll(request):
-    return Policy.count()
-
 
 @require_GET
 @login_required
 def search(request):
+    """
+    Filter policies
+    """
     context = {}
     context['title'] = _('Policies')
     context['count'] = Policy.objects.count()
@@ -219,6 +227,9 @@ def search(request):
     return render(request, 'cygapp/policies.html', context)
 
 def check_range(ranges):
+    """
+    Check range input
+    """
     if ranges == '': return True
 
     ranges = ranges.replace(' ','')
@@ -240,6 +251,10 @@ def check_range(ranges):
     return True
 
 def invert_range(ranges):
+    """
+    Inverts a given port range and inverts it to select all other ports
+    Combines adjacent ports to ranges and sorts numerically
+    """
     ranges = ranges.replace(' ','')
 
     #Very special cases
@@ -288,6 +303,9 @@ def invert_range(ranges):
     return ','.join(ranges)
 
 def paginate(items, request):
+    """
+    Paginated browsing
+    """
     paginator = Paginator(items, 50) # Show 50 policies per page
     page = request.GET.get('page')
     try:

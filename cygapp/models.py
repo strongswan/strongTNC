@@ -1,3 +1,7 @@
+"""
+Defines model classes which are used by the Django OR-mapper 
+"""
+
 import binascii
 from datetime import datetime
 from calendar import timegm
@@ -18,6 +22,9 @@ class BinaryField(models.Field):
         return 'blob'
 
 class HashField(BinaryField):
+    """
+    Custom field type to display file hashes
+    """
     __metaclass__ = models.SubfieldBase
 
     def to_python(self, value):
@@ -43,6 +50,9 @@ class EpochField(models.IntegerField):
         return timegm(value.utctimetuple())
 
 class Action(object):
+    """
+    Possible recommendation values
+    """
     NONE = 0
     ALLOW = 1
     ISOLATE = 2
@@ -79,6 +89,9 @@ class Device(models.Model):
             return self.value
 
     def get_group_set(self):
+        """
+        Get all groups of the device
+        """
         groups = []
         for g in self.groups.all():
             groups.append(g)
@@ -88,6 +101,9 @@ class Device(models.Model):
         return groups
 
     def get_inherit_set(self):
+        """
+        Get the groups which the device has inherited
+        """
         group_set = self.get_group_set()
         for group in (group_set & set(self.groups.all())):
             group_set.remove(group)
@@ -96,6 +112,10 @@ class Device(models.Model):
 
 
     def is_due_for(self, enforcement):
+        """
+        Check if the device needs to perform the measurement defined by the
+        enforcement
+        """
         try:
             last_meas = Session.objects.filter(device=self).latest('time')
             result = Result.objects.get(session=last_meas,
@@ -156,6 +176,9 @@ class Group(models.Model):
         return self.name
 
     def get_parents(self):
+        """
+        Recursively get all parent groups
+        """
         if not self.parent:
             return []
 
@@ -276,15 +299,12 @@ class Policy(models.Model):
             related_name='policies', on_delete=models.PROTECT, db_column='dir')
 
     def create_work_item(self, enforcement, session):
-        item = WorkItem()
-        item.result = None
-        item.type = self.type
-        item.recommendation = None
-        item.file = self.file
-        item.dir = self.dir
-        item.argument = self.argument
-        item.enforcement = enforcement
-        item.session = session
+        """
+        Generate a workitem for a session
+        """
+        item = WorkItem(result=None, type=self.type, recommendation=None,
+                file=self.file, dir=self.dir, argument=self.argument,
+                enforcement=enforcement, session=session)
         
         item.fail = self.fail
         if enforcement.fail is not None:
@@ -365,6 +385,9 @@ class Enforcement(models.Model):
         unique_together = (('policy','group'))
 
 class Identity(models.Model):
+    """
+    A user identity
+    """
     id = models.AutoField(primary_key=True)
     data = models.TextField(db_column='value')
 
@@ -386,6 +409,9 @@ class Session(models.Model):
         db_table = u'sessions'
 
 class WorkItem(models.Model):
+    """
+    A workitem representing a task for an IMV
+    """
     id = models.AutoField(primary_key=True)
     enforcement = models.ForeignKey(Enforcement, db_column='enforcement',
                   related_name="workitems", on_delete=models.CASCADE)
@@ -406,6 +432,9 @@ class WorkItem(models.Model):
         db_table = u'workitems'
 
 class Result(models.Model):
+    """
+    A result of a measurement
+    """
     id = models.AutoField(primary_key=True)
     session = models.ForeignKey(Session, db_column='session',
             on_delete=models.CASCADE, related_name='results')

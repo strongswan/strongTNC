@@ -11,8 +11,6 @@ from cygapp.models import (File, WorkItem, Device, Group, Product, Session,
 from views import generate_results, purge_dead_sessions
 from policy_views import check_range, invert_range
 
-
-
 class cygappTest(TestCase):
     def setUp(self):
         user = Identity.objects.create(data='Test User')

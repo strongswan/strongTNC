@@ -1,3 +1,7 @@
+"""
+Provides CRUD for devices
+"""
+
 import re
 from datetime import datetime
 from django.http import HttpResponse
@@ -13,6 +17,9 @@ from models import Device, Group, Product, Session, Result, Policy
 @require_GET
 @login_required
 def devices(request):
+    """
+    All devices
+    """
     context = {}
     context['title'] = _('Devices')
     context['count'] = Device.objects.count()
@@ -24,6 +31,9 @@ def devices(request):
 @require_GET
 @login_required
 def device(request, deviceID):
+    """
+    Device detail view
+    """
     try:
         device = Device.objects.get(pk=deviceID)
     except Device.DoesNotExist:
@@ -53,6 +63,9 @@ def device(request, deviceID):
 @require_GET
 @login_required
 def add(request):
+    """
+    Add new device
+    """
     context = {}
     context['title'] = _('New device')
     context['count'] = Device.objects.count()
@@ -66,6 +79,9 @@ def add(request):
 @require_POST
 @login_required
 def save(request):
+    """
+    Insert/update a device
+    """
     deviceID = request.POST['deviceId']
     if not (deviceID == 'None' or re.match(r'^\d+$', deviceID)):
         return HttpResponse(status=400)
@@ -119,6 +135,9 @@ def save(request):
 @require_POST
 @login_required
 def delete(request, deviceID):
+    """
+    Delete a device
+    """
     device = get_object_or_404(Device, pk=deviceID)
     device.delete()
 
@@ -128,6 +147,9 @@ def delete(request, deviceID):
 @require_GET
 @login_required
 def search(request):
+    """
+    Filter devices
+    """
     context = {}
     context['title'] = _('Devices')
     context['count'] = Device.objects.count()
@@ -144,6 +166,9 @@ def search(request):
     return render(request, 'cygapp/devices.html', context)
 
 def paginate(items, request):
+    """
+    Paginated browsing
+    """
     paginator = Paginator(items, 50) # Show 50 devices per page
     page = request.GET.get('page')
     try:
@@ -160,6 +185,9 @@ def paginate(items, request):
 @require_GET
 @login_required
 def report(request, deviceID):
+    """
+    Generate device report for given device
+    """
     device = get_object_or_404(Device, pk=deviceID)
     
     context = {}
@@ -204,6 +232,9 @@ def report(request, deviceID):
 @require_GET
 @login_required
 def session(request, sessionID):
+    """
+    View details for a device-session
+    """
     session = get_object_or_404(Session, pk=sessionID)
     
     context = {}
