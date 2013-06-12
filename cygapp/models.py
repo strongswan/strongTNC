@@ -1,8 +1,12 @@
 import binascii
 from datetime import datetime
+from calendar import timegm
 from django.db import models
 
 class BinaryField(models.Field):
+    """
+    Custom field type for Binary data
+    """
     description = "Raw binary data for SQLite"
 
     def __init__(self, *args, **kwargs):
@@ -21,6 +25,22 @@ class HashField(BinaryField):
 
     def get_prep_value(self, value):
         return binascii.unhexlify(value)
+
+class EpochField(models.IntegerField):
+    """
+    Custom field type for unix timestamps
+    """
+    __metaclass__ = models.SubfieldBase
+
+    def to_python(self, value):
+        if type(value) == int:
+            return datetime.fromtimestamp(float(value))
+        else:
+            if type(value) == datetime:
+                return value
+
+    def get_prep_value(self, value):
+        return timegm(value.utctimetuple())
 
 class Action(object):
     NONE = 0
@@ -49,7 +69,7 @@ class Device(models.Model):
     value = models.TextField()
     description = models.TextField(blank=True, null=True)
     product = models.ForeignKey(Product, related_name='devices')
-    created = models.DateTimeField(null=True,blank=True)
+    created = EpochField(null=True,blank=True)
 
 
     def __unicode__(self):
@@ -230,7 +250,7 @@ class Version(models.Model):
             db_column='product', on_delete=models.CASCADE)
     release = models.TextField()
     security = models.BooleanField(default=0)
-    time = models.DateTimeField()
+    time = EpochField()
     blacklist = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):
@@ -359,7 +379,7 @@ class Session(models.Model):
        	     on_delete=models.CASCADE, db_column='device')
     identity = models.ForeignKey(Identity, related_name='sessions',
                on_delete=models.CASCADE, db_column='identity')
-    time = models.DateTimeField()
+    time = EpochField()
     recommendation = models.IntegerField(null=True, db_column='rec')
 
     class Meta:
