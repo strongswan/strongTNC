@@ -113,11 +113,11 @@ def check(request):
         package_name = request.POST['name']
         package_id = request.POST['package']
         if package_id == 'None':
-            package_id = ''
+            package_id = -1
         
         try:
             package = Package.objects.get(name=package_name)
-            response = (package.id == package_id)
+            response = (package.id == int(package_id))
         except Package.DoesNotExist:
             response = True
 

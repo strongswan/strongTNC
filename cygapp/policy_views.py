@@ -183,11 +183,11 @@ def check(request):
         policy_name = request.POST['name']
         policy_id = request.POST['policy']
         if policy_id == 'None':
-            policy_id = ''
+            policy_id = -1
         
         try:
             policy = Policy.objects.get(name=policy_name)
-            response = (policy.id == policy_id)
+            response = (policy.id == int(policy_id))
         except Policy.DoesNotExist:
             response = True
 

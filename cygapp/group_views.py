@@ -128,11 +128,11 @@ def check(request):
         group_name = request.POST['name']
         group_id = request.POST['group']
         if group_id == 'None':
-            group_id = ''
+            group_id = -1
         
         try:
             group = Group.objects.get(name=group_name)
-            response = (group.id == group_id)
+            response = (group.id == int(group_id))
         except Group.DoesNotExist:
             response = True
 

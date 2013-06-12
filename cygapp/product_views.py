@@ -124,11 +124,11 @@ def check(request):
         product_name = request.POST['name']
         product_id = request.POST['product']
         if product_id == 'None':
-            product_id = ''
+            product_id = -1
         
         try:
             product = Product.objects.get(name=product_name)
-            response = (product.id == product_id)
+            response = (product.id == int(product_id))
         except Product.DoesNotExist:
             response = True
 
