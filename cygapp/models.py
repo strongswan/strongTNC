@@ -224,7 +224,7 @@ class Algorithm(models.Model):
     name = models.CharField(null=False, blank=False, max_length=20)
 
     def __unicode__(self):
-        return self.name[14:] # name - 'PTS_MEAS_ALGO_'
+        return self.name
 
     class Meta:
         db_table = u'algorithms'
