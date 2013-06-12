@@ -164,9 +164,9 @@ def check(request):
         try:
             e = Enforcement.objects.get(policy=policy_id, group=group_id)
 
-            response = e.id == enforcement_id
+            response = (e.id == enforcement_id)
         except Enforcement.DoesNotExist:
-            response = False
+            response = True
 
     return HttpResponse(("%s" % response).lower())
 
