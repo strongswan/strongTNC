@@ -227,11 +227,11 @@ function type_change(){
   console.log(type);
   //type ++; //Because empty defaults to 0
 
-  if (type == 4 || type == 5 || type == 6)
+  if (type == 0 || type == 4 || type == 5)
     $(document.getElementById('file')).show();
-  else if (type == 7 || type == 8 || type == 9)
+  else if (type == 1)
     $(document.getElementById('dir')).show();
-  else if (type == 10 || type == 11){
+  else if (type == 2 || type == 3){
     $(document.getElementById('port')).show();
     $(document.getElementById('range-flip')).show();
   }
