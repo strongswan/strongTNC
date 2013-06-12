@@ -247,8 +247,8 @@ class Policy(models.Model):
     type = models.IntegerField()
     name = models.CharField(unique=True, max_length=100)
     argument = models.TextField(null='True')
-    fail = models.IntegerField(blank=True)
-    noresult = models.IntegerField(blank=True)
+    fail = models.IntegerField(blank=True, db_column='rec_fail')
+    noresult = models.IntegerField(blank=True, db_column='rec_noresult')
     file = models.ForeignKey(File, null=True, blank=True,
             related_name='policies', on_delete=models.PROTECT,
             db_column='file')
@@ -287,31 +287,35 @@ class Policy(models.Model):
             ]
 
     types = [
-            'File Hash',
-            'Dir Hash',
-            'Listening Port TCP',
-            'Listening Port UDP',
-            'File Exist',
-            'Not File Exist',
-            'Missing Update',
-            'Missing Security Update',
-            'Blacklisted Package',
-            'OS Settings',
+            'Installed Packages',
+            'Unknown Source',
+            'Forwarding Enabled',
+            'Default Password Enabled',
+            'File Reference Measurement',
+            'File Measurement',
+            'File Metadata',
+            'Directory Reference Measurement',
+            'Directory Measurement',
+            'Directory Metadata',
+            'TCP Listening Ports',
+            'UDP Listening Ports',
             'Deny',
             ]
 
     
     argument_funcs = {
-            'File Hash': lambda policy: '',
-            'Dir Hash': lambda policy: '',
-            'Listening Port TCP': lambda p: p.argument if p.argument else '',
-            'Listening Port UDP': lambda p: p.argument if p.argument else '',
-            'File Exist': lambda policy: '',
-            'Not File Exist': lambda policy: '',
-            'Missing Update': lambda policy: '',
-            'Missing Security Update':lambda policy:  '',
-            'Blacklisted Package': lambda policy: '',
-            'OS Settings': lambda policy: '',
+            'Installed Packages': lambda policy: '',
+            'Unknown Source': lambda policy: '',
+            'Forwarding Enabled': lambda policy: '',
+            'Default Password Enabled': lambda policy: '',
+            'File Reference Measurement': lambda policy: '',
+            'File Measurement':lambda policy:  '',
+            'File Metadata': lambda policy: '',
+            'Directory Reference Measurement': lambda policy: '',
+            'Directory Measurement': lambda policy: '',
+            'Directory Metadata': lambda policy: '',
+            'TCP Listening Ports': lambda p: p.argument if p.argument else '',
+            'UDP Listening Ports': lambda p: p.argument if p.argument else '',
             'Deny': lambda policy: '',
             }
 
@@ -328,10 +332,10 @@ class Enforcement(models.Model):
     policy = models.ForeignKey(Policy, related_name='enforcements',
             on_delete=models.CASCADE, db_column='policy')
     group = models.ForeignKey(Group, related_name='enforcements',
-            on_delete=models.CASCADE, db_column='group')
+            on_delete=models.CASCADE, db_column='group_id')
     max_age = models.IntegerField()
-    fail = models.IntegerField(null=True,blank=True)
-    noresult = models.IntegerField(null=True,blank=True)
+    fail = models.IntegerField(null=True,blank=True, db_column='rec_fail')
+    noresult = models.IntegerField(null=True,blank=True, db_column='rec_noresult')
 
     def __unicode__(self):
         return '%s on %s' % (self.policy.name, self.group.name)
@@ -342,7 +346,7 @@ class Enforcement(models.Model):
 
 class Identity(models.Model):
     id = models.AutoField(primary_key=True)
-    data = models.TextField()
+    data = models.TextField(db_column='value')
 
     class Meta:
         db_table = u'identities'
@@ -350,23 +354,23 @@ class Identity(models.Model):
 class Session(models.Model):
     """Result of a TNC session."""
     id = models.AutoField(primary_key=True)
-    connectionID = models.IntegerField()
+    connectionID = models.IntegerField(db_column='connection')
     device = models.ForeignKey(Device, related_name='sessions',
-        on_delete=models.CASCADE, db_column='device')
+       	     on_delete=models.CASCADE, db_column='device')
     identity = models.ForeignKey(Identity, related_name='sessions',
-            on_delete=models.CASCADE, db_column='identity')
+               on_delete=models.CASCADE, db_column='identity')
     time = models.DateTimeField()
-    recommendation = models.IntegerField(null=True)
+    recommendation = models.IntegerField(null=True, db_column='rec')
 
     class Meta:
         db_table = u'sessions'
 
 class WorkItem(models.Model):
     id = models.AutoField(primary_key=True)
-    enforcement = models.ForeignKey(Enforcement, on_delete=models.CASCADE,
-            db_column='enforcement')
+    enforcement = models.ForeignKey(Enforcement, db_column='enforcement',
+                  related_name="workitems", on_delete=models.CASCADE)
     session = models.ForeignKey(Session, db_column='session',
-            related_name='workitems', on_delete=models.CASCADE)
+                  related_name='workitems', on_delete=models.CASCADE)
     type = models.IntegerField(null=False, blank=False)
     argument = models.TextField()
     fail = models.IntegerField(null=True,blank=True)
@@ -386,9 +390,9 @@ class Result(models.Model):
     session = models.ForeignKey(Session, db_column='session',
             on_delete=models.CASCADE, related_name='results')
     policy = models.ForeignKey(Policy, db_column='policy',
-            on_delete=models.CASCADE)
+            on_delete=models.CASCADE, related_name='results')
     result = models.TextField()
-    recommendation = models.IntegerField()
+    recommendation = models.IntegerField(db_column='rec')
 
     class Meta:
         db_table = u'results'
