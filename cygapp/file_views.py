@@ -22,8 +22,7 @@ def files(request):
     context = {}
     context['title'] = _('Files')
     context['count'] = File.objects.count()
-    files = File.objects.all().order_by('name')
-    
+    files = File.objects.all().order_by('directory__path','name')    
     context['files'] = paginate(files, request)
     return render(request, 'cygapp/files.html', context)
 
@@ -42,7 +41,7 @@ def file(request,fileID):
     context = {}
     context['title'] = _('Files')
     context['count'] = File.objects.count()
-    files = File.objects.all().order_by('name')
+    files = File.objects.all().order_by('directory__path','name')    
 
     context['files'] = paginate(files, request)
 
