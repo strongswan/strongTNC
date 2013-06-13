@@ -189,7 +189,10 @@
 	    if (blacklist != {{package.blacklist|yesno:"true,false"}}){
 	      $("#saveModal").modal('show');
 	    } else {
-	      packageform.submit();
+	      if ($("#packageform").validate().invalid.name != true)
+	      {
+	        packageform.submit();
+	      }
 	    }
 	  }
       

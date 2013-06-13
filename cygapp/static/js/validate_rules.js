@@ -86,7 +86,19 @@ $(document).ready(function(){
     },
     success: function(element) {
       element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
-    }
+    },
+    errorPlacement: function(error, element) {
+      if (element.attr("id") == "type") {
+	error.insertAfter("#type_chzn");
+      } else if (element.attr("id") == "fail"){
+        error.insertAfter("#fail_chzn");
+      } else if (element.attr("id") == "noresult"){
+	error.insertAfter("#noresult_chzn");
+      } else {
+	error.insertAfter(element)
+      }    
+    },
+    ignore: ":hidden:not(.chzn-select)",
   });  
   
   $('#enforcementform').validate({
@@ -179,7 +191,15 @@ $(document).ready(function(){
     },
     success: function(element) {
       element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
-    }
+    },
+    errorPlacement: function(error, element) {
+      if (element.attr("id") == "product") {
+	error.insertAfter("#product_chzn");
+      } else {
+	error.insertAfter(element)
+      }    
+    },
+    ignore: ":hidden:not(.chzn-select)",
   });
 
   $('#packageform').validate({

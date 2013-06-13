@@ -94,7 +94,7 @@ Basic Metrics for module ./cygapp/policy_views.py
 
           4    maxBlockDepth
          64    numBlocks
-       8992    numCharacters
+       8997    numCharacters
           4    numComments
           1    numCommentsInline
          11    numDocStrings
@@ -104,7 +104,7 @@ Basic Metrics for module ./cygapp/policy_views.py
         320    numLines
           1    numModuleDocStrings
           3    numMultipleExitFcns
-       2992    numTokens
+       2996    numTokens
 
           1.25 %Comments
           0.31 %CommentsInline
@@ -371,7 +371,7 @@ Basic Metrics for module ./cygapp/product_views.py
 
           3    maxBlockDepth
          30    numBlocks
-       5184    numCharacters
+       5189    numCharacters
           3    numComments
           1    numCommentsInline
           9    numDocStrings
@@ -381,7 +381,7 @@ Basic Metrics for module ./cygapp/product_views.py
         185    numLines
           1    numModuleDocStrings
           2    numMultipleExitFcns
-       1536    numTokens
+       1540    numTokens
 
           1.62 %Comments
           0.54 %CommentsInline
@@ -428,7 +428,7 @@ Basic Metrics for module ./cygapp/group_views.py
 
           3    maxBlockDepth
          34    numBlocks
-       4850    numCharacters
+       4855    numCharacters
           1    numComments
           9    numDocStrings
           9    numFcnDocStrings
@@ -437,7 +437,7 @@ Basic Metrics for module ./cygapp/group_views.py
         189    numLines
           1    numModuleDocStrings
           1    numMultipleExitFcns
-       1497    numTokens
+       1501    numTokens
 
           0.53 %Comments
         100.00 %FunctionsHavingDocStrings
@@ -476,28 +476,28 @@ COCOMO 2's SLOC Metric for ./cygapp/group_views.py
         127    ./cygapp/group_views.py
 
 === File: ./cygapp/file_views.py ===
-In file ./cygapp/file_views.py, function save has 2 extra exits at lines 65, 69
-In file ./cygapp/file_views.py, function search has 1 extra exit at line 117
+In file ./cygapp/file_views.py, function save has 2 extra exits at lines 64, 68
+In file ./cygapp/file_views.py, function search has 1 extra exit at line 116
 
 Basic Metrics for module ./cygapp/file_views.py
 -----------------------------------------------
 
           2    maxBlockDepth
          18    numBlocks
-       3618    numCharacters
+       3657    numCharacters
           3    numComments
           1    numCommentsInline
           8    numDocStrings
           8    numFcnDocStrings
           7    numFunctions
          50    numKeywords
-        138    numLines
+        137    numLines
           1    numModuleDocStrings
           2    numMultipleExitFcns
-       1103    numTokens
+       1105    numTokens
 
-          2.17 %Comments
-          0.72 %CommentsInline
+          2.19 %Comments
+          0.73 %CommentsInline
         100.00 %FunctionsHavingDocStrings
 
 Functions DocString present(+) or missing(-)
@@ -540,7 +540,7 @@ Basic Metrics for module ./cygapp/enforcement_views.py
 
           3    maxBlockDepth
          33    numBlocks
-       6884    numCharacters
+       6885    numCharacters
           3    numComments
           1    numCommentsInline
           9    numDocStrings
@@ -550,7 +550,7 @@ Basic Metrics for module ./cygapp/enforcement_views.py
         222    numLines
           1    numModuleDocStrings
           2    numMultipleExitFcns
-       1993    numTokens
+       1995    numTokens
 
           1.35 %Comments
           0.45 %CommentsInline
@@ -692,32 +692,30 @@ COCOMO 2's SLOC Metric for ./cygapp/simIMV.py
          42    ./cygapp/simIMV.py
 
 === File: ./cygapp/models.py ===
-In file ./cygapp/models.py, function Device.__unicode__ has 2 extra exits at lines 67, 69
-In file ./cygapp/models.py, function Device.is_due_for has 3 extra exits at lines 104, 106, 112
-In file ./cygapp/models.py, function Group.get_parents has 1 extra exit at line 163
+In file ./cygapp/models.py, function Device.__unicode__ has 2 extra exits at lines 70, 72
+In file ./cygapp/models.py, function Device.is_due_for has 3 extra exits at lines 107, 109, 115
+In file ./cygapp/models.py, function Group.get_parents has 1 extra exit at line 166
 
 Basic Metrics for module ./cygapp/models.py
 -------------------------------------------
 
           6    maxBlockDepth
          73    numBlocks
-      12952    numCharacters
+      12687    numCharacters
          18    numClassDocStrings
          33    numClasses
-          2    numComments
-          1    numCommentsInline
-         25    numDocStrings
+          1    numComments
+         26    numDocStrings
           8    numFcnDocStrings
          21    numFunctions
-        183    numKeywords
-        429    numLines
+        181    numKeywords
+        428    numLines
           1    numModuleDocStrings
           3    numMultipleExitFcns
-       3527    numTokens
+       3492    numTokens
 
          54.55 %ClassesHavingDocStrings
-          0.47 %Comments
-          0.23 %CommentsInline
+          0.23 %Comments
          36.36 %FunctionsHavingDocStrings
 
 Functions DocString present(+) or missing(-)
@@ -815,7 +813,7 @@ McCabe Complexity Metric for file ./cygapp/models.py
 COCOMO 2's SLOC Metric for ./cygapp/models.py
 ----------------------------------------------
 
-        256    ./cygapp/models.py
+        252    ./cygapp/models.py
 
 === File: ./cygapp/search_views.py ===
 
@@ -863,7 +861,7 @@ Basic Metrics for module ./cygapp/package_views.py
 
           4    maxBlockDepth
          30    numBlocks
-       5377    numCharacters
+       5382    numCharacters
           4    numComments
           1    numCommentsInline
          10    numDocStrings
@@ -873,7 +871,7 @@ Basic Metrics for module ./cygapp/package_views.py
         190    numLines
           1    numModuleDocStrings
           2    numMultipleExitFcns
-       1561    numTokens
+       1565    numTokens
 
           2.11 %Comments
           0.53 %CommentsInline
