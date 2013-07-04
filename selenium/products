@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Products</td>
+	<td>strongTNC - Products</td>
 	<td></td>
 </tr>
 <tr>
@@ -28,7 +28,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Products</td>
+	<td>strongTNC - Products</td>
 	<td></td>
 </tr>
 <tr>
@@ -38,7 +38,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - New product</td>
+	<td>strongTNC - New product</td>
 	<td></td>
 </tr>
 <tr>
@@ -73,7 +73,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Groups</td>
+	<td>strongTNC - Groups</td>
 	<td></td>
 </tr>
 <tr>
@@ -83,7 +83,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - New group</td>
+	<td>strongTNC - New group</td>
 	<td></td>
 </tr>
 <tr>
@@ -98,7 +98,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Group TEST GROUP</td>
+	<td>strongTNC - Group TEST GROUP</td>
 	<td></td>
 </tr>
 <tr>
@@ -108,7 +108,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - New group</td>
+	<td>strongTNC - New group</td>
 	<td></td>
 </tr>
 <tr>
@@ -128,7 +128,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Group TEST GROUP 2</td>
+	<td>strongTNC - Group TEST GROUP 2</td>
 	<td></td>
 </tr>
 <tr>
@@ -138,7 +138,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Products</td>
+	<td>strongTNC - Products</td>
 	<td></td>
 </tr>
 <tr>
@@ -148,7 +148,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Product Fedora Linux</td>
+	<td>strongTNC - Product Fedora Linux</td>
 	<td></td>
 </tr>
 <tr>
@@ -173,7 +173,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Product Fedora Linux</td>
+	<td>strongTNC - Product Fedora Linux</td>
 	<td></td>
 </tr>
 <tr>
@@ -208,7 +208,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Products</td>
+	<td>strongTNC - Products</td>
 	<td></td>
 </tr>
 <tr>
@@ -223,7 +223,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Groups</td>
+	<td>strongTNC - Groups</td>
 	<td></td>
 </tr>
 <tr>
@@ -233,7 +233,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Group TEST GROUP</td>
+	<td>strongTNC - Group TEST GROUP</td>
 	<td></td>
 </tr>
 <tr>
@@ -248,7 +248,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Groups</td>
+	<td>strongTNC - Groups</td>
 	<td></td>
 </tr>
 <tr>

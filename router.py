@@ -1,5 +1,5 @@
 """
-Database Router for Cygnet-Project
+Database Router for strongTNC project
 """
 class DBRouter(object):
     """
@@ -38,5 +38,4 @@ class DBRouter(object):
             response = 'meta'
 
         return response
-        
-        
+

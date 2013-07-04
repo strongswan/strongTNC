@@ -1,5 +1,5 @@
 """
-Defines regular expressions for URL's that are served by cygnet
+Defines regular expressions for URL's that are served by the web app
 """
 
 import settings

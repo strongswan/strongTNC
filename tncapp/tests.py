@@ -1,5 +1,5 @@
 """
-Unit tests for the django app cygnet are specified in this file
+Unit tests for the django app are specified in this file
 
     run using 'python manage.py test tncapp'
 """

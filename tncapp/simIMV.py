@@ -1,6 +1,6 @@
 """
-A module to simulate a StrongSwan IMV used for testing workitem generation
-and session handling of cygnet. Invoke by calling run_test()
+A module to simulate a strongSwan IMV used for testing workitem generation
+and session hannvoke by calling run_test()
 """
 
 import httplib,random
@@ -11,7 +11,7 @@ start_url = '/cmd/start_session'
 end_url  = '/cmd/end_session'
 
 def start_login(params):
-    """Call start url to invoke cygnet workItem generation."""
+    """Call start url to invoke workItem generation."""
 
     con = httplib.HTTPConnection('localhost', 8000)
     url = '%s?%s' % (start_url, '&'.join(['%s=%s' % (k,v) for k,v in
@@ -29,7 +29,7 @@ def start_login(params):
 
 
 def finish_login(params):
-    """Call finish url to invoke cygnet result processing."""
+    """Call finish url to invoke result processing."""
     con = httplib.HTTPConnection('localhost', 8000)
 
     url = '%s?%s' % (end_url, '&'.join(['%s=%s' % (k,v) for k,v in

@@ -1,4 +1,4 @@
-# Django settings for cygnet project.
+# Django settings for strongTNC
 from django.contrib import messages
 
 DEBUG = True

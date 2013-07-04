@@ -1,4 +1,4 @@
--- INSERTs to create a new, (nearly) empty default database for Cygnet
+-- INSERTs to create a new, (nearly) empty default database
 
 -- Default group
 INSERT INTO groups(id, name) VALUES (1, 'Default group');

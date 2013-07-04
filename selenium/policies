@@ -128,7 +128,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Policy Missing Seucrity Updates</td>
+	<td>strongTNC - Policy Missing Seucrity Updates</td>
 	<td></td>
 </tr>
 <tr>
@@ -143,7 +143,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Policies</td>
+	<td>strongTNC - Policies</td>
 	<td></td>
 </tr>
 <tr>
@@ -158,7 +158,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - New policy</td>
+	<td>strongTNC - New policy</td>
 	<td></td>
 </tr>
 <tr>
@@ -198,7 +198,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Policy No webservers allowed</td>
+	<td>strongTNC - Policy No webservers allowed</td>
 	<td></td>
 </tr>
 <tr>
@@ -218,7 +218,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Policy Only webservers allowed</td>
+	<td>strongTNC - Policy Only webservers allowed</td>
 	<td></td>
 </tr>
 <tr>
@@ -238,7 +238,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Policy Only webservers allowed</td>
+	<td>strongTNC - Policy Only webservers allowed</td>
 	<td></td>
 </tr>
 <tr>
@@ -258,7 +258,7 @@
 </tr>
 <tr>
 	<td>assertTitle</td>
-	<td>cygnet - Policies</td>
+	<td>strongTNC - Policies</td>
 	<td></td>
 </tr>
 </tbody></table>
