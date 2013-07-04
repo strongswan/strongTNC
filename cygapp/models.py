@@ -53,10 +53,10 @@ class Action(object):
     """
     Possible recommendation values
     """
-    NONE = 0
-    ALLOW = 1
+    ALLOW = 0
+    BLOCK = 1
     ISOLATE = 2
-    BLOCK = 3
+    NONE = 3
 
 class Product(models.Model):
     """
@@ -78,7 +78,7 @@ class Device(models.Model):
     id = models.AutoField(primary_key=True)
     value = models.TextField()
     description = models.TextField(blank=True, null=True)
-    product = models.ForeignKey(Product, related_name='devices')
+    product = models.ForeignKey(Product, related_name='devices', db_column='product')
     created = EpochField(null=True,blank=True)
 
 
@@ -127,7 +127,7 @@ class Device(models.Model):
 
         age = datetime.today() - last_meas.time
 
-        if age.days >= enforcement.max_age or (result.recommendation !=
+        if age.seconds >= enforcement.max_age or (result.recommendation !=
                 Action.ALLOW):
             return True
 
@@ -320,39 +320,47 @@ class Policy(models.Model):
         return self.name
 
     action = [
-            'NONE',
             'ALLOW',
-            'ISOLATE',
             'BLOCK',
+            'ISOLATE',
+            'NONE',
             ]
 
     types = [
-            'File Hash',
-            'Dir Hash',
-            'Listening Port TCP',
-            'Listening Port UDP',
-            'File Exist',
-            'Not File Exist',
-            'Missing Update',
-            'Missing Security Update',
-            'Blacklisted Package',
-            'OS Settings',
             'Deny',
+            'Installed Packages',
+            'Unknown Source',
+            'Forwarding Enabled',
+            'Default Password Enabled',
+            'File Reference Measurement',
+            'File Measurement',
+            'File Metadata',
+            'Directory Reference Measurement',
+            'Directory Measurement',
+            'Directory Metadata',
+            'Open TCP Listening Ports',
+            'Blocked TCP Listening Ports',
+            'Open UDP Listening Ports',
+            'Blocked UDP Listening Ports',
             ]
 
     
     argument_funcs = {
-            'File Hash': lambda policy: '',
-            'Dir Hash': lambda policy: '',
-            'Listening Port TCP': lambda p: p.argument if p.argument else '',
-            'Listening Port UDP': lambda p: p.argument if p.argument else '',
-            'File Exist': lambda policy: '',
-            'Not File Exist': lambda policy: '',
-            'Missing Update': lambda policy: '',
-            'Missing Security Update':lambda policy:  '',
-            'Blacklisted Package': lambda policy: '',
-            'OS Settings': lambda policy: '',
             'Deny': lambda policy: '',
+            'Installed Packages': lambda policy: '',
+            'Unknown Source': lambda policy: '',
+            'Forwarding Enabled': lambda policy: '',
+            'Default Password Enabled': lambda policy: '',
+            'File Reference Measurement': lambda policy: '',
+            'File Measurement':lambda policy:  '',
+            'File Metadata': lambda policy: '',
+            'Directory Reference Measurement': lambda policy: '',
+            'Directory Measurement': lambda policy: '',
+            'Directory Metadata': lambda policy: '',
+            'Open TCP Listening Ports': lambda p: p.argument if p.argument else '',
+            'Blocked TCP Listening Ports': lambda p: p.argument if p.argument else '',
+            'Open UDP Listening Ports': lambda p: p.argument if p.argument else '',
+            'Blocked UDP Listening Ports': lambda p: p.argument if p.argument else '',
             }
 
 

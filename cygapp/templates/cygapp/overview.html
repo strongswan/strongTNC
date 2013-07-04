@@ -4,10 +4,9 @@
 {% block title %}{%trans "Overview" %}{% endblock %}
 
 {% block hero %}
-  <h1>{% trans "Welcome to Cygnet!" %}</h1>
-  <p class="lead">Cygnet is an extension for the StrongSwan VPN-Client and the corresponding server. It allows
-  the definition and enforcement of policies that apply to all VPN clients and must be achieved 
-  in every connection attempt.</p>
+  <h1>{% trans "Welcome to strongTNC!" %}</h1>
+  <p class="lead">strongTNC is a Trusted Network Connect (TNC) extension for the strongSwan VPN solution. It allows
+  the definition and enforcement of TNC policies that apply to all VPN clients and must be fulfilled with each connection attempt.</p>
 {% endblock %}
 
 {% block content %}
@@ -15,10 +14,11 @@
 	  <div class="page-header">
         <h2>Getting started</h2>
       </div>
-	  <p>StrongSwan-VPN-Clients <strong>(Clients)</strong> can be assigned to groups, according as operating system, company structure
+	  <p>strongSwan VPN Clients <strong>(Clients)</strong> can be assigned to groups, according as operating system, company structure
 	  or individual preferences of the administrator. There can be rules <strong>(Policies)</strong> defined like all available
 	  operating system updates have to be installed on the client or certain applications must not be installed on the client. Thus,
-	  these policies can be applied/enforced on the groups <strong>(Enforcements)</strong> which gets checked by CYGNET when the client
+	  these policies can be applied/enforced on the groups <strong>(Enforcements)</strong> which gets checked by <strong>strongTNC</strong>
+	  when the client
 	  starts a connection attempt.</p>
 	  <ul class="thumbnails">  
         <li class="span4">  
@@ -55,19 +55,22 @@
 			<p>Enter here the name of the policy.</p>
 		  </div>
 		  <div class="tab-pane fade in " id="type">
-			<p>CYGNET provides the following policy types. Select one:</p>
+			<p>strongTNC provides the following policy types. Select one:</p>
 			<pre class="prettyprint">
-File Hash
-Dir Hash
-Listening Port TCP/UDP
-File Exist
-File Not Exist
-Missing Update
-Missing Security Update
-Blacklisted Package
-OSSettings
-Deny
-			</pre>
+PCKGS - Installed Packages 
+UNSRC - Unknown Source
+FWDEN - Forwarding Enabled
+PWDEN - Factory Default Password Enabled
+FREFM - File Reference Measurement
+FMEAS - File Measurement
+FMETA - File Metadata
+DREFM - Directory Reference Measurement
+DMEAS - Directory Measurement
+DMETA - Directory Metadata
+TCPOP - TCP Ports allowed to be Open
+TCPBL - TCP Ports to be Blocked
+UDPOP - UDP Ports allowed to be Open
+UDPBL - UDP Ports to be Blocked</pre>
 			<p><a class="btn" href="/help">View details &raquo;</a></p>
 		  </div>
 		  <div class="tab-pane fade in " id="argument">
@@ -89,20 +92,20 @@ Deny
 				<table class="table table-bordered table-striped">
 				  <tbody>
 					<tr>
-					  <td><span class="label">NONE</span></td>
-					  <td>No recommendation</td>
-					</tr>
-					<tr>
 					  <td><span class="label label-success">ALLOW</span></td>
 					  <td>Grant admission</td>
+					</tr>
+					<tr>
+					  <td><span class="label label-important">BLOCK</span></td>
+					  <td>Block device, decline connection</td>
 					</tr>
 					<tr>
 					  <td><span class="label label-warning">ISOLATE</span></td>
 					  <td>Isolate device, connection to a special network</td>
 					</tr>
 					<tr>
-					  <td><span class="label label-important">BLOCK</span></td>
-					  <td>Block device, decline connection</td>
+					  <td><span class="label">NONE</span></td>
+					  <td>No recommendation</td>
 					</tr>
 				  </tbody>
 				</table>
@@ -166,9 +169,9 @@ Deny
 		<h2>Links</h2>
 	  </div>
 	  <ul class="nav nav-list">
-		<li class="nav-header">CYGNET</li>
+		<li class="nav-header">strongTNC</li>
 		<li><a href="https://github.com/tannerli/cygnet" target="_blank"><i class="icon-star"></i> cygnet @ GithHub</a></li>
-		<li class="nav-header">Strongswan</li>
+		<li class="nav-header">strongSwan</li>
 		<li><a href="http://www.strongswan.org" target="_blank"><i class="icon-star"></i> strongswan.org</a></li>
 		<li><a href="https://github.com/strongswan" target="_blank"><i class="icon-star"></i> strongswan @ GitHub</a></li>
 		<li class="nav-header">TNC</li>
