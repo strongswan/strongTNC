@@ -112,7 +112,7 @@ def login(request):
     """
     if request.method == 'POST':
         password = request.POST.get('password', None)
-        user = authenticate(username='cygnet-user', password=password)
+        user = authenticate(username='admin-user', password=password)
         if user is not None and user.is_active:
                 django_login(request, user)
                 next = request.POST.get('next_url', None)

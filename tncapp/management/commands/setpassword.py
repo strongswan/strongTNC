@@ -1,5 +1,5 @@
 """
-Custom manage.py command to set the cygnet user password
+Custom manage.py command to set the admin user password
 
 Usage: python manage.py setpassword [PASSWORD]
 """
@@ -13,15 +13,15 @@ class Command(BaseCommand):
     Required class to be recognized by manage.py
     """
 
-    help = 'Get or create cygnet-user and set password interactively'
+    help = 'Get or create admin-user and set password interactively'
     args = '[password]'
 
     def handle(self, *args, **kwargs):
         if len(args) > 1: raise CommandError('Too many arguments')
 
-        self.stdout.write('looking for cygnet user in database...')
+        self.stdout.write('looking for admin-user in database...')
 
-        user, new = User.objects.get_or_create(username='cygnet-user')
+        user, new = User.objects.get_or_create(username='admin-user')
 
         if new:
             self.stdout.write('... not found: creating new.')
@@ -32,7 +32,7 @@ class Command(BaseCommand):
 
         if pwd == '':
             try:
-                pwd = getpass('\nplease enter a new password for cygnet-user: ')
+                pwd = getpass('\nplease enter a new password for admin-user: ')
             except KeyboardInterrupt:
                 self.stdout.write('\nabort')
                 return
