@@ -26,7 +26,7 @@ def devices(request):
     devices = Device.objects.all().order_by('description')
     
     context['devices'] = paginate(devices, request)
-    return render(request, 'cygapp/devices.html', context)
+    return render(request, 'tncapp/devices.html', context)
 
 @require_GET
 @login_required
@@ -58,7 +58,7 @@ def device(request, deviceID):
         context['groups'] = groups
         context['title'] = _('Device ') + device.description
 
-    return render(request, 'cygapp/devices.html', context)
+    return render(request, 'tncapp/devices.html', context)
 
 @require_GET
 @login_required
@@ -74,7 +74,7 @@ def add(request):
     devices = Device.objects.all().order_by('description')
     context['devices'] = paginate(devices, request)
     context['device'] = Device()
-    return render(request, 'cygapp/devices.html', context)
+    return render(request, 'tncapp/devices.html', context)
 
 @require_POST
 @login_required
@@ -163,7 +163,7 @@ def search(request):
         return redirect('/devices')
     
     context['devices'] = paginate(devices, request)
-    return render(request, 'cygapp/devices.html', context)
+    return render(request, 'tncapp/devices.html', context)
 
 def paginate(items, request):
     """
@@ -227,7 +227,7 @@ def report(request, deviceID):
 
     context['enforcements'] = enforcements
 
-    return render(request, 'cygapp/device_report.html', context)
+    return render(request, 'tncapp/device_report.html', context)
 
 @require_GET
 @login_required
@@ -246,4 +246,4 @@ def session(request, sessionID):
     for result in session.results.all():
         context['results'].append((result, Policy.action[result.recommendation]))
 
-    return render(request, 'cygapp/session.html', context)
+    return render(request, 'tncapp/session.html', context)

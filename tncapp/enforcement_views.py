@@ -25,7 +25,7 @@ def enforcements(request):
     enforcements = Enforcement.objects.all().order_by('policy')
     context['enforcements'] = paginate(enforcements, request)
     
-    return render(request, 'cygapp/enforcements.html', context)
+    return render(request, 'tncapp/enforcements.html', context)
 
 @require_GET
 @login_required
@@ -53,7 +53,7 @@ def enforcement(request, enforcementID):
         context['title'] = _('Enforcement ') + str(enforcement)
         context['policies'] = Policy.objects.all().order_by('name')
 
-    return render(request, 'cygapp/enforcements.html', context)
+    return render(request, 'tncapp/enforcements.html', context)
 
 
 @require_GET
@@ -73,7 +73,7 @@ def add(request):
     enforcement.max_age = 0
     context['enforcement'] = enforcement
     context['actions'] = Policy.action
-    return render(request, 'cygapp/enforcements.html', context)
+    return render(request, 'tncapp/enforcements.html', context)
 
 
 @require_POST
@@ -201,7 +201,7 @@ def search(request):
         return redirect('/enforcements')
     
     context['enforcements'] = paginate(enforcements, request)
-    return render(request, 'cygapp/enforcements.html', context)
+    return render(request, 'tncapp/enforcements.html', context)
 
 def paginate(items, request):
     """

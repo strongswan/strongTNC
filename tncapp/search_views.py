@@ -45,4 +45,4 @@ def search(request):
         q2 = Q(directory__path__icontains=q)
         context['files'] = File.objects.filter(q1 | q2)
 
-    return render(request, 'cygapp/search.html', context)
+    return render(request, 'tncapp/search.html', context)

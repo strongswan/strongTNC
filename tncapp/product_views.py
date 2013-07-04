@@ -24,7 +24,7 @@ def products(request):
     products = Product.objects.all().order_by('name')
     
     context['products'] = paginate(products, request)
-    return render(request, 'cygapp/products.html', context)
+    return render(request, 'tncapp/products.html', context)
 
 @require_GET
 @login_required
@@ -54,7 +54,7 @@ def product(request, productID):
         context['groups'] = groups
         context['title'] = _('Product ') + product.name
 
-    return render(request, 'cygapp/products.html', context)
+    return render(request, 'tncapp/products.html', context)
 
 
 @require_GET
@@ -70,7 +70,7 @@ def add(request):
     products = Product.objects.all().order_by('name')
     context['products'] = paginate(products, request)
     context['product'] = Product()
-    return render(request, 'cygapp/products.html', context)
+    return render(request, 'tncapp/products.html', context)
 
 
 @require_POST
@@ -165,7 +165,7 @@ def search(request):
         return redirect('/products')
     
     context['products'] = paginate(products, request)
-    return render(request, 'cygapp/products.html', context)
+    return render(request, 'tncapp/products.html', context)
 
 def paginate(items, request):
     """

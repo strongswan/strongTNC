@@ -24,7 +24,7 @@ def policies(request):
     policies = Policy.objects.all().order_by('name')
 
     context['policies'] = paginate(policies, request)
-    return render(request, 'cygapp/policies.html', context)
+    return render(request, 'tncapp/policies.html', context)
 
 @require_GET
 @login_required
@@ -63,7 +63,7 @@ def policy(request, policyID):
         context['groups'] = groups
         context['title'] = _('Policy ') + policy.name
 
-    return render(request, 'cygapp/policies.html', context)
+    return render(request, 'tncapp/policies.html', context)
 
 
 @require_GET
@@ -84,7 +84,7 @@ def add(request):
     context['files'] = files
     dirs = Directory.objects.all().order_by('path')
     context['dirs'] = dirs
-    return render(request, 'cygapp/policies.html', context)
+    return render(request, 'tncapp/policies.html', context)
 
 @require_POST
 @login_required
@@ -224,7 +224,7 @@ def search(request):
         return redirect('/policies')
     
     context['policies'] = paginate(policies, request)
-    return render(request, 'cygapp/policies.html', context)
+    return render(request, 'tncapp/policies.html', context)
 
 def check_range(ranges):
     """

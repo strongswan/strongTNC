@@ -21,7 +21,7 @@ def groups(request):
     context['groups'] = Group.objects.all().order_by('name')
     context['grouptree'] = group_tree()
     context['title'] = _('Groups')
-    return render(request, 'cygapp/groups.html', context)
+    return render(request, 'tncapp/groups.html', context)
 
 @require_GET
 @login_required
@@ -50,7 +50,7 @@ def group(request, groupID):
         context['devices'] = devices
         context['title'] = _('Group ') + context['group'].name
 
-    return render(request, 'cygapp/groups.html', context)
+    return render(request, 'tncapp/groups.html', context)
 
 @require_GET
 @login_required
@@ -64,7 +64,7 @@ def add(request):
     context['grouptree'] = group_tree()
     context['group'] = Group()
     context['devices'] = Device.objects.all()
-    return render(request, 'cygapp/groups.html', context)
+    return render(request, 'tncapp/groups.html', context)
 
 @require_POST
 @login_required

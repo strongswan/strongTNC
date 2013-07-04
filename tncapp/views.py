@@ -21,7 +21,7 @@ def overview(request):
     """
     Main page
     """
-    return render(request, 'cygapp/overview.html')
+    return render(request, 'tncapp/overview.html')
 
 @require_safe
 def start_session(request):
@@ -103,7 +103,7 @@ def statistics(request):
     for item in context['rec_count_result']:
         item['recommendation'] = Policy.action[item['recommendation']]
 
-    return render(request, 'cygapp/statistics.html', context)
+    return render(request, 'tncapp/statistics.html', context)
 
 @require_http_methods(('GET','POST'))
 def login(request):
@@ -127,7 +127,7 @@ def login(request):
         return redirect('/overview')
 
     context = {'next_url': request.GET.get('next', '')}
-    return render(request, 'cygapp/login.html', context)
+    return render(request, 'tncapp/login.html', context)
 
 def logout(request):
     """
@@ -136,7 +136,7 @@ def logout(request):
     django_logout(request)
     messages.success(request, _('Logout successful!'))
 
-    return render(request, 'cygapp/login.html')
+    return render(request, 'tncapp/login.html')
     
 
 #NOT views, do not need decorators

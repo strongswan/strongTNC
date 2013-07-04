@@ -24,7 +24,7 @@ def files(request):
     context['count'] = File.objects.count()
     files = File.objects.all().order_by('directory__path','name')    
     context['files'] = paginate(files, request)
-    return render(request, 'cygapp/files.html', context)
+    return render(request, 'tncapp/files.html', context)
 
 @require_GET
 @login_required
@@ -51,7 +51,7 @@ def file(request,fileID):
         file_hashes = file.hashes.all().order_by('product', 'algorithm')
         context['file_hashes'] = file_hashes
 
-    return render(request, 'cygapp/files.html', context)
+    return render(request, 'tncapp/files.html', context)
 
 @require_POST
 @login_required
@@ -116,7 +116,7 @@ def search(request):
         return redirect('/files')
     
     context['files'] = paginate(files, request)
-    return render(request, 'cygapp/files.html', context)
+    return render(request, 'tncapp/files.html', context)
 
 def paginate(items, request):
     """

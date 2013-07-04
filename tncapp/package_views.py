@@ -24,7 +24,7 @@ def packages(request):
     packages = Package.objects.all().order_by('name')
     
     context['packages'] = paginate(packages, request)
-    return render(request, 'cygapp/packages.html', context)
+    return render(request, 'tncapp/packages.html', context)
 
 @require_GET
 @login_required
@@ -50,7 +50,7 @@ def package(request, packageID):
         context['versions'] = versions
         context['title'] = _('Package ') + package.name
 
-    return render(request, 'cygapp/packages.html', context)
+    return render(request, 'tncapp/packages.html', context)
 
 @require_GET
 @login_required
@@ -64,7 +64,7 @@ def add(request):
     packages = Package.objects.all().order_by('name')   
     context['packages'] = paginate(packages, request)
     context['package'] = Package()
-    return render(request, 'cygapp/packages.html', context)
+    return render(request, 'tncapp/packages.html', context)
 
 
 @require_POST
@@ -169,7 +169,7 @@ def search(request):
         return redirect('/packages')
     
     context['packages'] = paginate(packages, request)
-    return render(request, 'cygapp/packages.html', context)
+    return render(request, 'tncapp/packages.html', context)
 
 def paginate(items, request):
     """

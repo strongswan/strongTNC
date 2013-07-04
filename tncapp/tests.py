@@ -1,17 +1,17 @@
 """
 Unit tests for the django app cygnet are specified in this file
 
-    run using 'python manage.py test cygapp'
+    run using 'python manage.py test tncapp'
 """
 
 from django.test import TestCase
 from datetime import datetime, timedelta
-from cygapp.models import (File, WorkItem, Device, Group, Product, Session,
+from tncapp.models import (File, WorkItem, Device, Group, Product, Session,
     Policy, Enforcement, Action, Package, Directory, Version, Identity, Result)
 from views import generate_results, purge_dead_sessions
 from policy_views import check_range, invert_range
 
-class cygappTest(TestCase):
+class tncappTest(TestCase):
     def setUp(self):
         user = Identity.objects.create(data='Test User')
         user.type = 1
