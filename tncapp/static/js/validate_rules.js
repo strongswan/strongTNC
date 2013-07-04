@@ -1,3 +1,13 @@
+/**
+ * strongTNC validation rules.
+ *
+ * Copyright (C) 2013 Marco Tanner
+ * Copyright (C) 2013 Stefan Rohner
+ * HSR University of Applied Sciences Rapperswil
+ *
+ * Licensed under the GNU Affero General Public License:
+ *   http://www.gnu.org/licenses/agpl-3.0.html
+ */
 $(document).ready(function(){
 
   // Validate
@@ -96,11 +106,11 @@ $(document).ready(function(){
 	error.insertAfter("#noresult_chzn");
       } else {
 	error.insertAfter(element)
-      }    
+      }
     },
     ignore: ":hidden:not(.chzn-select)",
-  });  
-  
+  });
+
   $('#enforcementform').validate({
     rules: {
       policy: {
@@ -143,7 +153,7 @@ $(document).ready(function(){
       },
       max_age: {
 	required: true,
-	range: [0, 9223372036854775] // sqlite max value 
+	range: [0, 9223372036854775] // sqlite max value
       }
     },
     messages: {
@@ -171,7 +181,7 @@ $(document).ready(function(){
 	    }
     }
   });
-  
+
   $('#deviceform').validate({
     rules: {
       value: {
@@ -197,7 +207,7 @@ $(document).ready(function(){
 	error.insertAfter("#product_chzn");
       } else {
 	error.insertAfter(element)
-      }    
+      }
     },
     ignore: ":hidden:not(.chzn-select)",
   });
@@ -234,7 +244,7 @@ $(document).ready(function(){
       element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
     }
   });
-  
+
   $('#productform').validate({
     rules: {
       name: {
@@ -267,7 +277,7 @@ $(document).ready(function(){
       element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");;
     }
   });
-  
+
   $.validator.addMethod("regex",
     function(value, element, regexp) {
 	var re = new RegExp(regexp);

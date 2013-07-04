@@ -1,6 +1,26 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# Copyright (C) 2013 Stefan Rohner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 General views like overview and site-wide search
 """
+
 import re
 from datetime import datetime, timedelta
 from django.http import HttpResponse
@@ -137,7 +157,7 @@ def logout(request):
     messages.success(request, _('Logout successful!'))
 
     return render(request, 'tncapp/login.html')
-    
+
 
 #NOT views, do not need decorators
 

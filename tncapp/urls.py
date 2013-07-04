@@ -1,3 +1,22 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# Copyright (C) 2013 Stefan Rohner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Defines regular expressions for URL's that are served by the web app
 """
@@ -17,9 +36,9 @@ urlpatterns = patterns('',
 
         url(r'^login/?$', views.login, name='login'),
         url(r'^logout/?$', views.logout, name='logout'),
-        
+
         url(r'^search/?$', search_views.search, name='search'),
-        
+
         url(r'^groups/?$', group_views.groups, name='groups'),
         url(r'^groups/(?P<groupID>\d+)/?$', group_views.group, name='group'),
         url(r'^groups/add/?$', group_views.add, name='add'),
@@ -60,7 +79,7 @@ urlpatterns = patterns('',
 
         url(r'^file_hashes/(?P<file_hashID>\d+)/delete/?$', file_views.deleteHash,
             name='delete'),
-    
+
         url(r'^packages/?$', package_views.packages, name='packages'),
         url(r'^packages/(?P<packageID>\d+)/?$', package_views.package,
             name='package'),
@@ -73,7 +92,7 @@ urlpatterns = patterns('',
 
         url(r'^versions/(?P<versionID>\d+)/toggle/?$',
             package_views.toggle_version, name='toggle_version'),
-        
+
         url(r'^products/?$', product_views.products, name='products'),
         url(r'^products/(?P<productID>\d+)/?$', product_views.product,
             name='product'),
@@ -83,7 +102,7 @@ urlpatterns = patterns('',
             name='delete'),
         url(r'^products/search/?$', product_views.search, name='search'),
         url(r'^products/check/?$', product_views.check, name='check'),
-        
+
         url(r'^policies/?$', policy_views.policies, name='policies'),
         url(r'^policies/(?P<policyID>\d+)/?$', policy_views.policy,
             name='policy'),
@@ -93,7 +112,7 @@ urlpatterns = patterns('',
             name='delete'),
         url(r'^policies/search/?$', policy_views.search, name='search'),
         url(r'^policies/check/?$', policy_views.check, name='check'),
-        
+
         url(r'^enforcements/?$', enforcement_views.enforcements,
             name='enforcements'),
         url(r'^enforcements/(?P<enforcementID>\d+)/?$', enforcement_views.enforcement,
@@ -104,7 +123,7 @@ urlpatterns = patterns('',
             name='delete'),
         url(r'^enforcements/search/?$', enforcement_views.search, name='search'),
         url(r'^enforcements/check/?$', enforcement_views.check, name='check'),
-        
+
         #IMV API patterns
         url(r'^cmd/start_session/?$', views.start_session,
             name='start_session'),

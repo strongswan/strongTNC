@@ -1,3 +1,21 @@
+#
+# Copyright (C) 2013 Andreas Steffen
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Provides CRUD for directories
 """
@@ -22,7 +40,7 @@ def directories(request):
     context = {}
     context['title'] = _('Directories')
     context['count'] = Directory.objects.count()
-    directories = Directory.objects.all().order_by('path')    
+    directories = Directory.objects.all().order_by('path')
     context['directories'] = paginate(directories, request)
     return render(request, 'tncapp/directories.html', context)
 
@@ -41,13 +59,13 @@ def directory(request,directoryID):
     context = {}
     context['title'] = _('Directories')
     context['count'] = Directory.objects.count()
-    directories = Directory.objects.all().order_by('path')    
+    directories = Directory.objects.all().order_by('path')
 
     context['directories'] = paginate(directories, request)
 
     if directories:
         context['directory'] = directory
-        context['title'] = _('Directory ') + directory.path        
+        context['title'] = _('Directory ') + directory.path
         files = File.objects.filter(directory=directory).order_by('name')
         context['files'] = files
 
@@ -113,7 +131,7 @@ def search(request):
     context['title'] = _('Directories')
     context['count'] = Directory.objects.count()
     directories = Directory.objects.all().order_by('path')
-    
+
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
@@ -121,7 +139,7 @@ def search(request):
         directories = Directory.objects.filter(q1)
     else:
         return redirect('/directories')
-    
+
     context['directories'] = paginate(directories, request)
     return render(request, 'tncapp/directories.html', context)
 
@@ -139,6 +157,6 @@ def paginate(items, request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         directories = paginator.page(paginator.num_pages)
-    
+
     return directories
 

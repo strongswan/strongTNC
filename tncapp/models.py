@@ -1,5 +1,24 @@
+#
+# Copyright (C) 2013 Andreas Steffen
+# Copyright (C) 2013 Marco Tanner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
-Defines model classes which are used by the Django OR-mapper 
+Defines model classes which are used by the Django OR-mapper
 """
 
 import binascii
@@ -199,7 +218,7 @@ class Directory(models.Model):
 
     class Meta:
         db_table = u'directories'
-    
+
 
 class File(models.Model):
     """
@@ -305,7 +324,7 @@ class Policy(models.Model):
         item = WorkItem(result=None, type=self.type, recommendation=None,
                 file=self.file, dir=self.dir, argument=self.argument,
                 enforcement=enforcement, session=session)
-        
+
         item.fail = self.fail
         if enforcement.fail is not None:
             item.fail = enforcement.fail
@@ -344,7 +363,7 @@ class Policy(models.Model):
             'Blocked UDP Listening Ports',
             ]
 
-    
+
     argument_funcs = {
             'Deny': lambda policy: '',
             'Installed Packages': lambda policy: '',

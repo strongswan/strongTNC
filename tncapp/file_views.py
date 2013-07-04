@@ -1,3 +1,22 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# Copyright (C) 2013 Stefan Rohner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Provides CRUD for files
 """
@@ -22,7 +41,7 @@ def files(request):
     context = {}
     context['title'] = _('Files')
     context['count'] = File.objects.count()
-    files = File.objects.all().order_by('directory__path','name')    
+    files = File.objects.all().order_by('directory__path','name')
     context['files'] = paginate(files, request)
     return render(request, 'tncapp/files.html', context)
 
@@ -41,13 +60,13 @@ def file(request,fileID):
     context = {}
     context['title'] = _('Files')
     context['count'] = File.objects.count()
-    files = File.objects.all().order_by('directory__path','name')    
+    files = File.objects.all().order_by('directory__path','name')
 
     context['files'] = paginate(files, request)
 
     if file:
         context['file'] = file
-        context['title'] = _('File ') + file.name        
+        context['title'] = _('File ') + file.name
         file_hashes = file.hashes.all().order_by('product', 'algorithm')
         context['file_hashes'] = file_hashes
 
@@ -105,7 +124,7 @@ def search(request):
     context['title'] = _('Files')
     context['count'] = File.objects.count()
     files = File.objects.all().order_by('name')
-    
+
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
@@ -114,7 +133,7 @@ def search(request):
         files = File.objects.filter(q1 | q2)
     else:
         return redirect('/files')
-    
+
     context['files'] = paginate(files, request)
     return render(request, 'tncapp/files.html', context)
 
@@ -132,6 +151,6 @@ def paginate(items, request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         files = paginator.page(paginator.num_pages)
-    
+
     return files
 

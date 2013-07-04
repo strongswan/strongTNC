@@ -1,3 +1,22 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# Copyright (C) 2013 Stefan Rohner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Provides CRUD for groups
 """
@@ -83,7 +102,7 @@ def save(request):
     for member in members:
         if not re.match(r'^\d+$', member):
             return HttpResponse(status=400)
-    
+
     name = request.POST['name']
     if not re.match(r'^[\S ]{1,50}$', name):
         return HttpResponse(status=400)
@@ -129,7 +148,7 @@ def check(request):
         group_id = request.POST['group']
         if group_id == 'None':
             group_id = ''
-        
+
         try:
             group = Group.objects.get(name=group_name)
             response = (group.id == group_id)
@@ -166,7 +185,7 @@ def group_tree():
     for root in roots:
         #dl += '<dt>%s</dt>' % root
         dl += add_children(root)
-        
+
     dl += '</dl>'
 
     return dl

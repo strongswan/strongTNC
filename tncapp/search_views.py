@@ -1,3 +1,22 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# Copyright (C) 2013 Stefan Rohner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Defines backend-views for site-wide search
 """
@@ -23,7 +42,7 @@ def search(request):
     context['package_title'] = _('Packages')
     context['product_title'] = _('Products')
     context['file_title'] = _('Files')
-    
+
     context['groups'] = Group.objects.all().order_by('name')
     context['policies'] = Policy.objects.all().order_by('name')
     context['enforcements'] = Enforcement.objects.all().order_by('policy')
@@ -31,7 +50,7 @@ def search(request):
     context['packages'] = Package.objects.all().order_by('name')
     context['products'] = Product.objects.all().order_by('name')
     context['files'] = File.objects.all().order_by('name')
-    
+
     q = request.GET.get('q', '')
     if q != '':
         context['query'] = q

@@ -1,3 +1,22 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# Copyright (C) 2013 Stefan Rohner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Provides CRUD for products
 """
@@ -22,7 +41,7 @@ def products(request):
     context['title'] = _('Products')
     context['count'] = Product.objects.count()
     products = Product.objects.all().order_by('name')
-    
+
     context['products'] = paginate(products, request)
     return render(request, 'tncapp/products.html', context)
 
@@ -125,7 +144,7 @@ def check(request):
         product_id = request.POST['product']
         if product_id == 'None':
             product_id = ''
-        
+
         try:
             product = Product.objects.get(name=product_name)
             response = (product.id == product_id)
@@ -156,14 +175,14 @@ def search(request):
     context['title'] = _('Product')
     context['count'] = Product.objects.count()
     products = Product.objects.all().order_by('name')
-    
+
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
         products = Product.objects.filter(name__icontains=q)
     else:
         return redirect('/products')
-    
+
     context['products'] = paginate(products, request)
     return render(request, 'tncapp/products.html', context)
 
@@ -181,5 +200,5 @@ def paginate(items, request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         products = paginator.page(paginator.num_pages)
-    
+
     return products

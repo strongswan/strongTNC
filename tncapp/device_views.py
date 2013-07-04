@@ -1,3 +1,22 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# Copyright (C) 2013 Stefan Rohner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Provides CRUD for devices
 """
@@ -24,7 +43,7 @@ def devices(request):
     context['title'] = _('Devices')
     context['count'] = Device.objects.count()
     devices = Device.objects.all().order_by('description')
-    
+
     context['devices'] = paginate(devices, request)
     return render(request, 'tncapp/devices.html', context)
 
@@ -101,7 +120,7 @@ def save(request):
     description = request.POST['description']
     if not re.match(r'^[\S ]{0,50}$', description):
         return HttpResponse(status=400)
-    
+
     productID = request.POST['product']
     if not re.match(r'^\d+$', productID):
         return HttpResponse(status=400)
@@ -154,14 +173,14 @@ def search(request):
     context['title'] = _('Devices')
     context['count'] = Device.objects.count()
     devices = Device.objects.all().order_by('description')
-    
+
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
         devices = Device.objects.filter(Q(description__icontains=q)|Q(value__icontains=q))
     else:
         return redirect('/devices')
-    
+
     context['devices'] = paginate(devices, request)
     return render(request, 'tncapp/devices.html', context)
 
@@ -179,7 +198,7 @@ def paginate(items, request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         devices = paginator.page(paginator.num_pages)
-    
+
     return devices
 
 @require_GET
@@ -189,12 +208,12 @@ def report(request, deviceID):
     Generate device report for given device
     """
     device = get_object_or_404(Device, pk=deviceID)
-    
+
     context = {}
     context['device'] = device
     context['title'] = _('Report for ') + str(device)
 
-    sessions = Session.objects.filter(device=device).order_by('-time') 
+    sessions = Session.objects.filter(device=device).order_by('-time')
     context['session_count'] = len(sessions)
     context['definition_set'] = list(device.groups.all())
     context['inherit_set'] = list(device.get_inherit_set())
@@ -236,7 +255,7 @@ def session(request, sessionID):
     View details for a device-session
     """
     session = get_object_or_404(Session, pk=sessionID)
-    
+
     context = {}
     context['session'] = session
     context['title'] = _('Session details')

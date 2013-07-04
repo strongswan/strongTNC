@@ -1,3 +1,22 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# Copyright (C) 2013 Stefan Rohner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Provides CRUD for policies
 """
@@ -150,7 +169,7 @@ def save(request):
     name = request.POST['name']
     if not re.match(r'^[\S ]+$', name):
         raise ValueError
-    
+
     if policyID == 'None':
         policy = Policy(name=name, type=type, fail=fail,
                 noresult=noresult, file=file, dir=dir, argument=argument)
@@ -184,7 +203,7 @@ def check(request):
         policy_id = request.POST['policy']
         if policy_id == 'None':
             policy_id = ''
-        
+
         try:
             policy = Policy.objects.get(name=policy_name)
             response = (policy.id == policy_id)
@@ -215,14 +234,14 @@ def search(request):
     context['title'] = _('Policies')
     context['count'] = Policy.objects.count()
     policies = Policy.objects.all().order_by('name')
-    
+
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
         policies = Policy.objects.filter(name__icontains=q)
     else:
         return redirect('/policies')
-    
+
     context['policies'] = paginate(policies, request)
     return render(request, 'tncapp/policies.html', context)
 
@@ -316,5 +335,5 @@ def paginate(items, request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         policies = paginator.page(paginator.num_pages)
-    
+
     return policies

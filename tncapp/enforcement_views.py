@@ -1,3 +1,22 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# Copyright (C) 2013 Stefan Rohner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Provides CRUD for enforcements
 """
@@ -24,7 +43,7 @@ def enforcements(request):
     context['count'] = Enforcement.objects.count()
     enforcements = Enforcement.objects.all().order_by('policy')
     context['enforcements'] = paginate(enforcements, request)
-    
+
     return render(request, 'tncapp/enforcements.html', context)
 
 @require_GET
@@ -42,7 +61,7 @@ def enforcement(request, enforcementID):
     context = {}
     context['title'] = _('Enforcements')
     context['count'] = Enforcement.objects.count()
-    enforcements = Enforcement.objects.all().order_by('policy')   
+    enforcements = Enforcement.objects.all().order_by('policy')
     context['enforcements'] = paginate(enforcements, request)
 
     if enforcement:
@@ -192,14 +211,14 @@ def search(request):
     context['title'] = _('Enforcements')
     context['count'] = Enforcement.objects.count()
     enforcements = Enforcement.objects.all().order_by('policy')
-    
+
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
         enforcements = Enforcement.objects.filter(Q(policy__name__icontains=q)|Q(group__name__icontains=q))
     else:
         return redirect('/enforcements')
-    
+
     context['enforcements'] = paginate(enforcements, request)
     return render(request, 'tncapp/enforcements.html', context)
 
@@ -217,6 +236,6 @@ def paginate(items, request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         enforcements = paginator.page(paginator.num_pages)
-    
+
     return enforcements
 

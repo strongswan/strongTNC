@@ -1,3 +1,22 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# Copyright (C) 2013 Stefan Rohner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Provides CRUD for packages
 """
@@ -22,7 +41,7 @@ def packages(request):
     context['title'] = _('Packages')
     context['count'] = Package.objects.count()
     packages = Package.objects.all().order_by('name')
-    
+
     context['packages'] = paginate(packages, request)
     return render(request, 'tncapp/packages.html', context)
 
@@ -41,7 +60,7 @@ def package(request, packageID):
     context = {}
     context['title'] = _('Packages')
     context['count'] = Package.objects.count()
-    packages = Package.objects.all().order_by('name')   
+    packages = Package.objects.all().order_by('name')
     context['packages'] = paginate(packages, request)
 
     if package:
@@ -61,7 +80,7 @@ def add(request):
     context = {}
     context['title'] = _('New package')
     context['count'] = Package.objects.count()
-    packages = Package.objects.all().order_by('name')   
+    packages = Package.objects.all().order_by('name')
     context['packages'] = paginate(packages, request)
     context['package'] = Package()
     return render(request, 'tncapp/packages.html', context)
@@ -90,7 +109,7 @@ def save(request):
         package = get_object_or_404(Package, pk=packageID)
         package.name = name
 
-        if blacklist != package.blacklist: 
+        if blacklist != package.blacklist:
             #Override blacklist settings on versions
             for version in package.versions.all():
                 version.blacklist = None
@@ -114,7 +133,7 @@ def check(request):
         package_id = request.POST['package']
         if package_id == 'None':
             package_id = ''
-        
+
         try:
             package = Package.objects.get(name=package_name)
             response = (package.id == package_id)
@@ -160,14 +179,14 @@ def search(request):
     context['title'] = _('Packages')
     context['count'] = Package.objects.count()
     packages = Package.objects.all().order_by('name')
-    
+
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
         packages = Package.objects.filter(name__icontains=q)
     else:
         return redirect('/packages')
-    
+
     context['packages'] = paginate(packages, request)
     return render(request, 'tncapp/packages.html', context)
 
@@ -185,6 +204,6 @@ def paginate(items, request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         packages = paginator.page(paginator.num_pages)
-    
+
     return packages
 

@@ -1,3 +1,21 @@
+#
+# Copyright (C) 2013 Marco Tanner
+# HSR University of Applied Sciences Rapperswil
+#
+# This file is part of strongTNC.  strongTNC is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Affero General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
+#
+# strongTNC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Unit tests for the django app are specified in this file
 
@@ -16,10 +34,10 @@ class tncappTest(TestCase):
         user = Identity.objects.create(data='Test User')
         user.type = 1
         user.save()
-        
+
         p = Product.objects.create(name='Fancy OS 3.14')
         device = Device.objects.create(value='def', description='Test Device', product=p)
-        
+
         g1 = Group.objects.create(name='ROOT')
         g11 = Group.objects.create(name='B1.1', parent=g1)
         Group.objects.create(name='L1.2', parent=g1)
@@ -61,7 +79,7 @@ class tncappTest(TestCase):
 
         device.groups.add(Group.objects.get(name='B1.1.1'))
         device.groups.add(Group.objects.get(name='L1.3.2'))
-        
+
         groups = device.get_group_set()
         self.assertEqual(7, len(groups))
 
@@ -102,7 +120,7 @@ class tncappTest(TestCase):
         self.assertEqual('/bin/bash', item.argument)
         self.assertEqual(None, item.recommendation)
         self.assertEqual(None, item.result)
-        
+
 
     def test_actionInheritance(self):
 
@@ -125,7 +143,7 @@ class tncappTest(TestCase):
         e2.save()
 
         user = Identity.objects.create(data='foobar')
-        
+
         device = Device.objects.get(value='def')
 
         session = Session.objects.create(device=device,
@@ -137,7 +155,7 @@ class tncappTest(TestCase):
         self.assertEqual(3, item.fail)
         self.assertEqual(0, item.noresult)
 
-        
+
         item = WorkItem.objects.get(session=session, enforcement=e2)
         self.assertEqual(3, item.fail)
         self.assertEqual(0, item.noresult)
@@ -191,7 +209,7 @@ class tncappTest(TestCase):
         user = Identity.objects.create(data='foobar')
         session = Session.objects.create(device=device,
                 time=datetime.today(), connectionID=123, identity=user)
-        
+
         WorkItem.objects.create(session=session, argument='asdf',
                 fail=3, noresult=0, result='OK', recommendation=1, enforcement=e1,
                 type=1)
@@ -294,7 +312,7 @@ class tncappTest(TestCase):
                 '1-1000,500,600,499': '0,1001-65535',
                 '10-100,50-200,150-500,450-10000': '0-9,10001-65535',
                 }
-        
+
         for test in tests.keys():
             self.assertEqual(tests[test], invert_range(test))
 
@@ -309,28 +327,28 @@ class tncappTest(TestCase):
     def test_purge_dead_sessions(self):
         device = Device.objects.get(pk=1)
         id = Identity.objects.create(data='user')
- 
-        time = datetime.today() - timedelta(days=20) 
+
+        time = datetime.today() - timedelta(days=20)
         Session.objects.create(device=device,identity=id,time=time,connectionID=1)
 
-        time = datetime.today() - timedelta(days=7) 
+        time = datetime.today() - timedelta(days=7)
         Session.objects.create(device=device,identity=id,time=time,connectionID=2)
- 
-        time = datetime.today() - timedelta(days=3) 
+
+        time = datetime.today() - timedelta(days=3)
         Session.objects.create(device=device,identity=id,time=time,connectionID=3)
- 
-        time = datetime.today() - timedelta(days=10) 
+
+        time = datetime.today() - timedelta(days=10)
         Session.objects.create(device=device,identity=id,time=time,connectionID=4,
                 recommendation=Action.BLOCK)
- 
-        time = datetime.today() - timedelta(days=10) 
+
+        time = datetime.today() - timedelta(days=10)
         Session.objects.create(device=device,identity=id,time=time,connectionID=5,
                 recommendation=Action.ALLOW)
- 
+
         purge_dead_sessions()
         sessions = Session.objects.all()
- 
+
         self.assertEqual(3, len(sessions))
         for session in sessions:
             self.assertTrue(session.id in (3,4,5))
- 
+
