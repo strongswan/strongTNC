@@ -10,3 +10,5 @@
 *.pyc
 
 *.db-journal
+*.log
+*.orig
