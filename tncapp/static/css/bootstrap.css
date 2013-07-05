@@ -764,15 +764,15 @@ h3 {
 }
 
 h1 {
-  font-size: 25px;
+  font-size: 38.5px;
 }
 
 h2 {
-  font-size: 22px;
+  font-size: 31.5px;
 }
 
 h3 {
-  font-size: 20px;
+  font-size: 24.5px;
 }
 
 h4 {
@@ -2008,8 +2008,8 @@ table {
 
 .table th,
 .table td {
-  padding: 4px;
-  line-height: 15px;
+  padding: 8px;
+  line-height: 20px;
   text-align: left;
   vertical-align: top;
   border-top: 1px solid #dddddd;

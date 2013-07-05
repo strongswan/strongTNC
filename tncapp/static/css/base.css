@@ -17,6 +17,24 @@ body {
     padding-bottom: 40px;
 }
 
+h1 {
+    font-size: 25px;
+}
+
+h2 {
+    font-size: 22px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+.table th,
+.table td {
+    padding: 4px;
+    line-height: 15px;
+}
+
 .sidebar-nav {
     padding: 9px 0;
 }
