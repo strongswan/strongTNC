@@ -33,7 +33,7 @@
             </tr>
             <tr>
               <td><strong>{% trans 'Time' %}</strong></td>
-              <td>{{ session.time }}</td>
+              <td>{{ session.time|date:'M d H:i:s Y' }}</td>
             </tr>
             <tr>
               <td><strong>{% trans 'Result' %}</strong></td>
