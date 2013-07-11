@@ -4,8 +4,8 @@ Defines regular expressions for URL's that are served by the web app
 
 import settings
 from django.conf.urls import patterns, url
-import group_views, device_views, product_views, policy_views
-import enforcement_views, package_views, file_views, search_views, views
+import group_views, device_views, product_views, policy_views, enforcement_views
+import package_views, directory_views, file_views, search_views, views
 
 urlpatterns = patterns('',
         url(r'^media/(?P<path>.*)$','django.views.static.serve',
@@ -42,6 +42,14 @@ urlpatterns = patterns('',
         url(r'^sessions/(?P<sessionID>\d+)/?$', device_views.session,
             name='session'),
 
+        url(r'^directories/?$', directory_views.directories, name='directories'),
+        url(r'^directories/(?P<directoryID>\d+)/?$', directory_views.directory,
+            name='directory'),
+        url(r'^directories/save?$', directory_views.save, name='save'),
+        url(r'^directories/(?P<directoryID>\d+)/delete/?$', directory_views.delete,
+            name='delete'),
+        url(r'^directories/search/?$', directory_views.search, name='search'),
+
         url(r'^files/?$', file_views.files, name='files'),
         url(r'^files/(?P<fileID>\d+)/?$', file_views.file, name='file'),
         url(r'^files/save?$', file_views.save, name='save'),
@@ -53,7 +61,8 @@ urlpatterns = patterns('',
             name='delete'),
     
         url(r'^packages/?$', package_views.packages, name='packages'),
-        url(r'^packages/(?P<packageID>\d+)/?$', package_views.package, name='package'),
+        url(r'^packages/(?P<packageID>\d+)/?$', package_views.package,
+            name='package'),
         url(r'^packages/add/?$', package_views.add, name='add'),
         url(r'^packages/save?$', package_views.save, name='save'),
         url(r'^packages/(?P<packageID>\d+)/delete/?$', package_views.delete,
@@ -65,7 +74,8 @@ urlpatterns = patterns('',
             package_views.toggle_version, name='toggle_version'),
         
         url(r'^products/?$', product_views.products, name='products'),
-        url(r'^products/(?P<productID>\d+)/?$', product_views.product, name='product'),
+        url(r'^products/(?P<productID>\d+)/?$', product_views.product,
+            name='product'),
         url(r'^products/add/?$', product_views.add, name='product_add'),
         url(r'^products/save?$', product_views.save, name='product_save'),
         url(r'^products/(?P<productID>\d+)/delete/?$', product_views.delete,
@@ -74,7 +84,8 @@ urlpatterns = patterns('',
         url(r'^products/check/?$', product_views.check, name='check'),
         
         url(r'^policies/?$', policy_views.policies, name='policies'),
-        url(r'^policies/(?P<policyID>\d+)/?$', policy_views.policy, name='policy'),
+        url(r'^policies/(?P<policyID>\d+)/?$', policy_views.policy,
+            name='policy'),
         url(r'^policies/add/?$', policy_views.add, name='add'),
         url(r'^policies/save?$', policy_views.save, name='save'),
         url(r'^policies/(?P<policyID>\d+)/delete/?$', policy_views.delete,
@@ -84,7 +95,8 @@ urlpatterns = patterns('',
         
         url(r'^enforcements/?$', enforcement_views.enforcements,
             name='enforcements'),
-        url(r'^enforcements/(?P<enforcementID>\d+)/?$', enforcement_views.enforcement, name='enforcement'),
+        url(r'^enforcements/(?P<enforcementID>\d+)/?$', enforcement_views.enforcement,
+            name='enforcement'),
         url(r'^enforcements/add/?$', enforcement_views.add, name='add'),
         url(r'^enforcements/save?$', enforcement_views.save, name='save'),
         url(r'^enforcements/(?P<enforcementID>\d+)/delete/?$', enforcement_views.delete,
