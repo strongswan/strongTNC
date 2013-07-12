@@ -53,6 +53,20 @@ def directory(request,directoryID):
 
     return render(request, 'tncapp/directories.html', context)
 
+@require_GET
+@login_required
+def add(request):
+    """
+    Add a directory
+    """
+    context = {}
+    context['title'] = _('New directory')
+    context['count'] = Directory.objects.count()
+    directories = Directory.objects.all().order_by('path')
+    context['directories'] = paginate(directories, request)
+    context['directory'] = Directory()
+    return render(request, 'tncapp/directories.html', context)
+
 @require_POST
 @login_required
 def save(request):
@@ -60,12 +74,19 @@ def save(request):
     Insert/update view
     """
     directoryID = request.POST['directoryId']
-    if not (fileID == 'None' or re.match(r'^\d+$', directoryID)):
+    if not (directoryID == 'None' or re.match(r'^\d+$', directoryID)):
         return HttpResponse(status=400)
 
-    name = request.POST['name']
-    if not re.match(r'^[\S]+$', name):
+    path = request.POST['path']
+    if not re.match(r'^[\S]+$', path):
         return HttpResponse(status=400)
+
+    if directoryID == 'None':
+        directory = Directory.objects.create(path=path)
+    else:
+        directory = get_object_or_404(Directory, pk=directoryID)
+        directory.path = path
+        directory.save()
 
     messages.success(request, _('Directory saved!'))
     return redirect('/directories/%d' % directory.id)

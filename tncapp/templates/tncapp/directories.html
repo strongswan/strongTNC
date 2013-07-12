@@ -13,7 +13,14 @@
   <div class="container-fluid">
     <div class="row-fluid">
       <div class="span3" id="line">
-		<h4>{% trans "Directory" %}</h4>
+		<h4>{% trans "Directory" %}
+	      <div class="pull-right">
+	        <a class="btn btn-primary btn-mini" href="/directories/add"
+	          value="addNew" rel="tooltip" title="add new">
+	          <i class="icon-plus-sign icon-white"></i>
+	        </a>
+	      </div>
+        </h4>
 		<hr>
 		<div class="row-fluid">
 		  {% if count > 0 %}
@@ -60,27 +67,33 @@
 	</div>
       
     <div class="span9" id="content">
-	{% if directory %}
-	<h4>Directory Info</h4>
-	<form class="form-horizontal" method="POST" action="/directories/save" id="directoryform">
+	  {% if directory %}
+	  <h4>Directory Info</h4>
+	  <form class="form-horizontal" method="POST" action="/directories/save" id="directoryform">
 	  {% csrf_token %}
+      <input type="hidden" id="directoryId" name="directoryId" value="{{directory.id}}" />
 
-	<div class="control-group">
-	  <label class="control-label" for="name">Path</label>    
-	  <div class="controls controls-row">
-	    <label class="help-inline" style="margin-bottom: -5px"><strong>{{ directory.path }}</strong></label>
+	  <div class="control-group">
+	    <label class="control-label" for="id">{% trans "Path" %}</label>
+	    <div class="controls">
+	      <input type="text" id="path" name="path" placeholder="{% trans 'Path' %}" rel="tooltip"
+	      title="{% trans 'Directory path' %}" value="{{ directory.path}}">
+	    </div>
 	  </div>
-	</div>
     
-	<hr>
+	  <hr>
 	    
-	<div class="btn-toolbar" style="margin: 0;">
-	  {% if directory.id %}
-          <div class="btn-group">
-	    <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
-	  </div><!-- /btn-group -->
-	</div><!-- /btn-toolbar-->
-	{% endif %}
+	  <div class="btn-toolbar" style="margin: 0;">
+        <div class="btn-group">
+          <button class="btn btn-success" type="submit" onclick="save_product()">
+          <i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
+        </div><!-- /btn-group -->
+	    {% if directory.id %}
+        <div class="btn-group">
+	      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+	    </div><!-- /btn-group -->
+	  </div><!-- /btn-toolbar-->
+	  {% endif %}
 
 	<hr>
 	    
@@ -124,6 +137,21 @@
     <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete directory</a>
   </div>
 </div>
+
+  <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-header">
+	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	  <h3 id="deleteModalLabel">Update directory</h3>
+	</div>
+	<div class="modal-body">
+	  <h4>Warning</h4>
+	  <p>You have changed the blabla</p>
+	</div>
+	<div class="modal-footer">
+	  <a class="btn" data-dismiss="modal">Cancel</a>
+	  <a class="btn btn-success" onclick="directoryform.submit()" >Continue</a>
+	</div>
+  </div>
 
 </div><!--content-->
     </div><!--/row-->
