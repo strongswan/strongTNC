@@ -218,6 +218,21 @@ $(document).ready(function () {
 })
 
 function type_change(){
+  var PCKGS =  1;
+  var UNSRC =  2;
+  var FWDEN =  3;
+  var PWDEN =  4;
+  var FREFM =  5;
+  var FMEAS =  6;
+  var FMETA =  7;
+  var DREFM =  8;
+  var DMEAS =  9;
+  var DMETA = 10;
+  var TCPOP = 11;
+  var TCPBL = 12;
+  var UDPOP = 13;
+  var UDPBL = 14;
+
   $(document.getElementById('file')).hide();
   $(document.getElementById('dir')).hide();
   $(document.getElementById('port')).hide();
@@ -226,11 +241,11 @@ function type_change(){
   type = $("select#type option:selected").attr("value")
   //type ++; //Because empty defaults to 0
 
-  if (type == 5 || type == 6 || type == 7)
+  if (type == FREFM || type == FMEAS || type == FMETA)
     $(document.getElementById('file')).show();
-  else if (type == 8 || type == 9 || type == 10)
+  else if (type == DREFM || type == DMEAS || type == DMETA)
     $(document.getElementById('dir')).show();
-  else if (type == 11 || type == 12 || type == 13 || type == 14)
+  else if (type == TCPOP || type == TCPBL || type == UDPOP || type == UDPBL)
   {
     $(document.getElementById('port')).show();
     $(document.getElementById('range-flip')).show();
