@@ -121,22 +121,20 @@
           </div>
         </div>        
         
-        <div class="control-group hide" id="range-flip">
-          <label class="control-label" for="flip">{% trans "All ports" %}</label> 
+        <div class="control-group hide" id="closed-port">
+          <label class="control-label" for="range">{% trans "All ports closed except" %}</label> 
           <div class="controls">   
-            <input type="radio" id="flip" name="flip" value="0" checked> can be open...<br>
-          </div>
-          <div class="controls">   
-            <input type="radio" id="flip" name="flip" value="1"> have to be closed...<br>
+            <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
+              rel="tooltip" title="{% trans 'Comma or space separated range(s) of ports, f.e: 5,10-1024 2450-4000' %}"
+              value="{{ policy.argument|default:'' }}">
           </div>
         </div>
 
-        <div class="control-group hide" id="port">
-          <label class="control-label" for="range">{% trans "...except" %}</label> 
-          <div class="controls">   
-            
+        <div class="control-group hide" id="open-port">
+          <label class="control-label" for="range">{% trans "All ports open except" %}</label>
+          <div class="controls">
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
-              rel="tooltip" title="{% trans 'Comma separated range(s) of ports, f.e: 5,10-1024,2450-4000' %}"
+              rel="tooltip" title="{% trans 'Comma or space separated range(s) of ports, f.e: 5,10-1024 2450-4000' %}"
               value="{{ policy.argument|default:'' }}">
           </div>
         </div>
@@ -245,11 +243,10 @@ function type_change(){
     $(document.getElementById('file')).show();
   else if (type == DREFM || type == DMEAS || type == DMETA)
     $(document.getElementById('dir')).show();
-  else if (type == TCPOP || type == TCPBL || type == UDPOP || type == UDPBL)
-  {
-    $(document.getElementById('port')).show();
-    $(document.getElementById('range-flip')).show();
-  }
+  else if (type == TCPOP || type == UDPOP)
+    $(document.getElementById('closed-port')).show();
+  else if (type == TCPBL || type == UDPBL)
+    $(document.getElementById('open-port')).show();
 }
 
 </script>
