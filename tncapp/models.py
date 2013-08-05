@@ -23,6 +23,7 @@ Defines model classes which are used by the Django OR-mapper
 
 import binascii
 from datetime import datetime
+from datetime import timedelta
 from calendar import timegm
 from django.db import models
 
@@ -76,6 +77,26 @@ class Action(object):
     BLOCK = 1
     ISOLATE = 2
     NONE = 3
+
+class WorkItemType(object):
+    """
+    Possible workitem type values
+    """
+    RESVD =  0
+    PCKGS =  1
+    UNSRC =  2
+    FWDEN =  3
+    PWDEN =  4
+    FREFM =  5
+    FMEAS =  6
+    FMETA =  7
+    DREFM =  8
+    DMEAS =  9
+    DMETA = 10
+    TCPOP = 11
+    TCPBL = 12
+    UDPOP = 13
+    UDPBL = 14
 
 class Product(models.Model):
     """
@@ -136,18 +157,14 @@ class Device(models.Model):
         enforcement
         """
         try:
-            last_meas = Session.objects.filter(device=self).latest('time')
-            result = Result.objects.get(session=last_meas,
-                    policy=enforcement.policy)
-        except Session.DoesNotExist:
-            return True
+            result = Result.objects.filter(session__device=self,
+                                           policy=enforcement.policy).latest()
         except Result.DoesNotExist:
             return True
 
-        age = datetime.today() - last_meas.time
+        deadline = datetime.today() - timedelta(seconds=enforcement.max_age)
 
-        if age.seconds >= enforcement.max_age or (result.recommendation !=
-                Action.ALLOW):
+        if result.session.time < deadline or (result.recommendation != Action.ALLOW):
             return True
 
         return False

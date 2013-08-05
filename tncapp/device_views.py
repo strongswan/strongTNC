@@ -242,7 +242,7 @@ def report(request, deviceID):
                 enforcements.append((e, Policy.action[result.recommendation],
                     device.is_due_for(e)))
             except Result.DoesNotExist:
-                enforcements.append((e, _('N/A'), device.is_due_for(e)))
+                enforcements.append((e, _('N/A'), True))
 
     context['enforcements'] = enforcements
 
