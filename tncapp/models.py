@@ -97,6 +97,7 @@ class WorkItemType(object):
     TCPBL = 12
     UDPOP = 13
     UDPBL = 14
+    SWIDT = 15
 
 class Product(models.Model):
     """
@@ -378,6 +379,7 @@ class Policy(models.Model):
             'Blocked TCP Listening Ports',
             'Open UDP Listening Ports',
             'Blocked UDP Listening Ports',
+            'SWID Tag Inventory',
             ]
 
 
@@ -397,6 +399,7 @@ class Policy(models.Model):
             'Blocked TCP Listening Ports': lambda p: p.argument if p.argument else '',
             'Open UDP Listening Ports': lambda p: p.argument if p.argument else '',
             'Blocked UDP Listening Ports': lambda p: p.argument if p.argument else '',
+            'SWID Tag Inventory': lambda p: p.argument if p.argument else '',
             }
 
 

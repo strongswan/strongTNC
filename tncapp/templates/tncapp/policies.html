@@ -139,6 +139,15 @@
           </div>
         </div>
 
+        <div class="control-group hide" id="swid-request">
+          <label class="control-label" for="flags">{% trans "SWID Request Flags" %}</label>
+          <div class="controls">
+            <input type="text" id="flags" name="flags" placeholder="{% trans 'SWID Request Flags' %}"
+              rel="tooltip" title="{% trans 'R or Tag IDs only, S for Subscribe, C for Clear subscription' %}"
+              value="{{ policy.argument|default:'' }}">
+          </div>
+        </div>
+
         <div class="control-group">
           <label class="control-label" for="fail">{% trans "Fail-Action" %}</label> 
           <div class="controls">   
@@ -230,11 +239,13 @@ function type_change(){
   var TCPBL = 12;
   var UDPOP = 13;
   var UDPBL = 14;
+  var SWIDT = 15;
 
   $(document.getElementById('file')).hide();
   $(document.getElementById('dir')).hide();
-  $(document.getElementById('port')).hide();
-  $(document.getElementById('range-flip')).hide();
+  $(document.getElementById('closed-port')).hide();
+  $(document.getElementById('open-port')).hide();
+  $(document.getElementById('swid-request')).hide();
 
   type = $("select#type option:selected").attr("value")
   //type ++; //Because empty defaults to 0
@@ -247,6 +258,8 @@ function type_change(){
     $(document.getElementById('closed-port')).show();
   else if (type == TCPBL || type == UDPBL)
     $(document.getElementById('open-port')).show();
+  else if (type == SWIDT)
+    $(document.getElementById('swid-request')).show();
 }
 
 </script>
