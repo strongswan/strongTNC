@@ -151,7 +151,7 @@ def check(request):
 
         try:
             group = Group.objects.get(name=group_name)
-            response = (group.id == group_id)
+            response = (str(group.id) == group_id)
         except Group.DoesNotExist:
             response = True
 

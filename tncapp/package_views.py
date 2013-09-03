@@ -136,7 +136,7 @@ def check(request):
 
         try:
             package = Package.objects.get(name=package_name)
-            response = (package.id == package_id)
+            response = (str(package.id) == package_id)
         except Package.DoesNotExist:
             response = True
 

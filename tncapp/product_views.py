@@ -147,7 +147,7 @@ def check(request):
 
         try:
             product = Product.objects.get(name=product_name)
-            response = (product.id == product_id)
+            response = (str(product.id) == product_id)
         except Product.DoesNotExist:
             response = True
 

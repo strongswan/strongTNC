@@ -206,7 +206,7 @@ def check(request):
 
         try:
             policy = Policy.objects.get(name=policy_name)
-            response = (policy.id == policy_id)
+            response = (str(policy.id) == policy_id)
         except Policy.DoesNotExist:
             response = True
 
