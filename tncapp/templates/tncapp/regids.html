@@ -1,0 +1,162 @@
+
+{% extends "tncapp/base.html" %}
+
+{% load i18n %}
+{% block title %}{{title}}{% endblock %}
+
+{% block hero %}
+<h1>{{ title }}</h1>
+{% endblock %}
+
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span3" id="line">
+		<h4>{% trans "Regid" %}
+	      <div class="pull-right">
+	        <a class="btn btn-primary btn-mini" href="/regids/add"
+	          value="addNew" rel="tooltip" title="add new">
+	          <i class="icon-plus-sign icon-white"></i>
+	        </a>
+	      </div>
+        </h4>
+		<hr>
+		<div class="row-fluid">
+		  {% if count > 0 %}
+		  <form class="form-search pull-center" action="/regids/search" method="get">
+			<div class="input-append">
+			  <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
+			  <button type="submit" class="btn"><i class="icon-search"></i></button>
+			</div>
+		  </form>
+		  {% endif %}
+		  {% if regid|length >= 50 %}
+		  {% if regids.paginator.num_pages > 1 %}
+		  <div class="pagination pagination-mini pagination-centered">
+			<ul>
+			  {% if regids.has_previous %}
+			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ regids.previous_page_number }}">&laquo;</a></li>
+			  {% else %}
+			  <li class="disabled"><a href="">&laquo;</a></li>
+			  {% endif %}
+			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ regids.number }}">Page {{ regids.number }} of {{ regids.paginator.num_pages }}</a></li>
+			  {% if regids.has_next %}
+			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ regids.next_page_number }}">&raquo;</a></li>
+			  {% else %}
+			  <li class="disabled"><a href="">&raquo;</a></li>
+			  {% endif %}
+			</ul>
+		  </div>
+		  {% endif %}
+		  {% endif %}
+		</div>
+		{% if regids %}
+		<table class="table table-hover">
+		  <tbody>
+			{% for d in regids %}
+			<tr><td><a href="/regids/{{ d.id }}">{{ d }}</a></td></tr>
+			{% endfor %}
+		  </tbody>
+		</table>
+		{% elif count == 0 %}
+	  <p><small>There are no entries.</small></p>
+      {% elif query %}
+	  <p><small>No regids matched your search criteria.</small></p>
+	  {% endif %}
+	</div>
+      
+    <div class="span9" id="content">
+	  {% if regid %}
+	  <h4>Regid Info</h4>
+	  <form class="form-horizontal" method="POST" action="/regids/save" id="regidform">
+	  {% csrf_token %}
+      <input type="hidden" id="regidId" name="regidId" value="{{regid.id}}" />
+
+	  <div class="control-group">
+	    <label class="control-label" for="id">{% trans "Name" %}</label>
+	    <div class="controls">
+	      <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}" rel="tooltip"
+	      title="{% trans 'Regid name' %}" value="{{ regid.name}}">
+	    </div>
+	  </div>
+    
+	  <hr>
+	    
+	  <div class="btn-toolbar" style="margin: 0;">
+        <div class="btn-group">
+          <button class="btn btn-success" type="submit" onclick="save_product()">
+          <i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
+        </div><!-- /btn-group -->
+	    {% if regid.id %}
+        <div class="btn-group">
+	      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+	    </div><!-- /btn-group -->
+	  </div><!-- /btn-toolbar-->
+	  {% endif %}
+
+	<hr>
+	    
+	<h4>Tags</h4>
+      {% if tags %}
+  <div class="row-fluid">
+    <table id="versions" class="table table-hover table-striped">
+      <thead>
+	<tr>
+	  <td>{% trans 'Unique Software ID' %}</td>
+	</tr>
+      </thead>
+      <tbody>
+	{% for f in tags %}
+	<tr>
+	  <td><a href="/tags/{{ f.id }}">{{ f.unique_sw_id }}</a></td>
+	</tr>
+	{% endfor %}
+      </tbody>
+    </table>
+    </div>
+  {% endif %}
+  </form>
+
+{% endif %}
+
+<div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3 id="deleteModalLabel">Are you sure to delete this regid?</h3>
+  </div>
+  <div class="modal-body">
+    <h4>Warning</h4>
+    <p>Are you sure to delete this tag?</p>
+  </div>
+  <form method="POST" action="/regids/{{ regid.id }}/delete" id="deleteform">
+    {% csrf_token %}
+  </form>
+  <div class="modal-footer">
+    <a class="btn" data-dismiss="modal">Cancel</a>
+    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete regid</a>
+  </div>
+</div>
+
+  <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-header">
+	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	  <h3 id="deleteModalLabel">Update regid</h3>
+	</div>
+	<div class="modal-body">
+	  <h4>Warning</h4>
+	  <p>You have changed the blabla</p>
+	</div>
+	<div class="modal-footer">
+	  <a class="btn" data-dismiss="modal">Cancel</a>
+	  <a class="btn btn-success" onclick="regidform.submit()" >Continue</a>
+	</div>
+  </div>
+
+</div><!--content-->
+    </div><!--/row-->
+  </div>
+
+{% endblock %}
+
+

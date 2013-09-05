@@ -112,6 +112,35 @@ class Product(models.Model):
     class Meta:
         db_table = u'products'
 
+class Regid(models.Model):
+    """
+    SWID Registration ID
+    """
+    id = models.AutoField(primary_key=True)
+    name = models.TextField()
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        db_table = u'regids'
+
+class Tag(models.Model):
+    """
+    SWID Tag
+    """
+    id = models.AutoField(primary_key=True)
+    regid = models.ForeignKey(Regid, db_column='regid',
+            related_name='tags', on_delete=models.CASCADE)
+    unique_sw_id = models.TextField()
+    value = models.TextField()
+
+    def __unicode__(self):
+        return '%s_%s' % (self.regid.name, self.unique_sw_id)
+
+    class Meta:
+        db_table = u'tags'
+
 class Device(models.Model):
     """
     An Android Device identified by its AndroidID

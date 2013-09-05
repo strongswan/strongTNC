@@ -71,7 +71,9 @@
           <tr><td><li{% if request.path|slice:":9" == '/products' %} class="active"{% endif %}><a href="/products"><i class="icon-briefcase"></i> {% trans 'Products' %}</a></li></td></tr>
           <tr><td><li{% if request.path|slice:":12" == '/directories' %} class="active"{% endif %}><a href="/directories"><i class="icon-folder-open"></i> {% trans 'Directories' %}</a></li></td></tr>
           <tr><td><li{% if request.path|slice:":6" == '/files' %} class="active"{% endif %}><a href="/files"><i class="icon-file"></i> {% trans 'Files' %}</a></li></td></tr>
-	      <tr><td><li{% if request.path|slice:":11" == '/statistics' %} class="active"{% endif %}><a
+          <tr><td><li{% if request.path|slice:":6" == '/regids' %} class="active"{% endif %}><a href="/regids"><i class="icon-barcode"></i> {% trans 'Regids' %}</a></li></td></tr>
+	      <tr><td><li{% if request.path|slice:":4" == '/tags' %} class="active"{% endif %}><a href="/tags"><i class="icon-tag"></i> {% trans 'Tags' %}</a></li></td></tr>
+          <tr><td><li{% if request.path|slice:":11" == '/statistics' %} class="active"{% endif %}><a
           href="/statistics"><i class="icon-tasks"></i> {% trans 'Statistics' %}</a></li></td></tr>
 	      	  </tbody></table>
             </ul>

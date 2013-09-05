@@ -25,6 +25,7 @@ import settings
 from django.conf.urls import patterns, url
 import group_views, device_views, product_views, policy_views, enforcement_views
 import package_views, directory_views, file_views, search_views, views
+import regid_views
 
 urlpatterns = patterns('',
         url(r'^media/(?P<path>.*)$','django.views.static.serve',
@@ -80,6 +81,14 @@ urlpatterns = patterns('',
         url(r'^file_hashes/(?P<file_hashID>\d+)/delete/?$', file_views.deleteHash,
             name='delete'),
 
+        url(r'^regids/?$', regid_views.regids, name='regids'),
+        url(r'^regids/(?P<regidID>\d+)/?$', regid_views.regid, name='regid'),
+        url(r'^regids/add/?$', regid_views.add, name='add'),
+        url(r'^regids/save?$', regid_views.save, name='save'),
+        url(r'^regids/(?P<regidID>\d+)/delete/?$', regid_views.delete,
+            name='delete'),
+        url(r'^regids/search/?$', regid_views.search, name='search'),
+ 
         url(r'^packages/?$', package_views.packages, name='packages'),
         url(r'^packages/(?P<packageID>\d+)/?$', package_views.package,
             name='package'),
