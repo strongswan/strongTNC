@@ -11,8 +11,7 @@ class DBRouter(object):
         Routes reading access requests
         """
         response = 'default'
-        if model._meta.db_table.startswith('auth_') or \
-                model._meta.db_table.startswith('django_') :
+        if self.is_meta(model):
             response = 'meta'
 
         return response
@@ -22,20 +21,26 @@ class DBRouter(object):
         Routes writing access requests
         """
         response = 'default'
-        if model._meta.db_table.startswith('auth_') or \
-                model._meta.db_table.startswith('django_') :
+        if self.is_meta(model):
             response = 'meta'
 
         return response
 
     def allow_syncdb(self, db, model):
         """
-        For manage.py syncdb
+        For manage.py syncdb make sure data ends up in the right table
         """
-        response = 'default'
-        if (model._meta.db_table.startswith('auth_') or \
-                model._meta.db_table.startswith('django_')):
-            response = 'meta'
+        if db == 'meta':
+            return self.is_meta(model)
+        elif self.is_meta(model):
+            return False
 
-        return response
+        return True
+
+    def is_meta(self, model):
+        """
+        Check if the given model is Django meta data
+        """
+        return model._meta.db_table.startswith('auth_') or \
+               model._meta.db_table.startswith('django_')
 
