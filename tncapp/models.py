@@ -98,6 +98,7 @@ class WorkItemType(object):
     UDPOP = 13
     UDPBL = 14
     SWIDT = 15
+    TPMRA = 16
 
 class Product(models.Model):
     """
@@ -409,6 +410,7 @@ class Policy(models.Model):
             'Open UDP Listening Ports',
             'Blocked UDP Listening Ports',
             'SWID Tag Inventory',
+            'TPM Remote Attestation',
             ]
 
 
@@ -429,6 +431,7 @@ class Policy(models.Model):
             'Open UDP Listening Ports': lambda p: p.argument if p.argument else '',
             'Blocked UDP Listening Ports': lambda p: p.argument if p.argument else '',
             'SWID Tag Inventory': lambda p: p.argument if p.argument else '',
+            'TPM Remote Attestation': lambda p: p.argument if p.argument else '',
             }
 
 

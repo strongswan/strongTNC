@@ -143,7 +143,16 @@
           <label class="control-label" for="flags">{% trans "SWID Request Flags" %}</label>
           <div class="controls">
             <input type="text" id="flags" name="flags" placeholder="{% trans 'SWID Request Flags' %}"
-              rel="tooltip" title="{% trans 'R or Tag IDs only, S for Subscribe, C for Clear subscription' %}"
+              rel="tooltip" title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}"
+              value="{{ policy.argument|default:'' }}">
+          </div>
+        </div>
+
+        <div class="control-group hide" id="tpm-attestation">
+          <label class="control-label" for="flags">{% trans "TPM Attestation Flags" %}</label>
+          <div class="controls">
+            <input type="text" id="flags" name="flags" placeholder="{% trans 'TPM Attestation Flags' %}"
+              rel="tooltip" title="{% trans 'B for BIOS measurements, I for IMA measurements' %}"
               value="{{ policy.argument|default:'' }}">
           </div>
         </div>
@@ -240,12 +249,14 @@ function type_change(){
   var UDPOP = 13;
   var UDPBL = 14;
   var SWIDT = 15;
+  var TPMRA = 16;
 
   $(document.getElementById('file')).hide();
   $(document.getElementById('dir')).hide();
   $(document.getElementById('closed-port')).hide();
   $(document.getElementById('open-port')).hide();
   $(document.getElementById('swid-request')).hide();
+  $(document.getElementById('tpm-attestation')).hide();
 
   type = $("select#type option:selected").attr("value")
   //type ++; //Because empty defaults to 0
@@ -260,6 +271,8 @@ function type_change(){
     $(document.getElementById('open-port')).show();
   else if (type == SWIDT)
     $(document.getElementById('swid-request')).show();
+  else if (type == TPMRA)
+    $(document.getElementById('tpm-attestation')).show();
 }
 
 </script>
