@@ -37,6 +37,18 @@ The web interface should be available on ``http://localhost:8000/``. The
 default password is ``password``.
 
 
+Testing
+-------
+
+Install pytest & dependencies::
+
+    pip install -r requirements-tests.txt
+
+Run the tests::
+
+    ./runtests.py
+
+
 License
 -------
 

@@ -26,8 +26,8 @@ from django.test import TestCase
 from datetime import datetime, timedelta
 from tncapp.models import (File, WorkItem, Device, Group, Product, Session,
     Policy, Enforcement, Action, Package, Directory, Version, Identity, Result)
-from views import generate_results, purge_dead_sessions
-from policy_views import check_range, invert_range
+from tncapp.views import generate_results, purge_dead_sessions
+from tncapp.policy_views import check_range, invert_range
 
 class tncappTest(TestCase):
     def setUp(self):
