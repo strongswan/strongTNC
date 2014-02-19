@@ -16,3 +16,4 @@
 # Other files
 *.log
 *.orig
+.cache
