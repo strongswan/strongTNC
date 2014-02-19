@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Django settings for strongTNC
 from django.contrib import messages
 
@@ -5,8 +6,9 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-     ('Marco Tanner', 'm1tanner@hsr.ch'),
-     ('Stefan Rohner','srohner@hsr.ch'),
+     ('Christian Fässler','cfaessle@hsr.ch'),
+     ('Danilo Bargen', 'dbargen@hsr.ch'),
+     ('Jonas Furrer','jfurrer@hsr.ch'),
 )
 
 MANAGERS = ADMINS
@@ -17,7 +19,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'ipsec.config.db',
     },
-    
+
     'meta': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'django.db',
