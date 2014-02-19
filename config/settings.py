@@ -26,7 +26,7 @@ DATABASES = {
     },
 }
 
-DATABASE_ROUTERS = ['router.DBRouter']
+DATABASE_ROUTERS = ['config.router.DBRouter']
 
 LOGIN_URL = '/login'
 
@@ -121,7 +121,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'tncapp.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
