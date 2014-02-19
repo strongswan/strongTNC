@@ -9,6 +9,10 @@
 # Python byte code
 *.pyc
 
+# Databases
+*.db
 *.db-journal
+
+# Other files
 *.log
 *.orig
