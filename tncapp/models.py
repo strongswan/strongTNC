@@ -67,7 +67,9 @@ class EpochField(models.IntegerField):
                 return value
 
     def get_prep_value(self, value):
-        return timegm(value.utctimetuple())
+        if value:
+            return timegm(value.utctimetuple())
+        return None
 
 class Action(object):
     """
