@@ -15,13 +15,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-"""
-Unit tests for the django app are specified in this file
-
-    run using 'python manage.py test tncapp'
-"""
-
 from django.test import TestCase
 from datetime import datetime, timedelta
 from tncapp.models import (File, WorkItem, Device, Group, Product, Session,
@@ -29,7 +22,8 @@ from tncapp.models import (File, WorkItem, Device, Group, Product, Session,
 from tncapp.views import generate_results, purge_dead_sessions
 from tncapp.policy_views import check_range, invert_range
 
-class tncappTest(TestCase):
+
+class TncappTest(TestCase):
     def setUp(self):
         user = Identity.objects.create(data='Test User')
         user.type = 1
@@ -52,9 +46,9 @@ class tncappTest(TestCase):
         device.groups.add(g131)
         device.save()
 
-        Policy.objects.create(name='bash',type=1,argument='/bin/bash',fail=3,noresult=0)
-        Policy.objects.create(name='usrbin',type=2,argument='/usr/bin/',fail=4,noresult=1)
-        Policy.objects.create(name='ports',type=3,argument='0-1024',fail=0,noresult=0)
+        Policy.objects.create(name='bash', type=1, argument='/bin/bash', fail=3, noresult=0)
+        Policy.objects.create(name='usrbin', type=2, argument='/usr/bin/', fail=4, noresult=1)
+        Policy.objects.create(name='ports', type=3, argument='0-1024', fail=0, noresult=0)
 
         lib = Package.objects.create(name='libstrongswan')
         ss = Package.objects.create(name='strongswan')
@@ -112,7 +106,6 @@ class tncappTest(TestCase):
         self.assertEqual(None, item.recommendation)
         self.assertEqual(None, item.result)
 
-
         item = items[1]
         self.assertEqual(1, item.type)
         self.assertEqual(3, item.fail)
@@ -120,7 +113,6 @@ class tncappTest(TestCase):
         self.assertEqual('/bin/bash', item.argument)
         self.assertEqual(None, item.recommendation)
         self.assertEqual(None, item.result)
-
 
     def test_actionInheritance(self):
 
@@ -155,11 +147,9 @@ class tncappTest(TestCase):
         self.assertEqual(3, item.fail)
         self.assertEqual(0, item.noresult)
 
-
         item = WorkItem.objects.get(session=session, enforcement=e2)
         self.assertEqual(3, item.fail)
         self.assertEqual(0, item.noresult)
-
 
     def test_is_due_for(self):
         g = Group.objects.get(name='L1.3.1')
@@ -178,7 +168,7 @@ class tncappTest(TestCase):
 
         #Session is too old
         Result.objects.create(policy=p, session=meas, result='OK',
-                recommendation = Action.ALLOW)
+                recommendation=Action.ALLOW)
 
         meas.time -= timedelta(days=4)
         meas.save()
@@ -242,7 +232,7 @@ class tncappTest(TestCase):
     def test_policy_file_protection(self):
         file = File.objects.get(name='bash')
 
-        policy = Policy.objects.create(name='binbash', type=1, argument='%d'%file.id,
+        policy = Policy.objects.create(name='binbash', type=1, argument='%d' % file.id,
                 file=file, fail=Action.BLOCK, noresult=Action.ALLOW)
 
         from django.db.models.deletion import ProtectedError
@@ -254,7 +244,7 @@ class tncappTest(TestCase):
         dir = Directory.objects.get(path='/bin')
 
         policy = Policy.objects.create(name='binhashes', type=2,
-                argument='%d'%dir.id, dir=dir, fail=Action.BLOCK,
+                argument='%d' % dir.id, dir=dir, fail=Action.BLOCK,
                 noresult=Action.ALLOW)
 
         from django.db.models.deletion import ProtectedError
@@ -329,20 +319,20 @@ class tncappTest(TestCase):
         id = Identity.objects.create(data='user')
 
         time = datetime.today() - timedelta(days=20)
-        Session.objects.create(device=device,identity=id,time=time,connectionID=1)
+        Session.objects.create(device=device, identity=id, time=time, connectionID=1)
 
         time = datetime.today() - timedelta(days=7)
-        Session.objects.create(device=device,identity=id,time=time,connectionID=2)
+        Session.objects.create(device=device, identity=id, time=time, connectionID=2)
 
         time = datetime.today() - timedelta(days=3)
-        Session.objects.create(device=device,identity=id,time=time,connectionID=3)
+        Session.objects.create(device=device, identity=id, time=time, connectionID=3)
 
         time = datetime.today() - timedelta(days=10)
-        Session.objects.create(device=device,identity=id,time=time,connectionID=4,
+        Session.objects.create(device=device, identity=id, time=time, connectionID=4,
                 recommendation=Action.BLOCK)
 
         time = datetime.today() - timedelta(days=10)
-        Session.objects.create(device=device,identity=id,time=time,connectionID=5,
+        Session.objects.create(device=device, identity=id, time=time, connectionID=5,
                 recommendation=Action.ALLOW)
 
         purge_dead_sessions()
@@ -350,5 +340,4 @@ class tncappTest(TestCase):
 
         self.assertEqual(3, len(sessions))
         for session in sessions:
-            self.assertTrue(session.id in (3,4,5))
-
+            self.assertTrue(session.id in (3, 4, 5))
