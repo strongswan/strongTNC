@@ -1,6 +1,10 @@
 strongTNC
 =========
 
+.. image:: https://travis-ci.org/strongswan/strongTNC.png?branch=master
+	:target: https://travis-ci.org/strongswan/strongTNC
+	:alt: Build status
+
 strongTNC is a Trusted Network Connect (TNC) extension for the strongSwan VPN
 solution. It allows the definition and enforcement of TNC policies that apply
 to all VPN clients and must be fulfilled with each connection attempt.
