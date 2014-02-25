@@ -14,11 +14,13 @@ if __name__ == '__main__':
 
     # Run pytest
     if len(sys.argv) > 1:
-        pytest.main(sys.argv)
+        code = pytest.main(sys.argv)
     else:
-        pytest.main(['tests'])
+        code = pytest.main(['tests'])
 
     # Show coverage report
     cov.stop()
     cov.save()
     cov.report()
+
+    sys.exit(code)
