@@ -222,7 +222,7 @@ class TncappTest(TestCase):
 
         result = Result.objects.get(session=session, policy=p3)
         self.assertEqual('', result.result)
-        self.assertEqual(0, result.recommendation)
+        self.assertEqual(3, result.recommendation)
 
     def test_imv_login(self):
         #This is no longer a simple test unit and dealt with in simIMV.py run
