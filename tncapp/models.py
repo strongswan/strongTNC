@@ -61,7 +61,7 @@ class EpochField(models.IntegerField):
 
     def to_python(self, value):
         if type(value) == int:
-            return datetime.fromtimestamp(float(value))
+            return datetime.utcfromtimestamp(float(value))
         else:
             if type(value) == datetime:
                 return value

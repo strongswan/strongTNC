@@ -156,7 +156,7 @@ class TncappTest(TestCase):
         p = Policy.objects.get(name='usrbin')
         user = Identity.objects.create(data='foobar')
         device = Device.objects.get(value='def')
-        e = Enforcement.objects.create(group=g, policy=p, max_age=2)
+        e = Enforcement.objects.create(group=g, policy=p, max_age=2 * 86400)
 
         #No Session yet
         self.assertEqual(True, device.is_due_for(e))
