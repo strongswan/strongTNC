@@ -4,6 +4,10 @@ strongTNC
 .. image:: https://travis-ci.org/tnc-ba/strongTNC.png?branch=master
 	:target: https://travis-ci.org/tnc-ba/strongTNC
 	:alt: Build status
+	
+.. image:: https://landscape.io/github/tnc-ba/strongTNC/master/landscape.png
+   :target: https://landscape.io/github/tnc-ba/strongTNC/master
+   :alt: Code Health
 
 strongTNC is a Trusted Network Connect (TNC) extension for the strongSwan VPN
 solution.  It allows the definition and enforcement of TNC policies that apply
