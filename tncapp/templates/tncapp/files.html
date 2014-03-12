@@ -90,17 +90,17 @@
     <table id="versions" class="table table-hover table-striped">
       <thead>
 	<tr>
-	  <td>{% trans 'Hash' %}</td>
-	  <td>{% trans 'Algo' %}</td>
 	  <td>{% trans 'OS' %}</td>
+	  <td>{% trans 'Algo' %}</td>
+	  <td>{% trans 'Hash' %}</td>
 	</tr>
       </thead>
       <tbody>
 	{% for h in file_hashes %}
 	<tr>
-	  <td>{{h.hash}}</td>
-	  <td>{{h.algorithm}}</td>
 	  <td>{{h.product}}</td>
+	  <td>{{h.algorithm}}</td>
+	  <td title="{{h.hash}}">{{h.hash|truncatechars:40}}</td>
     <td><a class="btn btn-danger btn-mini" href="/file_hashes/{{ h.id }}/delete" data-toggle="modal"><i class="icon-remove icon-white"></i></a></td>
 	</tr>
 	{% endfor %}
