@@ -231,6 +231,10 @@
 
 $(document).ready(function () {
   type_change();
+  $('#policyform').submit(function(){
+	  var $form = $(this);
+	  $form.children('.hide:hidden').remove();
+  });
 })
 
 function type_change(){
