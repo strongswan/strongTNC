@@ -139,25 +139,50 @@
           </div>
         </div>
 
-        <div class="control-group hide" id="swid-request">
+        <div class="control-group" id="swid-request">
           <label class="control-label" for="flags">{% trans "SWID Request Flags" %}</label>
           <div class="controls">
-            <input type="text" id="flags" name="flags" placeholder="{% trans 'SWID Request Flags' %}"
-              rel="tooltip" title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}"
-              value="{{ policy.argument|default:'' }}">
+            <select id="flags" name="flags" class="chzn-select" rel="tooltip"
+              title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}">
+              <option value="R"
+                {% if policy.argument == 'R' %}
+                  selected="selected"
+                {% endif %}
+                >{% trans 'R (Tag IDs only)' %}</option>
+              <option value="S"
+                {% if policy.argument == 'S' %}
+                  selected="selected"
+                {% endif %}
+                >{% trans 'S (Subscribe)' %}</option>
+              <option value="C"
+                {% if policy.argument == 'C' %}
+                  selected="selected"
+                {% endif %}
+                >{% trans 'C (Clear subscription)' %}</option>
+            </select>
           </div>
         </div>
 
-        <div class="control-group hide" id="tpm-attestation">
+        <div class="control-group" id="tpm-attestation">
           <label class="control-label" for="flags">{% trans "TPM Attestation Flags" %}</label>
           <div class="controls">
-            <input type="text" id="flags" name="flags" placeholder="{% trans 'TPM Attestation Flags' %}"
-              rel="tooltip" title="{% trans 'B for BIOS measurements, I for IMA measurements' %}"
-              value="{{ policy.argument|default:'' }}">
+            <select id="flags" name="flags" class="chzn-select" rel="tooltip"
+              title="{% trans 'B for BIOS measurements, I for IMA measurements' %}">
+              <option value="B"
+                {% if policy.argument == 'B' %}
+                  selected="selected"
+                {% endif %}
+                >{% trans 'B (BIOS)' %}</option>
+              <option value="I"
+                {% if policy.argument == 'I' %}
+                  selected="selected"
+                {% endif %}
+                >{% trans 'I (IMA)' %}</option>
+            </select>
           </div>
         </div>
 
-        <div class="control-group">
+	      <div class="control-group">
           <label class="control-label" for="fail">{% trans "Fail-Action" %}</label> 
           <div class="controls">   
             <select id="fail" name="fail" class="chzn-select" rel="tooltip"
