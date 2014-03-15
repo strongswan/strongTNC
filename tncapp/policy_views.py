@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from models import Policy, Group, File, Directory
 
+
 @require_GET
 @login_required
 def policies(request):
@@ -44,6 +45,7 @@ def policies(request):
 
     context['policies'] = paginate(policies, request)
     return render(request, 'tncapp/policies.html', context)
+
 
 @require_GET
 @login_required
@@ -77,8 +79,8 @@ def policy(request, policyID):
         dirs = Directory.objects.all().order_by('path')
         context['dirs'] = dirs
 
-        groups = Group.objects.exclude(id__in = enforcements.values_list('id',
-            flat=True))
+        groups = Group.objects.exclude(id__in=enforcements.values_list('id',
+                                                                       flat=True))
         context['groups'] = groups
         context['title'] = _('Policy ') + policy.name
 
@@ -105,6 +107,7 @@ def add(request):
     context['dirs'] = dirs
     return render(request, 'tncapp/policies.html', context)
 
+
 @require_POST
 @login_required
 def save(request):
@@ -121,7 +124,7 @@ def save(request):
 
     type = int(type)
 
-    fileID = request.POST.get('file','')
+    fileID = request.POST.get('file', '')
     file = None
     if not fileID == '':
         if not re.match(r'^\d+$', fileID):
@@ -132,7 +135,7 @@ def save(request):
         except (File.DoesNotExist):
             messages.warning(request, _('No such file'))
 
-    dirID = request.POST.get('dir','')
+    dirID = request.POST.get('dir', '')
     dir = None
     if not dirID == '':
         if not re.match(r'^\d+$', dirID):
@@ -145,17 +148,36 @@ def save(request):
 
     argument = ''
 
-    ranges = request.POST.get('range', None)
-    flip = int(request.POST.get('flip', 0))
-    if ranges != '':
-        if not check_range(ranges):
-            raise ValueError
-        else:
-            if flip:
-                ranges = invert_range(ranges)
-
+    # port ranges
+    if type in [11, 12, 13, 14]:
+        ranges = request.POST.get('range', None)
+        #TODO: flip does not exist in the policy form (view), is this save to delete?
+        flip = int(request.POST.get('flip', 0))
+        if ranges is not '' and ranges is not None:
+            if not check_range(ranges):
+                raise ValueError
+            else:
+                if flip:
+                    ranges = invert_range(ranges)
 
             argument = ranges
+
+    # swid tag inventory
+    if type == 15:
+        swid_flag = request.POST.get('flags', None)
+        if swid_flag in Policy.swid_request_flags:
+            argument = swid_flag
+            print argument
+        else:
+            raise ValueError
+
+    # tpm remote attestation
+    if type == 16:
+        tmp_flag = request.POST.get('flags', None)
+        if tmp_flag in Policy.tpm_attestation_flags:
+            argument = tmp_flag
+        else:
+            raise ValueError
 
     fail = request.POST['fail']
     if not re.match(r'^\d+$', fail) and int(fail) in range(len(Policy.action)):
@@ -163,7 +185,7 @@ def save(request):
 
     noresult = request.POST['noresult']
     if not (re.match(r'^\d+$', noresult) and int(noresult) in
-            range(len(Policy.action))):
+        range(len(Policy.action))):
         raise ValueError
 
     name = request.POST['name']
@@ -172,7 +194,7 @@ def save(request):
 
     if policyID == 'None':
         policy = Policy(name=name, type=type, fail=fail,
-                noresult=noresult, file=file, dir=dir, argument=argument)
+                        noresult=noresult, file=file, dir=dir, argument=argument)
     else:
         policy = get_object_or_404(Policy, pk=policyID)
         policy.name = name
@@ -190,6 +212,7 @@ def save(request):
 
     messages.success(request, _('Policy saved!'))
     return redirect('/policies/%d' % policy.id)
+
 
 @require_POST
 @login_required
@@ -212,6 +235,7 @@ def check(request):
 
     return HttpResponse(("%s" % response).lower())
 
+
 @require_POST
 @login_required
 def delete(request, policyID):
@@ -223,6 +247,7 @@ def delete(request, policyID):
 
     messages.success(request, _('Policy deleted!'))
     return redirect('/policies')
+
 
 @require_GET
 @login_required
@@ -245,13 +270,15 @@ def search(request):
     context['policies'] = paginate(policies, request)
     return render(request, 'tncapp/policies.html', context)
 
+
 def check_range(ranges):
     """
     Check range input
     """
-    if ranges == '': return True
+    if ranges == '':
+        return True
 
-    ranges = ranges.replace(' ','')
+    ranges = ranges.replace(' ', '')
     for r in ranges.split(','):
         bounds = r.split('-', 1)
         for b in bounds:
@@ -266,15 +293,16 @@ def check_range(ranges):
                 return False
         else:
             if (not 0 <= upper <= 65535) or lower > upper:
-                    return False
+                return False
     return True
+
 
 def invert_range(ranges):
     """
     Inverts a given port range and inverts it to select all other ports
     Combines adjacent ports to ranges and sorts numerically
     """
-    ranges = ranges.replace(' ','')
+    ranges = ranges.replace(' ', '')
 
     #Very special cases
     if ranges == '0-65535': return ''
@@ -289,7 +317,7 @@ def invert_range(ranges):
         if upper != -1:
             doubles.append((lower, upper))
         else:
-            doubles.append((lower,lower))
+            doubles.append((lower, lower))
 
     doubles.sort(reverse=True)
     ranges = []
@@ -305,10 +333,10 @@ def invert_range(ranges):
             else:
                 ranges.append('0')
 
-        while len(doubles) > 0 and upper >= int(doubles[-1][0] - 1) :
+        while len(doubles) > 0 and upper >= int(doubles[-1][0] - 1):
             d2 = doubles.pop()
             if int(d2[1]) > upper:
-               upper = int(d2[1])
+                upper = int(d2[1])
 
         if len(doubles) > 0:
             if (upper + 1) != (doubles[-1][0] - 1):
@@ -320,6 +348,7 @@ def invert_range(ranges):
                 ranges.append('%d-65535' % (upper + 1))
 
     return ','.join(ranges)
+
 
 def paginate(items, request):
     """

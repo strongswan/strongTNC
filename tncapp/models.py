@@ -351,6 +351,7 @@ class Version(models.Model):
     class Meta:
         db_table = u'versions'
 
+
 class Policy(models.Model):
     """
     Instance of a policy. Defines a specific check
@@ -389,57 +390,67 @@ class Policy(models.Model):
         return self.name
 
     action = [
-            'ALLOW',
-            'BLOCK',
-            'ISOLATE',
-            'NONE',
-            ]
+        'ALLOW',
+        'BLOCK',
+        'ISOLATE',
+        'NONE',
+    ]
 
     types = [
-            'Deny',
-            'Installed Packages',
-            'Unknown Source',
-            'Forwarding Enabled',
-            'Default Password Enabled',
-            'File Reference Measurement',
-            'File Measurement',
-            'File Metadata',
-            'Directory Reference Measurement',
-            'Directory Measurement',
-            'Directory Metadata',
-            'Open TCP Listening Ports',
-            'Blocked TCP Listening Ports',
-            'Open UDP Listening Ports',
-            'Blocked UDP Listening Ports',
-            'SWID Tag Inventory',
-            'TPM Remote Attestation',
-            ]
+        'Deny',
+        'Installed Packages',
+        'Unknown Source',
+        'Forwarding Enabled',
+        'Default Password Enabled',
+        'File Reference Measurement',
+        'File Measurement',
+        'File Metadata',
+        'Directory Reference Measurement',
+        'Directory Measurement',
+        'Directory Metadata',
+        'Open TCP Listening Ports',
+        'Blocked TCP Listening Ports',
+        'Open UDP Listening Ports',
+        'Blocked UDP Listening Ports',
+        'SWID Tag Inventory',
+        'TPM Remote Attestation',
+    ]
 
+    swid_request_flags = [
+        'R',
+        'S',
+        'C',
+    ]
+
+    tpm_attestation_flags = [
+        'B',
+        'I'
+    ]
 
     argument_funcs = {
-            'Deny': lambda policy: '',
-            'Installed Packages': lambda policy: '',
-            'Unknown Source': lambda policy: '',
-            'Forwarding Enabled': lambda policy: '',
-            'Default Password Enabled': lambda policy: '',
-            'File Reference Measurement': lambda policy: '',
-            'File Measurement':lambda policy:  '',
-            'File Metadata': lambda policy: '',
-            'Directory Reference Measurement': lambda policy: '',
-            'Directory Measurement': lambda policy: '',
-            'Directory Metadata': lambda policy: '',
-            'Open TCP Listening Ports': lambda p: p.argument if p.argument else '',
-            'Blocked TCP Listening Ports': lambda p: p.argument if p.argument else '',
-            'Open UDP Listening Ports': lambda p: p.argument if p.argument else '',
-            'Blocked UDP Listening Ports': lambda p: p.argument if p.argument else '',
-            'SWID Tag Inventory': lambda p: p.argument if p.argument else '',
-            'TPM Remote Attestation': lambda p: p.argument if p.argument else '',
-            }
-
+        'Deny': lambda policy: '',
+        'Installed Packages': lambda policy: '',
+        'Unknown Source': lambda policy: '',
+        'Forwarding Enabled': lambda policy: '',
+        'Default Password Enabled': lambda policy: '',
+        'File Reference Measurement': lambda policy: '',
+        'File Measurement':lambda policy:  '',
+        'File Metadata': lambda policy: '',
+        'Directory Reference Measurement': lambda policy: '',
+        'Directory Measurement': lambda policy: '',
+        'Directory Metadata': lambda policy: '',
+        'Open TCP Listening Ports': lambda p: p.argument if p.argument else '',
+        'Blocked TCP Listening Ports': lambda p: p.argument if p.argument else '',
+        'Open UDP Listening Ports': lambda p: p.argument if p.argument else '',
+        'Blocked UDP Listening Ports': lambda p: p.argument if p.argument else '',
+        'SWID Tag Inventory': lambda p: p.argument if p.argument else '',
+        'TPM Remote Attestation': lambda p: p.argument if p.argument else '',
+    }
 
     class Meta:
         db_table = u'policies'
         verbose_name_plural = 'Policies'
+
 
 class Enforcement(models.Model):
     """
