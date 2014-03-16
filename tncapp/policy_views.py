@@ -79,8 +79,7 @@ def policy(request, policyID):
         dirs = Directory.objects.all().order_by('path')
         context['dirs'] = dirs
 
-        groups = Group.objects.exclude(id__in=enforcements.values_list('id',
-                                                                       flat=True))
+        groups = Group.objects.exclude(id__in=enforcements.values_list('id', flat=True))
         context['groups'] = groups
         context['title'] = _('Policy ') + policy.name
 
@@ -114,91 +113,90 @@ def save(request):
     """
     Insert/update a policy
     """
-    policyID = request.POST['policyId']
-    if not (policyID == 'None' or re.match(r'^\d+$', policyID)):
+    policy_id = request.POST['policyId']
+    if not (policy_id == 'None' or re.match(r'^\d+$', policy_id)):
         raise ValueError
 
-    type = request.POST['type']
-    if not re.match(r'^\d+$', type) and int(type) in range(len(Policy.types)):
+    policy_type = request.POST['type']
+    if not re.match(r'^\d+$', policy_type) and int(policy_type) in range(len(Policy.types)):
         raise ValueError
 
-    type = int(type)
+    policy_type = int(policy_type)
 
-    fileID = request.POST.get('file', '')
+    file_id = request.POST.get('file', '')
     file = None
-    if not fileID == '':
-        if not re.match(r'^\d+$', fileID):
+    if not file_id == '':
+        if not re.match(r'^\d+$', file_id):
             raise ValueError
 
         try:
-            file = File.objects.get(pk=fileID)
-        except (File.DoesNotExist):
+            file = File.objects.get(pk=file_id)
+        except File.DoesNotExist:
             messages.warning(request, _('No such file'))
 
-    dirID = request.POST.get('dir', '')
+    dir_id = request.POST.get('dir', '')
     dir = None
-    if not dirID == '':
-        if not re.match(r'^\d+$', dirID):
+    if not dir_id == '':
+        if not re.match(r'^\d+$', dir_id):
             raise ValueError
 
         try:
-            dir = Directory.objects.get(pk=dirID)
-        except (Directory.DoesNotExist):
+            dir = Directory.objects.get(pk=dir_id)
+        except Directory.DoesNotExist:
             messages.warning(request, _('No such directory'))
 
     argument = ''
 
     # port ranges
-    if type in [11, 12, 13, 14]:
-        ranges = request.POST.get('range', None)
+    if policy_type in [11, 12, 13, 14]:
+        ranges = request.POST.get('range')
         #TODO: flip does not exist in the policy form (view), is this save to delete?
-        flip = int(request.POST.get('flip', 0))
+        flip = unicode(request.POST.get('flip')).lower() in ['1', 'yes', 'y', 'true']
         if ranges is not '' and ranges is not None:
             if not check_range(ranges):
-                raise ValueError
-            else:
-                if flip:
-                    ranges = invert_range(ranges)
+                raise ValueError('Port ranges are not valid.')
+
+            if flip:
+                ranges = invert_range(ranges)
 
             argument = ranges
 
     # swid tag inventory
-    if type == 15:
+    elif policy_type == 15:
         swid_flag = request.POST.get('flags', None)
         if swid_flag in Policy.swid_request_flags:
             argument = swid_flag
             print argument
         else:
-            raise ValueError
+            raise ValueError('SWID flag is not valid.')
 
     # tpm remote attestation
-    if type == 16:
+    elif policy_type == 16:
         tmp_flag = request.POST.get('flags', None)
         if tmp_flag in Policy.tpm_attestation_flags:
             argument = tmp_flag
         else:
-            raise ValueError
+            raise ValueError('TMP attestation flag is not valid.')
 
-    fail = request.POST['fail']
+    fail = request.POST.get('fail')
     if not re.match(r'^\d+$', fail) and int(fail) in range(len(Policy.action)):
-        raise ValueError
+        raise ValueError('The value for the fail action is invalid.')
 
     noresult = request.POST['noresult']
-    if not (re.match(r'^\d+$', noresult) and int(noresult) in
-        range(len(Policy.action))):
-        raise ValueError
+    if not (re.match(r'^\d+$', noresult) and int(noresult) in range(len(Policy.action))):
+        raise ValueError('The value for the noresult action is invalid.')
 
     name = request.POST['name']
     if not re.match(r'^[\S ]+$', name):
-        raise ValueError
+        raise ValueError('The policy name is invalid.')
 
-    if policyID == 'None':
-        policy = Policy(name=name, type=type, fail=fail,
-                        noresult=noresult, file=file, dir=dir, argument=argument)
+    if policy_id == 'None':
+        policy = Policy(name=name, type=policy_type, fail=fail, noresult=noresult, file=file, dir=dir,
+                        argument=argument)
     else:
-        policy = get_object_or_404(Policy, pk=policyID)
+        policy = get_object_or_404(Policy, pk=policy_id)
         policy.name = name
-        policy.type = type
+        policy.type = policy_type
         policy.file = file
         policy.dir = dir
         policy.fail = fail
@@ -238,11 +236,11 @@ def check(request):
 
 @require_POST
 @login_required
-def delete(request, policyID):
+def delete(request, policy_id):
     """
     Delete a policy
     """
-    policy = get_object_or_404(Policy, pk=policyID)
+    policy = get_object_or_404(Policy, pk=policy_id)
     policy.delete()
 
     messages.success(request, _('Policy deleted!'))

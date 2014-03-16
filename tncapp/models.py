@@ -439,12 +439,12 @@ class Policy(models.Model):
         'Directory Reference Measurement': lambda policy: '',
         'Directory Measurement': lambda policy: '',
         'Directory Metadata': lambda policy: '',
-        'Open TCP Listening Ports': lambda p: p.argument if p.argument else '',
-        'Blocked TCP Listening Ports': lambda p: p.argument if p.argument else '',
-        'Open UDP Listening Ports': lambda p: p.argument if p.argument else '',
-        'Blocked UDP Listening Ports': lambda p: p.argument if p.argument else '',
-        'SWID Tag Inventory': lambda p: p.argument if p.argument else '',
-        'TPM Remote Attestation': lambda p: p.argument if p.argument else '',
+        'Open TCP Listening Ports': lambda p: p.argument or '',
+        'Blocked TCP Listening Ports': lambda p: p.argument or '',
+        'Open UDP Listening Ports': lambda p: p.argument or '',
+        'Blocked UDP Listening Ports': lambda p: p.argument or '',
+        'SWID Tag Inventory': lambda p: p.argument or '',
+        'TPM Remote Attestation': lambda p: p.argument or '',
     }
 
     class Meta:
