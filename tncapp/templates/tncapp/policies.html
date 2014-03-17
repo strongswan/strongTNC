@@ -121,7 +121,7 @@
           </div>
         </div>        
         
-        <div class="control-group hide" id="closed-port">
+        <div class="control-group hide filter" id="closed-port">
           <label class="control-label" for="range">{% trans "All ports closed except" %}</label> 
           <div class="controls">   
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
@@ -130,7 +130,7 @@
           </div>
         </div>
 
-        <div class="control-group hide" id="open-port">
+        <div class="control-group hide filter" id="open-port">
           <label class="control-label" for="range">{% trans "All ports open except" %}</label>
           <div class="controls">
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
@@ -139,7 +139,7 @@
           </div>
         </div>
 
-        <div class="control-group" id="swid-request">
+        <div class="control-group filter" id="swid-request">
           <label class="control-label" for="flags">{% trans "SWID Request Flags" %}</label>
           <div class="controls">
             <select id="flags" name="flags" class="chzn-select" rel="tooltip"
@@ -163,7 +163,7 @@
           </div>
         </div>
 
-        <div class="control-group" id="tpm-attestation">
+        <div class="control-group filter" id="tpm-attestation">
           <label class="control-label" for="flags">{% trans "TPM Attestation Flags" %}</label>
           <div class="controls">
             <select id="flags" name="flags" class="chzn-select" rel="tooltip"
@@ -258,7 +258,7 @@ $(document).ready(function () {
   type_change();
   $('#policyform').submit(function(){
 	  var $form = $(this);
-	  $form.children('.hide:hidden').remove();
+	  $form.children('.filter:hidden').remove();
   });
 })
 
