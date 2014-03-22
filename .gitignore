@@ -13,11 +13,13 @@
 *.db
 *.db-journal
 
-#PyCharm IDE
+#PyCharm IDE/Intellij
 .idea/*
+*.iml
 
 # Other files
 *.log
 *.orig
 .cache
 .coverage
+*.bak
