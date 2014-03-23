@@ -159,7 +159,7 @@ def save(request):
             if flip:
                 ranges = invert_range(ranges)
 
-            argument = ranges
+            argument = normalize_ranges_whitespace(ranges)
 
     # swid tag inventory
     elif policy_type == 15:
@@ -269,6 +269,18 @@ def search(request):
     return render(request, 'tncapp/policies.html', context)
 
 
+def normalize_ranges_whitespace(ranges):
+    """
+    Reduce multiple whitespace-chars to exactly one space.
+
+    Args:
+        ranges:
+            String containing port ranges.
+
+    """
+    return re.sub('\s+', ' ', ranges.strip())
+
+
 def check_range(ranges):
     """
     Check range input
@@ -276,8 +288,8 @@ def check_range(ranges):
     if ranges == '':
         return True
 
-    ranges = ranges.replace(' ', '')
-    for r in ranges.split(','):
+    ranges = normalize_ranges_whitespace(ranges)
+    for r in ranges.split():
         bounds = r.split('-', 1)
         for b in bounds:
             if not re.match('^\d+$', b):

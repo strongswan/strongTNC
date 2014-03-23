@@ -125,7 +125,7 @@
           <label class="control-label" for="range">{% trans "All ports closed except" %}</label> 
           <div class="controls">   
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
-              rel="tooltip" title="{% trans 'Comma or space separated range(s) of ports, f.e: 5,10-1024 2450-4000' %}"
+              rel="tooltip" title="{% trans 'Whitespace separated range(s) of ports, f.e: 5 10-1024 2450-4000' %}"
               value="{{ policy.argument|default:'' }}">
           </div>
         </div>
@@ -134,7 +134,7 @@
           <label class="control-label" for="range">{% trans "All ports open except" %}</label>
           <div class="controls">
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
-              rel="tooltip" title="{% trans 'Comma or space separated range(s) of ports, f.e: 5,10-1024 2450-4000' %}"
+              rel="tooltip" title="{% trans 'Whitespace separated range(s) of ports, f.e: 5 10-1024 2450-4000' %}"
               value="{{ policy.argument|default:'' }}">
           </div>
         </div>
