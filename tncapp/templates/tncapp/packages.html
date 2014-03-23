@@ -97,14 +97,14 @@
       </h4>
       {% if versions %}
       <div class="row-fluid">
-	<table id="versions" class="table table-hover table-striped">
+	<table id="versions" class="table table-hover table-striped sortable">
 	  <thead>
 	    <tr>
-	      <td>{% trans 'Version' %}</td>
-	      <td>{% trans 'OS' %}</td>
-	      <td>{% trans 'Security' %}</td>
-	      <td>{% trans 'Registered on' %}</td>
-	      <td>{% trans 'Blacklisted' %}</td>
+	      <th>{% trans 'Version' %}</th>
+	      <th>{% trans 'OS' %}</th>
+	      <th>{% trans 'Security' %}</th>
+	      <th>{% trans 'Registered on' %}</th>
+	      <th class="sorter-false">{% trans 'Blacklisted' %}</th>
 	    </tr>
 	  </thead>
 	  <tbody>
