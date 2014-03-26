@@ -108,7 +108,7 @@ def delete(request, fileID):
 
 @require_GET
 @login_required
-def deleteHash(request, file_hashID):
+def delete_hash(request, file_hashID):
     """
     Delete a file hash
     """
@@ -148,7 +148,7 @@ def paginate(items, request):
     """
     Paginated browsing
     """
-    paginator = Paginator(items, 50) # Show 50 packages per page
+    paginator = Paginator(items, 50)  # Show 50 packages per page
     page = request.GET.get('page')
     try:
         files = paginator.page(page)
@@ -160,4 +160,3 @@ def paginate(items, request):
         files = paginator.page(paginator.num_pages)
 
     return files
-

@@ -28,6 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 from models import Group, Policy, Enforcement, Device, Package, Product, File
 
+
 @require_GET
 @login_required
 def search(request):
@@ -56,8 +57,10 @@ def search(request):
         context['query'] = q
         context['groups'] = Group.objects.filter(name__icontains=q)
         context['policies'] = Policy.objects.filter(name__icontains=q)
-        context['enforcements'] = Enforcement.objects.filter(Q(policy__name__icontains=q)|Q(group__name__icontains=q))
-        context['devices'] = Device.objects.filter(Q(description__icontains=q)|Q(value__icontains=q))
+        context['enforcements'] = Enforcement.objects.filter(
+                Q(policy__name__icontains=q) | Q(group__name__icontains=q))
+        context['devices'] = Device.objects.filter(
+                Q(description__icontains=q) | Q(value__icontains=q))
         context['packages'] = Package.objects.filter(name__icontains=q)
         context['products'] = Product.objects.filter(name__icontains=q)
         q1 = Q(name__icontains=q)

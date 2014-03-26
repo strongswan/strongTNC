@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from models import Product, Group
 
+
 @require_GET
 @login_required
 def products(request):
@@ -44,6 +45,7 @@ def products(request):
 
     context['products'] = paginate(products, request)
     return render(request, 'tncapp/products.html', context)
+
 
 @require_GET
 @login_required
@@ -68,8 +70,7 @@ def product(request, productID):
         context['product'] = product
         defaults = product.default_groups.all().order_by('name')
         context['defaults'] = defaults
-        groups = Group.objects.exclude(id__in = defaults.values_list('id',
-            flat=True))
+        groups = Group.objects.exclude(id__in=defaults.values_list('id', flat=True))
         context['groups'] = groups
         context['title'] = _('Product ') + product.name
 
@@ -132,6 +133,7 @@ def save(request):
     messages.success(request, _('Product saved!'))
     return redirect('/products/%d' % product.id)
 
+
 @require_POST
 @login_required
 def check(request):
@@ -153,6 +155,7 @@ def check(request):
 
     return HttpResponse(("%s" % response).lower())
 
+
 @require_POST
 @login_required
 def delete(request, productID):
@@ -164,6 +167,7 @@ def delete(request, productID):
 
     messages.success(request, _('Product deleted!'))
     return redirect('/products')
+
 
 @require_GET
 @login_required
@@ -186,11 +190,12 @@ def search(request):
     context['products'] = paginate(products, request)
     return render(request, 'tncapp/products.html', context)
 
+
 def paginate(items, request):
     """
     Paginated browsing
     """
-    paginator = Paginator(items, 50) # Show 50 products per page
+    paginator = Paginator(items, 50)  # Show 50 products per page
     page = request.GET.get('page')
     try:
         products = paginator.page(page)

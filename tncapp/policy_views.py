@@ -150,7 +150,6 @@ def save(request):
     # port ranges
     if policy_type in [11, 12, 13, 14]:
         ranges = request.POST.get('range')
-
         if ranges is not '' and ranges is not None:
             if not check_range(ranges):
                 raise ValueError('Port ranges are not valid.')
@@ -187,8 +186,8 @@ def save(request):
         raise ValueError('The policy name is invalid.')
 
     if policy_id == 'None':
-        policy = Policy(name=name, type=policy_type, fail=fail, noresult=noresult, file=file, dir=dir,
-                        argument=argument)
+        policy = Policy(name=name, type=policy_type, fail=fail, noresult=noresult,
+                        file=file, dir=dir, argument=argument)
     else:
         policy = get_object_or_404(Policy, pk=policy_id)
         policy.name = name
@@ -307,7 +306,7 @@ def paginate(items, request):
     """
     Paginated browsing
     """
-    paginator = Paginator(items, 50) # Show 50 policies per page
+    paginator = Paginator(items, 50)  # Show 50 policies per page
     page = request.GET.get('page')
     try:
         policies = paginator.page(page)

@@ -31,6 +31,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from models import Regid, Tag
 
+
 @require_GET
 @login_required
 def regids(request):
@@ -44,9 +45,10 @@ def regids(request):
     context['regids'] = paginate(regids, request)
     return render(request, 'tncapp/regids.html', context)
 
+
 @require_GET
 @login_required
-def regid(request,regidID):
+def regid(request, regidID):
     """
     Regid detail view
     """
@@ -71,6 +73,7 @@ def regid(request,regidID):
 
     return render(request, 'tncapp/regids.html', context)
 
+
 @require_GET
 @login_required
 def add(request):
@@ -84,6 +87,7 @@ def add(request):
     context['regids'] = paginate(regids, request)
     context['regid'] = Regid()
     return render(request, 'tncapp/regids.html', context)
+
 
 @require_POST
 @login_required
@@ -109,6 +113,7 @@ def save(request):
     messages.success(request, _('Regid saved!'))
     return redirect('/regids/%d' % regid.id)
 
+
 @require_POST
 @login_required
 def delete(request, regidID):
@@ -120,6 +125,7 @@ def delete(request, regidID):
 
     messages.success(request, _('Regid deleted!'))
     return redirect('/regids')
+
 
 @require_GET
 @login_required
@@ -143,11 +149,12 @@ def search(request):
     context['regids'] = paginate(regids, request)
     return render(request, 'tncapp/regids.html', context)
 
+
 def paginate(items, request):
     """
     Paginated browsing
     """
-    paginator = Paginator(items, 50) # Show 50 packages per page
+    paginator = Paginator(items, 50)  # Show 50 packages per page
     page = request.GET.get('page')
     try:
         regids = paginator.page(page)
@@ -159,4 +166,3 @@ def paginate(items, request):
         regids = paginator.page(paginator.num_pages)
 
     return regids
-
