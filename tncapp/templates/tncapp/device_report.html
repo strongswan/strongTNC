@@ -81,12 +81,12 @@
     {% if enforcements %}
     <hr>
     <h4>{% trans 'Enforcements' %}</h4>
-    <table class="table table-striped">
+    <table class="table table-striped sortable">
       <thead>
         <tr>
-          <td>{% trans "Enforcement" %}</td>
-          <td>{% trans "Last result" %}</td>
-          <td>{% trans "Will be tested" %}</td>
+          <th>{% trans "Enforcement" %}</th>
+          <th>{% trans "Last result" %}</th>
+          <th>{% trans "Will be tested" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -104,11 +104,11 @@
     {% if sessions %}
     <hr>
     <h4>{% trans 'Last 50 Sessions' %}</h4>
-    <table class="table table-striped">
+    <table class="table table-striped sortable">
       <thead>
         <tr>
-          <td>{% trans "Time" %}</td>
-          <td>{% trans "Result" %}</td>
+          <th>{% trans "Time" %}</th>
+          <th>{% trans "Result" %}</th>
         </tr>
       </thead>
       <tbody>

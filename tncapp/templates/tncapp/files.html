@@ -87,20 +87,20 @@
 	<h4>File Hashes</h4>
       {% if file_hashes %}
   <div class="row-fluid">
-    <table id="versions" class="table table-hover table-striped">
+    <table id="versions" class="table table-hover table-striped sortable">
       <thead>
 	<tr>
-	  <td>{% trans 'Hash' %}</td>
-	  <td>{% trans 'Algo' %}</td>
-	  <td>{% trans 'OS' %}</td>
+	  <th>{% trans 'OS' %}</th>
+	  <th>{% trans 'Algo' %}</th>
+	  <th>{% trans 'Hash' %}</th>
 	</tr>
       </thead>
       <tbody>
 	{% for h in file_hashes %}
 	<tr>
-	  <td>{{h.hash}}</td>
-	  <td>{{h.algorithm}}</td>
 	  <td>{{h.product}}</td>
+	  <td>{{h.algorithm}}</td>
+	  <td title="{{h.hash}}">{{h.hash|truncatechars:40}}</td>
     <td><a class="btn btn-danger btn-mini" href="/file_hashes/{{ h.id }}/delete" data-toggle="modal"><i class="icon-remove icon-white"></i></a></td>
 	</tr>
 	{% endfor %}
