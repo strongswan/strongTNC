@@ -1,4 +1,6 @@
-thead>tr>td { font-weight: bold}
+thead > tr > th {
+    font-weight: bold;
+}
 
 label.error {
   color: red;
@@ -87,4 +89,22 @@ div#line {
   border-color:black;
   padding-right:1em;
   text-align:justify;
+}
+
+table.sortable th {
+    background: url(../img/sortable.gif) no-repeat center right;
+    cursor: pointer;
+    border-right: 1px solid #ddd;
+}
+
+table.sortable th.tablesorter-headerAsc {
+    background: #fdfdfd url(../img/sortable-asc.gif) no-repeat center right;
+}
+
+table.sortable th.tablesorter-headerDesc {
+    background: #fdfdfd url(../img/sortable-desc.gif) no-repeat center right;
+}
+
+table.sortable th.sorter-false {
+    background: inherit;
 }

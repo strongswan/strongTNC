@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from models import Policy, Group, File, Directory
 
+
 @require_GET
 @login_required
 def policies(request):
@@ -44,6 +45,7 @@ def policies(request):
 
     context['policies'] = paginate(policies, request)
     return render(request, 'tncapp/policies.html', context)
+
 
 @require_GET
 @login_required
@@ -77,8 +79,7 @@ def policy(request, policyID):
         dirs = Directory.objects.all().order_by('path')
         context['dirs'] = dirs
 
-        groups = Group.objects.exclude(id__in = enforcements.values_list('id',
-            flat=True))
+        groups = Group.objects.exclude(id__in=enforcements.values_list('id', flat=True))
         context['groups'] = groups
         context['title'] = _('Policy ') + policy.name
 
@@ -105,78 +106,97 @@ def add(request):
     context['dirs'] = dirs
     return render(request, 'tncapp/policies.html', context)
 
+
 @require_POST
 @login_required
 def save(request):
     """
     Insert/update a policy
     """
-    policyID = request.POST['policyId']
-    if not (policyID == 'None' or re.match(r'^\d+$', policyID)):
+    policy_id = request.POST['policyId']
+    if not (policy_id == 'None' or re.match(r'^\d+$', policy_id)):
         raise ValueError
 
-    type = request.POST['type']
-    if not re.match(r'^\d+$', type) and int(type) in range(len(Policy.types)):
+    policy_type = request.POST['type']
+    if not re.match(r'^\d+$', policy_type) and int(policy_type) in range(len(Policy.types)):
         raise ValueError
 
-    type = int(type)
+    policy_type = int(policy_type)
 
-    fileID = request.POST.get('file','')
+    file_id = request.POST.get('file', '')
     file = None
-    if not fileID == '':
-        if not re.match(r'^\d+$', fileID):
+    if not file_id == '':
+        if not re.match(r'^\d+$', file_id):
             raise ValueError
 
         try:
-            file = File.objects.get(pk=fileID)
-        except (File.DoesNotExist):
+            file = File.objects.get(pk=file_id)
+        except File.DoesNotExist:
             messages.warning(request, _('No such file'))
 
-    dirID = request.POST.get('dir','')
+    dir_id = request.POST.get('dir', '')
     dir = None
-    if not dirID == '':
-        if not re.match(r'^\d+$', dirID):
+    if not dir_id == '':
+        if not re.match(r'^\d+$', dir_id):
             raise ValueError
 
         try:
-            dir = Directory.objects.get(pk=dirID)
-        except (Directory.DoesNotExist):
+            dir = Directory.objects.get(pk=dir_id)
+        except Directory.DoesNotExist:
             messages.warning(request, _('No such directory'))
 
     argument = ''
 
-    ranges = request.POST.get('range', None)
-    flip = int(request.POST.get('flip', 0))
-    if ranges != '':
-        if not check_range(ranges):
-            raise ValueError
-        else:
+    # port ranges
+    if policy_type in [11, 12, 13, 14]:
+        ranges = request.POST.get('range')
+        #TODO: flip does not exist in the policy form (view), is this save to delete?
+        flip = unicode(request.POST.get('flip')).lower() in ['1', 'yes', 'y', 'true']
+        if ranges is not '' and ranges is not None:
+            if not check_range(ranges):
+                raise ValueError('Port ranges are not valid.')
+
             if flip:
                 ranges = invert_range(ranges)
 
+            argument = normalize_ranges_whitespace(ranges)
 
-            argument = ranges
+    # swid tag inventory
+    elif policy_type == 15:
+        swid_flag = request.POST.get('flags', None)
+        if swid_flag in Policy.swid_request_flags:
+            argument = swid_flag
+            print argument
+        else:
+            raise ValueError('SWID flag is not valid.')
 
-    fail = request.POST['fail']
+    # tpm remote attestation
+    elif policy_type == 16:
+        tmp_flag = request.POST.get('flags', None)
+        if tmp_flag in Policy.tpm_attestation_flags:
+            argument = tmp_flag
+        else:
+            raise ValueError('TMP attestation flag is not valid.')
+
+    fail = request.POST.get('fail')
     if not re.match(r'^\d+$', fail) and int(fail) in range(len(Policy.action)):
-        raise ValueError
+        raise ValueError('The value for the fail action is invalid.')
 
     noresult = request.POST['noresult']
-    if not (re.match(r'^\d+$', noresult) and int(noresult) in
-            range(len(Policy.action))):
-        raise ValueError
+    if not (re.match(r'^\d+$', noresult) and int(noresult) in range(len(Policy.action))):
+        raise ValueError('The value for the noresult action is invalid.')
 
     name = request.POST['name']
     if not re.match(r'^[\S ]+$', name):
-        raise ValueError
+        raise ValueError('The policy name is invalid.')
 
-    if policyID == 'None':
-        policy = Policy(name=name, type=type, fail=fail,
-                noresult=noresult, file=file, dir=dir, argument=argument)
+    if policy_id == 'None':
+        policy = Policy(name=name, type=policy_type, fail=fail, noresult=noresult, file=file, dir=dir,
+                        argument=argument)
     else:
-        policy = get_object_or_404(Policy, pk=policyID)
+        policy = get_object_or_404(Policy, pk=policy_id)
         policy.name = name
-        policy.type = type
+        policy.type = policy_type
         policy.file = file
         policy.dir = dir
         policy.fail = fail
@@ -190,6 +210,7 @@ def save(request):
 
     messages.success(request, _('Policy saved!'))
     return redirect('/policies/%d' % policy.id)
+
 
 @require_POST
 @login_required
@@ -212,17 +233,19 @@ def check(request):
 
     return HttpResponse(("%s" % response).lower())
 
+
 @require_POST
 @login_required
-def delete(request, policyID):
+def delete(request, policy_id):
     """
     Delete a policy
     """
-    policy = get_object_or_404(Policy, pk=policyID)
+    policy = get_object_or_404(Policy, pk=policy_id)
     policy.delete()
 
     messages.success(request, _('Policy deleted!'))
     return redirect('/policies')
+
 
 @require_GET
 @login_required
@@ -245,14 +268,28 @@ def search(request):
     context['policies'] = paginate(policies, request)
     return render(request, 'tncapp/policies.html', context)
 
+
+def normalize_ranges_whitespace(ranges):
+    """
+    Reduce multiple whitespace-chars to exactly one space.
+
+    Args:
+        ranges:
+            String containing port ranges.
+
+    """
+    return re.sub('\s+', ' ', ranges.strip())
+
+
 def check_range(ranges):
     """
     Check range input
     """
-    if ranges == '': return True
+    if ranges == '':
+        return True
 
-    ranges = ranges.replace(' ','')
-    for r in ranges.split(','):
+    ranges = normalize_ranges_whitespace(ranges)
+    for r in ranges.split():
         bounds = r.split('-', 1)
         for b in bounds:
             if not re.match('^\d+$', b):
@@ -266,15 +303,16 @@ def check_range(ranges):
                 return False
         else:
             if (not 0 <= upper <= 65535) or lower > upper:
-                    return False
+                return False
     return True
+
 
 def invert_range(ranges):
     """
     Inverts a given port range and inverts it to select all other ports
     Combines adjacent ports to ranges and sorts numerically
     """
-    ranges = ranges.replace(' ','')
+    ranges = ranges.replace(' ', '')
 
     #Very special cases
     if ranges == '0-65535': return ''
@@ -289,7 +327,7 @@ def invert_range(ranges):
         if upper != -1:
             doubles.append((lower, upper))
         else:
-            doubles.append((lower,lower))
+            doubles.append((lower, lower))
 
     doubles.sort(reverse=True)
     ranges = []
@@ -305,10 +343,10 @@ def invert_range(ranges):
             else:
                 ranges.append('0')
 
-        while len(doubles) > 0 and upper >= int(doubles[-1][0] - 1) :
+        while len(doubles) > 0 and upper >= int(doubles[-1][0] - 1):
             d2 = doubles.pop()
             if int(d2[1]) > upper:
-               upper = int(d2[1])
+                upper = int(d2[1])
 
         if len(doubles) > 0:
             if (upper + 1) != (doubles[-1][0] - 1):
@@ -320,6 +358,7 @@ def invert_range(ranges):
                 ranges.append('%d-65535' % (upper + 1))
 
     return ','.join(ranges)
+
 
 def paginate(items, request):
     """

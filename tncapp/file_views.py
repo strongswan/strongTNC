@@ -32,6 +32,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from models import File, FileHash
 
+
 @require_GET
 @login_required
 def files(request):
@@ -41,13 +42,14 @@ def files(request):
     context = {}
     context['title'] = _('Files')
     context['count'] = File.objects.count()
-    files = File.objects.all().order_by('directory__path','name')
+    files = File.objects.all().order_by('directory__path', 'name')
     context['files'] = paginate(files, request)
     return render(request, 'tncapp/files.html', context)
 
+
 @require_GET
 @login_required
-def file(request,fileID):
+def file(request, fileID):
     """
     File detail view
     """
@@ -60,7 +62,7 @@ def file(request,fileID):
     context = {}
     context['title'] = _('Files')
     context['count'] = File.objects.count()
-    files = File.objects.all().order_by('directory__path','name')
+    files = File.objects.all().order_by('directory__path', 'name')
 
     context['files'] = paginate(files, request)
 
@@ -71,6 +73,7 @@ def file(request,fileID):
         context['file_hashes'] = file_hashes
 
     return render(request, 'tncapp/files.html', context)
+
 
 @require_POST
 @login_required
@@ -89,6 +92,7 @@ def save(request):
     messages.success(request, _('File saved!'))
     return redirect('/files/%d' % file.id)
 
+
 @require_POST
 @login_required
 def delete(request, fileID):
@@ -100,6 +104,7 @@ def delete(request, fileID):
 
     messages.success(request, _('File deleted!'))
     return redirect('/files')
+
 
 @require_GET
 @login_required
@@ -113,6 +118,7 @@ def deleteHash(request, file_hashID):
 
     messages.success(request, _('Hash deleted!'))
     return redirect('/files/%d' % file.id)
+
 
 @require_GET
 @login_required
@@ -136,6 +142,7 @@ def search(request):
 
     context['files'] = paginate(files, request)
     return render(request, 'tncapp/files.html', context)
+
 
 def paginate(items, request):
     """
