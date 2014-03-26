@@ -1,23 +1,23 @@
 strongTNC
 =========
 
-.. image:: https://travis-ci.org/tnc-ba/strongTNC.png?branch=master
-	:target: https://travis-ci.org/tnc-ba/strongTNC
+.. image:: https://travis-ci.org/strongswan/strongTNC.png?branch=master
+	:target: https://travis-ci.org/strongswan/strongTNC
 	:alt: Build status
 	
-.. image:: https://landscape.io/github/tnc-ba/strongTNC/master/landscape.png
-   :target: https://landscape.io/github/tnc-ba/strongTNC/master
+.. image:: https://landscape.io/github/strongswan/strongTNC/master/landscape.png
+   :target: https://landscape.io/github/strongswan/strongTNC/master
    :alt: Code Health
 
 strongTNC is a Trusted Network Connect (TNC) extension for the strongSwan VPN
-solution.  It allows the definition and enforcement of TNC policies that apply
+solution. It allows the definition and enforcement of TNC policies that apply
 to all VPN clients and must be fulfilled with each connection attempt.
 
 
 Development Setup
 -----------------
 
-StrongTNC uses Django (currently version 1.6.x). It is recommended to use the
+strongTNC uses Django (currently version 1.6.x). It is recommended to use the
 pip_ and virtualenv_ tools to ease the dependency management. They can be
 installed via your package manager on most Linux distributions.
 

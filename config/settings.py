@@ -6,9 +6,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-     ('Christian Fässler','cfaessle@hsr.ch'),
-     ('Danilo Bargen', 'dbargen@hsr.ch'),
-     ('Jonas Furrer','jfurrer@hsr.ch'),
+     ('Name', 'admin@example.com'),
 )
 
 MANAGERS = ADMINS
