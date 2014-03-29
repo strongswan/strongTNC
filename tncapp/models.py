@@ -331,11 +331,10 @@ class FileHash(models.Model):
 
 class Package(models.Model):
     """
-    aptitude Package name
+    Package
     """
     id = models.AutoField(primary_key=True)
     name = models.TextField(unique=True)
-    blacklist = models.IntegerField(blank=True, default=0)
 
     def __unicode__(self):
         return self.name
