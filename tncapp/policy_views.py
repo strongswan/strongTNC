@@ -230,11 +230,11 @@ def check(request):
 
 @require_POST
 @login_required
-def delete(request, policy_id):
+def delete(request, policyID):
     """
     Delete a policy
     """
-    policy = get_object_or_404(Policy, pk=policy_id)
+    policy = get_object_or_404(Policy, pk=policyID)
     policy.delete()
 
     messages.success(request, _('Policy deleted!'))
