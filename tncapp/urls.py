@@ -21,10 +21,15 @@
 Defines regular expressions for URL's that are served by the web app
 """
 
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 import group_views, device_views, product_views, policy_views, enforcement_views
 import package_views, directory_views, file_views, search_views, views
 import regid_views, tag_views
+
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from dajaxice.core import dajaxice_autodiscover, dajaxice_config
+
+dajaxice_autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', views.overview, name='overview'),
@@ -119,4 +124,8 @@ urlpatterns = patterns('',
     # IMV API patterns
     url(r'^cmd/start_session/?$', views.start_session, name='start_session'),
     url(r'^cmd/end_session/?$', views.end_session, name='end_session'),
+
+    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 )
+
+urlpatterns += staticfiles_urlpatterns()

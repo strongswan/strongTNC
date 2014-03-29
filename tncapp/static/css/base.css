@@ -108,3 +108,7 @@ table.sortable th.tablesorter-headerDesc {
 table.sortable th.sorter-false {
     background: inherit;
 }
+
+.slct2-autocomplete {
+    width: 220px;
+}

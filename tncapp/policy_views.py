@@ -74,8 +74,12 @@ def policy(request, policyID):
         for typ in context['types']:
             typ = _(typ)
         context['action'] = Policy.action
-        files = File.objects.all().order_by('name')
-        context['files'] = files
+        try:
+            if policy.file:
+                context['file'] = policy.file
+        except File.DoesNotExist:
+            pass
+
         dirs = Directory.objects.all().order_by('path')
         context['dirs'] = dirs
 

@@ -90,7 +90,7 @@
         <div class="control-group">
           <label class="control-label" for="groupselect">{% trans "Groups" %}</label> 
           <div class="controls"> 
-            <select data-placeholder="Click to add a group..." id="group_select" multiple class="chzn-select-deselect" tabindex="8"
+            <select data-placeholder="Click to add a group..." id="group_select" multiple class="slct2-dropdown" tabindex="8"
             rel="tooltip" title="{% trans 'Click into the field to add groups or close them to remove.' %}">
               {% for g in groups %}
               <option value="{{ g.id }}">{{ g }}</option>

@@ -85,12 +85,12 @@
         <div class="control-group">
           <label class="control-label" for="type">{% trans "Type" %}</label>
           <div class="controls">
-            <select id="type" name="type" class="chzn-select" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
+            <select id="type" name="type" class="slct2-dropdown" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
               <option value="-1">{% trans 'Select one...' %}</option>
               {% for t in types %}
               <option value="{{ forloop.counter0 }}"
               {% if policy.type == forloop.counter0 %} selected {% endif %}>{{ t }}</option>
-              {% endfor %}
+              {% endfor %}file
             </select>
           </div>
         </div>
@@ -98,20 +98,14 @@
         <div class="control-group" id="file">
           <label class="control-label" for="file">{% trans "File" %}</label>
           <div class="controls">
-            <select id="file" name="file" class="chzn-select" rel="tooltip"
-              title="{% trans 'File to check' %}">
-              <option value="">{% trans 'Select one...' %}</option>
-              {% for f in files %}
-              <option value="{{ f.id }}" {% if policy.file.id == f.id %} selected {% endif %}>{{ f }}</option>
-              {% endfor %}
-            </select>
+            <input type="hidden" id="file" name="file" class="slct2-autocomplete" value="{% if file %}{{ file.id }}{% endif %}"/>
           </div>
         </div>
 
         <div class="control-group" id="dir">
           <label class="control-label" for="dir">{% trans "Directory" %}</label>
           <div class="controls">
-            <select id="dir" name="dir" class="chzn-select" rel="tooltip"
+            <select id="dir" name="dir" class="slct2-dropdown" rel="tooltip"
               title="{% trans 'Directory to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for d in dirs %}
@@ -143,7 +137,7 @@
 	      <label class="control-label" for="swid-flags">{% trans "SWID Request Flags" %}</label>
 	      <div class="controls">
 		    <select data-placeholder="Click to add a SWID flag.." id="swid-flags" name="swid-flags"
-                multiple class="chzn-select-deselect" rel="tooltip"
+                multiple class="slct2-dropdown" rel="tooltip"
 		        title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}">
 			  <option value="R"
 		        {% if 'R' in policy.argument %}
@@ -168,7 +162,7 @@
 	    <label class="control-label" for="attestation-flags">{% trans "TPM Attestation Flags" %}</label>
 	    <div class="controls">
 		  <select data-placeholder="Click to add an attestation flag..." id="attestation-flags" name="attestation-flags"
-              multiple class="chzn-select-deselect" rel="tooltip"
+              multiple class="slct2-dropdown" rel="tooltip"
 		      title="{% trans 'B for BIOS measurements, I for IMA measurements, T for Trusted Boot' %}">
 			<option value="B"
 	          {% if 'B' in policy.argument %}
@@ -192,7 +186,7 @@
 	      <div class="control-group">
           <label class="control-label" for="fail">{% trans "Fail-Action" %}</label>
           <div class="controls">
-            <select id="fail" name="fail" class="chzn-select" rel="tooltip"
+            <select id="fail" name="fail" class="slct2-dropdown" rel="tooltip"
               title="{% trans 'Recommendation when a client does not meet the policy requirement' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
@@ -209,7 +203,7 @@
         <div class="control-group">
           <label class="control-label" for="noresult">{% trans "Noresult-Action" %}</label>
           <div class="controls">
-            <select id="noresult" name="noresult" class="chzn-select" rel="tooltip"
+            <select id="noresult" name="noresult" class="slct2-dropdown" rel="tooltip"
               title="{% trans 'Recommendation when the policy does not apply to the client' %}">
               <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
@@ -261,6 +255,7 @@
 </div>
 <script type="text/javascript">
 
+
 $(document).ready(function () {
   type_change();
   $('#policyform').submit(function(){
@@ -268,7 +263,57 @@ $(document).ready(function () {
 	  var $form = $(this);
 	  $form.children('.filter:hidden').remove();
   });
+
+  $('input#file').select2({
+    minimumInputLength: 3,
+    {% if file %}
+    initSelection: function (element, callback) {
+      var data = {"text": "{{ file.directory }}/{{ file.name }}", "id": "{{ file.id }}"};
+      callback(data);
+    },
+    {% endif %}
+    query: function (query) {
+      autocompleteDelay.callback = query.callback;
+      autocompleteDelay.queryUpdate(query.term);
+    }
+  });
 });
+
+// delay the request, to reduce the amount of requests
+// --> the request is only sent if the query does not
+//     change during a the defined delay.
+var autocompleteDelay = {
+  delay: 600,
+  query: '',
+  lastDelayedCall: null,
+  callback: null,
+
+  queryUpdate: function(newQuery) {
+    this.query = newQuery;
+    if(this.lastDelayedCall != null) {
+      this.cancelLastDelayedCall();
+    }
+    this.startDelayedCall();
+  },
+
+  startDelayedCall: function() {
+    this.lastDelayedCall = window.setTimeout(this.autocompleteCall, this.delay);
+  },
+
+  cancelLastDelayedCall: function() {
+    window.clearTimeout(this.lastDelayedCall);
+  },
+
+  autocompleteCall: function() {
+    // function is called by setTimeout,
+    // thus it's running in the context of the window object
+    var callback = autocompleteDelay.callback;
+    var query = autocompleteDelay.query;
+    Dajaxice.tncapp.files_autocomplete(callback, {'search_term': query});
+  }
+
+};
+
 
 var PolicyType = {
   PCKGS :  1,
