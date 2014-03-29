@@ -150,14 +150,10 @@ def save(request):
     # port ranges
     if policy_type in [11, 12, 13, 14]:
         ranges = request.POST.get('range')
-        #TODO: flip does not exist in the policy form (view), is this save to delete?
-        flip = unicode(request.POST.get('flip')).lower() in ['1', 'yes', 'y', 'true']
+
         if ranges is not '' and ranges is not None:
             if not check_range(ranges):
                 raise ValueError('Port ranges are not valid.')
-
-            if flip:
-                ranges = invert_range(ranges)
 
             argument = normalize_ranges_whitespace(ranges)
 
@@ -305,59 +301,6 @@ def check_range(ranges):
             if (not 0 <= upper <= 65535) or lower > upper:
                 return False
     return True
-
-
-def invert_range(ranges):
-    """
-    Inverts a given port range and inverts it to select all other ports
-    Combines adjacent ports to ranges and sorts numerically
-    """
-    ranges = ranges.replace(' ', '')
-
-    #Very special cases
-    if ranges == '0-65535': return ''
-    if ranges == '': return '0-65535'
-
-    doubles = []
-    for r in ranges.split(','):
-        bounds = r.split('-', 1)
-        lower = int(bounds[0])
-        upper = int(bounds[1]) if len(bounds) > 1 else -1
-
-        if upper != -1:
-            doubles.append((lower, upper))
-        else:
-            doubles.append((lower, lower))
-
-    doubles.sort(reverse=True)
-    ranges = []
-
-    while len(doubles) > 0:
-        d = doubles.pop()
-        lower = int(d[0])
-        upper = int(d[1])
-
-        if len(ranges) == 0 and lower != 0:
-            if lower != 1:
-                ranges.append('0-%d' % (lower - 1))
-            else:
-                ranges.append('0')
-
-        while len(doubles) > 0 and upper >= int(doubles[-1][0] - 1):
-            d2 = doubles.pop()
-            if int(d2[1]) > upper:
-                upper = int(d2[1])
-
-        if len(doubles) > 0:
-            if (upper + 1) != (doubles[-1][0] - 1):
-                ranges.append('%d-%d' % (upper + 1, doubles[-1][0] - 1))
-            else:
-                ranges.append('%d' % (upper + 1))
-        else:
-            if upper != 65535:
-                ranges.append('%d-65535' % (upper + 1))
-
-    return ','.join(ranges)
 
 
 def paginate(items, request):
