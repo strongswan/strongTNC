@@ -103,21 +103,11 @@ def save(request):
     if not re.match(r'^[\S]+$', name):
         return HttpResponse(status=400)
 
-    blacklist = request.POST.get('blacklist') == 'blacklist'
-
     if packageID == 'None':
-        package = Package.objects.create(name=name, blacklist=blacklist)
+        package = Package.objects.create(name=name)
     else:
         package = get_object_or_404(Package, pk=packageID)
         package.name = name
-
-        if blacklist != package.blacklist:
-            # Override blacklist settings on versions
-            for version in package.versions.all():
-                version.blacklist = None
-                version.save()
-
-        package.blacklist = blacklist
         package.save()
 
     messages.success(request, _('Package saved!'))
@@ -213,3 +203,4 @@ def paginate(items, request):
         packages = paginator.page(paginator.num_pages)
 
     return packages
+
