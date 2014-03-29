@@ -59,10 +59,10 @@
 	</tbody>
       </table>
       {% elif count == 0 %}
-    <p><small>There are no entries.</small></p>      
+    <p><small>There are no entries.</small></p>
       {% elif query %}
     <p><small>No policies matched your search criteria.</small></p>
-    {% endif %}    
+    {% endif %}
     </div>
 
     <div class="span9" id="content">
@@ -83,8 +83,8 @@
         </div>
 
         <div class="control-group">
-          <label class="control-label" for="description">{% trans "Type" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="description">{% trans "Type" %}</label>
+          <div class="controls">
             <select id="type" name="type" class="chzn-select" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
               <option value="-1">{% trans 'Select one...' %}</option>
               {% for t in types %}
@@ -94,10 +94,10 @@
             </select>
           </div>
         </div>
-        
+
         <div class="control-group" id="file">
-          <label class="control-label" for="file">{% trans "File" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="file">{% trans "File" %}</label>
+          <div class="controls">
             <select id="file" name="file" class="chzn-select" rel="tooltip"
               title="{% trans 'File to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
@@ -107,10 +107,10 @@
             </select>
           </div>
         </div>
-        
+
         <div class="control-group" id="dir">
-          <label class="control-label" for="dir">{% trans "Directory" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="dir">{% trans "Directory" %}</label>
+          <div class="controls">
             <select id="dir" name="dir" class="chzn-select" rel="tooltip"
               title="{% trans 'Directory to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
@@ -119,11 +119,11 @@
               {% endfor %}
             </select>
           </div>
-        </div>        
-        
+        </div>
+
         <div class="control-group hide filter" id="closed-port">
-          <label class="control-label" for="range">{% trans "All ports closed except" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="range">{% trans "All ports closed except" %}</label>
+          <div class="controls">
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
               rel="tooltip" title="{% trans 'Whitespace separated range(s) of ports, f.e: 5 10-1024 2450-4000' %}"
               value="{{ policy.argument|default:'' }}">
@@ -140,51 +140,53 @@
         </div>
 
         <div class="control-group filter" id="swid-request">
-          <label class="control-label" for="flags">{% trans "SWID Request Flags" %}</label>
-          <div class="controls">
-            <select id="flags" name="flags" class="chzn-select" rel="tooltip"
-              title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}">
-              <option value="R"
-                {% if policy.argument == 'R' %}
-                  selected="selected"
-                {% endif %}
-                >{% trans 'R (Tag IDs only)' %}</option>
-              <option value="S"
-                {% if policy.argument == 'S' %}
-                  selected="selected"
-                {% endif %}
-                >{% trans 'S (Subscribe)' %}</option>
-              <option value="C"
-                {% if policy.argument == 'C' %}
-                  selected="selected"
-                {% endif %}
-                >{% trans 'C (Clear subscription)' %}</option>
-            </select>
-          </div>
-        </div>
+	      <label class="control-label" for="flags">{% trans "SWID Request Flags" %}</label>
+	      <div class="controls">
+		    <select data-placeholder="Click to add a SWID flag.." id="swid-flags" name="swid-flags"
+                multiple class="chzn-select-deselect" rel="tooltip"
+		        title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}">
+			  <option value="R"
+		        {% if 'R' in policy.argument %}
+		          selected="selected"
+		        {% endif %}
+		        >{% trans 'R (Tag IDs only)' %}</option>
+			  <option value="S"
+		        {% if 'S' in policy.argument %}
+		          selected="selected"
+		        {% endif %}
+		        >{% trans 'S (Subscribe)' %}</option>
+			  <option value="C"
+			    {% if 'C' in policy.argument %}
+			      selected="selected"
+			    {% endif %}
+			    >{% trans 'C (Clear subscription)' %}</option>
+		      </select>
+	      </div>
+      </div>
 
-        <div class="control-group filter" id="tpm-attestation">
-          <label class="control-label" for="flags">{% trans "TPM Attestation Flags" %}</label>
-          <div class="controls">
-            <select id="flags" name="flags" class="chzn-select" rel="tooltip"
-              title="{% trans 'B for BIOS measurements, I for IMA measurements' %}">
-              <option value="B"
-                {% if policy.argument == 'B' %}
-                  selected="selected"
-                {% endif %}
-                >{% trans 'B (BIOS)' %}</option>
-              <option value="I"
-                {% if policy.argument == 'I' %}
-                  selected="selected"
-                {% endif %}
-                >{% trans 'I (IMA)' %}</option>
-            </select>
-          </div>
-        </div>
+      <div class="control-group filter" id="tpm-attestation">
+	    <label class="control-label" for="flags">{% trans "TPM Attestation Flags" %}</label>
+	    <div class="controls">
+		  <select data-placeholder="Click to add an attestation flag..." id="attestation-flags" name="attestation-flags"
+              multiple class="chzn-select-deselect" rel="tooltip"
+		      title="{% trans 'B for BIOS measurements, I for IMA measurements' %}">
+			<option value="B"
+	          {% if 'B' in policy.argument %}
+	            selected="selected"
+	          {% endif %}
+	          >{% trans 'B (BIOS)' %}</option>
+			<option value="I"
+			  {% if 'I' in policy.argument %}
+			    selected="selected"
+			  {% endif %}
+			>{% trans 'I (IMA)' %}</option>
+		   </select>
+	      </div>
+      </div>
 
 	      <div class="control-group">
-          <label class="control-label" for="fail">{% trans "Fail-Action" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="fail">{% trans "Fail-Action" %}</label>
+          <div class="controls">
             <select id="fail" name="fail" class="chzn-select" rel="tooltip"
               title="{% trans 'Recommendation when a client does not meet the policy requirement' %}">
               <option value="">{% trans 'Select one...' %}</option>
@@ -192,7 +194,7 @@
               <option value="{{forloop.counter0}}"
               {% if policy.fail == forloop.counter0 %}
               selected="selected"
-              {% endif %} 
+              {% endif %}
               >{{ a }}</option>
               {% endfor %}
             </select>
@@ -200,8 +202,8 @@
         </div>
 
         <div class="control-group">
-          <label class="control-label" for="noresult">{% trans "Noresult-Action" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="noresult">{% trans "Noresult-Action" %}</label>
+          <div class="controls">
             <select id="noresult" name="noresult" class="chzn-select" rel="tooltip"
               title="{% trans 'Recommendation when the policy does not apply to the client' %}">
               <option value="">{% trans 'Select one...' %}</option>
@@ -209,7 +211,7 @@
               <option value="{{forloop.counter0}}"
               {% if policy.noresult == forloop.counter0 %}
               selected="selected"
-              {% endif %} 
+              {% endif %}
               >{{ a }}</option>
               {% endfor %}
             </select>
@@ -230,7 +232,7 @@
         </div><!-- /btn-toolbar-->
       {% endif %}
       </form>
-    
+
     </div><!--content-->
   </div><!--/row-->
 </div>
@@ -257,10 +259,28 @@
 $(document).ready(function () {
   type_change();
   $('#policyform').submit(function(){
+    prepare_flags();
 	  var $form = $(this);
 	  $form.children('.filter:hidden').remove();
   });
 })
+
+function prepare_flags() {
+
+  var $form = $('#policyform');
+  var $hiddenFlagInput = $('<input />').attr('type', 'hidden').attr('name', 'flags').appendTo($form);
+  var value = "";
+  // swid-flags
+  if (type == 15) {
+    value = $("#swid-flags").val().join(' ');
+  }
+  // attestation-flags
+  if (type == 16) {
+    value = $("#attestation-flags").val().join(' ');
+  }
+  $hiddenFlagInput.val(value);
+
+}
 
 function type_change(){
   var PCKGS =  1;

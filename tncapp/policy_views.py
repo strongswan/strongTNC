@@ -158,20 +158,20 @@ def save(request):
 
     # swid tag inventory
     elif policy_type == 15:
-        swid_flag = request.POST.get('flags', None)
-        if swid_flag in Policy.swid_request_flags:
-            argument = swid_flag
+        swid_flag = request.POST.get('flags', '').split()
+        if set(swid_flag).issubset(Policy.swid_request_flags):
+            argument = ' '.join(swid_flag)
             print argument
         else:
-            raise ValueError('SWID flag is not valid.')
+            raise ValueError('SWID flags are not valid.')
 
     # tpm remote attestation
     elif policy_type == 16:
-        tmp_flag = request.POST.get('flags', None)
-        if tmp_flag in Policy.tpm_attestation_flags:
-            argument = tmp_flag
+        tpm_flag = request.POST.get('flags', '').split()
+        if set(tpm_flag).issubset(set(Policy.tpm_attestation_flags)):
+            argument = ' '.join(tpm_flag)
         else:
-            raise ValueError('TMP attestation flag is not valid.')
+            raise ValueError('TPM attestation flags are not valid.')
 
     fail = request.POST.get('fail')
     if not re.match(r'^\d+$', fail) and int(fail) in range(len(Policy.action)):
