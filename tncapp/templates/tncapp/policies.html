@@ -169,7 +169,7 @@
 	    <div class="controls">
 		  <select data-placeholder="Click to add an attestation flag..." id="attestation-flags" name="attestation-flags"
               multiple class="chzn-select-deselect" rel="tooltip"
-		      title="{% trans 'B for BIOS measurements, I for IMA measurements' %}">
+		      title="{% trans 'B for BIOS measurements, I for IMA measurements, T for Trusted Boot' %}">
 			<option value="B"
 	          {% if 'B' in policy.argument %}
 	            selected="selected"
@@ -180,6 +180,11 @@
 			    selected="selected"
 			  {% endif %}
 			>{% trans 'I (IMA)' %}</option>
+      <option value="T"
+          {% if 'T' in policy.argument %}
+              selected="selected"
+          {% endif %}
+          >{% trans 'T (Trusted Boot)' %}</option>
 		   </select>
 	      </div>
       </div>
