@@ -83,7 +83,7 @@
         </div>
 
         <div class="control-group">
-          <label class="control-label" for="description">{% trans "Type" %}</label>
+          <label class="control-label" for="type">{% trans "Type" %}</label>
           <div class="controls">
             <select id="type" name="type" class="chzn-select" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
               <option value="-1">{% trans 'Select one...' %}</option>
@@ -140,7 +140,7 @@
         </div>
 
         <div class="control-group filter" id="swid-request">
-	      <label class="control-label" for="flags">{% trans "SWID Request Flags" %}</label>
+	      <label class="control-label" for="swid-flags">{% trans "SWID Request Flags" %}</label>
 	      <div class="controls">
 		    <select data-placeholder="Click to add a SWID flag.." id="swid-flags" name="swid-flags"
                 multiple class="chzn-select-deselect" rel="tooltip"
@@ -165,7 +165,7 @@
       </div>
 
       <div class="control-group filter" id="tpm-attestation">
-	    <label class="control-label" for="flags">{% trans "TPM Attestation Flags" %}</label>
+	    <label class="control-label" for="attestation-flags">{% trans "TPM Attestation Flags" %}</label>
 	    <div class="controls">
 		  <select data-placeholder="Click to add an attestation flag..." id="attestation-flags" name="attestation-flags"
               multiple class="chzn-select-deselect" rel="tooltip"
@@ -263,19 +263,40 @@ $(document).ready(function () {
 	  var $form = $(this);
 	  $form.children('.filter:hidden').remove();
   });
-})
+});
+
+var PolicyType = {
+  PCKGS :  1,
+  UNSRC :  2,
+  FWDEN :  3,
+  PWDEN :  4,
+  FREFM :  5,
+  FMEAS :  6,
+  FMETA :  7,
+  DREFM :  8,
+  DMEAS :  9,
+  DMETA : 10,
+  TCPOP : 11,
+  TCPBL : 12,
+  UDPOP : 13,
+  UDPBL : 14,
+  SWIDT : 15,
+  TPMRA : 16
+};
 
 function prepare_flags() {
 
   var $form = $('#policyform');
   var $hiddenFlagInput = $('<input />').attr('type', 'hidden').attr('name', 'flags').appendTo($form);
   var value = "";
+  var type = $("select#type option:selected").attr("value");
+
   // swid-flags
-  if (type == 15) {
+  if (type == PolicyType.SWIDT) {
     value = $("#swid-flags").val().join(' ');
   }
   // attestation-flags
-  if (type == 16) {
+  if (type == PolicyType.TPMRA) {
     value = $("#attestation-flags").val().join(' ');
   }
   $hiddenFlagInput.val(value);
@@ -283,23 +304,6 @@ function prepare_flags() {
 }
 
 function type_change(){
-  var PCKGS =  1;
-  var UNSRC =  2;
-  var FWDEN =  3;
-  var PWDEN =  4;
-  var FREFM =  5;
-  var FMEAS =  6;
-  var FMETA =  7;
-  var DREFM =  8;
-  var DMEAS =  9;
-  var DMETA = 10;
-  var TCPOP = 11;
-  var TCPBL = 12;
-  var UDPOP = 13;
-  var UDPBL = 14;
-  var SWIDT = 15;
-  var TPMRA = 16;
-
   $(document.getElementById('file')).hide();
   $(document.getElementById('dir')).hide();
   $(document.getElementById('closed-port')).hide();
@@ -307,20 +311,19 @@ function type_change(){
   $(document.getElementById('swid-request')).hide();
   $(document.getElementById('tpm-attestation')).hide();
 
-  type = $("select#type option:selected").attr("value")
-  //type ++; //Because empty defaults to 0
+  var type = $("select#type option:selected").attr("value");
 
-  if (type == FREFM || type == FMEAS || type == FMETA)
+  if (type == PolicyType.FREFM || type == PolicyType.FMEAS || type == PolicyType.FMETA)
     $(document.getElementById('file')).show();
-  else if (type == DREFM || type == DMEAS || type == DMETA)
+  else if (type == PolicyType.DREFM || type == PolicyType.DMEAS || type == PolicyType.DMETA)
     $(document.getElementById('dir')).show();
-  else if (type == TCPOP || type == UDPOP)
+  else if (type == PolicyType.TCPOP || type == PolicyType.UDPOP)
     $(document.getElementById('closed-port')).show();
-  else if (type == TCPBL || type == UDPBL)
+  else if (type == PolicyType.TCPBL || type == PolicyType.UDPBL)
     $(document.getElementById('open-port')).show();
-  else if (type == SWIDT)
+  else if (type == PolicyType.SWIDT)
     $(document.getElementById('swid-request')).show();
-  else if (type == TPMRA)
+  else if (type == PolicyType.TPMRA)
     $(document.getElementById('tpm-attestation')).show();
 }
 

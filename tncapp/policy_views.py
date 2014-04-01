@@ -161,7 +161,6 @@ def save(request):
         swid_flag = request.POST.get('flags', '').split()
         if set(swid_flag).issubset(Policy.swid_request_flags):
             argument = ' '.join(swid_flag)
-            print argument
         else:
             raise ValueError('SWID flags are not valid.')
 
