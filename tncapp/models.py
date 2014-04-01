@@ -436,7 +436,8 @@ class Policy(models.Model):
 
     tpm_attestation_flags = [
         'B',
-        'I'
+        'I',
+        'T',
     ]
 
     argument_funcs = {
