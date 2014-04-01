@@ -203,4 +203,3 @@ def paginate(items, request):
         packages = paginator.page(paginator.num_pages)
 
     return packages
-

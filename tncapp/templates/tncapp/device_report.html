@@ -104,10 +104,10 @@
     {% if sessions %}
     <hr>
     <h4>{% trans 'Last 50 Sessions' %}</h4>
-    <table class="table table-striped sortable">
+    <table class="table table-striped sortable" data-sortlist="[[0,1]]">
       <thead>
         <tr>
-          <th>{% trans "Time" %}</th>
+          <th class="sorter-strongTNCDate">{% trans "Time" %}</th>
           <th>{% trans "Result" %}</th>
         </tr>
       </thead>
