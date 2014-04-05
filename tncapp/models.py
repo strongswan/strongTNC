@@ -22,9 +22,13 @@ Defines model classes which are used by the Django OR-mapper
 """
 
 import binascii
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from calendar import timegm
+
+from django.utils import timezone
+
+import pytz
+
 from django.db import models
 
 
@@ -58,16 +62,20 @@ class HashField(BinaryField):
 
 class EpochField(models.IntegerField):
     """
-    Custom field type for unix timestamps
+    Custom field type for unix timestamps.
     """
     __metaclass__ = models.SubfieldBase
 
     def to_python(self, value):
-        if type(value) == int:
-            return datetime.utcfromtimestamp(float(value))
+        if isinstance(value, int):
+            dt = datetime.utcfromtimestamp(value)
+            return dt.replace(tzinfo=pytz.utc)  # Make datetime timezone-aware
+        elif isinstance(value, datetime):
+            return value
+        elif value is None:
+            return None
         else:
-            if type(value) == datetime:
-                return value
+            raise ValueError('Invalid type for epoch field: %s' % type(value))
 
     def get_prep_value(self, value):
         if value:
@@ -202,7 +210,7 @@ class Device(models.Model):
         except Result.DoesNotExist:
             return True
 
-        deadline = datetime.today() - timedelta(seconds=enforcement.max_age)
+        deadline = timezone.now() - timedelta(seconds=enforcement.max_age)
 
         if result.session.time < deadline or (result.recommendation != Action.ALLOW):
             return True
