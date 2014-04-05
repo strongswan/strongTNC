@@ -112,8 +112,8 @@ def statistics(request):
     context['devices'] = Device.objects.count()
     context['packages'] = Package.objects.count()
     context['products'] = Product.objects.count()
-    context['OSranking'] = Product.objects.annotate(num=
-            Count('devices__id')).order_by('-num')
+    context['OSranking'] = Product.objects.annotate(
+            num=Count('devices__id')).order_by('-num')
 
     context['rec_count_session'] = Session.objects.values('recommendation').annotate(
             num=Count('recommendation')).order_by('-num')

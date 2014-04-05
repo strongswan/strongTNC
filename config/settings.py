@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 # Django settings for strongTNC
+import os
+
 from django.contrib import messages
+
+env = os.environ.get
+true_values = ['1', 'true', 'y', 'yes', 1, True]
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+DEBUG_TOOLBAR = env('DJANGO_DEBUG_TOOLBAR', 'False').lower() in true_values
 
 ADMINS = (
      ('Name', 'admin@example.com'),
@@ -118,6 +125,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
+if DEBUG_TOOLBAR:
+    MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
 
 ROOT_URLCONF = 'config.urls'
 
@@ -140,6 +149,8 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'tncapp',
 )
+if DEBUG_TOOLBAR:
+    INSTALLED_APPS += ('debug_toolbar',)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -176,4 +187,12 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'success',
     messages.WARNING: 'warning',
     messages.ERROR: 'error',
+}
+
+# DEBUG TOOLBAR
+def show_debug_toolbar(request):
+    return DEBUG_TOOLBAR
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False,
+    'SHOW_TOOLBAR_CALLBACK': 'config.settings.show_debug_toolbar',
 }
