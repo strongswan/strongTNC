@@ -150,33 +150,27 @@ def save(request):
     # port ranges
     if policy_type in [11, 12, 13, 14]:
         ranges = request.POST.get('range')
-        #TODO: flip does not exist in the policy form (view), is this save to delete?
-        flip = unicode(request.POST.get('flip')).lower() in ['1', 'yes', 'y', 'true']
         if ranges is not '' and ranges is not None:
             if not check_range(ranges):
                 raise ValueError('Port ranges are not valid.')
-
-            if flip:
-                ranges = invert_range(ranges)
 
             argument = normalize_ranges_whitespace(ranges)
 
     # swid tag inventory
     elif policy_type == 15:
-        swid_flag = request.POST.get('flags', None)
-        if swid_flag in Policy.swid_request_flags:
-            argument = swid_flag
-            print argument
+        swid_flag = request.POST.get('flags', '').split()
+        if set(swid_flag).issubset(Policy.swid_request_flags):
+            argument = ' '.join(swid_flag)
         else:
-            raise ValueError('SWID flag is not valid.')
+            raise ValueError('SWID flags are not valid.')
 
     # tpm remote attestation
     elif policy_type == 16:
-        tmp_flag = request.POST.get('flags', None)
-        if tmp_flag in Policy.tpm_attestation_flags:
-            argument = tmp_flag
+        tpm_flag = request.POST.get('flags', '').split()
+        if set(tpm_flag).issubset(set(Policy.tpm_attestation_flags)):
+            argument = ' '.join(tpm_flag)
         else:
-            raise ValueError('TMP attestation flag is not valid.')
+            raise ValueError('TPM attestation flags are not valid.')
 
     fail = request.POST.get('fail')
     if not re.match(r'^\d+$', fail) and int(fail) in range(len(Policy.action)):
@@ -191,8 +185,8 @@ def save(request):
         raise ValueError('The policy name is invalid.')
 
     if policy_id == 'None':
-        policy = Policy(name=name, type=policy_type, fail=fail, noresult=noresult, file=file, dir=dir,
-                        argument=argument)
+        policy = Policy(name=name, type=policy_type, fail=fail, noresult=noresult,
+                        file=file, dir=dir, argument=argument)
     else:
         policy = get_object_or_404(Policy, pk=policy_id)
         policy.name = name
@@ -236,11 +230,11 @@ def check(request):
 
 @require_POST
 @login_required
-def delete(request, policy_id):
+def delete(request, policyID):
     """
     Delete a policy
     """
-    policy = get_object_or_404(Policy, pk=policy_id)
+    policy = get_object_or_404(Policy, pk=policyID)
     policy.delete()
 
     messages.success(request, _('Policy deleted!'))
@@ -307,64 +301,11 @@ def check_range(ranges):
     return True
 
 
-def invert_range(ranges):
-    """
-    Inverts a given port range and inverts it to select all other ports
-    Combines adjacent ports to ranges and sorts numerically
-    """
-    ranges = ranges.replace(' ', '')
-
-    #Very special cases
-    if ranges == '0-65535': return ''
-    if ranges == '': return '0-65535'
-
-    doubles = []
-    for r in ranges.split(','):
-        bounds = r.split('-', 1)
-        lower = int(bounds[0])
-        upper = int(bounds[1]) if len(bounds) > 1 else -1
-
-        if upper != -1:
-            doubles.append((lower, upper))
-        else:
-            doubles.append((lower, lower))
-
-    doubles.sort(reverse=True)
-    ranges = []
-
-    while len(doubles) > 0:
-        d = doubles.pop()
-        lower = int(d[0])
-        upper = int(d[1])
-
-        if len(ranges) == 0 and lower != 0:
-            if lower != 1:
-                ranges.append('0-%d' % (lower - 1))
-            else:
-                ranges.append('0')
-
-        while len(doubles) > 0 and upper >= int(doubles[-1][0] - 1):
-            d2 = doubles.pop()
-            if int(d2[1]) > upper:
-                upper = int(d2[1])
-
-        if len(doubles) > 0:
-            if (upper + 1) != (doubles[-1][0] - 1):
-                ranges.append('%d-%d' % (upper + 1, doubles[-1][0] - 1))
-            else:
-                ranges.append('%d' % (upper + 1))
-        else:
-            if upper != 65535:
-                ranges.append('%d-65535' % (upper + 1))
-
-    return ','.join(ranges)
-
-
 def paginate(items, request):
     """
     Paginated browsing
     """
-    paginator = Paginator(items, 50) # Show 50 policies per page
+    paginator = Paginator(items, 50)  # Show 50 policies per page
     page = request.GET.get('page')
     try:
         policies = paginator.page(page)

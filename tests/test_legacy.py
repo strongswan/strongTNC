@@ -15,12 +15,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
 #
-from django.test import TestCase
 from datetime import datetime, timedelta
+
+from django.test import TestCase
+
 from tncapp.models import (File, WorkItem, Device, Group, Product, Session,
     Policy, Enforcement, Action, Package, Directory, Version, Identity, Result)
 from tncapp.views import generate_results, purge_dead_sessions
-from tncapp.policy_views import check_range, invert_range
+from tncapp.policy_views import check_range
 
 
 class TncappTest(TestCase):
@@ -280,45 +282,6 @@ class TncappTest(TestCase):
         self.assertEqual(False, check_range('1-10, 25555-25000'))
         self.assertEqual(False, check_range('1-65536'))
 
-    def test_invert_range(self):
-        tests = {
-                #default cases
-                '5-10': '0-4,11-65535',
-                '100-1000': '0-99,1001-65535',
-                '9': '0-8,10-65535',
-                '9,50,1001': '0-8,10-49,51-1000,1002-65535',
-                '9,50,90-500,1001': '0-8,10-49,51-89,501-1000,1002-65535',
-
-                #edge cases
-                '0-5': '6-65535',
-                '0-65535': '',
-                '0-100,60000-65535': '101-59999',
-                '0-4,11-65535': '5-10',
-                }
-
-        over = {
-                #unsorted
-                '90-500,9,50,1001': '0-8,10-49,51-89,501-1000,1002-65535',
-                '100,50,20': '0-19,21-49,51-99,101-65535',
-
-                #overlapping ranges
-                '9,10,11': '0-8,12-65535',
-                '5-10,9-20': '0-4,21-65535',
-                '5-50,10-15': '0-4,51-65535',
-                '1-1000,500,600,499': '0,1001-65535',
-                '10-100,50-200,150-500,450-10000': '0-9,10001-65535',
-                }
-
-        for test in tests.keys():
-            self.assertEqual(tests[test], invert_range(test))
-
-        for test in over.keys():
-            self.assertEqual(over[test], invert_range(test))
-
-            #Double reversion should yield test again IF there are no
-            #overlapping ranges, and no sorting done
-        for test in tests.keys():
-            self.assertEqual(test, invert_range(invert_range(test)))
 
     def test_purge_dead_sessions(self):
         device = Device.objects.get(pk=1)

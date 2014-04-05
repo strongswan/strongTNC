@@ -30,6 +30,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from models import Group, Device
 
+
 @require_GET
 @login_required
 def groups(request):
@@ -41,6 +42,7 @@ def groups(request):
     context['grouptree'] = group_tree()
     context['title'] = _('Groups')
     return render(request, 'tncapp/groups.html', context)
+
 
 @require_GET
 @login_required
@@ -63,13 +65,13 @@ def group(request, groupID):
         members = group.members.all()
         context['members'] = members
 
-        devices = Device.objects.exclude(id__in = members.values_list('id',
-            flat=True))
+        devices = Device.objects.exclude(id__in=members.values_list('id', flat=True))
 
         context['devices'] = devices
         context['title'] = _('Group ') + context['group'].name
 
     return render(request, 'tncapp/groups.html', context)
+
 
 @require_GET
 @login_required
@@ -84,6 +86,7 @@ def add(request):
     context['group'] = Group()
     context['devices'] = Device.objects.all()
     return render(request, 'tncapp/groups.html', context)
+
 
 @require_POST
 @login_required
@@ -111,15 +114,15 @@ def save(request):
     if parentId == groupID:
         return HttpResponse(status=400)
 
-    parent=None
+    parent = None
     if parentId != '':
         try:
-            parent=Group.objects.get(pk=parentId)
+            parent = Group.objects.get(pk=parentId)
         except Group.DoesNotExist:
             pass
 
     if groupID == 'None':
-        group = Group.objects.create(name=name,parent=parent)
+        group = Group.objects.create(name=name, parent=parent)
     else:
         group = get_object_or_404(Group, pk=groupID)
         group.name = name
@@ -135,6 +138,7 @@ def save(request):
 
     messages.success(request, _('Group saved!'))
     return redirect('/groups/%d' % group.id)
+
 
 @require_POST
 @login_required
@@ -157,6 +161,7 @@ def check(request):
 
     return HttpResponse(("%s" % response).lower())
 
+
 @require_POST
 @login_required
 def delete(request, groupID):
@@ -174,6 +179,7 @@ def delete(request, groupID):
 
     return redirect('/groups')
 
+
 def group_tree():
     """
     Returns a tree-view of all groups as <dl>-Tag.
@@ -183,12 +189,12 @@ def group_tree():
     roots = Group.objects.filter(parent=None)
 
     for root in roots:
-        #dl += '<dt>%s</dt>' % root
         dl += add_children(root)
 
     dl += '</dl>'
 
     return dl
+
 
 def add_children(parent):
     """
@@ -205,4 +211,3 @@ def add_children(parent):
         sub += '<dd><a href="/groups/%d">%s</a></dd>\n' % (parent.id, parent)
 
     return sub
-

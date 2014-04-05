@@ -33,6 +33,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from models import Device, Group, Product, Session, Result, Policy
 
+
 @require_GET
 @login_required
 def devices(request):
@@ -46,6 +47,7 @@ def devices(request):
 
     context['devices'] = paginate(devices, request)
     return render(request, 'tncapp/devices.html', context)
+
 
 @require_GET
 @login_required
@@ -72,12 +74,12 @@ def device(request, deviceID):
         context['members'] = members
         context['products'] = Product.objects.all().order_by('name')
 
-        groups = Group.objects.exclude(id__in = members.values_list('id',
-            flat=True))
+        groups = Group.objects.exclude(id__in=members.values_list('id', flat=True))
         context['groups'] = groups
         context['title'] = _('Device ') + device.description
 
     return render(request, 'tncapp/devices.html', context)
+
 
 @require_GET
 @login_required
@@ -94,6 +96,7 @@ def add(request):
     context['devices'] = paginate(devices, request)
     context['device'] = Device()
     return render(request, 'tncapp/devices.html', context)
+
 
 @require_POST
 @login_required
@@ -151,6 +154,7 @@ def save(request):
     messages.success(request, _('Device saved!'))
     return redirect('/devices/%d' % device.id)
 
+
 @require_POST
 @login_required
 def delete(request, deviceID):
@@ -162,6 +166,7 @@ def delete(request, deviceID):
 
     messages.success(request, _('Device deleted!'))
     return redirect('/devices')
+
 
 @require_GET
 @login_required
@@ -177,18 +182,19 @@ def search(request):
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
-        devices = Device.objects.filter(Q(description__icontains=q)|Q(value__icontains=q))
+        devices = Device.objects.filter(Q(description__icontains=q) | Q(value__icontains=q))
     else:
         return redirect('/devices')
 
     context['devices'] = paginate(devices, request)
     return render(request, 'tncapp/devices.html', context)
 
+
 def paginate(items, request):
     """
     Paginated browsing
     """
-    paginator = Paginator(items, 50) # Show 50 devices per page
+    paginator = Paginator(items, 50)  # Show 50 devices per page
     page = request.GET.get('page')
     try:
         devices = paginator.page(page)
@@ -200,6 +206,7 @@ def paginate(items, request):
         devices = paginator.page(paginator.num_pages)
 
     return devices
+
 
 @require_GET
 @login_required
@@ -237,8 +244,8 @@ def report(request, deviceID):
     for group in context['definition_set'] + context['inherit_set']:
         for e in group.enforcements.all():
             try:
-                result =  Result.objects.filter(
-                        session__device=device,policy=e.policy).latest()
+                result = Result.objects.filter(
+                        session__device=device, policy=e.policy).latest()
                 enforcements.append((e, Policy.action[result.recommendation],
                     device.is_due_for(e)))
             except Result.DoesNotExist:
@@ -247,6 +254,7 @@ def report(request, deviceID):
     context['enforcements'] = enforcements
 
     return render(request, 'tncapp/device_report.html', context)
+
 
 @require_GET
 @login_required
