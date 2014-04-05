@@ -6,7 +6,7 @@
     <title>strongTNC - {% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="Stefan Rohner, Marco Tanner & Andreas Steffen">
+    <meta name="author" content="HSR University of Applied Sciences Rapperswil">
 
     <!-- styles -->
     <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet" media="screen">
@@ -113,7 +113,7 @@
       <hr>
 
       <footer>
-        <p>&copy; 2013 Stefan Rohner, Marco Tanner & Andreas Steffen, HSR University of Applied Sciences Rapperswil</p>
+          <p>&copy; 2013&ndash;{% now "Y" %} <a href="https://www.hsr.ch/">HSR University of Applied Sciences Rapperswil</a> &amp; <a href="https://github.com/strongswan/strongTNC/blob/master/CONTRIBUTORS.md">contributors</a>.</p>
       </footer>
 
       <div id="logoutModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
