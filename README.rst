@@ -44,6 +44,15 @@ Now you can start the development server. ::
 The web interface should be available on ``http://localhost:8000/``. The
 default password is ``password``.
 
+If you want to use the django debug toolbar, install it via pip::
+
+    pip install django-debug-toolbar
+
+Then start the server with the ``DJANGO_DEBUG_TOOLBAR`` env variable set to
+``1`` or ``True``. ::
+
+    DJANGO_DEBUG_TOOLBAR=1 ./manage.py runserver
+
 
 Testing
 -------
