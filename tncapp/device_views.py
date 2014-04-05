@@ -22,9 +22,9 @@ Provides CRUD for devices
 """
 
 import re
-from datetime import datetime
 from django.http import HttpResponse
 from django.contrib import messages
+from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
@@ -135,7 +135,7 @@ def save(request):
 
     if deviceID == 'None':
         device = Device.objects.create(value=value, description=description,
-                product=product, created=datetime.today())
+                product=product, created=timezone.now())
     else:
         device = get_object_or_404(Device, pk=deviceID)
         device.value = value

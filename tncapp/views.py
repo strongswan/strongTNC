@@ -22,7 +22,7 @@ General views like overview and site-wide search
 """
 
 import re
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.http import HttpResponse
 from django.contrib import messages
 from django.db.models import Count
@@ -32,6 +32,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import (require_GET, require_safe,
         require_http_methods)
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from models import Session, Result, Action, Enforcement, Device, Group, Package, Product, Policy
 
@@ -66,7 +67,7 @@ def start_session(request):
 
     if not device.created:
         # This is a new device
-        device.created = datetime.today()
+        device.created = timezone.now()
 
         if device.product.default_groups.all():
             for group in device.product.default_groups.all():
@@ -198,7 +199,7 @@ def purge_dead_sessions():
     """
     MAX_AGE = 7  # days
 
-    deadline = datetime.today() - timedelta(days=MAX_AGE)
+    deadline = timezone.now() - timedelta(days=MAX_AGE)
     dead = Session.objects.filter(recommendation=None, time__lte=deadline)
 
     for d in dead:
