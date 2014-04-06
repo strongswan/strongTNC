@@ -22,7 +22,7 @@ General views like overview and site-wide search
 """
 
 import re
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.http import HttpResponse
 from django.contrib import messages
 from django.db.models import Count
@@ -32,8 +32,10 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import (require_GET, require_safe,
         require_http_methods)
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from models import Session, Result, Action, Enforcement, Device, Group, Package, Product, Policy
+
 
 @require_GET
 @login_required
@@ -42,6 +44,7 @@ def overview(request):
     Main page
     """
     return render(request, 'tncapp/overview.html')
+
 
 @require_safe
 def start_session(request):
@@ -63,14 +66,14 @@ def start_session(request):
     device = session.device
 
     if not device.created:
-        #This is a new device
-        device.created = datetime.today()
+        # This is a new device
+        device.created = timezone.now()
 
         if device.product.default_groups.all():
             for group in device.product.default_groups.all():
                 device.groups.add(group)
         else:
-            #If no default groups for OS are specified
+            # If no default groups for OS are specified
             device.groups.add(Group.objects.get(pk=1))
 
         device.save()
@@ -78,6 +81,7 @@ def start_session(request):
     device.create_work_items(session)
 
     return HttpResponse(content='')
+
 
 @require_safe
 def end_session(request):
@@ -95,6 +99,7 @@ def end_session(request):
 
     return HttpResponse(status=200)
 
+
 @require_GET
 def statistics(request):
     """
@@ -108,8 +113,8 @@ def statistics(request):
     context['devices'] = Device.objects.count()
     context['packages'] = Package.objects.count()
     context['products'] = Product.objects.count()
-    context['OSranking'] = Product.objects.annotate(num=
-            Count('devices__id')).order_by('-num')
+    context['OSranking'] = Product.objects.annotate(
+            num=Count('devices__id')).order_by('-num')
 
     context['rec_count_session'] = Session.objects.values('recommendation').annotate(
             num=Count('recommendation')).order_by('-num')
@@ -125,7 +130,8 @@ def statistics(request):
 
     return render(request, 'tncapp/statistics.html', context)
 
-@require_http_methods(('GET','POST'))
+
+@require_http_methods(('GET', 'POST'))
 def login(request):
     """
     Login view
@@ -149,6 +155,7 @@ def login(request):
     context = {'next_url': request.GET.get('next', '')}
     return render(request, 'tncapp/login.html', context)
 
+
 def logout(request):
     """
     Logout and redirect to login view
@@ -159,7 +166,7 @@ def logout(request):
     return render(request, 'tncapp/login.html')
 
 
-#NOT views, do not need decorators
+# NOT views, do not need decorators
 
 def generate_results(session):
     """
@@ -176,8 +183,7 @@ def generate_results(session):
                 policy=item.enforcement.policy, recommendation=rec)
 
     if workitems:
-        session.recommendation = max(workitems, key = lambda x:
-                x.recommendation)
+        session.recommendation = max(workitems, key=lambda x: x.recommendation)
     else:
         session.recommendation = Action.ALLOW
 
@@ -191,9 +197,9 @@ def purge_dead_sessions():
     """
     Removes sessions that have not been ended after 7 days
     """
-    MAX_AGE = 7 #days
+    MAX_AGE = 7  # days
 
-    deadline = datetime.today() - timedelta(days=MAX_AGE)
+    deadline = timezone.now() - timedelta(days=MAX_AGE)
     dead = Session.objects.filter(recommendation=None, time__lte=deadline)
 
     for d in dead:

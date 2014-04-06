@@ -15,12 +15,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
 #
-from django.test import TestCase
 from datetime import datetime, timedelta
+
+from django.test import TestCase
+from django.utils import timezone
+
 from tncapp.models import (File, WorkItem, Device, Group, Product, Session,
     Policy, Enforcement, Action, Package, Directory, Version, Identity, Result)
 from tncapp.views import generate_results, purge_dead_sessions
-from tncapp.policy_views import check_range, invert_range
+from tncapp.policy_views import check_range
 
 
 class TncappTest(TestCase):
@@ -56,11 +59,11 @@ class TncappTest(TestCase):
         ss_dbg = Package.objects.create(name='strongswan-dbg')
         ss_ike = Package.objects.create(name='strongswan-ikev1')
 
-        Version.objects.create(time=datetime.today(), product=p, package=lib, release='1.1')
-        Version.objects.create(time=datetime.today(), product=p, package=ss, release='0.9')
-        Version.objects.create(time=datetime.today(), product=p, package=ss_nm, release='3.1')
-        Version.objects.create(time=datetime.today(), product=p, package=ss_dbg, release='2.3')
-        Version.objects.create(time=datetime.today(), product=p, package=ss_ike, release='1.1')
+        Version.objects.create(time=timezone.now(), product=p, package=lib, release='1.1')
+        Version.objects.create(time=timezone.now(), product=p, package=ss, release='0.9')
+        Version.objects.create(time=timezone.now(), product=p, package=ss_nm, release='3.1')
+        Version.objects.create(time=timezone.now(), product=p, package=ss_dbg, release='2.3')
+        Version.objects.create(time=timezone.now(), product=p, package=ss_ike, release='1.1')
 
         dir = Directory.objects.create(path='/bin')
         File.objects.create(name='bash', directory=dir)
@@ -90,7 +93,7 @@ class TncappTest(TestCase):
 
         device = Device.objects.get(value='def')
 
-        session = Session.objects.create(device=device, time=datetime.today(),
+        session = Session.objects.create(device=device, time=timezone.now(),
                 connectionID=123, identity=user)
 
         device.create_work_items(session)
@@ -139,7 +142,7 @@ class TncappTest(TestCase):
         device = Device.objects.get(value='def')
 
         session = Session.objects.create(device=device,
-                time=datetime.today(), connectionID=123, identity=user)
+                time=timezone.now(), connectionID=123, identity=user)
 
         device.create_work_items(session)
 
@@ -158,15 +161,15 @@ class TncappTest(TestCase):
         device = Device.objects.get(value='def')
         e = Enforcement.objects.create(group=g, policy=p, max_age=2 * 86400)
 
-        #No Session yet
+        # No Session yet
         self.assertEqual(True, device.is_due_for(e))
 
-        #Session yields no results for policy
-        meas = Session.objects.create(device=device, time=datetime.today(),
+        # Session yields no results for policy
+        meas = Session.objects.create(device=device, time=timezone.now(),
                 connectionID=123, identity=user)
         self.assertEqual(True, device.is_due_for(e))
 
-        #Session is too old
+        # Session is too old
         Result.objects.create(policy=p, session=meas, result='OK',
                 recommendation=Action.ALLOW)
 
@@ -174,11 +177,11 @@ class TncappTest(TestCase):
         meas.save()
         self.assertEqual(True, device.is_due_for(e))
 
-        meas.time = datetime.today() - timedelta(days=2, minutes=1)
+        meas.time = timezone.now() - timedelta(days=2, minutes=1)
         meas.save()
         self.assertEqual(True, device.is_due_for(e))
 
-        meas.time = datetime.today() - timedelta(days=1, hours=23, minutes=59)
+        meas.time = timezone.now() - timedelta(days=1, hours=23, minutes=59)
         meas.save()
         self.assertEqual(False, device.is_due_for(e))
 
@@ -198,7 +201,7 @@ class TncappTest(TestCase):
         device = Device.objects.get(value='def')
         user = Identity.objects.create(data='foobar')
         session = Session.objects.create(device=device,
-                time=datetime.today(), connectionID=123, identity=user)
+                time=timezone.now(), connectionID=123, identity=user)
 
         WorkItem.objects.create(session=session, argument='asdf',
                 fail=3, noresult=0, result='OK', recommendation=1, enforcement=e1,
@@ -280,64 +283,25 @@ class TncappTest(TestCase):
         self.assertEqual(False, check_range('1-10, 25555-25000'))
         self.assertEqual(False, check_range('1-65536'))
 
-    def test_invert_range(self):
-        tests = {
-                #default cases
-                '5-10': '0-4,11-65535',
-                '100-1000': '0-99,1001-65535',
-                '9': '0-8,10-65535',
-                '9,50,1001': '0-8,10-49,51-1000,1002-65535',
-                '9,50,90-500,1001': '0-8,10-49,51-89,501-1000,1002-65535',
-
-                #edge cases
-                '0-5': '6-65535',
-                '0-65535': '',
-                '0-100,60000-65535': '101-59999',
-                '0-4,11-65535': '5-10',
-                }
-
-        over = {
-                #unsorted
-                '90-500,9,50,1001': '0-8,10-49,51-89,501-1000,1002-65535',
-                '100,50,20': '0-19,21-49,51-99,101-65535',
-
-                #overlapping ranges
-                '9,10,11': '0-8,12-65535',
-                '5-10,9-20': '0-4,21-65535',
-                '5-50,10-15': '0-4,51-65535',
-                '1-1000,500,600,499': '0,1001-65535',
-                '10-100,50-200,150-500,450-10000': '0-9,10001-65535',
-                }
-
-        for test in tests.keys():
-            self.assertEqual(tests[test], invert_range(test))
-
-        for test in over.keys():
-            self.assertEqual(over[test], invert_range(test))
-
-            #Double reversion should yield test again IF there are no
-            #overlapping ranges, and no sorting done
-        for test in tests.keys():
-            self.assertEqual(test, invert_range(invert_range(test)))
 
     def test_purge_dead_sessions(self):
         device = Device.objects.get(pk=1)
         id = Identity.objects.create(data='user')
 
-        time = datetime.today() - timedelta(days=20)
+        time = timezone.now() - timedelta(days=20)
         Session.objects.create(device=device, identity=id, time=time, connectionID=1)
 
-        time = datetime.today() - timedelta(days=7)
+        time = timezone.now() - timedelta(days=7)
         Session.objects.create(device=device, identity=id, time=time, connectionID=2)
 
-        time = datetime.today() - timedelta(days=3)
+        time = timezone.now() - timedelta(days=3)
         Session.objects.create(device=device, identity=id, time=time, connectionID=3)
 
-        time = datetime.today() - timedelta(days=10)
+        time = timezone.now() - timedelta(days=10)
         Session.objects.create(device=device, identity=id, time=time, connectionID=4,
                 recommendation=Action.BLOCK)
 
-        time = datetime.today() - timedelta(days=10)
+        time = timezone.now() - timedelta(days=10)
         Session.objects.create(device=device, identity=id, time=time, connectionID=5,
                 recommendation=Action.ALLOW)
 

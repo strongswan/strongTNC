@@ -22,10 +22,15 @@ Defines model classes which are used by the Django OR-mapper
 """
 
 import binascii
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from calendar import timegm
+
+from django.utils import timezone
+
+import pytz
+
 from django.db import models
+
 
 class BinaryField(models.Field):
     """
@@ -41,6 +46,7 @@ class BinaryField(models.Field):
         """Internal database field type."""
         return 'blob'
 
+
 class HashField(BinaryField):
     """
     Custom field type to display file hashes
@@ -53,23 +59,29 @@ class HashField(BinaryField):
     def get_prep_value(self, value):
         return binascii.unhexlify(value)
 
+
 class EpochField(models.IntegerField):
     """
-    Custom field type for unix timestamps
+    Custom field type for unix timestamps.
     """
     __metaclass__ = models.SubfieldBase
 
     def to_python(self, value):
-        if type(value) == int:
-            return datetime.utcfromtimestamp(float(value))
+        if isinstance(value, int):
+            dt = datetime.utcfromtimestamp(value)
+            return dt.replace(tzinfo=pytz.utc)  # Make datetime timezone-aware
+        elif isinstance(value, datetime):
+            return value
+        elif value is None:
+            return None
         else:
-            if type(value) == datetime:
-                return value
+            raise ValueError('Invalid type for epoch field: %s' % type(value))
 
     def get_prep_value(self, value):
         if value:
             return timegm(value.utctimetuple())
         return None
+
 
 class Action(object):
     """
@@ -80,20 +92,21 @@ class Action(object):
     ISOLATE = 2
     NONE = 3
 
+
 class WorkItemType(object):
     """
     Possible workitem type values
     """
-    RESVD =  0
-    PCKGS =  1
-    UNSRC =  2
-    FWDEN =  3
-    PWDEN =  4
-    FREFM =  5
-    FMEAS =  6
-    FMETA =  7
-    DREFM =  8
-    DMEAS =  9
+    RESVD = 0
+    PCKGS = 1
+    UNSRC = 2
+    FWDEN = 3
+    PWDEN = 4
+    FREFM = 5
+    FMEAS = 6
+    FMETA = 7
+    DREFM = 8
+    DMEAS = 9
     DMETA = 10
     TCPOP = 11
     TCPBL = 12
@@ -101,6 +114,7 @@ class WorkItemType(object):
     UDPBL = 14
     SWIDT = 15
     TPMRA = 16
+
 
 class Product(models.Model):
     """
@@ -115,6 +129,7 @@ class Product(models.Model):
     class Meta:
         db_table = u'products'
 
+
 class Regid(models.Model):
     """
     SWID Registration ID
@@ -127,6 +142,7 @@ class Regid(models.Model):
 
     class Meta:
         db_table = u'regids'
+
 
 class Tag(models.Model):
     """
@@ -144,6 +160,7 @@ class Tag(models.Model):
     class Meta:
         db_table = u'tags'
 
+
 class Device(models.Model):
     """
     An Android Device identified by its AndroidID
@@ -152,8 +169,7 @@ class Device(models.Model):
     value = models.TextField()
     description = models.TextField(blank=True, null=True)
     product = models.ForeignKey(Product, related_name='devices', db_column='product')
-    created = EpochField(null=True,blank=True)
-
+    created = EpochField(null=True, blank=True)
 
     def __unicode__(self):
         if self.description:
@@ -183,7 +199,6 @@ class Device(models.Model):
 
         return group_set
 
-
     def is_due_for(self, enforcement):
         """
         Check if the device needs to perform the measurement defined by the
@@ -195,7 +210,7 @@ class Device(models.Model):
         except Result.DoesNotExist:
             return True
 
-        deadline = datetime.today() - timedelta(seconds=enforcement.max_age)
+        deadline = timezone.now() - timedelta(seconds=enforcement.max_age)
 
         if result.session.time < deadline or (result.recommendation != Action.ALLOW):
             return True
@@ -209,15 +224,15 @@ class Device(models.Model):
 
         enforcements = []
         for group in self.get_group_set():
-           enforcements += group.enforcements.all()
+            enforcements += group.enforcements.all()
 
-        minforcements=[]
+        minforcements = []
 
         while enforcements:
             emin = enforcements.pop()
             for e in enforcements:
                 if emin.policy == e.policy:
-                    emin = min(emin,e, key=lambda x: x.max_age)
+                    emin = min(emin, e, key=lambda x: x.max_age)
                     if emin == e:
                         enforcements.remove(e)
 
@@ -229,6 +244,7 @@ class Device(models.Model):
 
     class Meta:
         db_table = u'devices'
+
 
 class Group(models.Model):
     """
@@ -255,6 +271,7 @@ class Group(models.Model):
 
     class Meta:
         db_table = u'groups'
+
 
 class Directory(models.Model):
     """
@@ -285,6 +302,7 @@ class File(models.Model):
     class Meta:
         db_table = u'files'
 
+
 class Algorithm(models.Model):
     """
     A hashing algorithm
@@ -297,6 +315,7 @@ class Algorithm(models.Model):
 
     class Meta:
         db_table = u'algorithms'
+
 
 class FileHash(models.Model):
     """
@@ -317,19 +336,20 @@ class FileHash(models.Model):
     def __unicode__(self):
         return '%s (%s)' % (self.hash, self.algorithm)
 
+
 class Package(models.Model):
     """
-    aptitude Package name
+    Package
     """
     id = models.AutoField(primary_key=True)
     name = models.TextField(unique=True)
-    blacklist = models.IntegerField(blank=True, default=0)
 
     def __unicode__(self):
         return self.name
 
     class Meta:
         db_table = u'packages'
+
 
 class Version(models.Model):
     """
@@ -424,7 +444,8 @@ class Policy(models.Model):
 
     tpm_attestation_flags = [
         'B',
-        'I'
+        'I',
+        'T',
     ]
 
     argument_funcs = {
@@ -434,7 +455,7 @@ class Policy(models.Model):
         'Forwarding Enabled': lambda policy: '',
         'Default Password Enabled': lambda policy: '',
         'File Reference Measurement': lambda policy: '',
-        'File Measurement':lambda policy:  '',
+        'File Measurement': lambda policy: '',
         'File Metadata': lambda policy: '',
         'Directory Reference Measurement': lambda policy: '',
         'Directory Measurement': lambda policy: '',
@@ -462,15 +483,16 @@ class Enforcement(models.Model):
     group = models.ForeignKey(Group, related_name='enforcements',
             on_delete=models.CASCADE, db_column='group_id')
     max_age = models.IntegerField()
-    fail = models.IntegerField(null=True,blank=True, db_column='rec_fail')
-    noresult = models.IntegerField(null=True,blank=True, db_column='rec_noresult')
+    fail = models.IntegerField(null=True, blank=True, db_column='rec_fail')
+    noresult = models.IntegerField(null=True, blank=True, db_column='rec_noresult')
 
     def __unicode__(self):
         return '%s on %s' % (self.policy.name, self.group.name)
 
     class Meta:
         db_table = u'enforcements'
-        unique_together = (('policy','group'))
+        unique_together = (('policy', 'group'))
+
 
 class Identity(models.Model):
     """
@@ -482,19 +504,21 @@ class Identity(models.Model):
     class Meta:
         db_table = u'identities'
 
+
 class Session(models.Model):
     """Result of a TNC session."""
     id = models.AutoField(primary_key=True)
     connectionID = models.IntegerField(db_column='connection')
     device = models.ForeignKey(Device, related_name='sessions',
-       	     on_delete=models.CASCADE, db_column='device')
+        on_delete=models.CASCADE, db_column='device')
     identity = models.ForeignKey(Identity, related_name='sessions',
-               on_delete=models.CASCADE, db_column='identity')
+        on_delete=models.CASCADE, db_column='identity')
     time = EpochField()
     recommendation = models.IntegerField(null=True, db_column='rec')
 
     class Meta:
         db_table = u'sessions'
+
 
 class WorkItem(models.Model):
     """
@@ -507,17 +531,18 @@ class WorkItem(models.Model):
                   related_name='workitems', on_delete=models.CASCADE)
     type = models.IntegerField(null=False, blank=False)
     argument = models.TextField()
-    fail = models.IntegerField(null=True,blank=True)
-    noresult = models.IntegerField(null=True,blank=True)
+    fail = models.IntegerField(null=True, blank=True)
+    noresult = models.IntegerField(null=True, blank=True)
     result = models.TextField(null=True)
-    recommendation = models.IntegerField(null=True,blank=True)
+    recommendation = models.IntegerField(null=True, blank=True)
 
-    #Foreign Keys for FileHash, DirHash, FileExist, FileNotExist
+    # Foreign Keys for FileHash, DirHash, FileExist, FileNotExist
     file = models.ForeignKey(File, null=True, on_delete=models.DO_NOTHING)
     dir = models.ForeignKey(Directory, null=True, on_delete=models.DO_NOTHING)
 
     class Meta:
         db_table = u'workitems'
+
 
 class Result(models.Model):
     """
@@ -534,4 +559,3 @@ class Result(models.Model):
     class Meta:
         db_table = u'results'
         get_latest_by = 'session__time'
-

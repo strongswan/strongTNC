@@ -33,6 +33,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from models import Tag
 
+
 @require_GET
 @login_required
 def tags(request):
@@ -42,13 +43,14 @@ def tags(request):
     context = {}
     context['title'] = _('Tags')
     context['count'] = Tag.objects.count()
-    tags = Tag.objects.all().order_by('regid__name','unique_sw_id')
+    tags = Tag.objects.all().order_by('regid__name', 'unique_sw_id')
     context['tags'] = paginate(tags, request)
     return render(request, 'tncapp/tags.html', context)
 
+
 @require_GET
 @login_required
-def tag(request,tagID):
+def tag(request, tagID):
     """
     Tag detail view
     """
@@ -61,7 +63,7 @@ def tag(request,tagID):
     context = {}
     context['title'] = _('Tags')
     context['count'] = Tag.objects.count()
-    tags = Tag.objects.all().order_by('regid__name','unique_sw_id')
+    tags = Tag.objects.all().order_by('regid__name', 'unique_sw_id')
 
     context['tags'] = paginate(tags, request)
 
@@ -70,6 +72,7 @@ def tag(request,tagID):
         context['title'] = _('Tag ') + tag.unique_sw_id
 
     return render(request, 'tncapp/tags.html', context)
+
 
 @require_POST
 @login_required
@@ -88,6 +91,7 @@ def save(request):
     messages.success(request, _('Tag saved!'))
     return redirect('/tags/%d' % tag.id)
 
+
 @require_POST
 @login_required
 def delete(request, tagID):
@@ -100,18 +104,6 @@ def delete(request, tagID):
     messages.success(request, _('Tag deleted!'))
     return redirect('/tags')
 
-@require_GET
-@login_required
-def deleteHash(request, tag_hashID):
-    """
-    Delete a tag hash
-    """
-    hash = get_object_or_404(TagHash, pk=tag_hashID)
-    tag = hash.tag
-    hash.delete()
-
-    messages.success(request, _('Hash deleted!'))
-    return redirect('/tags/%d' % tag.id)
 
 @require_GET
 @login_required
@@ -136,11 +128,12 @@ def search(request):
     context['tags'] = paginate(tags, request)
     return render(request, 'tncapp/tags.html', context)
 
+
 def paginate(items, request):
     """
     Paginated browsing
     """
-    paginator = Paginator(items, 50) # Show 50 packages per page
+    paginator = Paginator(items, 50)  # Show 50 packages per page
     page = request.GET.get('page')
     try:
         tags = paginator.page(page)
@@ -152,4 +145,3 @@ def paginate(items, request):
         tags = paginator.page(paginator.num_pages)
 
     return tags
-
