@@ -31,6 +31,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from models import Directory, File
 
+
 @require_GET
 @login_required
 def directories(request):
@@ -44,9 +45,10 @@ def directories(request):
     context['directories'] = paginate(directories, request)
     return render(request, 'tncapp/directories.html', context)
 
+
 @require_GET
 @login_required
-def directory(request,directoryID):
+def directory(request, directoryID):
     """
     Directory detail view
     """
@@ -71,6 +73,7 @@ def directory(request,directoryID):
 
     return render(request, 'tncapp/directories.html', context)
 
+
 @require_GET
 @login_required
 def add(request):
@@ -84,6 +87,7 @@ def add(request):
     context['directories'] = paginate(directories, request)
     context['directory'] = Directory()
     return render(request, 'tncapp/directories.html', context)
+
 
 @require_POST
 @login_required
@@ -109,6 +113,7 @@ def save(request):
     messages.success(request, _('Directory saved!'))
     return redirect('/directories/%d' % directory.id)
 
+
 @require_POST
 @login_required
 def delete(request, directoryID):
@@ -120,6 +125,7 @@ def delete(request, directoryID):
 
     messages.success(request, _('Directory deleted!'))
     return redirect('/directories')
+
 
 @require_GET
 @login_required
@@ -143,11 +149,12 @@ def search(request):
     context['directories'] = paginate(directories, request)
     return render(request, 'tncapp/directories.html', context)
 
+
 def paginate(items, request):
     """
     Paginated browsing
     """
-    paginator = Paginator(items, 50) # Show 50 packages per page
+    paginator = Paginator(items, 50)  # Show 50 packages per page
     page = request.GET.get('page')
     try:
         directories = paginator.page(page)
@@ -159,4 +166,3 @@ def paginate(items, request):
         directories = paginator.page(paginator.num_pages)
 
     return directories
-

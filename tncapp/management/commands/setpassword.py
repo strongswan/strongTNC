@@ -26,6 +26,7 @@ from getpass import getpass
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 
+
 class Command(BaseCommand):
     """
     Required class to be recognized by manage.py
@@ -35,7 +36,8 @@ class Command(BaseCommand):
     args = '[password]'
 
     def handle(self, *args, **kwargs):
-        if len(args) > 1: raise CommandError('Too many arguments')
+        if len(args) > 1:
+            raise CommandError('Too many arguments')
 
         self.stdout.write('looking for admin-user in database...')
 

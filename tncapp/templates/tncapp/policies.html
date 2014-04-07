@@ -59,10 +59,10 @@
 	</tbody>
       </table>
       {% elif count == 0 %}
-    <p><small>There are no entries.</small></p>      
+    <p><small>There are no entries.</small></p>
       {% elif query %}
     <p><small>No policies matched your search criteria.</small></p>
-    {% endif %}    
+    {% endif %}
     </div>
 
     <div class="span9" id="content">
@@ -83,8 +83,8 @@
         </div>
 
         <div class="control-group">
-          <label class="control-label" for="description">{% trans "Type" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="type">{% trans "Type" %}</label>
+          <div class="controls">
             <select id="type" name="type" class="chzn-select" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
               <option value="-1">{% trans 'Select one...' %}</option>
               {% for t in types %}
@@ -94,10 +94,10 @@
             </select>
           </div>
         </div>
-        
+
         <div class="control-group" id="file">
-          <label class="control-label" for="file">{% trans "File" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="file">{% trans "File" %}</label>
+          <div class="controls">
             <select id="file" name="file" class="chzn-select" rel="tooltip"
               title="{% trans 'File to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
@@ -107,10 +107,10 @@
             </select>
           </div>
         </div>
-        
+
         <div class="control-group" id="dir">
-          <label class="control-label" for="dir">{% trans "Directory" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="dir">{% trans "Directory" %}</label>
+          <div class="controls">
             <select id="dir" name="dir" class="chzn-select" rel="tooltip"
               title="{% trans 'Directory to check' %}">
               <option value="">{% trans 'Select one...' %}</option>
@@ -119,11 +119,11 @@
               {% endfor %}
             </select>
           </div>
-        </div>        
-        
+        </div>
+
         <div class="control-group hide filter" id="closed-port">
-          <label class="control-label" for="range">{% trans "All ports closed except" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="range">{% trans "All ports closed except" %}</label>
+          <div class="controls">
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
               rel="tooltip" title="{% trans 'Whitespace separated range(s) of ports, f.e: 5 10-1024 2450-4000' %}"
               value="{{ policy.argument|default:'' }}">
@@ -140,51 +140,58 @@
         </div>
 
         <div class="control-group filter" id="swid-request">
-          <label class="control-label" for="flags">{% trans "SWID Request Flags" %}</label>
-          <div class="controls">
-            <select id="flags" name="flags" class="chzn-select" rel="tooltip"
-              title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}">
-              <option value="R"
-                {% if policy.argument == 'R' %}
-                  selected="selected"
-                {% endif %}
-                >{% trans 'R (Tag IDs only)' %}</option>
-              <option value="S"
-                {% if policy.argument == 'S' %}
-                  selected="selected"
-                {% endif %}
-                >{% trans 'S (Subscribe)' %}</option>
-              <option value="C"
-                {% if policy.argument == 'C' %}
-                  selected="selected"
-                {% endif %}
-                >{% trans 'C (Clear subscription)' %}</option>
-            </select>
-          </div>
-        </div>
+	      <label class="control-label" for="swid-flags">{% trans "SWID Request Flags" %}</label>
+	      <div class="controls">
+		    <select data-placeholder="Click to add a SWID flag.." id="swid-flags" name="swid-flags"
+                multiple class="chzn-select-deselect" rel="tooltip"
+		        title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}">
+			  <option value="R"
+		        {% if 'R' in policy.argument %}
+		          selected="selected"
+		        {% endif %}
+		        >{% trans 'R (Tag IDs only)' %}</option>
+			  <option value="S"
+		        {% if 'S' in policy.argument %}
+		          selected="selected"
+		        {% endif %}
+		        >{% trans 'S (Subscribe)' %}</option>
+			  <option value="C"
+			    {% if 'C' in policy.argument %}
+			      selected="selected"
+			    {% endif %}
+			    >{% trans 'C (Clear subscription)' %}</option>
+		      </select>
+	      </div>
+      </div>
 
-        <div class="control-group filter" id="tpm-attestation">
-          <label class="control-label" for="flags">{% trans "TPM Attestation Flags" %}</label>
-          <div class="controls">
-            <select id="flags" name="flags" class="chzn-select" rel="tooltip"
-              title="{% trans 'B for BIOS measurements, I for IMA measurements' %}">
-              <option value="B"
-                {% if policy.argument == 'B' %}
-                  selected="selected"
-                {% endif %}
-                >{% trans 'B (BIOS)' %}</option>
-              <option value="I"
-                {% if policy.argument == 'I' %}
-                  selected="selected"
-                {% endif %}
-                >{% trans 'I (IMA)' %}</option>
-            </select>
-          </div>
-        </div>
+      <div class="control-group filter" id="tpm-attestation">
+	    <label class="control-label" for="attestation-flags">{% trans "TPM Attestation Flags" %}</label>
+	    <div class="controls">
+		  <select data-placeholder="Click to add an attestation flag..." id="attestation-flags" name="attestation-flags"
+              multiple class="chzn-select-deselect" rel="tooltip"
+		      title="{% trans 'B for BIOS measurements, I for IMA measurements, T for Trusted Boot' %}">
+			<option value="B"
+	          {% if 'B' in policy.argument %}
+	            selected="selected"
+	          {% endif %}
+	          >{% trans 'B (BIOS)' %}</option>
+			<option value="I"
+			  {% if 'I' in policy.argument %}
+			    selected="selected"
+			  {% endif %}
+			>{% trans 'I (IMA)' %}</option>
+      <option value="T"
+          {% if 'T' in policy.argument %}
+              selected="selected"
+          {% endif %}
+          >{% trans 'T (Trusted Boot)' %}</option>
+		   </select>
+	      </div>
+      </div>
 
 	      <div class="control-group">
-          <label class="control-label" for="fail">{% trans "Fail-Action" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="fail">{% trans "Fail-Action" %}</label>
+          <div class="controls">
             <select id="fail" name="fail" class="chzn-select" rel="tooltip"
               title="{% trans 'Recommendation when a client does not meet the policy requirement' %}">
               <option value="">{% trans 'Select one...' %}</option>
@@ -192,7 +199,7 @@
               <option value="{{forloop.counter0}}"
               {% if policy.fail == forloop.counter0 %}
               selected="selected"
-              {% endif %} 
+              {% endif %}
               >{{ a }}</option>
               {% endfor %}
             </select>
@@ -200,8 +207,8 @@
         </div>
 
         <div class="control-group">
-          <label class="control-label" for="noresult">{% trans "Noresult-Action" %}</label> 
-          <div class="controls">   
+          <label class="control-label" for="noresult">{% trans "Noresult-Action" %}</label>
+          <div class="controls">
             <select id="noresult" name="noresult" class="chzn-select" rel="tooltip"
               title="{% trans 'Recommendation when the policy does not apply to the client' %}">
               <option value="">{% trans 'Select one...' %}</option>
@@ -209,7 +216,7 @@
               <option value="{{forloop.counter0}}"
               {% if policy.noresult == forloop.counter0 %}
               selected="selected"
-              {% endif %} 
+              {% endif %}
               >{{ a }}</option>
               {% endfor %}
             </select>
@@ -230,7 +237,7 @@
         </div><!-- /btn-toolbar-->
       {% endif %}
       </form>
-    
+
     </div><!--content-->
   </div><!--/row-->
 </div>
@@ -257,29 +264,51 @@
 $(document).ready(function () {
   type_change();
   $('#policyform').submit(function(){
+    prepare_flags();
 	  var $form = $(this);
 	  $form.children('.filter:hidden').remove();
   });
-})
+});
+
+var PolicyType = {
+  PCKGS :  1,
+  UNSRC :  2,
+  FWDEN :  3,
+  PWDEN :  4,
+  FREFM :  5,
+  FMEAS :  6,
+  FMETA :  7,
+  DREFM :  8,
+  DMEAS :  9,
+  DMETA : 10,
+  TCPOP : 11,
+  TCPBL : 12,
+  UDPOP : 13,
+  UDPBL : 14,
+  SWIDT : 15,
+  TPMRA : 16
+};
+
+function prepare_flags() {
+
+  var $form = $('#policyform');
+  var $hiddenFlagInput = $('<input />').attr('type', 'hidden').attr('name', 'flags').appendTo($form);
+  var value = "";
+  var type = $("select#type option:selected").attr("value");
+
+  // swid-flags
+  if (type == PolicyType.SWIDT) {
+    value = $("#swid-flags").val().join(' ');
+  }
+  // attestation-flags
+  if (type == PolicyType.TPMRA) {
+    value = $("#attestation-flags").val().join(' ');
+  }
+  $hiddenFlagInput.val(value);
+
+}
 
 function type_change(){
-  var PCKGS =  1;
-  var UNSRC =  2;
-  var FWDEN =  3;
-  var PWDEN =  4;
-  var FREFM =  5;
-  var FMEAS =  6;
-  var FMETA =  7;
-  var DREFM =  8;
-  var DMEAS =  9;
-  var DMETA = 10;
-  var TCPOP = 11;
-  var TCPBL = 12;
-  var UDPOP = 13;
-  var UDPBL = 14;
-  var SWIDT = 15;
-  var TPMRA = 16;
-
   $(document.getElementById('file')).hide();
   $(document.getElementById('dir')).hide();
   $(document.getElementById('closed-port')).hide();
@@ -287,20 +316,19 @@ function type_change(){
   $(document.getElementById('swid-request')).hide();
   $(document.getElementById('tpm-attestation')).hide();
 
-  type = $("select#type option:selected").attr("value")
-  //type ++; //Because empty defaults to 0
+  var type = $("select#type option:selected").attr("value");
 
-  if (type == FREFM || type == FMEAS || type == FMETA)
+  if (type == PolicyType.FREFM || type == PolicyType.FMEAS || type == PolicyType.FMETA)
     $(document.getElementById('file')).show();
-  else if (type == DREFM || type == DMEAS || type == DMETA)
+  else if (type == PolicyType.DREFM || type == PolicyType.DMEAS || type == PolicyType.DMETA)
     $(document.getElementById('dir')).show();
-  else if (type == TCPOP || type == UDPOP)
+  else if (type == PolicyType.TCPOP || type == PolicyType.UDPOP)
     $(document.getElementById('closed-port')).show();
-  else if (type == TCPBL || type == UDPBL)
+  else if (type == PolicyType.TCPBL || type == PolicyType.UDPBL)
     $(document.getElementById('open-port')).show();
-  else if (type == SWIDT)
+  else if (type == PolicyType.SWIDT)
     $(document.getElementById('swid-request')).show();
-  else if (type == TPMRA)
+  else if (type == PolicyType.TPMRA)
     $(document.getElementById('tpm-attestation')).show();
 }
 

@@ -32,6 +32,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from models import Group, Enforcement, Policy
 
+
 @require_GET
 @login_required
 def enforcements(request):
@@ -45,6 +46,7 @@ def enforcements(request):
     context['enforcements'] = paginate(enforcements, request)
 
     return render(request, 'tncapp/enforcements.html', context)
+
 
 @require_GET
 @login_required
@@ -128,9 +130,10 @@ def save(request):
         raise ValueError
         return HttpResponse(status=400)
 
-    fail = request.POST.get('fail', None)
-    if not (re.match(r'^-?\d+$', fail) and int(fail) in range(-1,
-        len(Policy.action))):
+    fail = request.POST.get('fail')
+    if not (re.match(r'^-?\d+$', fail) and int(fail) in range(-1, len(Policy.action))):
+        # TODO replace lines like these with
+        # raise HttpResponseBadRequest()
         raise ValueError
         return HttpResponse(status=400)
 
@@ -139,8 +142,7 @@ def save(request):
         fail = None
 
     noresult = request.POST.get('noresult', -1)
-    if not (re.match(r'^-?\d+$', noresult) and int(noresult) in range(-1,
-        len(Policy.action))):
+    if not (re.match(r'^-?\d+$', noresult) and int(noresult) in range(-1, len(Policy.action))):
         raise ValueError
         return HttpResponse(status=400)
 
@@ -162,6 +164,7 @@ def save(request):
 
     messages.success(request, _('Enforcement saved!'))
     return redirect('/enforcements/%d' % enforcement.id)
+
 
 @require_POST
 @login_required
@@ -189,6 +192,7 @@ def check(request):
 
     return HttpResponse(("%s" % response).lower())
 
+
 @require_POST
 @login_required
 def delete(request, enforcementID):
@@ -200,6 +204,7 @@ def delete(request, enforcementID):
 
     messages.success(request, _('Enforcement deleted!'))
     return redirect('/enforcements')
+
 
 @require_GET
 @login_required
@@ -215,18 +220,20 @@ def search(request):
     q = request.GET.get('q', None)
     if q != '':
         context['query'] = q
-        enforcements = Enforcement.objects.filter(Q(policy__name__icontains=q)|Q(group__name__icontains=q))
+        condition = Q(policy__name__icontains=q) | Q(group__name__icontains=q)
+        enforcements = Enforcement.objects.filter(condition)
     else:
         return redirect('/enforcements')
 
     context['enforcements'] = paginate(enforcements, request)
     return render(request, 'tncapp/enforcements.html', context)
 
+
 def paginate(items, request):
     """
     Paginated browsing
     """
-    paginator = Paginator(items, 50) # Show 50 packages per page
+    paginator = Paginator(items, 50)  # Show 50 packages per page
     page = request.GET.get('page')
     try:
         enforcements = paginator.page(page)
@@ -238,4 +245,3 @@ def paginate(items, request):
         enforcements = paginator.page(paginator.num_pages)
 
     return enforcements
-

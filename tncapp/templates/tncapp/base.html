@@ -6,14 +6,14 @@
     <title>strongTNC - {% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="Stefan Rohner, Marco Tanner & Andreas Steffen">
+    <meta name="author" content="HSR University of Applied Sciences Rapperswil">
 
     <!-- styles -->
     <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet" type="text/css"/>
     <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}css/chosen.css" rel="stylesheet"/>
-    
+
     <!-- script librarys -->
     <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
@@ -27,7 +27,7 @@
   </head>
 
   <body>
-  
+
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
 	<div class="container-fluid">
@@ -37,7 +37,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          
+
           <div class="nav-collapse collapse">
 	    <div class="pull-right">
 	      <ul class="nav pull-right">
@@ -47,7 +47,7 @@
 		<li><a href="#logoutModal" data-toggle="modal" id="logout" rel="tooltip" title="{% trans 'Logout'%}"><i class="icon-off icon-white"></i></a></li>
 	      </ul>
 	    </div>
-            
+
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -82,7 +82,7 @@
 
         </div><!--/span-->
         <div class="span10">
-          
+
           <div class="hero-unit">
 	    {% block hero %}{% endblock %}
           </div>
@@ -106,14 +106,14 @@
 	  {% endif %}
 	  {% block content %}{% endblock %}
 	  </div><!--/row-->
-	  
+
         </div><!--/span-->
       </div><!--/row-->
 
       <hr>
 
       <footer>
-        <p>&copy; 2013 Stefan Rohner, Marco Tanner & Andreas Steffen, HSR University of Applied Sciences Rapperswil</p>
+          <p>&copy; 2013&ndash;{% now "Y" %} <a href="https://www.hsr.ch/">HSR University of Applied Sciences Rapperswil</a> &amp; <a href="https://github.com/strongswan/strongTNC/blob/master/CONTRIBUTORS.md">contributors</a>.</p>
       </footer>
 
       <div id="logoutModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
@@ -130,7 +130,7 @@
 	  <a class="btn btn-danger" href="/logout"><i class="icon-off icon-white"></i> Logout</a>
 	</div>
       </div>
-      
+
     </div><!--/.fluid-container-->
 
     <!-- javascript
@@ -152,7 +152,20 @@
         $("#logout").tooltip({
           'selector': '',
           'placement': 'bottom'
+     	  });
+
+        $.tablesorter.addParser({
+          id: 'strongTNCDate',
+          is: function(s, table, cell) {
+            // return false so this parser is not auto detected
+            return false;
+          },
+          format: function(s, table, cell, cellIndex) {
+            return Date.parse(s);
+          },
+          type: 'numeric'
         });
+
         $('.sortable').tablesorter({
             sortList: [
               [0, 0]
