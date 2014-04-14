@@ -1,6 +1,8 @@
 {% extends "tncapp/base.html" %}
 
 {% load i18n %}
+{% load permissions %}
+
 {% block title %}{{title}}{% endblock %}
 
 {% block hero %}
@@ -13,12 +15,14 @@
   <div class="row-fluid">
     <div class="span3" id="line">
       <h4>{% trans "Policy" %}
+        {% if 'tncapp.write_access' in perms %}
         <div class="pull-right">
           <a class="btn btn-primary btn-mini" href="/policies/add"
           value="addNew" rel="tooltip" title="add new">
             <i class="icon-plus-sign icon-white"></i>
           </a>
         </div>
+        {% endif %}
       </h4>
       <hr>
       <div class="row-fluid">
@@ -78,14 +82,15 @@
             <input type="hidden" id="policyId" name="policyId" value="{{policy.id}}" />
             <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}"
               rel="tooltip" title="{% trans 'Policy Name' %}"
-            value="{{ policy.name }}">
+              value="{{ policy.name }}" {% input_editability %}>
           </div>
         </div>
 
         <div class="control-group">
           <label class="control-label" for="type">{% trans "Type" %}</label>
           <div class="controls">
-            <select id="type" name="type" class="slct2-dropdown" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
+              <select id="type" name="type" class="slct2-dropdown" onchange="type_change()" rel="tooltip"
+                title="{% trans 'Policy Type' %}" {% input_editability %}>
               <option value="-1">{% trans 'Select one...' %}</option>
               {% for t in types %}
               <option value="{{ forloop.counter0 }}"
@@ -98,7 +103,7 @@
         <div class="control-group" id="file">
           <label class="control-label" for="file">{% trans "File" %}</label>
           <div class="controls">
-            <input type="hidden" id="file" name="file" class="slct2-autocomplete" value="{% if file %}{{ file.id }}{% endif %}"/>
+            <input type="hidden" id="file" name="file" class="slct2-autocomplete" value="{% if file %}{{ file.id }}{% endif %}" {% input_editability %} />
           </div>
         </div>
 
@@ -106,7 +111,7 @@
           <label class="control-label" for="dir">{% trans "Directory" %}</label>
           <div class="controls">
             <select id="dir" name="dir" class="slct2-dropdown" rel="tooltip"
-              title="{% trans 'Directory to check' %}">
+              title="{% trans 'Directory to check' %}" {% input_editability %}>
               <option value="">{% trans 'Select one...' %}</option>
               {% for d in dirs %}
               <option value="{{ d.id }}"{% if policy.dir.id == d.id %} selected {% endif %}>{{ d }}</option>
@@ -120,7 +125,7 @@
           <div class="controls">
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
               rel="tooltip" title="{% trans 'Whitespace separated range(s) of ports, f.e: 5 10-1024 2450-4000' %}"
-              value="{{ policy.argument|default:'' }}">
+              value="{{ policy.argument|default:'' }}" {% input_editability %}>
           </div>
         </div>
 
@@ -129,7 +134,7 @@
           <div class="controls">
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
               rel="tooltip" title="{% trans 'Whitespace separated range(s) of ports, f.e: 5 10-1024 2450-4000' %}"
-              value="{{ policy.argument|default:'' }}">
+              value="{{ policy.argument|default:'' }}" {% input_editability %}>
           </div>
         </div>
 
@@ -138,7 +143,8 @@
 	      <div class="controls">
 		    <select data-placeholder="Click to add a SWID flag.." id="swid-flags" name="swid-flags"
                 multiple class="slct2-dropdown" rel="tooltip"
-		        title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}">
+		        title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}"
+                {% input_editability %}>
 			  <option value="R"
 		        {% if 'R' in policy.argument %}
 		          selected="selected"
@@ -163,7 +169,7 @@
 	    <div class="controls">
 		  <select data-placeholder="Click to add an attestation flag..." id="attestation-flags" name="attestation-flags"
               multiple class="slct2-dropdown" rel="tooltip"
-		      title="{% trans 'B for BIOS measurements, I for IMA measurements, T for Trusted Boot' %}">
+              title="{% trans 'B for BIOS measurements, I for IMA measurements, T for Trusted Boot' %}" {% input_editability %}>
 			<option value="B"
 	          {% if 'B' in policy.argument %}
 	            selected="selected"
@@ -187,7 +193,7 @@
           <label class="control-label" for="fail">{% trans "Fail-Action" %}</label>
           <div class="controls">
             <select id="fail" name="fail" class="slct2-dropdown" rel="tooltip"
-              title="{% trans 'Recommendation when a client does not meet the policy requirement' %}">
+              title="{% trans 'Recommendation when a client does not meet the policy requirement' %}" {% input_editability %}>
               <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
               <option value="{{forloop.counter0}}"
@@ -204,7 +210,7 @@
           <label class="control-label" for="noresult">{% trans "Noresult-Action" %}</label>
           <div class="controls">
             <select id="noresult" name="noresult" class="slct2-dropdown" rel="tooltip"
-              title="{% trans 'Recommendation when the policy does not apply to the client' %}">
+              title="{% trans 'Recommendation when the policy does not apply to the client' %}" {% input_editability %}>
               <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
               <option value="{{forloop.counter0}}"
@@ -217,7 +223,8 @@
           </div>
         </div>
 
-      <hr>
+        {% if 'tncapp.write_access' in perms %}
+        <hr>
 
         <div class="btn-toolbar" style="margin: 0;">
           <div class="btn-group">
@@ -229,6 +236,8 @@
           </div><!-- /btn-group -->
           {% endif %}
         </div><!-- /btn-toolbar-->
+
+        {% endif %}
       {% endif %}
       </form>
 

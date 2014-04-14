@@ -1,7 +1,8 @@
-
 {% extends "tncapp/base.html" %}
 
 {% load i18n %}
+{% load permissions %}
+
 {% block title %}{%trans "Search Results" %}{% endblock %}
 
 {% block hero %}
@@ -17,7 +18,7 @@
           <input type="text" class="input search-query" name="q" value="{{ query }}" autofocus>
           <input type="submit" class="btn btn-small" value="Search">
         </form>
-        
+
         <div class="accordion" id="accordion2">
           {% if groups %}
           <div class="accordion-group">
@@ -39,7 +40,7 @@
             </div>
           </div>
           {% endif %}
-          
+
           {% if policies %}
           <div class="accordion-group">
             <div class="accordion-heading">
@@ -60,7 +61,7 @@
             </div>
           </div>
           {% endif %}
-          
+
           {% if enforcements %}
           <div class="accordion-group">
             <div class="accordion-heading">
@@ -81,7 +82,7 @@
             </div>
           </div>
           {% endif %}
-        
+
           {% if devices %}
           <div class="accordion-group">
             <div class="accordion-heading">
@@ -123,7 +124,7 @@
             </div>
           </div>
           {% endif %}
-          
+
           {% if products %}
           <div class="accordion-group">
             <div class="accordion-heading">
@@ -144,7 +145,7 @@
             </div>
           </div>
           {% endif %}
-          
+
           {% if files %}
           <div class="accordion-group">
             <div class="accordion-heading">
@@ -164,14 +165,14 @@
               </div>
             </div>
           </div>
-          {% endif %}          
-          
+          {% endif %}
+
         </div>
-        
+
         {% if not groups and not policies and not enforcements and not devices and not packages and not products and not files %}
         <p class="text-error">No results matched your search criteria.</p>
         {% endif %}
- 
+
       </div><!--/span-->
     </div><!--/row-->
   </div><!--/container-->
