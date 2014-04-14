@@ -1,7 +1,8 @@
-
 {% extends "tncapp/base.html" %}
 
 {% load i18n %}
+{% load permissions %}
+
 {% block title %}{{title}}{% endblock %}
 
 {% block hero %}
@@ -58,7 +59,7 @@
 	  <p><small>No files matched your search criteria.</small></p>
 	  {% endif %}
 	</div>
-      
+
     <div class="span9" id="content">
 	{% if file %}
 	<h4>File Info</h4>
@@ -66,14 +67,15 @@
 	  {% csrf_token %}
 
 	<div class="control-group">
-	  <label class="control-label" for="name">Name</label>    
+	  <label class="control-label" for="name">Name</label>
 	  <div class="controls controls-row">
 	    <label class="help-inline" style="margin-bottom: -5px"><strong>{{ file.directory }}/{{ file.name }}</strong></label>
 	  </div>
 	</div>
-    
+
+    {% if 'tncapp.write_access' in perms %}
 	<hr>
-	    
+
 	<div class="btn-toolbar" style="margin: 0;">
 	  {% if file.id %}
           <div class="btn-group">
@@ -81,9 +83,10 @@
 	  </div><!-- /btn-group -->
 	</div><!-- /btn-toolbar-->
 	{% endif %}
+	{% endif %}
 
 	<hr>
-	    
+
 	<h4>File Hashes</h4>
       {% if file_hashes %}
   <div class="row-fluid">
@@ -93,6 +96,9 @@
 	  <th>{% trans 'OS' %}</th>
 	  <th>{% trans 'Algo' %}</th>
 	  <th>{% trans 'Hash' %}</th>
+      {% if 'tncapp.write_access' in perms %}
+	  <th>&nbsp;</th>
+      {% endif %}
 	</tr>
       </thead>
       <tbody>
@@ -101,7 +107,11 @@
 	  <td>{{h.product}}</td>
 	  <td>{{h.algorithm}}</td>
 	  <td title="{{h.hash}}">{{h.hash|truncatechars:40}}</td>
-    <td><a class="btn btn-danger btn-mini" href="/file_hashes/{{ h.id }}/delete" data-toggle="modal"><i class="icon-remove icon-white"></i></a></td>
+    {% if 'tncapp.write_access' in perms %}
+      <td>
+        <a class="btn btn-danger btn-mini" href="/file_hashes/{{ h.id }}/delete" data-toggle="modal"><i class="icon-remove icon-white"></i></a>
+      </td>
+    {% endif %}
 	</tr>
 	{% endfor %}
       </tbody>
@@ -111,6 +121,8 @@
   </form>
 
 {% endif %}
+
+{% if 'tncapp.write_access' in perms %}
 
 <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-header">
@@ -144,6 +156,8 @@
     <a class="btn btn-danger" href="/file_hashes/{{ h.id }}/delete">Delete hash</a>
   </div>
 </div>
+
+{% endif %}
 
 </div><!--content-->
     </div><!--/row-->
