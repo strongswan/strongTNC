@@ -56,7 +56,7 @@ If you want to use the django debug toolbar, install it via pip::
 
     pip install django-debug-toolbar
 
-Then start the server with the ``DEBUG_TOOLBAR`` setting enabled (in
+Then start the server with the setting ``DEBUG_TOOLBAR=1`` (in
 ``settings.ini``).
 
 
