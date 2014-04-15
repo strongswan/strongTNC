@@ -37,21 +37,27 @@ Then install the dependencies::
 
     pip install -r requirements.txt
 
+Create a local `settings.ini` file::
+
+    cp config/settings.sample.ini config/settings.ini
+    $EDITOR config/settings.ini
+
+Set the default passwords::
+
+    ./manage.py setpassword
+
 Now you can start the development server. ::
 
     ./manage.py runserver
 
-The web interface should be available on ``http://localhost:8000/``. The
-default password is ``password``.
+The web interface should be available on ``http://localhost:8000/``.
 
 If you want to use the django debug toolbar, install it via pip::
 
     pip install django-debug-toolbar
 
-Then start the server with the ``DJANGO_DEBUG_TOOLBAR`` env variable set to
-``1`` or ``True``. ::
-
-    DJANGO_DEBUG_TOOLBAR=1 ./manage.py runserver
+Then start the server with the ``DEBUG_TOOLBAR`` setting enabled (in
+``settings.ini``).
 
 
 Testing

@@ -18,7 +18,9 @@ if os.path.exists('config/settings.ini'):
 elif os.path.exists('/etc/strongTNC/settings.ini'):
     config.read('/etc/strongTNC/settings.ini')
 else:
-    raise ImproperlyConfigured('No settings.ini found.')
+    raise ImproperlyConfigured('No settings.ini found. Please copy `config/settings.sample.ini` ' +
+            'to either `config/settings.ini` or `/etc/strongTNC/settings.ini` and configure it ' +
+            'to your likings.')
 
 
 DEBUG = config.getboolean('debug', 'DEBUG')
