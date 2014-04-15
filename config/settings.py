@@ -2,24 +2,42 @@
 # Django settings for strongTNC
 import os
 
+try:
+    from ConfigParser import RawConfigParser, NoSectionError, NoOptionError
+except ImportError:  # py3
+    from configparser import ConfigParser, NoSectionError, NoOptionError
+
 from django.contrib import messages
+from django.core.exceptions import ImproperlyConfigured
 
-env = os.environ.get
-true_values = ['1', 'true', 'y', 'yes', 1, True]
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+# Read configuration from ini
+config = RawConfigParser()
+if os.path.exists('config/settings.ini'):
+    config.read('config/settings.ini')
+elif os.path.exists('/etc/strongTNC/settings.ini'):
+    config.read('/etc/strongTNC/settings.ini')
+else:
+    raise ImproperlyConfigured('No settings.ini found.')
 
-DEBUG_TOOLBAR = env('DJANGO_DEBUG_TOOLBAR', 'False').lower() in true_values
 
-ADMINS = (
-     ('Name', 'admin@example.com'),
-)
+DEBUG = config.getboolean('debug', 'DEBUG')
+TEMPLATE_DEBUG = config.getboolean('debug', 'TEMPLATE_DEBUG')
+DEBUG_TOOLBAR = config.getboolean('debug', 'DEBUG_TOOLBAR')
+
+if DEBUG:
+    ADMINS = tuple()
+else:
+    ADMINS = tuple(config.items('admins'))
 
 MANAGERS = ADMINS
 
-DATABASES = {
+try:
+    ALLOWED_HOSTS = list(config.items('allowed hosts'))
+except (NoSectionError, NoOptionError):
+    ALLOWED_HOSTS = []
 
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'ipsec.config.db',
@@ -47,7 +65,10 @@ TIME_ZONE = None
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+try:
+    LANGUAGE_CODE = config.get('locale', 'LANGUAGE_CODE')
+except (NoSectionError, NoOptionError):
+    LANGUAGE_CODE = 'en-us'
 
 SITE_ID = 1
 
@@ -100,7 +121,13 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'y=d53+ah_2e$$0v#c8*yvl3+tp&j!!2bc+q8zqmt2r6hh_@x%b'
+try:
+    SECRET_KEY = config.get('secrets', 'SECRET_KEY')
+except (NoSectionError, NoOptionError):
+    if DEBUG:
+        SECRET_KEY = 'DEBUGGING-SECRETKEY'
+    else:
+        raise ImproperlyConfigured('Please set SECRET_KEY in your settings.ini.')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
