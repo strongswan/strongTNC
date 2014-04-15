@@ -63,12 +63,15 @@ LOGIN_URL = '/login'
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
 USE_TZ = True
-TIME_ZONE = None
+try:
+    TIME_ZONE = config.get('localization', 'TIME_ZONE')
+except (NoSectionError, NoOptionError):
+    TIME_ZONE = None
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 try:
-    LANGUAGE_CODE = config.get('locale', 'LANGUAGE_CODE')
+    LANGUAGE_CODE = config.get('localization', 'LANGUAGE_CODE')
 except (NoSectionError, NoOptionError):
     LANGUAGE_CODE = 'en-us'
 
