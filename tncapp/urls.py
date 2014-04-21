@@ -75,8 +75,6 @@ urlpatterns = patterns('',
 
     url(r'^file_hashes/(?P<file_hashID>\d+)/delete/?$', file_views.delete_hash, name='delete'),
 
-    url(r'^regids/?$', regid_views.regids, name='regids'),
-    url(r'^regids/(?P<regidID>\d+)/?$', regid_views.regid, name='regid'),
     url(r'^regids/add/?$', regid_views.add, name='add'),
     url(r'^regids/save/?$', regid_views.save, name='save'),
     url(r'^regids/(?P<regidID>\d+)/delete/?$', regid_views.delete, name='delete'),
