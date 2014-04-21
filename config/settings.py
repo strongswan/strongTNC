@@ -180,8 +180,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'tncapp',
     'dajaxice',
+
+    # Own apps
+    'tncapp',
+    'apps.swid',
 )
 if DEBUG_TOOLBAR:
     INSTALLED_APPS += ('debug_toolbar',)
