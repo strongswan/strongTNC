@@ -1,0 +1,95 @@
+{% extends "tncapp/base.html" %}
+
+{% load i18n %}
+{% load permissions %}
+
+{% block title %}{% trans "Regids" %}{% endblock %}
+
+{% block hero %}
+    <h1>{% trans "Regids" %}</h1>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="line">
+                <h4>{% trans "Regids" %}</h4>
+                <hr>
+                <div class="row-fluid">
+                    {% if object_list.count %}
+                        <form class="form-search pull-center" action="/regids/search" method="get">
+                            <div class="input-append">
+                                <input type="text" class="input input-small search-query" name="q" placeholder="Filter"
+                                       value="{{ query }}" autofocus>
+                                <button type="submit" class="btn"><i class="icon-search"></i></button>
+                            </div>
+                        </form>
+                    {% endif %}
+
+                    {% if object_list %}
+                        <table class="table table-hover">
+                            <tbody>
+                            {% for entity in object_list %}
+                                <tr>
+                                    <td><a href="{% url 'regid_detail' entity.pk %}">{{ entity.regid }}</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+
+                    {% comment %}
+          {% if regids.paginator.num_pages > 1 %}
+		  <div class="pagination pagination-mini pagination-centered">
+			<ul>
+			  {% if regids.has_previous %}
+			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ regids.previous_page_number }}">&laquo;</a></li>
+			  {% else %}
+			  <li class="disabled"><a href="">&laquo;</a></li>
+			  {% endif %}
+			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ regids.number }}">Page {{ regids.number }} of {{ regids.paginator.num_pages }}</a></li>
+			  {% if regids.has_next %}
+			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ regids.next_page_number }}">&raquo;</a></li>
+			  {% else %}
+			  <li class="disabled"><a href="">&raquo;</a></li>
+			  {% endif %}
+			</ul>
+		  </div>
+		  {% endif %}
+		  {% endcomment %}
+
+
+                </div>
+                {% if regids %}
+                    <table class="table table-hover">
+                        <tbody>
+                        {% for d in regids %}
+                            <tr>
+                                <td><a href="/regids/{{ d.id }}">{{ d }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% elif count == 0 %}
+                    <p>
+                        <small>There are no entries.</small>
+                    </p>
+                {% elif query %}
+                    <p>
+                        <small>No regids matched your search criteria.</small>
+                    </p>
+                {% endif %}
+            </div>
+
+            <div class="span9" id="content">
+                {% block detail %}{% endblock %}
+            </div>
+            <!--content-->
+        </div>
+        <!--/row-->
+    </div>
+
+{% endblock %}
+
+

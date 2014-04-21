@@ -8,6 +8,7 @@ from django.contrib import admin
 # App URLs
 urlpatterns = patterns('',
     url(r'', include('tncapp.urls')),
+    url(r'', include('apps.swid.urls', app_name='swid')),
 )
 
 # Admin URLs. Only in DEBUG mode for now.
