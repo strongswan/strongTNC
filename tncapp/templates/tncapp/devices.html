@@ -1,7 +1,8 @@
-
 {% extends "tncapp/base.html" %}
 
 {% load i18n %}
+{% load permissions %}
+
 {% block title %}{{title}}{% endblock %}
 
 {% block hero %}
@@ -14,12 +15,14 @@
     <div class="row-fluid">
       <div class="span3" id="line">
       <h4>{% trans "Device" %}
+    {% if 'tncapp.write_access' in perms %}
 	<div class="pull-right">
 	  <a class="btn btn-primary btn-mini" href="/devices/add"
 	  value="addNew" rel="tooltip" title="add new">
 	    <i class="icon-plus-sign icon-white"></i>
 	  </a>
 	</div>
+    {% endif %}
       </h4>
       <hr>
       <div class="row-fluid">
@@ -63,9 +66,9 @@
     <p><small>There are no entries.</small></p>
       {% elif query %}
     <p><small>No devices matched your search criteria.</small></p>
-    {% endif %}    
+    {% endif %}
     </div>
-      
+
       <div class="span9" id="content">
     {% if device %}
 	<h4>Device Info</h4>
@@ -77,24 +80,24 @@
       <div class="controls">
         <input type="hidden" name="deviceId" value="{{device.id}}" />
         <input type="text" id="value" name="value" placeholder="{% trans 'ID' %}" rel="tooltip" title="{% trans 'Device ID' %}"
-        value="{{ device.value }}">
+        value="{{ device.value }}" {% input_visibility %}>
       </div>
     </div>
-    
+
     <div class="control-group">
-      <label class="control-label" for="description">{% trans "Description" %}</label> 
-      <div class="controls">   
+      <label class="control-label" for="description">{% trans "Description" %}</label>
+      <div class="controls">
         <input type="text" id="description" name="description"
           placeholder="{% trans 'Description'%}" rel="tooltip" title="{% trans 'Device description' %}"
-          value="{{ device.description }}">
+          value="{{ device.description }}" {% input_visibility %}>
       </div>
     </div>
-    
+
     <div class="control-group">
-      <label class="control-label" for="product">{% trans "Product" %}</label> 
-      <div class="controls">   
-        <select type="text" id="product" class="chzn-select" name="product" placeholder="{% trans "Product" %}" rel="tooltip"
-          title="{% trans 'Device product (operating system)' %}">
+      <label class="control-label" for="product">{% trans "Product" %}</label>
+      <div class="controls">
+        <select type="text" id="product" class="slct2-dropdown" name="product" placeholder="{% trans "Product" %}" rel="tooltip"
+          title="{% trans 'Device product (operating system)' %}" {% input_visibility %}>
           <option value="">{% trans "Select one..." %}</option>
           {% for p in products %}
             <option value="{{ p.id }}"
@@ -104,21 +107,21 @@
             >{{ p }}</option>
           {% endfor %}
         </select>
-      </div>  
+      </div>
     </div>
-    
+
     <hr>
-    
+
     <h4>{% trans "Assign Groups" %}
       <a class="btn-small" href="#" rel="tooltip"
       title="{% trans 'When the device is member of a group, all policies enforced on the group are applied to the device upon login' %}"><i class="icon-info-sign"></i></a>
     </h4>
-    
+
     <div class="control-group">
-      <label class="control-label" for="groupselect">{% trans "Groups" %}</label> 
-      <div class="controls"> 
-	<select data-placeholder="Click to add a group..." id="group_select2" multiple class="chzn-select-deselect" tabindex="8"
-	rel="tooltip" title="{% trans 'Click into the field to add groups or close them to remove.' %}">
+      <label class="control-label" for="groupselect">{% trans "Groups" %}</label>
+      <div class="controls">
+	<select data-placeholder="Click to add a group..." id="group_select2" multiple class="slct2-dropdown" tabindex="8"
+	rel="tooltip" title="{% trans 'Click into the field to add groups or close them to remove.' %}" {% input_visibility %}>
 	  {% for g in groups %}
 	  <option value="{{ g.id }}">{{ g }}</option>
 	  {% endfor %}
@@ -128,22 +131,27 @@
 	</select>
       </div>
     </div>
-        
+
     <hr>
-  
+
     <div class="btn-toolbar" style="margin: 0;">
-      <div class="btn-group">
-	<button class="btn btn-success" type="submit" onclick="save_device()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
-      </div><!-- /btn-group -->
-      {% if device.id %}
-      <div class="btn-group">
-	<a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
-      </div><!-- /btn-group -->
-      <div class="btn-group">
-	<a href="/devices/{{ device.id }}/report" class="btn btn-primary"><i class="icon-file icon-white"></i> {%trans "View device report"%}</a>
-      </div>
-      {% endif %}
+        {% if 'tncapp.write_access' in perms %}
+            <div class="btn-group">
+                <button class="btn btn-success" type="submit" onclick="save_device()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
+            </div><!-- /btn-group -->
+        {% endif %}
+        {% if device.id %}
+            {% if 'tncapp.write_access' in perms %}
+                <div class="btn-group">
+                    <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
+                </div><!-- /btn-group -->
+            {% endif %}
+            <div class="btn-group">
+                <a href="/devices/{{ device.id }}/report" class="btn btn-primary"><i class="icon-file icon-white"></i> {%trans "View device report"%}</a>
+            </div>
+        {% endif %}
     </div><!-- /btn-toolbar-->
+
     {% endif %}
   </form>
 

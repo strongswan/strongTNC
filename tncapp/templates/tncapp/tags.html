@@ -1,7 +1,8 @@
-
 {% extends "tncapp/base.html" %}
 
 {% load i18n %}
+{% load permissions %}
+
 {% block title %}{{title}}{% endblock %}
 
 {% block hero %}
@@ -58,7 +59,7 @@
 	  <p><small>No tags matched your search criteria.</small></p>
 	  {% endif %}
 	</div>
-      
+
     <div class="span7" id="content">
 	{% if tag %}
 	<h4>Tag Info</h4>
@@ -66,24 +67,26 @@
 	  {% csrf_token %}
 
 	<div class="control-group">
-	  <label class="control-label" for="name">Name</label>    
+	  <label class="control-label" for="name">Name</label>
 	  <div class="controls controls-row">
 	    <label class="help-inline" style="margin-bottom: -5px"><strong>{{ tag.directory }}/{{ tag.name }}</strong></label>
 	  </div>
 	</div>
-    
+
+    {% if 'tncapp.write_access' in perms %}
 	<hr>
-	    
+
 	<div class="btn-toolbar" style="margin: 0;">
 	  {% if tag.id %}
           <div class="btn-group">
 	    <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
 	  </div><!-- /btn-group -->
 	</div><!-- /btn-toolbar-->
+    {% endif %}
 	{% endif %}
 
 	<hr>
-	    
+
   </form>
 
 {% endif %}
