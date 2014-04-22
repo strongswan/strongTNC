@@ -38,6 +38,17 @@ class EntityRole(models.Model):
     entity = models.ForeignKey('Entity')
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
 
+    def get_software_id(self):
+        """
+        Returns the software_id of the tag.
+        The software_id consists of the regid and the unique_id.
+
+        Returns:
+            software_id (str)
+
+        """
+        return '%s_%s' % (self.entity.regid, self.tag.unique_id)
+
     class Meta:
         db_table = TABLE_PREFIX + 'entityroles'
 

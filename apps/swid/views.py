@@ -18,11 +18,17 @@ class RegidDetailView(DetailView):
         return context
 
 
-class SwidInventoryView(DetailView):
-    template_name = 'swid/swid_inventory.html'
-    model = tnc_models.Device
+class SwidTagListView(ListView):
+    queryset = models.Tag.objects.order_by('unique_id')
+    template_name = 'swid/tags_list.html'
+
+
+class SwidTagDetailView(DetailView):
+    model = models.Tag
+    template_name = 'swid/tags_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(SwidInventoryView, self).get_context_data(**kwargs)
-        context['current_session'] = self.object.sessions.latest()
+        context = super(SwidTagDetailView, self).get_context_data(**kwargs)
+        context['object_list'] = self.model.objects.order_by('unique_id')
+        context['entityroles'] = self.object.entityrole_set.all()
         return context
