@@ -1,0 +1,74 @@
+{% extends "tncapp/base.html" %}
+
+{% load i18n %}
+
+{% block title %}SWID tags{% endblock %}
+
+{% block hero %}
+    <h1>SWID tags</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="line">
+                <h4>{% trans "Tag" %}</h4>
+                <hr>
+                <div class="row-fluid">
+                    {% if object_list.count %}
+                        <form class="form-search pull-center" action="/tags/search" method="get">
+                            <div class="input-append">
+                                <input type="text" class="input input-small search-query" name="q" placeholder="Filter"
+                                       value="{{ query }}" autofocus>
+                                <button type="submit" class="btn"><i class="icon-search"></i></button>
+                            </div>
+                        </form>
+
+                        <table class="table table-hover">
+                            <tbody>
+                            {% for tag in object_list %}
+                                <tr>
+                                    <td><a href="{% url 'swid_tag_detail' tag.pk %}">{{ tag.unique_id }}</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                    {% comment %}
+                    {% if tag|length >= 50 %}
+                        {% if tags.paginator.num_pages > 1 %}
+                            <div class="pagination pagination-mini pagination-centered">
+                                <ul>
+                                    {% if tags.has_previous %}
+                                        <li><a
+                                            href="?{% if query %}q={{ query }}&{% endif %}page={{ tags.previous_page_number }}">&laquo;</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="disabled"><a href="">&laquo;</a></li>
+                                    {% endif %}
+                                    <li><a
+                                        href="?{% if query %}q={{ query }}&{% endif %}page={{ tags.number }}">Page {{ tags.number }}
+                                        of {{ tags.paginator.num_pages }}</a></li>
+                                    {% if tags.has_next %}
+                                        <li><a
+                                            href="?{% if query %}q={{ query }}&{% endif %}page={{ tags.next_page_number }}">&raquo;</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="disabled"><a href="">&raquo;</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    {% endcomment %}
+                </div>
+            </div>
+
+            <div class="span9" id="content">
+                {% block detail %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
