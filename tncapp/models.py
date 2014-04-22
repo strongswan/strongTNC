@@ -290,6 +290,7 @@ class Directory(models.Model):
 
     class Meta:
         db_table = 'directories'
+        verbose_name_plural = 'directories'
 
 
 class File(models.Model):
@@ -331,6 +332,7 @@ class FileHash(models.Model):
 
     class Meta:
         db_table = 'file_hashes'
+        verbose_name_plural = 'file hashes'
 
     def __unicode__(self):
         return '%s (%s)' % (self.hash, self.algorithm)
@@ -498,9 +500,13 @@ class Identity(models.Model):
     type = models.IntegerField()
     data = models.TextField(db_column='value')
 
+    def __unicode__(self):
+        return self.data
+
     class Meta:
         db_table = 'identities'
         unique_together = [('type', 'data')]
+        verbose_name_plural = 'identities'
 
 
 class Session(models.Model):
@@ -512,6 +518,9 @@ class Session(models.Model):
     identity = models.ForeignKey(Identity, related_name='sessions', db_column='identity')
     device = models.ForeignKey(Device, related_name='sessions', db_column='device')
     recommendation = models.IntegerField(db_column='rec', null=True, choices=ACTION_CHOICES)
+
+    def __unicode__(self):
+        return 'Session %s by %s' % (self.connection_id, self.identity)
 
     class Meta:
         db_table = 'sessions'
@@ -572,3 +581,4 @@ class ComponentHash(models.Model):
 
     class Meta:
         db_table = 'component_hashes'
+        verbose_name_plural = 'component hashes'
