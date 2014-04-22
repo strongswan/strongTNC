@@ -1,6 +1,6 @@
-from django.views.generic import ListView, DetailView
-from django.utils.translation import ugettext_lazy as _
+from django.views.generic import ListView, DetailView, TemplateView
 from . import models
+from tncapp import models as tnc_models
 
 
 class RegidListView(ListView):
@@ -15,4 +15,14 @@ class RegidDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(RegidDetailView, self).get_context_data(**kwargs)
         context['object_list'] = self.model.objects.order_by('regid')
+        return context
+
+
+class SwidInventoryView(DetailView):
+    template_name = 'swid/swid_inventory.html'
+    model = tnc_models.Device
+
+    def get_context_data(self, **kwargs):
+        context = super(SwidInventoryView, self).get_context_data(**kwargs)
+        context['current_session'] = self.object.sessions.latest()
         return context

@@ -523,7 +523,9 @@ class Session(models.Model):
         return 'Session %s by %s' % (self.connection_id, self.identity)
 
     class Meta:
-        db_table = 'sessions'
+        db_table = u'sessions'
+        get_latest_by = 'time'
+        ordering = ['-time']
 
 
 class WorkItem(models.Model):

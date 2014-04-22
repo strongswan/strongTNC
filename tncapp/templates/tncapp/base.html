@@ -14,12 +14,17 @@
     <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet" type="text/css"/>
     <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}css/select2.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet"/>
 
     <!-- script librarys -->
     <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
     <script src="{{ STATIC_URL }}js/select2.min.js"></script>
     <script src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script src="{{ STATIC_URL }}js/spin.min.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.spin.js"></script>
+
 
     {% dajaxice_js_import %}
 
@@ -86,7 +91,7 @@
         </div><!--/span-->
         <div class="span10">
 
-          <div class="hero-unit">
+          <div class="hero-unit" id="hero">
 	    {% block hero %}{% endblock %}
           </div>
 
@@ -192,5 +197,6 @@
     </script>
     <script src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
     <script src="{{ STATIC_URL }}js/validate_rules.js"></script>
+    <script src="{{ STATIC_URL }}js/ajax-utils.js"></script>
   </body>
 </html>
