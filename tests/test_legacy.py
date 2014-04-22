@@ -28,8 +28,7 @@ from tncapp.policy_views import check_range
 
 class TncappTest(TestCase):
     def setUp(self):
-        user = Identity.objects.create(data='Test User')
-        user.type = 1
+        user = Identity.objects.create(data='Test User', type=1)
         user.save()
 
         p = Product.objects.create(name='Fancy OS 3.14')
@@ -94,7 +93,7 @@ class TncappTest(TestCase):
         device = Device.objects.get(value='def')
 
         session = Session.objects.create(device=device, time=timezone.now(),
-                connectionID=123, identity=user)
+                connection_id=123, identity=user)
 
         device.create_work_items(session)
 
@@ -105,7 +104,7 @@ class TncappTest(TestCase):
         self.assertEqual(2, item.type)
         self.assertEqual(4, item.fail)
         self.assertEqual(1, item.noresult)
-        self.assertEqual('/usr/bin/', item.argument)
+        self.assertEqual('/usr/bin/', item.arg_str)
         self.assertEqual(None, item.recommendation)
         self.assertEqual(None, item.result)
 
@@ -113,7 +112,7 @@ class TncappTest(TestCase):
         self.assertEqual(1, item.type)
         self.assertEqual(3, item.fail)
         self.assertEqual(0, item.noresult)
-        self.assertEqual('/bin/bash', item.argument)
+        self.assertEqual('/bin/bash', item.arg_str)
         self.assertEqual(None, item.recommendation)
         self.assertEqual(None, item.result)
 
@@ -137,12 +136,12 @@ class TncappTest(TestCase):
         e2.noresult = 0
         e2.save()
 
-        user = Identity.objects.create(data='foobar')
+        user = Identity.objects.create(data='foobar', type=5)
 
         device = Device.objects.get(value='def')
 
         session = Session.objects.create(device=device,
-                time=timezone.now(), connectionID=123, identity=user)
+                time=timezone.now(), connection_id=123, identity=user)
 
         device.create_work_items(session)
 
@@ -157,7 +156,7 @@ class TncappTest(TestCase):
     def test_is_due_for(self):
         g = Group.objects.get(name='L1.3.1')
         p = Policy.objects.get(name='usrbin')
-        user = Identity.objects.create(data='foobar')
+        user = Identity.objects.create(data='foobar', type=5)
         device = Device.objects.get(value='def')
         e = Enforcement.objects.create(group=g, policy=p, max_age=2 * 86400)
 
@@ -166,7 +165,7 @@ class TncappTest(TestCase):
 
         # Session yields no results for policy
         meas = Session.objects.create(device=device, time=timezone.now(),
-                connectionID=123, identity=user)
+                connection_id=123, identity=user)
         self.assertEqual(True, device.is_due_for(e))
 
         # Session is too old
@@ -199,17 +198,17 @@ class TncappTest(TestCase):
         e3 = Enforcement.objects.create(group=g, policy=p3, max_age=4)
 
         device = Device.objects.get(value='def')
-        user = Identity.objects.create(data='foobar')
+        user = Identity.objects.create(data='foobar', type=5)
         session = Session.objects.create(device=device,
-                time=timezone.now(), connectionID=123, identity=user)
+                time=timezone.now(), connection_id=123, identity=user)
 
-        WorkItem.objects.create(session=session, argument='asdf',
+        WorkItem.objects.create(session=session, arg_str='asdf',
                 fail=3, noresult=0, result='OK', recommendation=1, enforcement=e1,
                 type=1)
-        WorkItem.objects.create(session=session, argument='blubber',
+        WorkItem.objects.create(session=session, arg_str='blubber',
                 fail=3, noresult=0, result='FAIL', recommendation=3, enforcement=e2,
                 type=2)
-        WorkItem.objects.create(session=session, argument='sauce',
+        WorkItem.objects.create(session=session, arg_str='sauce',
                 fail=3, noresult=0, result='', enforcement=e3,
                 type=2)
 
@@ -286,23 +285,23 @@ class TncappTest(TestCase):
 
     def test_purge_dead_sessions(self):
         device = Device.objects.get(pk=1)
-        id = Identity.objects.create(data='user')
+        id = Identity.objects.create(data='user', type=5)
 
         time = timezone.now() - timedelta(days=20)
-        Session.objects.create(device=device, identity=id, time=time, connectionID=1)
+        Session.objects.create(device=device, identity=id, time=time, connection_id=1)
 
         time = timezone.now() - timedelta(days=7)
-        Session.objects.create(device=device, identity=id, time=time, connectionID=2)
+        Session.objects.create(device=device, identity=id, time=time, connection_id=2)
 
         time = timezone.now() - timedelta(days=3)
-        Session.objects.create(device=device, identity=id, time=time, connectionID=3)
+        Session.objects.create(device=device, identity=id, time=time, connection_id=3)
 
         time = timezone.now() - timedelta(days=10)
-        Session.objects.create(device=device, identity=id, time=time, connectionID=4,
+        Session.objects.create(device=device, identity=id, time=time, connection_id=4,
                 recommendation=Action.BLOCK)
 
         time = timezone.now() - timedelta(days=10)
-        Session.objects.create(device=device, identity=id, time=time, connectionID=5,
+        Session.objects.create(device=device, identity=id, time=time, connection_id=5,
                 recommendation=Action.ALLOW)
 
         purge_dead_sessions()
