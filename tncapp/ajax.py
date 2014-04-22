@@ -1,11 +1,43 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
+
 import json
 import os.path
+from datetime import datetime
 
 from dajaxice.decorators import dajaxice_register
 
 from tncapp import models
+from apps.swid.model_queries import get_installed_tags_with_time
+
+
+@dajaxice_register()
+def sessions_for_device(request, device_id, date_from, date_to):
+    dateobj_from, dateobj_to = map(datetime.utcfromtimestamp, [date_from, date_to])
+    device = models.Device.objects.get(pk=device_id)
+    sessions = device.sessions.filter(time__lte=dateobj_to, time__gte=dateobj_from)
+
+    data = {'sessions': [
+        {'id': s.id, 'time': s.time.strftime('%b %d %H:%M:%S %Y')}
+        for s in sessions
+    ]}
+
+    return json.dumps(data)
+
+
+@dajaxice_register()
+def tags_for_session(request, session_id):
+    tags = []
+    for tag, first_reported in get_installed_tags_with_time(session_id):
+        tags.append({
+            'name': tag.package_name,
+            'version': tag.version,
+            'unique-id': tag.unique_id,
+            'installed': first_reported.strftime('%b %d %H:%M:%S %Y')
+        })
+
+    data = {'swid-tag-count': len(tags), 'swid-tags': tags}
+    return json.dumps(data)
 
 
 @dajaxice_register()
