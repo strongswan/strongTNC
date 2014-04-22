@@ -1,35 +1,14 @@
-#
-# Copyright (C) 2013 Andreas Steffen
-# Copyright (C) 2013 Marco Tanner
-# HSR University of Applied Sciences Rapperswil
-#
-# This file is part of strongTNC.  strongTNC is free software: you can
-# redistribute it and/or modify it under the terms of the GNU Affero General
-# Public License as published by the Free Software Foundation, either version 3
-# of the License, or (at your option) any later version.
-#
-# strongTNC is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-# details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
-#
-
-"""
-Defines model classes which are used by the Django OR-mapper
-"""
+# -*- coding: utf-8 -*-
+from __future__ import print_function, division, absolute_import, unicode_literals
 
 import binascii
+import calendar
 from datetime import datetime, timedelta
-from calendar import timegm
 
 from django.utils import timezone
+from django.db import models
 
 import pytz
-
-from django.db import models
 
 
 class BinaryField(models.Field):
@@ -79,7 +58,7 @@ class EpochField(models.IntegerField):
 
     def get_prep_value(self, value):
         if value:
-            return timegm(value.utctimetuple())
+            return calendar.timegm(value.utctimetuple())
         return None
 
 
@@ -91,6 +70,13 @@ class Action(object):
     BLOCK = 1
     ISOLATE = 2
     NONE = 3
+
+ACTION_CHOICES = (
+    (Action.ALLOW, 'Allow'),
+    (Action.BLOCK, 'Block'),
+    (Action.ISOLATE, 'Isolate'),
+    (Action.NONE, 'None'),
+)
 
 
 class WorkItemType(object):
@@ -115,60 +101,82 @@ class WorkItemType(object):
     SWIDT = 15
     TPMRA = 16
 
+WORKITEM_TYPE_CHOICES = (
+    (WorkItemType.RESVD, 'RESVD'),
+    (WorkItemType.PCKGS, 'PCKGS'),
+    (WorkItemType.UNSRC, 'UNSRC'),
+    (WorkItemType.FWDEN, 'FWDEN'),
+    (WorkItemType.PWDEN, 'PWDEN'),
+    (WorkItemType.FREFM, 'FREFM'),
+    (WorkItemType.FMEAS, 'FMEAS'),
+    (WorkItemType.FMETA, 'FMETA'),
+    (WorkItemType.DREFM, 'DREFM'),
+    (WorkItemType.DMEAS, 'DMEAS'),
+    (WorkItemType.DMETA, 'DMETA'),
+    (WorkItemType.TCPOP, 'TCPOP'),
+    (WorkItemType.TCPBL, 'TCPBL'),
+    (WorkItemType.UDPOP, 'UDPOP'),
+    (WorkItemType.UDPBL, 'UDPBL'),
+    (WorkItemType.SWIDT, 'SWIDT'),
+    (WorkItemType.TPMRA, 'TPMRA'),
+)
+
 
 class Product(models.Model):
     """
-    Platform (f.e Android or Ubuntu)
+    The platform (e.g. Android or Ubuntu).
     """
-    id = models.AutoField(primary_key=True)
-    name = models.TextField()
+    name = models.CharField(max_length=255, db_index=True)
 
     def __unicode__(self):
         return self.name
 
     class Meta:
-        db_table = u'products'
+        db_table = 'products'
 
 
 class Regid(models.Model):
     """
-    SWID Registration ID
+    SWID Registration ID.
+
+    DEPRECATED, will be replaced with SWID tables.
+
     """
-    id = models.AutoField(primary_key=True)
-    name = models.TextField()
+    name = models.CharField(max_length=255, db_index=True)
 
     def __unicode__(self):
         return self.name
 
     class Meta:
-        db_table = u'regids'
+        db_table = 'regids'
 
 
 class Tag(models.Model):
     """
-    SWID Tag
+    SWID Tag.
+
+    DEPRECATED, will be replaced with SWID tables.
+
     """
-    id = models.AutoField(primary_key=True)
-    regid = models.ForeignKey(Regid, db_column='regid',
-            related_name='tags', on_delete=models.CASCADE)
-    unique_sw_id = models.TextField()
+    regid = models.ForeignKey(Regid, db_column='regid', related_name='tags')
+    unique_sw_id = models.TextField(db_index=True)
     value = models.TextField()
 
     def __unicode__(self):
         return '%s_%s' % (self.regid.name, self.unique_sw_id)
 
     class Meta:
-        db_table = u'tags'
+        db_table = 'tags'
 
 
 class Device(models.Model):
     """
-    An Android Device identified by its AndroidID
+    An Android Device identified by its AndroidID.
     """
-    id = models.AutoField(primary_key=True)
-    value = models.TextField()
-    description = models.TextField(blank=True, null=True)
+    value = models.CharField(max_length=255, db_index=True)
+    description = models.TextField(blank=True, null=True, default='')
     product = models.ForeignKey(Product, related_name='devices', db_column='product')
+    trusted = models.IntegerField(default=0)
     created = EpochField(null=True, blank=True)
 
     def __unicode__(self):
@@ -243,95 +251,86 @@ class Device(models.Model):
                 enforcement.policy.create_work_item(enforcement, session)
 
     class Meta:
-        db_table = u'devices'
+        db_table = 'devices'
 
 
 class Group(models.Model):
     """
-    Management group of devices
+    Group of devices, for management purposes.
     """
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    members = models.ManyToManyField(Device, related_name='groups', blank=True)
+    devices = models.ManyToManyField(Device, related_name='groups', blank=True, db_table='groups_members')
     product_defaults = models.ManyToManyField(Product, related_name='default_groups', blank=True)
     parent = models.ForeignKey('self', related_name='membergroups', null=True,
-            blank=True, on_delete=models.CASCADE, db_column='parent')
+            blank=True, db_column='parent')
+
+    class Meta:
+        db_table = 'groups'
+
+    def get_parents(self):
+        """
+        Recursively get all parent groups.
+        """
+        if not self.parent:
+            return []
+        return [self.parent] + self.parent.get_parents()
 
     def __unicode__(self):
         return self.name
 
-    def get_parents(self):
-        """
-        Recursively get all parent groups
-        """
-        if not self.parent:
-            return []
-
-        return [self.parent] + self.parent.get_parents()
-
-    class Meta:
-        db_table = u'groups'
-
 
 class Directory(models.Model):
     """
-    Unix-style directory path
+    Unix-style directory path.
     """
-    id = models.AutoField(primary_key=True)
-    path = models.TextField(unique=True)
+    path = models.CharField(max_length=255, unique=True)
 
     def __unicode__(self):
         return self.path
 
     class Meta:
-        db_table = u'directories'
+        db_table = 'directories'
 
 
 class File(models.Model):
     """
-    Filename
+    A file in a directory.
     """
-    id = models.AutoField(primary_key=True)
-    directory = models.ForeignKey(Directory, db_column='dir',
-            related_name='files', on_delete=models.CASCADE)
-    name = models.TextField()
+    name = models.CharField(max_length=255, db_index=True)
+    directory = models.ForeignKey(Directory, db_column='dir')
 
     def __unicode__(self):
         return '%s/%s' % (self.directory.path, self.name)
 
     class Meta:
-        db_table = u'files'
+        db_table = 'files'
 
 
 class Algorithm(models.Model):
     """
-    A hashing algorithm
+    A hashing algorithm.
     """
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(null=False, blank=False, max_length=20)
+    name = models.CharField(max_length=20)
 
     def __unicode__(self):
         return self.name
 
     class Meta:
-        db_table = u'algorithms'
+        db_table = 'algorithms'
 
 
 class FileHash(models.Model):
     """
-    SHA-1 or similar filehash
+    A file hash.
     """
-    id = models.AutoField(primary_key=True)
-    file = models.ForeignKey(File, db_column='file', related_name='hashes',
-            on_delete=models.CASCADE)
+    file = models.ForeignKey(File, db_column='file')
     product = models.ForeignKey(Product, db_column='product')
-    key = models.IntegerField(null=False, default=0)
-    algorithm = models.ForeignKey(Algorithm, db_column='algo',
-            on_delete=models.PROTECT)
+    device = models.IntegerField(null=False, default=0)  # TODO convert to nullable(?) FK
+    algorithm = models.ForeignKey(Algorithm, db_column='algo', on_delete=models.PROTECT)
     hash = HashField(db_column='hash')
 
     class Meta:
-        db_table = u'file_hashes'
+        db_table = 'file_hashes'
 
     def __unicode__(self):
         return '%s (%s)' % (self.hash, self.algorithm)
@@ -339,49 +338,45 @@ class FileHash(models.Model):
 
 class Package(models.Model):
     """
-    Package
+    A Package.
     """
-    id = models.AutoField(primary_key=True)
-    name = models.TextField(unique=True)
+    name = models.CharField(max_length=255, db_index=True)
 
     def __unicode__(self):
         return self.name
 
     class Meta:
-        db_table = u'packages'
+        db_table = 'packages'
 
 
 class Version(models.Model):
     """
-    Version number string of a package
+    Version number string of a package.
     """
-    id = models.AutoField(primary_key=True)
-    package = models.ForeignKey(Package, db_column='package',
-            on_delete=models.CASCADE, related_name='versions')
-    product = models.ForeignKey(Product, related_name='versions',
-            db_column='product', on_delete=models.CASCADE)
-    release = models.TextField()
+    package = models.ForeignKey(Package, db_column='package', related_name='versions')
+    product = models.ForeignKey(Product, db_column='product', related_name='versions')
+    release = models.CharField(max_length=255, db_index=True)
     security = models.BooleanField(default=0)
-    time = EpochField()
     blacklist = models.IntegerField(null=True, blank=True)
+    time = EpochField()
 
     def __unicode__(self):
         return self.release
 
     class Meta:
-        db_table = u'versions'
+        db_table = 'versions'
+        index_together = [('package', 'product')]
 
 
 class Policy(models.Model):
     """
-    Instance of a policy. Defines a specific check
+    Instance of a policy. Defines a specific check.
     """
-    id = models.AutoField(primary_key=True)
     type = models.IntegerField()
     name = models.CharField(unique=True, max_length=100)
-    argument = models.TextField(null='True')
-    fail = models.IntegerField(blank=True, db_column='rec_fail')
-    noresult = models.IntegerField(blank=True, db_column='rec_noresult')
+    argument = models.TextField(null=True)
+    fail = models.IntegerField(blank=True, db_column='rec_fail', choices=ACTION_CHOICES)
+    noresult = models.IntegerField(blank=True, db_column='rec_noresult', choices=ACTION_CHOICES)
     file = models.ForeignKey(File, null=True, blank=True,
             related_name='policies', on_delete=models.PROTECT,
             db_column='file')
@@ -390,11 +385,13 @@ class Policy(models.Model):
 
     def create_work_item(self, enforcement, session):
         """
-        Generate a workitem for a session
+        Generate a workitem for a session.
+
+        TODO do we even need to create workitems?
+
         """
         item = WorkItem(result=None, type=self.type, recommendation=None,
-                file=self.file, dir=self.dir, argument=self.argument,
-                enforcement=enforcement, session=session)
+                arg_str=self.argument, enforcement=enforcement, session=session)
 
         item.fail = self.fail
         if enforcement.fail is not None:
@@ -416,6 +413,7 @@ class Policy(models.Model):
         'NONE',
     ]
 
+    # TODO create CHOICES from this, use get_types_display()
     types = [
         'Deny',
         'Installed Packages',
@@ -469,93 +467,108 @@ class Policy(models.Model):
     }
 
     class Meta:
-        db_table = u'policies'
+        db_table = 'policies'
         verbose_name_plural = 'Policies'
 
 
 class Enforcement(models.Model):
     """
-    Rule to enforce a policy on a group
+    Rule to enforce a policy on a group.
     """
-    id = models.AutoField(primary_key=True)
-    policy = models.ForeignKey(Policy, related_name='enforcements',
-            on_delete=models.CASCADE, db_column='policy')
-    group = models.ForeignKey(Group, related_name='enforcements',
-            on_delete=models.CASCADE, db_column='group_id')
+    policy = models.ForeignKey(Policy, related_name='enforcements', db_column='policy')
+    group = models.ForeignKey(Group, related_name='enforcements', db_column='group_id')
     max_age = models.IntegerField()
-    fail = models.IntegerField(null=True, blank=True, db_column='rec_fail')
-    noresult = models.IntegerField(null=True, blank=True, db_column='rec_noresult')
+    fail = models.IntegerField(db_column='rec_fail', null=True, blank=True,
+            choices=ACTION_CHOICES)
+    noresult = models.IntegerField(db_column='rec_noresult', null=True, blank=True,
+            choices=ACTION_CHOICES)
 
     def __unicode__(self):
         return '%s on %s' % (self.policy.name, self.group.name)
 
     class Meta:
-        db_table = u'enforcements'
-        unique_together = (('policy', 'group'))
+        db_table = 'enforcements'
+        unique_together = [('policy', 'group')]
 
 
 class Identity(models.Model):
     """
-    A user identity
+    A user identity.
     """
-    id = models.AutoField(primary_key=True)
+    type = models.IntegerField()
     data = models.TextField(db_column='value')
 
     class Meta:
-        db_table = u'identities'
+        db_table = 'identities'
+        unique_together = [('type', 'data')]
 
 
 class Session(models.Model):
-    """Result of a TNC session."""
-    id = models.AutoField(primary_key=True)
-    connectionID = models.IntegerField(db_column='connection')
-    device = models.ForeignKey(Device, related_name='sessions',
-        on_delete=models.CASCADE, db_column='device')
-    identity = models.ForeignKey(Identity, related_name='sessions',
-        on_delete=models.CASCADE, db_column='identity')
+    """
+    Result of a TNC session.
+    """
     time = EpochField()
-    recommendation = models.IntegerField(null=True, db_column='rec')
+    connection_id = models.IntegerField(db_column='connection')
+    identity = models.ForeignKey(Identity, related_name='sessions', db_column='identity')
+    device = models.ForeignKey(Device, related_name='sessions', db_column='device')
+    recommendation = models.IntegerField(db_column='rec', null=True, choices=ACTION_CHOICES)
 
     class Meta:
-        db_table = u'sessions'
+        db_table = 'sessions'
 
 
 class WorkItem(models.Model):
     """
     A workitem representing a task for an IMV
     """
-    id = models.AutoField(primary_key=True)
-    enforcement = models.ForeignKey(Enforcement, db_column='enforcement',
-                  related_name="workitems", on_delete=models.CASCADE)
-    session = models.ForeignKey(Session, db_column='session',
-                  related_name='workitems', on_delete=models.CASCADE)
-    type = models.IntegerField(null=False, blank=False)
-    argument = models.TextField()
-    fail = models.IntegerField(null=True, blank=True)
-    noresult = models.IntegerField(null=True, blank=True)
-    result = models.TextField(null=True)
-    recommendation = models.IntegerField(null=True, blank=True)
-
-    # Foreign Keys for FileHash, DirHash, FileExist, FileNotExist
-    file = models.ForeignKey(File, null=True, on_delete=models.DO_NOTHING)
-    dir = models.ForeignKey(Directory, null=True, on_delete=models.DO_NOTHING)
+    enforcement = models.ForeignKey(Enforcement, db_column='enforcement', related_name="workitems")
+    session = models.ForeignKey(Session, db_column='session', related_name='workitems')
+    type = models.IntegerField(null=False, blank=False, choices=WORKITEM_TYPE_CHOICES)
+    arg_str = models.TextField()
+    arg_int = models.IntegerField(default=0)
+    fail = models.IntegerField(null=True, blank=True, db_column='rec_fail')
+    noresult = models.IntegerField(null=True, blank=True, db_column='rec_noresult')
+    recommendation = models.IntegerField(null=True, blank=True, db_column='rec_final')
+    result = models.TextField(null=True, blank=True, db_column='result')
 
     class Meta:
-        db_table = u'workitems'
+        db_table = 'workitems'
 
 
 class Result(models.Model):
     """
-    A result of a measurement
+    A result of a measurement.
     """
-    id = models.AutoField(primary_key=True)
-    session = models.ForeignKey(Session, db_column='session',
-            on_delete=models.CASCADE, related_name='results')
-    policy = models.ForeignKey(Policy, db_column='policy',
-            on_delete=models.CASCADE, related_name='results')
+    session = models.ForeignKey(Session, db_column='session', related_name='results')
+    policy = models.ForeignKey(Policy, db_column='policy', related_name='results')
     result = models.TextField()
     recommendation = models.IntegerField(db_column='rec')
 
     class Meta:
-        db_table = u'results'
+        db_table = 'results'
         get_latest_by = 'session__time'
+
+
+# EXTRA TABLES, TODO REMOVE AFTER STRONGSWAN / STRONGTNC SPLIT
+
+class Component(models.Model):
+    vendor_id = models.IntegerField()
+    name = models.IntegerField()
+    qualifier = models.IntegerField(default=0)
+    label = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'components'
+
+
+class ComponentHash(models.Model):
+    # TODO missing "id" primary key in database
+    component = models.ForeignKey(Component)
+    device = models.ForeignKey(Device, db_column='key')
+    seq_no = models.IntegerField()
+    pcr = models.IntegerField()
+    algorithm = models.ForeignKey(Algorithm, db_column='algo')
+    hash = HashField()
+
+    class Meta:
+        db_table = 'component_hashes'

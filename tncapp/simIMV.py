@@ -70,7 +70,7 @@ def run_test():
     """
     device = Device.objects.get(value='deadbeef')
     identity = Identity.objects.get(data='tannerli')
-    session = Session.objects.create(connectionID=random.randint(1, 65535),
+    session = Session.objects.create(connection_id=random.randint(1, 65535),
                                      device=device, time=datetime.today(), identity=identity)
 
     params = {}
