@@ -48,15 +48,17 @@ def process_swid_tag(tag_xml):
     """
     Parse a SWID XML tag and store the contained elements in the database.
 
+    The tag must be a unicode object in order to be processed correctly.
+
     All database changes run in a transaction. When an error occurs, the
     database remains unchanged.
 
     Args:
-        tag_xml:
-            The SWID tag as an XML string.
+       tag_xml (unicode):
+           The SWID tag as an XML string.
 
     Returns:
-        The newly created Tag model instance.
+       The newly created Tag model instance.
 
     """
     # Instantiate parser
@@ -65,9 +67,34 @@ def process_swid_tag(tag_xml):
 
     # Parse XML, save tag into database
     tag, file_pks = etree.fromstring(tag_xml, parser)
-    tag.swid_xml = tag_xml
+    # Parse and prettify the tag before saving
+    tag.swid_xml = prettify_xml(tag_xml)
     tag.save()  # We need to save before we can add many-to-many relations
     tag.files = file_pks
     tag.save()
 
     return tag
+
+
+def prettify_xml(xml, xml_declaration=True, encoding='UTF-8'):
+    """
+    Create a correctly indented (pretty) XML string from a parsable XML input.
+
+    Args:
+        xml (unicode):
+            The XML string to be prettified
+        xml_declaration (bool):
+            Wheter a XML declaration should be added or not.
+            Recommended for standalone documents.
+        encoding (str):
+            Value for the encoding attribute in the XML declaration.
+
+    Returns:
+        A prettified version of the given XML string.
+
+    """
+    xml_bytes = xml.encode(encoding)
+    return etree.tostring(etree.fromstring(xml_bytes),
+                          pretty_print=True,
+                          xml_declaration=xml_declaration,
+                          encoding=encoding,)

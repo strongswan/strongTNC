@@ -377,8 +377,8 @@ class Policy(models.Model):
     type = models.IntegerField()
     name = models.CharField(unique=True, max_length=100)
     argument = models.TextField(null=True)
-    fail = models.IntegerField(blank=True, db_column='rec_fail', choices=ACTION_CHOICES)
-    noresult = models.IntegerField(blank=True, db_column='rec_noresult', choices=ACTION_CHOICES)
+    fail = models.IntegerField(db_column='rec_fail', choices=ACTION_CHOICES)
+    noresult = models.IntegerField(db_column='rec_noresult', choices=ACTION_CHOICES)
     file = models.ForeignKey(File, null=True, blank=True,
             related_name='policies', on_delete=models.PROTECT,
             db_column='file')

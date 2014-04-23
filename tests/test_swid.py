@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-from apps.swid import utils
-from tncapp import models as tncapp_models
+from django.utils import timezone
 
 import pytest
+from model_mommy import mommy
 
+from tncapp import models as tncapp_models
+from tncapp import views as tncapp_views
+from apps.swid import models
+from apps.swid import utils
 
 ### FIXTURES ###
 
@@ -24,6 +28,17 @@ def swidtag(request, transactional_db):
         tag_xml = f.read()
         return utils.process_swid_tag(tag_xml)
 
+
+@pytest.fixture
+def session(transactional_db):
+    test_session = mommy.make(tncapp_models.Session, time=timezone.now())
+    workitem = mommy.make(tncapp_models.WorkItem, type=tncapp_models.WorkItemType.SWIDT, session=test_session)
+
+    with open('tests/test_tags/multiple-swid-tags.txt', 'r') as f:
+        workitem.result = f.read()
+        workitem.save()
+
+    return test_session
 
 ### SWID XML PROCESSING TESTS ###
 
@@ -72,7 +87,10 @@ def test_tag_version(swidtag, filename, version):
     'strongswan-tnc-imcvs.full.swidtag',
 ])
 def test_tag_xml(swidtag, filename):
-    assert swidtag.swid_xml == open('tests/test_tags/%s' % filename, 'r').read()
+    with open('tests/test_tags/%s' % filename, 'r') as swid_file:
+        swid_tag_xml = swid_file.read()
+        swid_tag_xml_pretty = utils.prettify_xml(swid_tag_xml.decode('utf-8'))
+        assert swidtag.swid_xml == swid_tag_xml_pretty
 
 
 @pytest.mark.parametrize(['filename', 'directories', 'files', 'filecount'], [
@@ -101,3 +119,17 @@ def test_tag_files(swidtag, filename, directories, files, filecount):
     assert tncapp_models.File.objects.filter(name__in=files).count() == len(files)
     assert tncapp_models.Directory.objects.filter(path__in=directories).count() == len(directories)
     assert swidtag.files.count() == filecount
+
+
+def test_import_from_db(session):
+    tncapp_views.import_swid_tags(session)
+    unique_ids = [
+        'Ubuntu_13.10-x86_64-xserver-xorg-video-vesa-1:2.3.2-0ubuntu3',
+        'Ubuntu_13.10-x86_64-xserver-xorg-video-vmware-1:13.0.1-0ubuntu2',
+        'Ubuntu_13.10-x86_64-xterm-278-1ubuntu3',
+        'Ubuntu_13.10-x86_64-xtrlock-2.3',
+        'Ubuntu_13.10-x86_64-xul-ext-ubufox-2.8-0ubuntu1',
+    ]
+
+    for unique_id in unique_ids:
+        assert models.Tag.objects.filter(unique_id=unique_id).exists()
