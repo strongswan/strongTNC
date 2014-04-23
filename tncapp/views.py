@@ -34,7 +34,9 @@ from django.views.decorators.http import (require_GET, require_safe,
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from models import Session, Result, Action, Enforcement, Device, Group, Package, Product, Policy
+from models import Session, Result, Action, Enforcement, Device, Group, Package, \
+    Product, Policy, WorkItem, WorkItemType
+from apps.swid import utils as swid_utils
 
 
 @require_GET
@@ -212,3 +214,16 @@ def purge_dead_sessions():
 
     for d in dead:
         d.delete()
+
+
+def import_swid_tags(session):
+    workitem = WorkItem.objects.get(session=session, type=WorkItemType.SWIDT)
+    result = workitem.result
+
+    if not result:
+        raise ValueError('No SWID tags provided')
+
+    swid_tags = result.splitlines()
+
+    for swid_tag in swid_tags:
+        swid_utils.process_swid_tag(swid_tag.encode('utf-8'))
