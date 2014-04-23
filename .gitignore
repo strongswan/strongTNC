@@ -9,6 +9,9 @@
 # Python byte code
 *.pyc
 
+# Configfiles
+settings.ini
+
 # Databases
 *.db
 *.db-journal

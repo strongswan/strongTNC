@@ -1,6 +1,7 @@
+{% load i18n %}
+{% load dajaxice_templatetags %}
 <!DOCTYPE html>
 <html lang="en">
-  {% load i18n %}
   <head>
     <meta charset="utf-8">
     <title>strongTNC - {% block title %}{% endblock %}</title>
@@ -12,13 +13,15 @@
     <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet" type="text/css"/>
     <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet"/>
-    <link href="{{ STATIC_URL }}css/chosen.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}css/select2.css" rel="stylesheet"/>
 
     <!-- script librarys -->
     <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
-    <script src="{{ STATIC_URL }}js/chosen.jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/select2.min.js"></script>
     <script src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
+
+    {% dajaxice_js_import %}
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -137,18 +140,31 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script type="text/javascript">
-      $(".chzn-select").chosen({disable_search_threshold: 15});
-      $(".chzn-select-deselect").chosen({allow_single_deselect:true});
-      $('.chzn-container').attr('rel', 'tooltip');
 
       $(document).ready(function () {
         csrftoken = '{{ csrf_token }}';
-        $(function () {
-          $("[rel='tooltip']").tooltip({
-            'selector': '',
-            'placement': 'right'
-          });
+
+        $('.slct2-dropdown').select2({
+          'width': 'element',
+          'minimumResultsForSearch': 15
         });
+
+        // copy title and rel attribute from original form-element
+        // to the select2 substitute to support bootstrap tooltips
+        $('.select2-container').each(function() {
+          var $this = $(this);
+          var originId = $this.attr('id').split('_')[1];
+          var $originElement = $('#'+originId);
+          var originTitle = $originElement.attr('title');
+          var originRel = $originElement.attr('rel');
+          $this.attr('title', originTitle);
+          $this.attr('rel', originRel);
+        });
+
+        $("[rel='tooltip']").tooltip({
+          'placement': 'right'
+        });
+
         $("#logout").tooltip({
           'selector': '',
           'placement': 'bottom'
@@ -173,7 +189,6 @@
         });
       });
 
-      $('.dropdown-toggle').dropdown();
     </script>
     <script src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
     <script src="{{ STATIC_URL }}js/validate_rules.js"></script>

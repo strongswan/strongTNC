@@ -4,4 +4,6 @@ python:
 install:
    - pip install -r requirements-tests.txt
 script:
+   - cp config/settings.sample.ini config/settings.ini
+   - sed -i 's/DEBUG=0/DEBUG=1/' config/settings.ini
    - ./runtests.py

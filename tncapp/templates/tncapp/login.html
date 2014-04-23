@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,7 +11,7 @@
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
     <style type="text/css">
-      
+
       body {
         padding-top: 40px;
         padding-bottom: 40px;
@@ -43,7 +44,7 @@
       }
     </style>
   </head>
-  
+
   <body>
     <div class="container">
       <div class="row-fluid">
@@ -69,12 +70,20 @@
             {% endif %}
             <div class="control-group">
               <div class="controls">
+                <select name="access_level" class="form-control input-block-level">
+                  <option value="readonly-user">{% trans 'Readonly' %}</option>
+                  <option value="admin-user">{% trans 'Read/Write' %}</option>
+                </select>
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="controls">
                 <input type="password" class="input-block-level" placeholder="Password" name="password">
               </div>
-            </div>             
+            </div>
             <button class="btn btn-large btn-primary" type="submit">Sign in</button>
           </form>
-          
+
         </div>
       </div>
     </div> <!-- /container -->

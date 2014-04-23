@@ -1,7 +1,8 @@
-
 {% extends "tncapp/base.html" %}
 
 {% load i18n %}
+{% load permissions %}
+
 {% block title %}{{title}}{% endblock %}
 
 {% block hero %}
@@ -14,12 +15,14 @@
     <div class="row-fluid">
       <div class="span3" id="line">
       <h4>{% trans "Enforcement" %}
+    {% if 'tncapp.write_access' in perms %}
 	<div class="pull-right">
 	  <a class="btn btn-primary btn-mini" href="/enforcements/add"
 	  value="addNew" rel="tooltip" title="add new">
 	    <i class="icon-plus-sign icon-white"></i>
 	  </a>
 	</div>
+    {% endif %}
       </h4>
       <hr>
       <div class="row-fluid">
@@ -63,9 +66,9 @@
       <p><small>There are no entries.</small></p>
 	{% elif query %}
       <p><small>No enforcements matched your search criteria.</small></p>
-      {% endif %}    
+      {% endif %}
       </div>
-      
+
       <div class="span9" id="content">
     {% if enforcement %}
 	<h4>Enforcement Info</h4>
@@ -76,7 +79,7 @@
     <div class="control-group">
       <label class="control-label" for="policy">{% trans "Policy" %}</label>
       <div class="controls">
-        <select name="policy" id="policy" rel="tooltip" title="{% trans 'Policy to enforce'%}">
+        <select name="policy" id="policy" class="slct2-dropdown" rel="tooltip" title="{% trans 'Policy to enforce'%}" {% input_editability %}>
           <option value=''>{% trans 'Select one...' %}</option>
           {% for p in policies %}
           <option value="{{ p.id }}" {% if p.id == enforcement.policy.id %} selected {% endif %}>
@@ -86,11 +89,11 @@
         </select>
       </div>
     </div>
-    
+
     <div class="control-group">
       <label class="control-label" for="group">{% trans "Group" %}</label>
       <div class="controls">
-        <select name="group" id="group" rel="tooltip" title="{% trans 'Group to enforce policy on'%}">
+        <select name="group" id="group" class="slct2-dropdown" rel="tooltip" title="{% trans 'Group to enforce policy on'%}" {% input_editability %}>
           <option value=''>{% trans 'Select one...' %}</option>
           {% for g in groups %}
           <option value="{{ g.id }}" {% if g.id == enforcement.group.id %} selected {% endif %}>
@@ -105,14 +108,14 @@
       <label class="control-label" for="max_age">{% trans "Max. age in seconds" %}</label>
       <div class="controls">
         <input type="text" name="max_age" id="max_age" value="{{ enforcement.max_age }}"
-        rel="tooltip" title="{% trans 'Policy will be executed every x seconds' %}"/>
+        rel="tooltip" title="{% trans 'Policy will be executed every x seconds' %}" {% input_editability %}></input>
       </div>
     </div>
 
     <div class="control-group">
       <label class="control-label" for="fail">{% trans "Fail Action" %}</label>
       <div class="controls">
-        <select name="fail" id="fail" rel="tooltip" title="{% trans 'Action if requirements are not met'%}">
+        <select name="fail" id="fail" class="slct2-dropdown" rel="tooltip" title="{% trans 'Action if requirements are not met'%}" {% input_editability %}>
           <option value="-1">{% trans 'Inherit from policy' %}</option>
           {% for a in actions %}
           <option value="{{ forloop.counter0 }}" {% if forloop.counter0 == enforcement.fail %} selected {% endif %}>
@@ -126,7 +129,7 @@
     <div class="control-group">
       <label class="control-label" for="noresult">{% trans "Noresult Action" %}</label>
       <div class="controls">
-        <select name="noresult" id="noresult" rel="tooltip" title="{% trans 'Action if policy does not apply'%}">
+        <select name="noresult" id="noresult" class="slct2-dropdown" rel="tooltip" title="{% trans 'Action if policy does not apply'%}" {% input_editability %}>
           <option value="-1"> {%trans 'Inherit from policy' %}</option>
           {% for a in actions %}
           <option value="{{ forloop.counter0 }}" {% if forloop.counter0 == enforcement.noresult %} selected {% endif %}>
@@ -136,19 +139,22 @@
         </select>
       </div>
     </div>
-  
+
+    {% if 'tncapp.write_access' in perms %}
     <hr>
-  
+
     <div class="btn-toolbar" style="margin: 0;">
       <div class="btn-group">
 	<button class="btn btn-success" type="submit"><i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
       </div><!-- /btn-group -->
+
     {% if enforcement.id %}
       <div class="btn-group">
 	<a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
       </div><!-- /btn-group -->
     {% endif %}
     </div><!-- /btn-toolbar-->
+    {% endif %}
   {% endif %}
   </form>
 
@@ -174,5 +180,3 @@
 </div><!--/row-->
 </div>
 {% endblock %}
-
-

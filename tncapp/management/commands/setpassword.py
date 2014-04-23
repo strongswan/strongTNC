@@ -1,63 +1,59 @@
-#
-# Copyright (C) 2013 Marco Tanner
-# HSR University of Applied Sciences Rapperswil
-#
-# This file is part of strongTNC.  strongTNC is free software: you can
-# redistribute it and/or modify it under the terms of the GNU Affero General
-# Public License as published by the Free Software Foundation, either version 3
-# of the License, or (at your option) any later version.
-#
-# strongTNC is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-# details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
-#
-
+# -*- coding: utf-8 -*-
+from __future__ import print_function, division, absolute_import, unicode_literals
 """
-Custom manage.py command to set the admin user password
+Custom manage.py command to create users and set their passwords.
 
-Usage: python manage.py setpassword [PASSWORD]
+Usage: ./manage.py setpassword [password]
 """
 
 from getpass import getpass
-from django.contrib.auth.models import User
-from django.core.management.base import BaseCommand, CommandError
+from django.contrib.auth import get_user_model
+from django.core.management.base import NoArgsCommand
+
+from tncapp.permissions import GlobalPermission
 
 
-class Command(BaseCommand):
+class Command(NoArgsCommand):
     """
-    Required class to be recognized by manage.py
+    Required class to be recognized by manage.py.
     """
-
     help = 'Get or create admin-user and set password interactively'
-    args = '[password]'
 
-    def handle(self, *args, **kwargs):
-        if len(args) > 1:
-            raise CommandError('Too many arguments')
+    def handle_noargs(self, **kwargs):
+        self.process_user('admin-user', write_access=True)
+        self.process_user('readonly-user')
+        self.stdout.write('Passwords updated succesfully!')
 
-        self.stdout.write('looking for admin-user in database...')
+    def process_user(self, username, write_access=False):
+        """
+        Get or create user, set password and set permissions.
 
-        user, new = User.objects.get_or_create(username='admin-user')
+        Args:
+            username (str):
+                The desired username for the user.
+            write_access (bool):
+                Whether or not the user should get the `write_access`
+                permission. Default ``False``.
 
+        Returns: None
+
+        """
+        # Get or create user
+        self.stdout.write('Looking for %s in database...' % username)
+        User = get_user_model()
+        user, new = User.objects.get_or_create(username=username)
         if new:
-            self.stdout.write('... not found: creating new.')
+            self.stdout.write('--> User "%s" not found. Creating new user.' % username)
 
-        pwd = ''
-        if len(args) > 0:
-            pwd = args[0]
-
-        if pwd == '':
-            try:
-                pwd = getpass('\nplease enter a new password for admin-user: ')
-            except KeyboardInterrupt:
-                self.stdout.write('\nabort')
-                return
-
+        # Set password
+        pwd = getpass('--> Please enter a new password for %s: ' % username)
         user.set_password(pwd)
         user.save()
 
-        self.stdout.write('password updated succesfully')
+        # Set permissions
+        if write_access:
+            perm, _ = GlobalPermission.objects.get_or_create(codename='write_access')
+            perm.name = 'Has write access to data.'
+            perm.save()
+            user.user_permissions.add(perm)
+            self.stdout.write('--> Granting write_access permission.')

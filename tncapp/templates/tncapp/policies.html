@@ -1,6 +1,8 @@
 {% extends "tncapp/base.html" %}
 
 {% load i18n %}
+{% load permissions %}
+
 {% block title %}{{title}}{% endblock %}
 
 {% block hero %}
@@ -13,12 +15,14 @@
   <div class="row-fluid">
     <div class="span3" id="line">
       <h4>{% trans "Policy" %}
+        {% if 'tncapp.write_access' in perms %}
         <div class="pull-right">
           <a class="btn btn-primary btn-mini" href="/policies/add"
           value="addNew" rel="tooltip" title="add new">
             <i class="icon-plus-sign icon-white"></i>
           </a>
         </div>
+        {% endif %}
       </h4>
       <hr>
       <div class="row-fluid">
@@ -78,14 +82,15 @@
             <input type="hidden" id="policyId" name="policyId" value="{{policy.id}}" />
             <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}"
               rel="tooltip" title="{% trans 'Policy Name' %}"
-            value="{{ policy.name }}">
+              value="{{ policy.name }}" {% input_editability %}>
           </div>
         </div>
 
         <div class="control-group">
           <label class="control-label" for="type">{% trans "Type" %}</label>
           <div class="controls">
-            <select id="type" name="type" class="chzn-select" onchange="type_change()" rel="tooltip" title="{% trans 'Policy Type' %}">
+              <select id="type" name="type" class="slct2-dropdown" onchange="type_change()" rel="tooltip"
+                title="{% trans 'Policy Type' %}" {% input_editability %}>
               <option value="-1">{% trans 'Select one...' %}</option>
               {% for t in types %}
               <option value="{{ forloop.counter0 }}"
@@ -98,21 +103,15 @@
         <div class="control-group" id="file">
           <label class="control-label" for="file">{% trans "File" %}</label>
           <div class="controls">
-            <select id="file" name="file" class="chzn-select" rel="tooltip"
-              title="{% trans 'File to check' %}">
-              <option value="">{% trans 'Select one...' %}</option>
-              {% for f in files %}
-              <option value="{{ f.id }}" {% if policy.file.id == f.id %} selected {% endif %}>{{ f }}</option>
-              {% endfor %}
-            </select>
+            <input type="hidden" id="file" name="file" class="slct2-autocomplete" value="{% if file %}{{ file.id }}{% endif %}" {% input_editability %} />
           </div>
         </div>
 
         <div class="control-group" id="dir">
           <label class="control-label" for="dir">{% trans "Directory" %}</label>
           <div class="controls">
-            <select id="dir" name="dir" class="chzn-select" rel="tooltip"
-              title="{% trans 'Directory to check' %}">
+            <select id="dir" name="dir" class="slct2-dropdown" rel="tooltip"
+              title="{% trans 'Directory to check' %}" {% input_editability %}>
               <option value="">{% trans 'Select one...' %}</option>
               {% for d in dirs %}
               <option value="{{ d.id }}"{% if policy.dir.id == d.id %} selected {% endif %}>{{ d }}</option>
@@ -126,7 +125,7 @@
           <div class="controls">
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
               rel="tooltip" title="{% trans 'Whitespace separated range(s) of ports, f.e: 5 10-1024 2450-4000' %}"
-              value="{{ policy.argument|default:'' }}">
+              value="{{ policy.argument|default:'' }}" {% input_editability %}>
           </div>
         </div>
 
@@ -135,7 +134,7 @@
           <div class="controls">
             <input type="text" id="range" name="range" placeholder="{% trans 'Port Range' %}"
               rel="tooltip" title="{% trans 'Whitespace separated range(s) of ports, f.e: 5 10-1024 2450-4000' %}"
-              value="{{ policy.argument|default:'' }}">
+              value="{{ policy.argument|default:'' }}" {% input_editability %}>
           </div>
         </div>
 
@@ -143,8 +142,9 @@
 	      <label class="control-label" for="swid-flags">{% trans "SWID Request Flags" %}</label>
 	      <div class="controls">
 		    <select data-placeholder="Click to add a SWID flag.." id="swid-flags" name="swid-flags"
-                multiple class="chzn-select-deselect" rel="tooltip"
-		        title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}">
+                multiple class="slct2-dropdown" rel="tooltip"
+		        title="{% trans 'R for Tag IDs only, S for Subscribe, C for Clear subscription' %}"
+                {% input_editability %}>
 			  <option value="R"
 		        {% if 'R' in policy.argument %}
 		          selected="selected"
@@ -168,8 +168,8 @@
 	    <label class="control-label" for="attestation-flags">{% trans "TPM Attestation Flags" %}</label>
 	    <div class="controls">
 		  <select data-placeholder="Click to add an attestation flag..." id="attestation-flags" name="attestation-flags"
-              multiple class="chzn-select-deselect" rel="tooltip"
-		      title="{% trans 'B for BIOS measurements, I for IMA measurements, T for Trusted Boot' %}">
+              multiple class="slct2-dropdown" rel="tooltip"
+              title="{% trans 'B for BIOS measurements, I for IMA measurements, T for Trusted Boot' %}" {% input_editability %}>
 			<option value="B"
 	          {% if 'B' in policy.argument %}
 	            selected="selected"
@@ -192,8 +192,8 @@
 	      <div class="control-group">
           <label class="control-label" for="fail">{% trans "Fail-Action" %}</label>
           <div class="controls">
-            <select id="fail" name="fail" class="chzn-select" rel="tooltip"
-              title="{% trans 'Recommendation when a client does not meet the policy requirement' %}">
+            <select id="fail" name="fail" class="slct2-dropdown" rel="tooltip"
+              title="{% trans 'Recommendation when a client does not meet the policy requirement' %}" {% input_editability %}>
               <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
               <option value="{{forloop.counter0}}"
@@ -209,8 +209,8 @@
         <div class="control-group">
           <label class="control-label" for="noresult">{% trans "Noresult-Action" %}</label>
           <div class="controls">
-            <select id="noresult" name="noresult" class="chzn-select" rel="tooltip"
-              title="{% trans 'Recommendation when the policy does not apply to the client' %}">
+            <select id="noresult" name="noresult" class="slct2-dropdown" rel="tooltip"
+              title="{% trans 'Recommendation when the policy does not apply to the client' %}" {% input_editability %}>
               <option value="">{% trans 'Select one...' %}</option>
               {% for a in action %}
               <option value="{{forloop.counter0}}"
@@ -223,7 +223,8 @@
           </div>
         </div>
 
-      <hr>
+        {% if 'tncapp.write_access' in perms %}
+        <hr>
 
         <div class="btn-toolbar" style="margin: 0;">
           <div class="btn-group">
@@ -235,6 +236,8 @@
           </div><!-- /btn-group -->
           {% endif %}
         </div><!-- /btn-toolbar-->
+
+        {% endif %}
       {% endif %}
       </form>
 
@@ -261,6 +264,7 @@
 </div>
 <script type="text/javascript">
 
+
 $(document).ready(function () {
   type_change();
   $('#policyform').submit(function(){
@@ -268,7 +272,57 @@ $(document).ready(function () {
 	  var $form = $(this);
 	  $form.children('.filter:hidden').remove();
   });
+
+  $('input#file').select2({
+    minimumInputLength: 3,
+    {% if file %}
+    initSelection: function (element, callback) {
+      var data = {"text": "{{ file.directory }}/{{ file.name }}", "id": "{{ file.id }}"};
+      callback(data);
+    },
+    {% endif %}
+    query: function (query) {
+      autocompleteDelay.callback = query.callback;
+      autocompleteDelay.queryUpdate(query.term);
+    }
+  });
 });
+
+// delay the request, to reduce the amount of requests
+// --> the request is only sent if the query does not
+//     change during a defined delay.
+var autocompleteDelay = {
+  delay: 600,
+  query: '',
+  lastDelayedCall: null,
+  callback: null,
+
+  queryUpdate: function(newQuery) {
+    this.query = newQuery;
+    if(this.lastDelayedCall != null) {
+      this.cancelLastDelayedCall();
+    }
+    this.startDelayedCall();
+  },
+
+  startDelayedCall: function() {
+    this.lastDelayedCall = window.setTimeout(this.autocompleteCall, this.delay);
+  },
+
+  cancelLastDelayedCall: function() {
+    window.clearTimeout(this.lastDelayedCall);
+  },
+
+  autocompleteCall: function() {
+    // function is called by setTimeout,
+    // thus it's running in the context of the window object
+    var callback = autocompleteDelay.callback;
+    var query = autocompleteDelay.query;
+    Dajaxice.tncapp.files_autocomplete(callback, {'search_term': query});
+  }
+
+};
+
 
 var PolicyType = {
   PCKGS :  1,
