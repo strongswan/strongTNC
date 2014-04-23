@@ -1,3 +1,4 @@
 Django>=1.6,<1.7
 pytz==2014.2
 django-dajaxice-ng==0.5.6.5
+lxml==3.3.5
