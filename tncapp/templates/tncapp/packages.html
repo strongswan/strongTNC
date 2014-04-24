@@ -1,7 +1,8 @@
-
 {% extends "tncapp/base.html" %}
 
 {% load i18n %}
+{% load permissions %}
+
 {% block title %}{{title}}{% endblock %}
 
 {% block hero %}
@@ -14,12 +15,14 @@
     <div class="row-fluid">
       <div class="span3" id="line">
       <h4>{% trans "Package" %}
+    {% if 'tncapp.write_access' in perms %}
 	<div class="pull-right">
 	  <a class="btn btn-primary btn-mini" href="/packages/add"
 	  value="addNew" rel="tooltip" title="add new">
 	    <i class="icon-plus-sign icon-white"></i>
 	  </a>
 	</div>
+    {% endif %}
       </h4>
       <hr>
       <div class="row-fluid">
@@ -63,9 +66,9 @@
     <p><small>There are no entries.</small></p>
       {% elif query %}
     <p><small>No packages matched your search criteria.</small></p>
-    {% endif %}    
+    {% endif %}
     </div>
-      
+
     <div class="span9" id="content">
       {% if package %}
       <h4>Package Info</h4>
@@ -77,12 +80,12 @@
 	<div class="controls">
 	  <input type="hidden" id="packageId" name="packageId" value="{{package.id}}" />
 	  <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}" rel="tooltip"
-	    title="{% trans 'Package Name' %}" value="{{ package.name }}">
+        title="{% trans 'Package Name' %}" value="{{ package.name }}" {% input_editability %}>
 	</div>
       </div>
-      
+
       <hr>
-      
+
       <h4>{% trans "Versions:" %}
 	<a class="btn-small" href="#" rel="tooltip"
 	title="{% trans 'All versions of this package' %}"><i class="icon-info-sign"></i></a>
@@ -108,7 +111,7 @@
 	      <td>{{v.time|date:'M d H:i:s Y'}}</td>
         <td><button type="button" class="btn btn-mini {% if v.blacklist == None %}
             {{package.blacklist|yesno:"active,"}} {% else %} {{v.blacklist|yesno:"active,"}}
-            {% endif %} " id="togBlack" data-toggle="button" onclick="toggle({{v.id}})">
+            {% endif %} " id="togBlack" data-toggle="button" onclick="toggle({{v.id}})" {% input_editability %}>
 		{%if v.blacklist ==  None %}
 		    {{package.blacklist|yesno:_("Yes,No")}}
 		  {%else%}
@@ -123,6 +126,7 @@
 	</div>
       {% endif %}
 
+      {% if 'tncapp.write_access' in perms %}
       <hr>
 
       <div class="btn-toolbar" style="margin: 0;">
@@ -135,6 +139,7 @@
 	</div><!-- /btn-group -->
       {% endif %}
       </div><!-- /btn-toolbar-->
+      {% endif %}
       {% endif %}
       </form>
 
@@ -155,7 +160,7 @@
 	  <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete package</a>
 	</div>
       </div>
-      
+
       <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
 	<div class="modal-header">
 	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -171,7 +176,7 @@
 	  <a class="btn btn-success" onclick="packageform.submit()" >Continue</a>
 	</div>
       </div>
-      
+
       </div><!--content-->
 	  </div><!--/row-->
 	</div>
@@ -187,7 +192,7 @@
 	      }
 	    }
 	  }
-      
+
 	  function toggle(id){
 	    $.ajax({
 	      url : "/versions/" + id + "/toggle",
@@ -197,8 +202,8 @@
 		  $(query).text(data)
 		},
 	      }
-	    })     
+	    })
 	  }
 	</script>
       {% endblock %}
-      
+

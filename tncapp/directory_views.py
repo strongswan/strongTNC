@@ -24,7 +24,7 @@ import re
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -76,6 +76,7 @@ def directory(request, directoryID):
 
 @require_GET
 @login_required
+@permission_required('tncapp.write_access', raise_exception=True)
 def add(request):
     """
     Add a directory
@@ -91,6 +92,7 @@ def add(request):
 
 @require_POST
 @login_required
+@permission_required('tncapp.write_access', raise_exception=True)
 def save(request):
     """
     Insert/update view
@@ -116,6 +118,7 @@ def save(request):
 
 @require_POST
 @login_required
+@permission_required('tncapp.write_access', raise_exception=True)
 def delete(request, directoryID):
     """
     Delete a directory

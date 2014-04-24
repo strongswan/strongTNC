@@ -1,7 +1,8 @@
-
 {% extends "tncapp/base.html" %}
 
 {% load i18n %}
+{% load permissions %}
+
 {% block title %}{{title}}{% endblock %}
 
 {% block hero %}
@@ -14,19 +15,21 @@
     <div class="row-fluid">
       <div class="span3" id="line">
 		<h4>{% trans "Regid" %}
+          {% if 'tncapp.write_access' in perms %}
 	      <div class="pull-right">
 	        <a class="btn btn-primary btn-mini" href="/regids/add"
 	          value="addNew" rel="tooltip" title="add new">
 	          <i class="icon-plus-sign icon-white"></i>
 	        </a>
 	      </div>
+          {% endif %}
         </h4>
 		<hr>
 		<div class="row-fluid">
 		  {% if count > 0 %}
 		  <form class="form-search pull-center" action="/regids/search" method="get">
 			<div class="input-append">
-			  <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
+                <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
 			  <button type="submit" class="btn"><i class="icon-search"></i></button>
 			</div>
 		  </form>
@@ -65,7 +68,7 @@
 	  <p><small>No regids matched your search criteria.</small></p>
 	  {% endif %}
 	</div>
-      
+
     <div class="span9" id="content">
 	  {% if regid %}
 	  <h4>Regid Info</h4>
@@ -77,12 +80,13 @@
 	    <label class="control-label" for="id">{% trans "Name" %}</label>
 	    <div class="controls">
 	      <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}" rel="tooltip"
-	      title="{% trans 'Regid name' %}" value="{{ regid.name}}">
+          title="{% trans 'Regid name' %}" value="{{ regid.name}}" {% input_editability %}>
 	    </div>
 	  </div>
-    
+
+      {% if 'tncapp.write_access' in perms %}
 	  <hr>
-	    
+
 	  <div class="btn-toolbar" style="margin: 0;">
         <div class="btn-group">
           <button class="btn btn-success" type="submit" onclick="save_product()">
@@ -93,10 +97,11 @@
 	      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
 	    </div><!-- /btn-group -->
 	  </div><!-- /btn-toolbar-->
+      {% endif %}
 	  {% endif %}
 
 	<hr>
-	    
+
 	<h4>Tags</h4>
       {% if tags %}
   <div class="row-fluid">

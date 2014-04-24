@@ -113,8 +113,7 @@ def statistics(request):
     context['devices'] = Device.objects.count()
     context['packages'] = Package.objects.count()
     context['products'] = Product.objects.count()
-    context['OSranking'] = Product.objects.annotate(
-            num=Count('devices__id')).order_by('-num')
+    context['OSranking'] = Product.objects.annotate(num=Count('devices__id')).order_by('-num')
 
     context['rec_count_session'] = Session.objects.values('recommendation').annotate(
             num=Count('recommendation')).order_by('-num')
@@ -137,13 +136,25 @@ def login(request):
     Login view
     """
     if request.method == 'POST':
+        # Get login data from POST
         password = request.POST.get('password', None)
-        user = authenticate(username='admin-user', password=password)
+        username = request.POST.get('access_level', None)
+
+        # Validate credentials
+        if username not in ['admin-user', 'readonly-user']:
+            # Make sure that people cannot log in as an arbitrary user
+            # using faked HTTP requests.
+            user = None
+        else:
+            # If authentication fails, the function returns ``None``.
+            user = authenticate(username=username, password=password)
+
+        # Authenticate user
         if user is not None and user.is_active:
                 django_login(request, user)
-                next = request.POST.get('next_url', None)
-                if next is not None:
-                    return redirect(next)
+                next_url = request.POST.get('next_url', None)
+                if next_url is not None:
+                    return redirect(next_url)
                 else:
                     return redirect('/overview')
         else:
