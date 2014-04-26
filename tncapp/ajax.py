@@ -50,7 +50,7 @@ def files_autocomplete(request, search_term):
         files = models.File.objects.filter(name__icontains=file_part)
         dirs = models.Directory.objects.filter(path__icontains=search_term)
 
-    resulting_files = None
+    resulting_files = []
 
     # prepare results from collected data
     if files and not dirs:
@@ -63,10 +63,38 @@ def files_autocomplete(request, search_term):
         resulting_files = files | models.File.objects.filter(directory__in=dirs)
 
     # create resulting json to return
-    if resulting_files:
-        options = [{'id': f.id, 'text': os.path.join(f.directory.path, f.name)} for f in resulting_files]
-    else:
-        options = []
+    options = [{'id': f.id, 'file': os.path.join(f.directory.path, f.name)} for f in resulting_files]
 
     results = {'results': options}
+    return json.dumps(results)
+
+
+@dajaxice_register()
+def directories_autocomplete(request, search_term):
+    """
+    Provides the autocomplete backend for the directories dropdown in the policy view.
+
+    Args:
+        request (request):
+            The django request object.
+
+        search_term (str):
+            The search term, should be a filename or path or a combination.
+
+    Returns:
+        A json object in the following form, eg.:
+            {
+                result: [
+                    {id: 758, 'text': '/bin'},
+                    {id: 65, 'text': '/etc'}
+                ]
+            }
+
+
+    This ajax function, especially the result format is made to work with
+    the autocomplete feature of the jQuery plugin Select2: http://ivaynberg.github.io/select2/
+
+    """
+    dirs = models.Directory.objects.filter(path__icontains=search_term)
+    results = {'results': [{'id': d.id, 'directory': d.path} for d in dirs]}
     return json.dumps(results)

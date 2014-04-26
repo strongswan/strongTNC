@@ -71,17 +71,16 @@ def policy(request, policyID):
         enforcements = policy.enforcements.all().order_by('id')
         context['enforcements'] = enforcements
         context['types'] = Policy.types
-        for typ in context['types']:
-            typ = _(typ)
         context['action'] = Policy.action
         try:
-            if policy.file:
-                context['file'] = policy.file
+            context['file'] = policy.file
         except File.DoesNotExist:
             pass
 
-        dirs = Directory.objects.all().order_by('path')
-        context['dirs'] = dirs
+        try:
+            context['dir'] = policy.dir
+        except Directory.DoesNotExist:
+            pass
 
         groups = Group.objects.exclude(id__in=enforcements.values_list('id', flat=True))
         context['groups'] = groups
@@ -105,10 +104,6 @@ def add(request):
     context['types'] = Policy.types
     context['action'] = Policy.action
     context['policy'] = Policy()
-    files = File.objects.all().order_by('name')
-    context['files'] = files
-    dirs = Directory.objects.all().order_by('path')
-    context['dirs'] = dirs
     return render(request, 'tncapp/policies.html', context)
 
 
