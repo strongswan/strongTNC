@@ -54,6 +54,7 @@ urlpatterns = patterns('',
     url(r'^devices/save/?$', device_views.save, name='save'),
     url(r'^devices/(?P<deviceID>\d+)/delete/?$', device_views.delete, name='delete'),
     url(r'^devices/search/?$', device_views.search, name='search'),
+    url(r'^devices/(?P<device_id>\d+)/toggle/?$', device_views.toggle_trusted, name='toggle_trusted'),
 
     url(r'^devices/(?P<deviceID>\d+)/report/?$', device_views.report, name='report'),
 
