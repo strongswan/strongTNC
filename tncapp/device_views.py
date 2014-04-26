@@ -277,3 +277,15 @@ def session(request, sessionID):
         context['results'].append((result, Policy.action[result.recommendation]))
 
     return render(request, 'tncapp/session.html', context)
+
+
+@require_GET
+@login_required
+def toggle_trusted(request, device_id):
+    """
+    Toggle the trusted state of a device
+    """
+    device_object = get_object_or_404(Device, pk=device_id)
+    device_object.trusted = not device_object.trusted
+    device_object.save()
+    return HttpResponse(_('Yes' if device_object.trusted else 'No'))

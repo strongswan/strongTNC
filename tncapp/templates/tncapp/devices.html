@@ -109,6 +109,19 @@
         </select>
       </div>
     </div>
+    <div class="control-group" id="trusted">
+      <label class="control-label" for="trusted">{% trans "Trusted" %}</label>
+      <div class="controls" id="trusted">
+         <button type="button" id="device-trusted-flag" class="btn btn-mini {{device.trusted|yesno:"active,"}} "
+                 id="togBlack" data-toggle="button"
+                 {% if 'tncapp.write_access' in perms %}
+                   onclick="toggle_trusted_flag({{device.id}})"
+                 {% endif %} >
+           {{device.trusted|yesno:_("Yes,No")}}
+         </button>
+      </div>
+    </div>
+
 
     <hr>
 
@@ -182,6 +195,17 @@
           $("#group_select2 option:selected").map(function() {
             return this.value;
             }).get().join()).appendTo("#deviceform")
+    }
+
+    function toggle_trusted_flag(id){
+        $.ajax({
+          url : "/devices/" + id + "/toggle",
+          statusCode: {
+            200 : function(data, status, jqXHR){
+                    $("#device-trusted-flag").text(data);
+                   }
+          }
+        });
     }
   </script>
 {% endblock %}

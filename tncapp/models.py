@@ -176,8 +176,8 @@ class Device(models.Model):
     value = models.CharField(max_length=255, db_index=True)
     description = models.TextField(blank=True, null=True, default='')
     product = models.ForeignKey(Product, related_name='devices', db_column='product')
-    trusted = models.IntegerField(default=0)
     created = EpochField(null=True, blank=True)
+    trusted = models.BooleanField(default=False)
 
     def __unicode__(self):
         if self.description:
