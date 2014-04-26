@@ -277,12 +277,31 @@ $(document).ready(function () {
     minimumInputLength: 3,
     {% if file %}
     initSelection: function (element, callback) {
-      var data = {"text": "{{ file.directory }}/{{ file.name }}", "id": "{{ file.id }}"};
+      var data = {"file": "{{ file.directory }}/{{ file.name }}", "id": "{{ file.id }}"};
       callback(data);
     },
     {% endif %}
+    formatSelection: function(o){return o.file},
+    formatResult: function(o){return o.file},
     query: function (query) {
       autocompleteDelay.callback = query.callback;
+      autocompleteDelay.ajaxFunction = Dajaxice.tncapp.files_autocomplete;
+      autocompleteDelay.queryUpdate(query.term);
+    }
+  });
+  $('input#dir').select2({
+    minimumInputLength: 3,
+    {% if dir %}
+      initSelection: function (element, callback) {
+        var data = {"directory": "{{ dir.path }}", "id": "{{ dir.id }}"};
+        callback(data);
+      },
+    {% endif %}
+    formatSelection: function(o){return o.directory},
+    formatResult: function(o){return o.directory},
+    query: function (query) {
+      autocompleteDelay.callback = query.callback;
+      autocompleteDelay.ajaxFunction = Dajaxice.tncapp.directories_autocomplete;
       autocompleteDelay.queryUpdate(query.term);
     }
   });
@@ -296,6 +315,7 @@ var autocompleteDelay = {
   query: '',
   lastDelayedCall: null,
   callback: null,
+  ajaxFunction: null,
 
   queryUpdate: function(newQuery) {
     this.query = newQuery;
@@ -318,7 +338,7 @@ var autocompleteDelay = {
     // thus it's running in the context of the window object
     var callback = autocompleteDelay.callback;
     var query = autocompleteDelay.query;
-    Dajaxice.tncapp.files_autocomplete(callback, {'search_term': query});
+    autocompleteDelay.ajaxFunction(callback, {'search_term': query});
   }
 
 };
