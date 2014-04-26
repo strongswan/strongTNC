@@ -5,6 +5,8 @@ import json
 import os.path
 from datetime import datetime
 
+from django.template.loader import render_to_string
+
 from dajaxice.decorators import dajaxice_register
 
 from tncapp import models
@@ -131,3 +133,75 @@ def directories_autocomplete(request, search_term):
     dirs = models.Directory.objects.filter(path__icontains=search_term)
     results = {'results': [{'id': d.id, 'directory': d.path} for d in dirs]}
     return json.dumps(results)
+
+
+@dajaxice_register()
+def paging(request, template, list_producer, stat_producer, var_name,
+           current_page, page_size, filter_query):
+    """
+    Returns paged tables.
+
+    Args:
+        template (str):
+            Name of the table template to be used, without .html extension.
+
+        list_producer (str):
+            Name of the key for the list producer function. The list producer is the function
+            which creates the paged list.
+
+        stat_producer (str);
+            Name of the key for the stat producer function. The stat producer is the function
+            which returns information about the page count.
+
+        var_name (str):
+            Name of the list variable used in the templated.
+
+        current_page (int):
+            Current page index, 0 based.
+
+        page_size (int):
+            Number of items to be shown on one page.
+
+        filter_query (str):
+            Query to filter the paged list/table.
+
+    Returns:
+        A json object:
+        {
+            current_page: <The current page index, 0 based>,
+            page_count: <Number of pages (might change when filtered)>,
+            html: <The rendered template (only provided if stats_only == False>
+        }
+
+    """
+    # register list producer
+    list_producer_dict = {
+    }
+
+    # register stat producer
+    stat_producer_dict = {
+    }
+
+    # get page count from stat producer
+    sp = stat_producer_dict.get(stat_producer)
+    if sp is None:
+        raise ValueError('Invalid stat producer: %s' % stat_producer)
+    page_count = sp(page_size, filter_query)
+
+    from_idx = current_page * page_size
+    to_idx = from_idx + page_size
+
+    # get element list form list producer
+    lp = list_producer_dict.get(list_producer)
+    if lp is None:
+        raise ValueError('Invalid list producer: %s' % list_producer)
+    element_list = lp(from_idx, to_idx, filter_query)
+
+    # render the given template with the element list to a html string
+    response = {
+        'current_page': current_page,
+        'page_count': page_count,
+        'html': render_to_string(template + '.html', {var_name: element_list})
+    }
+
+    return json.dumps(response)
