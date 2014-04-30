@@ -42,7 +42,7 @@
                     {% for entityrole in object.entityrole_set.all %}
                         <tr>
                             <td>
-                                <a href="{% url 'tag' entityrole.tag.pk %}">{{ entityrole.tag.unique_id }}</a>
+                                <a href="{% url 'swid_tag_detail' entityrole.tag.pk %}">{{ entityrole.tag.unique_id }}</a>
                             </td>
                             <td>{{ entityrole.get_role_display }}</td>
                         </tr>
