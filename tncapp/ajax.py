@@ -63,7 +63,8 @@ def files_autocomplete(request, search_term):
         resulting_files = files | models.File.objects.filter(directory__in=dirs)
 
     # create resulting json to return
-    options = [{'id': f.id, 'file': os.path.join(f.directory.path, f.name)} for f in resulting_files]
+    options = [{'id': f.id, 'file': '/'.join([f.directory.path.rstrip('/'), f.name])}
+               for f in resulting_files]
 
     results = {'results': options}
     return json.dumps(results)
