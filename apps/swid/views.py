@@ -1,6 +1,9 @@
-from django.views.generic import ListView, DetailView, TemplateView
+# -*- coding: utf-8 -*-
+from __future__ import print_function, division, absolute_import, unicode_literals
+
+from django.views.generic import ListView, DetailView
+
 from . import models
-from tncapp import models as tnc_models
 
 
 class RegidListView(ListView):

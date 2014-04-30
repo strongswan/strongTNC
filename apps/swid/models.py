@@ -12,14 +12,28 @@ TABLE_PREFIX = 'swid_'
 
 class Tag(models.Model):
     package_name = models.CharField(max_length=255, db_index=True,
-            help_text='The name of the software, e.g. "strongswan"')
+                                    help_text='The name of the software, e.g. "strongswan"')
     version = models.CharField(max_length=32,
-            help_text='The version of the software, e.g. "5.1.2-4.fc19"')
+                               help_text='The version of the software, e.g. "5.1.2-4.fc19"')
     unique_id = models.CharField(max_length=255, db_index=True,
-            help_text='The uniqueID, e.g. "fedora_19-x86_64-strongswan-5.1.2-4.fc19"')
+                                 help_text='The uniqueID, e.g. "fedora_19-x86_64-strongswan-5.1.2-4.fc19"')
     swid_xml = models.TextField(help_text='The full SWID tag XML')
     files = models.ManyToManyField('tncapp.File', blank=True, verbose_name='list of files')
     sessions = models.ManyToManyField('tncapp.Session', verbose_name='list of sessions')
+
+    def get_software_ids(self):
+        """
+        Return the software IDs of the tag.
+
+        A software ID consists of the regid and the unique_id. Because there
+        can be multiple roles per tag, there can also be multiple software IDs.
+
+        Returns:
+            List of software ID strings.
+
+        """
+        return ['%s_%s' % (entity_role.entity.regid, self.unique_id)
+                for entity_role in self.entityrole_set.filter(role=2)]
 
     class Meta:
         db_table = TABLE_PREFIX + 'tags'
@@ -37,17 +51,6 @@ class EntityRole(models.Model):
     tag = models.ForeignKey('Tag')
     entity = models.ForeignKey('Entity')
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
-
-    def get_software_id(self):
-        """
-        Returns the software_id of the tag.
-        The software_id consists of the regid and the unique_id.
-
-        Returns:
-            software_id (str)
-
-        """
-        return '%s_%s' % (self.entity.regid, self.tag.unique_id)
 
     class Meta:
         db_table = TABLE_PREFIX + 'entityroles'
