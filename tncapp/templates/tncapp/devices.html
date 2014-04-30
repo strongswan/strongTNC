@@ -162,6 +162,9 @@
             <div class="btn-group">
                 <a href="/devices/{{ device.id }}/report" class="btn btn-primary"><i class="icon-file icon-white"></i> {%trans "View device report"%}</a>
             </div>
+            <div class="btn-group">
+                <a href="{% url 'inventory' device.id %}" class="btn btn-primary"><i class="icon-file icon-white"></i> {%trans "View SWID inventory"%}</a>
+            </div>
         {% endif %}
     </div><!-- /btn-toolbar-->
 

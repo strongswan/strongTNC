@@ -13,7 +13,7 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <h4>{% trans 'Session Info' %}</h4>
-    
+
     <!-- ...or table (with or without border) -->
     <div class="row-fluid">
       <div class="span6">
@@ -44,7 +44,20 @@
       </div><!--/span5-->
     </div><!--/row-->
 
-    {% if results %}
+      <div>
+          {% if swid_measurement %}
+              <a href="{% url 'inventory' session.device.pk %}#session-id={{ session.pk }}"
+                 class="btn btn-primary"
+                 type="button"><i class="icon-file icon-white"></i> {% trans 'View SWID tags' %}</a>
+          {% else %}
+              <a href="#" class="btn btn-primary disabled" type="button"
+                 title="{% trans 'No SWID tags measured in this session' %}"><i
+                      class="icon-file icon-white"></i> {% trans 'View SWID tags' %}
+              </a>
+          {% endif %}
+      </div>
+
+      {% if results %}
     <hr>
     <h4>{% trans 'Results' %}</h4>
     <table class="table table-striped">
