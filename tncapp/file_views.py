@@ -69,7 +69,7 @@ def file(request, fileID):
     if file:
         context['file'] = file
         context['title'] = _('File ') + file.name
-        file_hashes = file.hashes.all().order_by('product', 'algorithm')
+        file_hashes = file.filehash_set.all().order_by('product', 'algorithm')
         context['file_hashes'] = file_hashes
 
     return render(request, 'tncapp/files.html', context)
