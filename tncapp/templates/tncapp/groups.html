@@ -85,7 +85,7 @@
       <select class="input-xlarge" size="5" name="selectionField" id="member_select" multiple="yes"
       data-content="Devices that belongs to this group. Select one or more devices and click the backward
       button to remove it." rel="popover" data-placement="bottom" data-original-title="Members" data-trigger="hover" {% input_editability %}>
-        {% for m in members %}
+        {% for m in group_members %}
         <option value="{{ m.id }}">{{ m }}</option>
         {% endfor %}
       </select>

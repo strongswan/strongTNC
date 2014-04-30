@@ -86,8 +86,8 @@ def get_completions(client, files_and_directories_test_data):
     autocompletion AJAX endpoint. That function, when called with a search
     term, returns a list of matching file paths.
     """
+
     def _query(term, url, key):
-        url = '/dajaxice/tncapp.files_autocomplete/'
         payload = {'search_term': term}
         data = {'argv': json.dumps(payload)}
         response = client.post(url, data=urllib.urlencode(data),

@@ -62,10 +62,10 @@ def group(request, groupID):
     context['title'] = _('Groups')
     if group:
         context['group'] = group
-        devices = group.devices.all()
-        context['devices'] = devices
+        group_members = group.devices.all()
+        context['group_members'] = group_members
 
-        devices = Device.objects.exclude(id__in=devices.values_list('id', flat=True))
+        devices = Device.objects.exclude(id__in=group_members.values_list('id', flat=True))
 
         context['devices'] = devices
         context['title'] = _('Group ') + context['group'].name
@@ -100,11 +100,11 @@ def save(request):
     if not (groupID == 'None' or re.match(r'^\d+$', groupID)):
         return HttpResponse(status=400)
 
-    devices = []
+    group_members = []
     if request.POST['memberlist'] != '':
-        devices = request.POST['memberlist'].split(',')
+        group_members = request.POST['memberlist'].split(',')
 
-    for device in devices:
+    for device in group_members:
         if not re.match(r'^\d+$', device):
             return HttpResponse(status=400)
 
@@ -132,7 +132,7 @@ def save(request):
         group.save()
 
     group.devices.clear()
-    devices = Device.objects.filter(id__in=devices)
+    devices = Device.objects.filter(id__in=group_members)
     for device in devices:
         group.devices.add(device)
 

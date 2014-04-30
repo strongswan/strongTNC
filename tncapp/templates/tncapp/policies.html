@@ -110,13 +110,10 @@
         <div class="control-group" id="dir">
           <label class="control-label" for="dir">{% trans "Directory" %}</label>
           <div class="controls">
-            <select id="dir" name="dir" class="slct2-dropdown" rel="tooltip"
-              title="{% trans 'Directory to check' %}" {% input_editability %}>
-              <option value="">{% trans 'Select one...' %}</option>
-              {% for d in dirs %}
-              <option value="{{ d.id }}"{% if policy.dir.id == d.id %} selected {% endif %}>{{ d }}</option>
-              {% endfor %}
-            </select>
+            <input type="hidden" id="dir" name="dir" class="slct2-autocomplete" value="{% if dir %}{{ dir.id }}{% endif %}"
+                   rel="tooltip"
+                   title="{% trans 'Directory to check' %}"
+                   {% input_editability %} />
           </div>
         </div>
 
