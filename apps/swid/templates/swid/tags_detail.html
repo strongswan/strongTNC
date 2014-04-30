@@ -54,8 +54,8 @@
                             <tr>
                                 <td><strong>{% trans 'Software IDs' %}</strong></td>
                                 <td>
-                                    {% for er in entityroles %}
-                                        {{ er.get_software_id }}
+                                    {% for er in object.get_software_ids %}
+                                        {{ er }}
                                         {% if not forloop.last %}
                                             <br/>
                                         {% endif %}
