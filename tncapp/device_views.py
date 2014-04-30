@@ -31,7 +31,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-from models import Device, Group, Product, Session, Result, Policy
+from models import Device, Group, Product, Session, Result, Policy, WorkItemType
 
 
 @require_GET
@@ -275,6 +275,8 @@ def session(request, sessionID):
     context['results'] = []
     for result in session.results.all():
         context['results'].append((result, Policy.action[result.recommendation]))
+        if result.policy.type == WorkItemType.SWIDT:
+            context['swid_measurement'] = result.session_id
 
     return render(request, 'tncapp/session.html', context)
 
