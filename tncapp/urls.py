@@ -24,7 +24,6 @@ Defines regular expressions for URL's that are served by the web app
 from django.conf.urls import patterns, url, include
 import group_views, device_views, product_views, policy_views, enforcement_views
 import package_views, directory_views, file_views, search_views, views
-import regid_views, tag_views
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from dajaxice.core import dajaxice_autodiscover, dajaxice_config
@@ -74,17 +73,6 @@ urlpatterns = patterns('',
     url(r'^files/search/?$', file_views.search, name='search'),
 
     url(r'^file_hashes/(?P<file_hashID>\d+)/delete/?$', file_views.delete_hash, name='delete'),
-
-    url(r'^regids/add/?$', regid_views.add, name='add'),
-    url(r'^regids/save/?$', regid_views.save, name='save'),
-    url(r'^regids/(?P<regidID>\d+)/delete/?$', regid_views.delete, name='delete'),
-    url(r'^regids/search/?$', regid_views.search, name='search'),
-
-    url(r'^tags/?$', tag_views.tags, name='tags'),
-    url(r'^tags/(?P<tagID>\d+)/?$', tag_views.tag, name='tag'),
-    url(r'^tags/save/?$', tag_views.save, name='save'),
-    url(r'^tags/(?P<tagID>\d+)/delete/?$', tag_views.delete, name='delete'),
-    url(r'^tags/search/?$', tag_views.search, name='search'),
 
     url(r'^packages/?$', package_views.packages, name='packages'),
     url(r'^packages/(?P<packageID>\d+)/?$', package_views.package, name='package'),
