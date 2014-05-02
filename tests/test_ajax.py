@@ -15,6 +15,30 @@ from tncapp import models as tnc_models
 from apps.swid import models as swid_models
 
 
+### Helper functions ###
+
+def ajax_request(client, endpoint, payload):
+    """
+    Simplify the sending of an AJAX request.
+
+    Args:
+        endpoint (str):
+            The AJAX endpoint, e.g. ``tncapp.sessions_for_device``.
+        payload (dict):
+            The HTTP POST arguments.
+
+    Returns:
+        The JSON response data as a dictionary.
+
+    """
+    url = '/dajaxice/%s/' % endpoint
+    data = {'argv': json.dumps(payload)}
+    response = client.post(url, data=urllib.urlencode(data),
+                           content_type='application/x-www-form-urlencoded',
+                           HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+    return json.loads(response.content)
+
+
 ### Fixtures ###
 
 @pytest.fixture
@@ -69,15 +93,9 @@ def session_with_tags(transactional_db):
 @pytest.fixture
 def get_sessions(client, sessions_test_data):
     def _query(device_id, date_from, date_to):
-        url = '/dajaxice/tncapp.sessions_for_device/'
         payload = {'device_id': device_id, 'date_from': date_from, 'date_to': date_to}
-        data = {'argv': json.dumps(payload)}
-        response = client.post(url, data=urllib.urlencode(data),
-                               content_type='application/x-www-form-urlencoded',
-                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        response_data = json.loads(response.content)
+        response_data = ajax_request(client, 'tncapp.sessions_for_device', payload)
         return response_data['sessions']
-
     return _query
 
 
@@ -88,17 +106,10 @@ def get_completions(client, files_and_directories_test_data):
     autocompletion AJAX endpoint. That function, when called with a search
     term, returns a list of matching file paths.
     """
-
-    def _query(term, url, key):
+    def _query(term, endpoint, key):
         payload = {'search_term': term}
-        data = {'argv': json.dumps(payload)}
-        response = client.post(url, data=urllib.urlencode(data),
-                               content_type='application/x-www-form-urlencoded',
-                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        response_data = json.loads(response.content)
-        results = response_data['results']
-        return [r[key] for r in results]
-
+        response_data = ajax_request(client, endpoint, payload)
+        return [r[key] for r in response_data['results']]
     return _query
 
 
@@ -129,7 +140,7 @@ def get_completions(client, files_and_directories_test_data):
     ('/saberthoothtigerdinozord', [])
 ])
 def test_files_autocomplete(get_completions, search_term, expected):
-    results = get_completions(search_term, '/dajaxice/tncapp.files_autocomplete/', 'file')
+    results = get_completions(search_term, 'tncapp.files_autocomplete', 'file')
     assert sorted(results) == sorted(expected)
 
 
@@ -152,7 +163,7 @@ def test_files_autocomplete(get_completions, search_term, expected):
     ('/saberthoothtigerdinozord', [])
 ])
 def test_directory_autocomplete(get_completions, search_term, expected):
-    results = get_completions(search_term, '/dajaxice/tncapp.directories_autocomplete/', 'directory')
+    results = get_completions(search_term, 'tncapp.directories_autocomplete', 'directory')
     assert sorted(results) == sorted(expected)
 
 
