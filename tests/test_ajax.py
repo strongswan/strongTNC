@@ -11,23 +11,11 @@ from django.utils import timezone
 import pytest
 from model_mommy import mommy
 
-from tncapp import models
-from apps.swid import models as new_models
+from tncapp import models as tnc_models
+from apps.swid import models as swid_models
 
 
-@pytest.fixture
-def session_with_tags(transactional_db):
-    now = timezone.now()
-    device = mommy.make(models.Device)
-    tag = mommy.make(new_models.Tag, unique_id='fedora_19-x86_64-strongswan-5.1.2-4.fc19',
-                     package_name='strongswan', version='5.1.2-4.fc19')
-    tag2 = mommy.make(new_models.Tag, unique_id='fedora_19-x86_64-strongswan2-5.1.2-4.fc19',
-                      package_name='strongswan2', version='5.1.2-4.fc19')
-    session = mommy.make(models.Session, device=device, time=now)
-    tag.sessions.add(session)
-    tag2.sessions.add(session)
-    return session
-
+### Fixtures ###
 
 @pytest.fixture
 def files_and_directories_test_data(transactional_db):
@@ -35,33 +23,47 @@ def files_and_directories_test_data(transactional_db):
     Create Directory and File objects in the test database.
     """
     # Directories
-    root_dir = models.Directory.objects.create(path='/')
-    bin_dir = models.Directory.objects.create(path='/bin')
-    usr_dir = models.Directory.objects.create(path='/usr')
-    usr_bin_dir = models.Directory.objects.create(path='/usr/bin')
-    etc_dir = models.Directory.objects.create(path='/etc')
-    models.Directory.objects.create(path='/system/lib/etc')
-    models.Directory.objects.create(path='/usr/lib')
+    root_dir = tnc_models.Directory.objects.create(path='/')
+    bin_dir = tnc_models.Directory.objects.create(path='/bin')
+    usr_dir = tnc_models.Directory.objects.create(path='/usr')
+    usr_bin_dir = tnc_models.Directory.objects.create(path='/usr/bin')
+    etc_dir = tnc_models.Directory.objects.create(path='/etc')
+    tnc_models.Directory.objects.create(path='/system/lib/etc')
+    tnc_models.Directory.objects.create(path='/usr/lib')
 
     # Files
     for name in ['rootfile', 'etcetera']:
-        models.File.objects.create(directory=root_dir, name=name)
+        tnc_models.File.objects.create(directory=root_dir, name=name)
     for name in ['bash', 'chmod']:
-        models.File.objects.create(directory=bin_dir, name=name)
+        tnc_models.File.objects.create(directory=bin_dir, name=name)
     for name in ['user1', 'user2']:
-        models.File.objects.create(directory=usr_dir, name=name)
+        tnc_models.File.objects.create(directory=usr_dir, name=name)
     for name in ['2to3', 'alsamixer']:
-        models.File.objects.create(directory=usr_bin_dir, name=name)
-    models.File.objects.create(directory=etc_dir, name='hosts')
+        tnc_models.File.objects.create(directory=usr_bin_dir, name=name)
+    tnc_models.File.objects.create(directory=etc_dir, name='hosts')
 
 
 @pytest.fixture
 def sessions_test_data(transactional_db):
     now = timezone.now()
-    mommy.make(models.Session, id=1, time=now - timedelta(days=1), device__id=1)
-    mommy.make(models.Session, id=2, time=now + timedelta(days=1), device__id=1)
-    mommy.make(models.Session, id=3, time=now + timedelta(days=3), device__id=1)
-    mommy.make(models.Session, id=4, time=now - timedelta(days=3), device__id=1)
+    mommy.make(tnc_models.Session, id=1, time=now - timedelta(days=1), device__id=1)
+    mommy.make(tnc_models.Session, id=2, time=now + timedelta(days=1), device__id=1)
+    mommy.make(tnc_models.Session, id=3, time=now + timedelta(days=3), device__id=1)
+    mommy.make(tnc_models.Session, id=4, time=now - timedelta(days=3), device__id=1)
+
+
+@pytest.fixture
+def session_with_tags(transactional_db):
+    now = timezone.now()
+    device = mommy.make(tnc_models.Device)
+    tag = mommy.make(swid_models.Tag, unique_id='fedora_19-x86_64-strongswan-5.1.2-4.fc19',
+                     package_name='strongswan', version='5.1.2-4.fc19')
+    tag2 = mommy.make(swid_models.Tag, unique_id='fedora_19-x86_64-strongswan2-5.1.2-4.fc19',
+                      package_name='strongswan2', version='5.1.2-4.fc19')
+    session = mommy.make(tnc_models.Session, device=device, time=now)
+    tag.sessions.add(session)
+    tag2.sessions.add(session)
+    return session
 
 
 @pytest.fixture
@@ -99,6 +101,8 @@ def get_completions(client, files_and_directories_test_data):
 
     return _query
 
+
+### Autocompletion Tests ###
 
 @pytest.mark.parametrize('search_term, expected', [
     # Prefix completion
@@ -151,6 +155,8 @@ def test_directory_autocomplete(get_completions, search_term, expected):
     results = get_completions(search_term, '/dajaxice/tncapp.directories_autocomplete/', 'directory')
     assert sorted(results) == sorted(expected)
 
+
+### Session Tests ###
 
 @pytest.mark.parametrize('from_diff_to_now, to_diff_to_now, expected', [
     (-2, +2, 2),
