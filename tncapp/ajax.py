@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 
 from dajaxice.decorators import dajaxice_register
 
-from tncapp import models
+from . import models
 from apps.swid.model_queries import get_installed_tags_with_time
 
 
@@ -29,15 +29,16 @@ def sessions_for_device(request, device_id, date_from, date_to):
 
 @dajaxice_register()
 def tags_for_session(request, session_id):
-    tags = []
-    for tag, first_reported in get_installed_tags_with_time(session_id):
-        tags.append({
+    installed_tags = get_installed_tags_with_time(session_id)
+    tags = [
+        {
             'name': tag.package_name,
             'version': tag.version,
             'unique-id': tag.unique_id,
-            'installed': first_reported.strftime('%b %d %H:%M:%S %Y')
-        })
-
+            'installed': first_reported.strftime('%b %d %H:%M:%S %Y'),
+        }
+        for tag, first_reported in installed_tags
+    ]
     data = {'swid-tag-count': len(tags), 'swid-tags': tags}
     return json.dumps(data)
 
