@@ -77,20 +77,6 @@ def sessions_test_data(transactional_db):
 
 
 @pytest.fixture
-def session_with_tags(transactional_db):
-    now = timezone.now()
-    device = mommy.make(tnc_models.Device)
-    tag = mommy.make(swid_models.Tag, unique_id='fedora_19-x86_64-strongswan-5.1.2-4.fc19',
-                     package_name='strongswan', version='5.1.2-4.fc19')
-    tag2 = mommy.make(swid_models.Tag, unique_id='fedora_19-x86_64-strongswan2-5.1.2-4.fc19',
-                      package_name='strongswan2', version='5.1.2-4.fc19')
-    session = mommy.make(tnc_models.Session, device=device, time=now)
-    tag.sessions.add(session)
-    tag2.sessions.add(session)
-    return session
-
-
-@pytest.fixture
 def get_sessions(client, sessions_test_data):
     def _query(device_id, date_from, date_to):
         payload = {'device_id': device_id, 'date_from': date_from, 'date_to': date_to}
@@ -181,5 +167,44 @@ def test_sessions(get_sessions, from_diff_to_now, to_diff_to_now, expected):
     assert len(results) == expected, 'not exactly %i sessions found in the given time range' % expected
 
 
-def test_session_tags(session_with_tags):
-    assert len(session_with_tags.tag_set.all()) == 2
+def test_tags_for_session(db, client):
+    """
+    Test whether the ``tags_for_session`` ajax endpoint works properly.
+    """
+    # Prepare 4 sessions and related tags
+    now = timezone.now()
+    for i in range(1, 5):
+        time = now + timedelta(days=i)
+        session = mommy.make(tnc_models.Session, pk=i, time=time, device__id=1)
+        tag = mommy.make(swid_models.Tag, package_name='name%d' % i)
+        tag.sessions.add(session)
+
+    # The second session has two tags
+    tag = mommy.make(swid_models.Tag, package_name='name5')
+    tag.sessions.add(2)
+
+    # Test first session
+    payload = {'session_id': 1}
+    data = ajax_request(client, 'tncapp.tags_for_session', payload)
+    assert data['swid-tag-count'] == 1
+    assert len(data['swid-tags']) == 1
+    assert data['swid-tags'][0]['name'] == 'name1'
+    assert data['swid-tags'][0]['installed'] == (now + timedelta(days=1)).strftime('%b %d %H:%M:%S %Y')
+
+    # Test second session
+    payload = {'session_id': 2}
+    data = ajax_request(client, 'tncapp.tags_for_session', payload)
+    assert data['swid-tag-count'] == 3
+    assert len(data['swid-tags']) == 3
+    names = sorted([t['name'] for t in data['swid-tags']])
+    assert names == sorted(['name1', 'name2', 'name5'])
+    dates = sorted([t['installed'] for t in data['swid-tags']])
+    date1 = (now + timedelta(days=1)).strftime('%b %d %H:%M:%S %Y')
+    date2 = (now + timedelta(days=2)).strftime('%b %d %H:%M:%S %Y')
+    assert dates == [date1, date2, date2]
+
+    # Test all sessions
+    payload = {'session_id': 4}
+    data = ajax_request(client, 'tncapp.tags_for_session', payload)
+    assert data['swid-tag-count'] == 5
+    assert len(data['swid-tags']) == 5
