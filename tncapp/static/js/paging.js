@@ -24,8 +24,10 @@ var Pager = function() {
         this.listProducer = this.$ctx.data('list-producer');
         this.statProducer = this.$ctx.data('stat-producer');
         this.varName = this.$ctx.data('var-name');
+        this.urlName = this.$ctx.data('url-name');
 
         // get containers and buttons
+        this.$buttonContainer = $('.paging-buttons', this.$ctx);
         this.$nextButton = $('.paging-next', this.$ctx);
         this.$prevButton = $('.paging-prev', this.$ctx);
         this.$currentPageElem = $('.paging-current', this.$ctx);
@@ -68,7 +70,7 @@ var Pager = function() {
 
     // grab next page
     this.next = function() {
-        if(this.currentPageIdx == this.pageCount - 1) {
+        if(this.currentPageIdx == this.pageCount - 1 || this.loading) {
             return;
         }
         ++this.currentPageIdx;
@@ -77,7 +79,7 @@ var Pager = function() {
 
     // grab previous page
     this.prev = function() {
-        if(this.currentPageIdx == 0) {
+        if(this.currentPageIdx == 0 || this.loading) {
             return;
         }
         --this.currentPageIdx;
@@ -97,14 +99,15 @@ var Pager = function() {
     this.statsUpdate = function(data) {
         this.currentPageIdx = data.current_page;
         this.pageCount = data.page_count;
+        this.hideButtons();
         this.updateStatus();
     };
 
     this.pagingCallback = function(data) {
-        this.loading = false;
         this.statsUpdate(data);
         this.$contentContainer.html(data.html);
         this.setURLParam(this.pageParam, this.currentPageIdx);
+        this.loading = false;
     };
 
     this.updateStatus = function() {
@@ -155,6 +158,14 @@ var Pager = function() {
         }).bind(this));
     };
 
+    this.hideButtons = function() {
+        if(this.pageCount > 1) {
+            this.$buttonContainer.removeClass('hidden');
+        } else {
+            this.$buttonContainer.addClass('hidden');
+        }
+    };
+
     this.getParamObject = function(filterQuery) {
         return {
             'template': this.template,
@@ -162,8 +173,10 @@ var Pager = function() {
             'stat_producer': this.statProducer,
             'current_page': this.currentPageIdx,
             'var_name': this.varName,
+            'url_name': this.urlName,
             'page_size': this.pageSize,
-            'filter_query': filterQuery
+            'filter_query': filterQuery,
+            'pager_id': this.uid
         };
     };
 
@@ -183,10 +196,10 @@ var Pager = function() {
     };
 
     this.isPageIdxInRange = function() {
-        if(this.currentPageIdx >= 0 && this.currentPageIdx < this.pageCount) {
-            return true;
+        if(this.pageCount) {
+            return !!(this.currentPageIdx >= 0 && this.currentPageIdx < this.pageCount);
         }
-        return false;
+        return true;
     };
 };
 

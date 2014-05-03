@@ -2,14 +2,13 @@
 from __future__ import print_function, division, absolute_import, unicode_literals
 
 import json
-import os.path
 from datetime import datetime
 
 from django.template.loader import render_to_string
-
 from dajaxice.decorators import dajaxice_register
 
 from . import models
+from . import paging as paging_functions
 from apps.swid import models as swid_models
 
 
@@ -70,33 +69,7 @@ def files_autocomplete(request, search_term):
     the autocomplete feature of the jQuery plugin Select2: http://ivaynberg.github.io/select2/
 
     """
-    path_part, file_part = os.path.split(search_term)
-
-    files = dirs = None
-
-    # collecting the data from two tables
-    if file_part and not path_part:
-        files = models.File.objects.filter(name__icontains=file_part)
-        dirs = models.Directory.objects.filter(path__icontains=file_part)
-
-    if path_part and not file_part:
-        dirs = models.Directory.objects.filter(path__icontains=path_part)
-
-    if path_part and file_part:
-        files = models.File.objects.filter(name__icontains=file_part)
-        dirs = models.Directory.objects.filter(path__icontains=search_term)
-
-    resulting_files = []
-
-    # prepare results from collected data
-    if files and not dirs:
-        resulting_files = files
-
-    if dirs and not files:
-        resulting_files = models.File.objects.filter(directory__in=dirs)
-
-    if dirs and files:
-        resulting_files = files | models.File.objects.filter(directory__in=dirs)
+    resulting_files = models.File.filter(search_term)
 
     # create resulting json to return
     options = [{'id': f.id, 'file': '/'.join([f.directory.path.rstrip('/'), f.name])}
@@ -138,8 +111,8 @@ def directories_autocomplete(request, search_term):
 
 
 @dajaxice_register()
-def paging(request, template, list_producer, stat_producer, var_name,
-           current_page, page_size, filter_query):
+def paging(request, template, list_producer, stat_producer, var_name, url_name,
+           current_page, page_size, filter_query, pager_id):
     """
     Returns paged tables.
 
@@ -178,10 +151,28 @@ def paging(request, template, list_producer, stat_producer, var_name,
     """
     # register list producer
     list_producer_dict = {
+        'device_list': paging_functions.device_producer_factory.list(),
+        'dir_list': paging_functions.directory_producer_factory.list(),
+        'enforcement_list': paging_functions.enforcement_list_producer,
+        'file_list': paging_functions.file_list_producer,
+        'pkg_list': paging_functions.package_producer_factory.list(),
+        'policy_list': paging_functions.policy_producer_factory.list(),
+        'product_list': paging_functions.product_producer_factory.list(),
+        'regid_list': paging_functions.regid_producer_factory.list(),
+        'swid_list': paging_functions.swid_producer_factory.list(),
     }
 
     # register stat producer
     stat_producer_dict = {
+        'device_stat': paging_functions.device_producer_factory.stat(),
+        'dir_stat': paging_functions.directory_producer_factory.stat(),
+        'enforcement_stat': paging_functions.enforcement_stat_producer,
+        'file_stat': paging_functions.file_stat_producer,
+        'pkg_stat': paging_functions.package_producer_factory.stat(),
+        'policy_stat': paging_functions.policy_producer_factory.stat(),
+        'product_stat': paging_functions.product_producer_factory.stat(),
+        'regid_stat': paging_functions.regid_producer_factory.stat(),
+        'swid_stat': paging_functions.swid_producer_factory.stat(),
     }
 
     # get page count from stat producer
@@ -199,11 +190,21 @@ def paging(request, template, list_producer, stat_producer, var_name,
         raise ValueError('Invalid list producer: %s' % list_producer)
     element_list = lp(from_idx, to_idx, filter_query)
 
+    template_context = {
+        var_name: element_list,
+        'current_page': current_page,
+        'page_count': page_count,
+        'filter_query': filter_query,
+        'pager_id': pager_id,
+        'url_name': url_name,
+        'url_hash': paging_functions.get_url_hash(pager_id, current_page, filter_query),
+    }
+
     # render the given template with the element list to a html string
     response = {
         'current_page': current_page,
         'page_count': page_count,
-        'html': render_to_string(template + '.html', {var_name: element_list})
+        'html': render_to_string(template + '.html', template_context)
     }
 
     return json.dumps(response)

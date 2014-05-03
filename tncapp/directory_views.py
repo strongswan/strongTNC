@@ -40,9 +40,6 @@ def directories(request):
     """
     context = {}
     context['title'] = _('Directories')
-    context['count'] = Directory.objects.count()
-    directories = Directory.objects.all().order_by('path')
-    context['directories'] = paginate(directories, request)
     return render(request, 'tncapp/directories.html', context)
 
 
@@ -60,10 +57,6 @@ def directory(request, directoryID):
 
     context = {}
     context['title'] = _('Directories')
-    context['count'] = Directory.objects.count()
-    directories = Directory.objects.all().order_by('path')
-
-    context['directories'] = paginate(directories, request)
 
     if directories:
         context['directory'] = directory
@@ -83,9 +76,6 @@ def add(request):
     """
     context = {}
     context['title'] = _('New directory')
-    context['count'] = Directory.objects.count()
-    directories = Directory.objects.all().order_by('path')
-    context['directories'] = paginate(directories, request)
     context['directory'] = Directory()
     return render(request, 'tncapp/directories.html', context)
 
@@ -128,44 +118,3 @@ def delete(request, directoryID):
 
     messages.success(request, _('Directory deleted!'))
     return redirect('/directories')
-
-
-@require_GET
-@login_required
-def search(request):
-    """
-    Filter directories
-    """
-    context = {}
-    context['title'] = _('Directories')
-    context['count'] = Directory.objects.count()
-    directories = Directory.objects.all().order_by('path')
-
-    q = request.GET.get('q', None)
-    if q != '':
-        context['query'] = q
-        q1 = Q(path__icontains=q)
-        directories = Directory.objects.filter(q1)
-    else:
-        return redirect('/directories')
-
-    context['directories'] = paginate(directories, request)
-    return render(request, 'tncapp/directories.html', context)
-
-
-def paginate(items, request):
-    """
-    Paginated browsing
-    """
-    paginator = Paginator(items, 50)  # Show 50 packages per page
-    page = request.GET.get('page')
-    try:
-        directories = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        directories = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        directories = paginator.page(paginator.num_pages)
-
-    return directories

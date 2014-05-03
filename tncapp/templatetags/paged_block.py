@@ -7,12 +7,14 @@ register = template.Library()
 
 
 @register.inclusion_tag('tncapp/paged_block.html')
-def paged_block(template_name, list_producer, stat_producer, var_name, page_size, with_filter=False):
+def paged_block(template_name, list_producer, stat_producer,
+                var_name, page_size, url_name='', with_filter=False):
     return {
         'template_name': template_name,
         'list_producer': list_producer,
         'stat_producer': stat_producer,
         'var_name': var_name,
+        'url_name': url_name,
         'page_size': page_size,
         'with_filter': with_filter
     }

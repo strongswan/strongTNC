@@ -21,6 +21,15 @@ class Tag(models.Model):
     files = models.ManyToManyField('tncapp.File', blank=True, verbose_name='list of files')
     sessions = models.ManyToManyField('tncapp.Session', verbose_name='list of sessions')
 
+    class Meta:
+        db_table = TABLE_PREFIX + 'tags'
+
+    def __unicode__(self):
+        return self.unique_id
+
+    def list_repr(self):
+        return self.unique_id
+
     def get_software_ids(self):
         """
         Return the software IDs of the tag.
@@ -86,6 +95,9 @@ class EntityRole(models.Model):
     def __unicode__(self):
         return '%s as %s' % (self.entity, dict(EntityRole.ROLE_CHOICES)[self.role])
 
+    def list_repr(self):
+        return '%s as %s' % (self.entity, dict(EntityRole.ROLE_CHOICES)[self.role])
+
 
 class Entity(models.Model):
     name = models.CharField(max_length=255, db_index=True)
@@ -98,3 +110,6 @@ class Entity(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def list_repr(self):
+        return self.regid

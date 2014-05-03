@@ -42,10 +42,6 @@ def devices(request):
     """
     context = {}
     context['title'] = _('Devices')
-    context['count'] = Device.objects.count()
-    devices = Device.objects.all().order_by('description')
-
-    context['devices'] = paginate(devices, request)
     return render(request, 'tncapp/devices.html', context)
 
 
@@ -63,10 +59,6 @@ def device(request, deviceID):
 
     context = {}
     context['title'] = _('Devices')
-    context['count'] = Device.objects.count()
-    devices = Device.objects.all().order_by('description')
-
-    context['devices'] = paginate(devices, request)
 
     if device:
         context['device'] = device
@@ -90,11 +82,8 @@ def add(request):
     """
     context = {}
     context['title'] = _('New device')
-    context['count'] = Device.objects.count()
     context['groups'] = Group.objects.all().order_by('name')
     context['products'] = Product.objects.all().order_by('name')
-    devices = Device.objects.all().order_by('description')
-    context['devices'] = paginate(devices, request)
     context['device'] = Device()
     return render(request, 'tncapp/devices.html', context)
 
@@ -169,46 +158,6 @@ def delete(request, deviceID):
 
     messages.success(request, _('Device deleted!'))
     return redirect('/devices')
-
-
-@require_GET
-@login_required
-def search(request):
-    """
-    Filter devices
-    """
-    context = {}
-    context['title'] = _('Devices')
-    context['count'] = Device.objects.count()
-    devices = Device.objects.all().order_by('description')
-
-    q = request.GET.get('q', None)
-    if q != '':
-        context['query'] = q
-        devices = Device.objects.filter(Q(description__icontains=q) | Q(value__icontains=q))
-    else:
-        return redirect('/devices')
-
-    context['devices'] = paginate(devices, request)
-    return render(request, 'tncapp/devices.html', context)
-
-
-def paginate(items, request):
-    """
-    Paginated browsing
-    """
-    paginator = Paginator(items, 50)  # Show 50 devices per page
-    page = request.GET.get('page')
-    try:
-        devices = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        devices = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        devices = paginator.page(paginator.num_pages)
-
-    return devices
 
 
 @require_GET
