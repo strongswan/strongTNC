@@ -68,6 +68,29 @@ def test_login(client, strongtnc_users, test_user, username, password, success):
         assert response.status_code == 200, msg
 
 
+@pytest.mark.parametrize('url', [
+    # SWID views
+    '/regids/',
+    '/regids/1/',
+    '/swid-tags/',
+    '/swid-tags/1/',
+])
+def test_login_required(client, strongtnc_users, url):
+    # Test as anonymous
+    response = client.get(url)
+    assert response.status_code == 302, 'Unauthenticated user should not have access to %s' % url
+
+    # Test as readonly
+    client.login(username='readonly-user', password='readonly')
+    response = client.get(url)
+    assert response.status_code != 302, 'Readonly user should have access to %s' % url
+
+    # Test as admin
+    client.login(username='admin-user', password='admin')
+    response = client.get(url)
+    assert response.status_code != 302, 'Admin user should have access to %s' % url
+
+
 @pytest.mark.parametrize('url, method', [
     # Add views
     ('/groups/add/', 'get'),
@@ -105,7 +128,7 @@ def test_login(client, strongtnc_users, test_user, username, password, success):
     # Other views
     ('/versions/1/toggle/', 'get'),
 ])
-def test_permission_enforced(client, strongtnc_users, url, method):
+def test_write_permission_enforced(client, strongtnc_users, url, method):
     do_request = getattr(client, method)
 
     # Test as admin
