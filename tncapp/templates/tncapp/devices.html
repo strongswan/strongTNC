@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load permissions %}
+{% load paged_block %}
 
 {% block title %}{{title}}{% endblock %}
 
@@ -26,49 +27,9 @@
       </h4>
       <hr>
       <div class="row-fluid">
-      	{% if count > 0 %}
-	<form class="form-search pull-center" action="/devices/search" method="get">
-	  <div class="input-append">
-	    <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
-	    <button type="submit" class="btn"><i class="icon-search"></i></button>
-	  </div>
-	</form>
-	{% endif %}
-	{% if device|length >= 50 %}
-        {% if devices.paginator.num_pages > 1 %}
-	<div class="pagination pagination-mini pagination-centered">
-	  <ul>
-	    {% if devices.has_previous %}
-	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ devices.previous_page_number }}">&laquo;</a></li>
-	    {% else %}
-	    <li class="disabled"><a href="">&laquo;</a></li>
-	    {% endif %}
-	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ devices.number }}">Page {{ packages.number }} of {{ packages.paginator.num_pages }}</a></li>
-	    {% if devices.has_next %}
-	    <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ devices.next_page_number }}">&raquo;</a></li>
-	    {% else %}
-	    <li class="disabled"><a href="">&raquo;</a></li>
-	    {% endif %}
-	  </ul>
-	</div>
-	{% endif %}
-	{% endif %}
+        {% paged_block template_name="tncapp/paging/default_list" list_producer="device_list" stat_producer="device_stat" var_name="object_list" url_name="device" page_size="50" with_filter=True %}
       </div>
-      {% if devices %}
-      <table class="table table-hover">
-        <tbody>
-        {% for d in devices %}
-          <tr><td><a href=/devices/{{ d.id }}>{{ d }}</a></td></tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      {% elif count == 0 %}
-    <p><small>There are no entries.</small></p>
-      {% elif query %}
-    <p><small>No devices matched your search criteria.</small></p>
-    {% endif %}
     </div>
-
       <div class="span9" id="content">
     {% if device %}
 	<h4>Device Info</h4>

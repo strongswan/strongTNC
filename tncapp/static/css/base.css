@@ -89,6 +89,7 @@ div#line {
     border-color: black;
     padding-right: 1em;
     text-align: justify;
+    word-break: break-all;
 }
 
 table.sortable th {
@@ -117,6 +118,9 @@ table.sortable th.sorter-false {
     width: 300px;
 }
 
+.ajax-paged .paging-buttons {
+    margin: 10px 0 20px 0;
+}
 pre.raw-xml {
     font-size: 10px;
 }

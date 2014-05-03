@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load permissions %}
+{% load paged_block %}
 
 {% block title %}{{title}}{% endblock %}
 
@@ -26,47 +27,8 @@
         </h4>
 		<hr>
 		<div class="row-fluid">
-		  {% if count > 0 %}
-		  <form class="form-search pull-center" action="/directories/search" method="get">
-			<div class="input-append">
-			  <input type="text" class="input input-small search-query" name="q" placeholder="Filter" value="{{ query }}" autofocus>
-			  <button type="submit" class="btn"><i class="icon-search"></i></button>
-			</div>
-		  </form>
-		  {% endif %}
-		  {% if directory|length >= 50 %}
-		  {% if directories.paginator.num_pages > 1 %}
-		  <div class="pagination pagination-mini pagination-centered">
-			<ul>
-			  {% if directories.has_previous %}
-			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ directories.previous_page_number }}">&laquo;</a></li>
-			  {% else %}
-			  <li class="disabled"><a href="">&laquo;</a></li>
-			  {% endif %}
-			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ directories.number }}">Page {{ directories.number }} of {{ directories.paginator.num_pages }}</a></li>
-			  {% if directories.has_next %}
-			  <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ directories.next_page_number }}">&raquo;</a></li>
-			  {% else %}
-			  <li class="disabled"><a href="">&raquo;</a></li>
-			  {% endif %}
-			</ul>
-		  </div>
-		  {% endif %}
-		  {% endif %}
-		</div>
-		{% if directories %}
-		<table class="table table-hover">
-		  <tbody>
-			{% for d in directories %}
-			<tr><td><a href="/directories/{{ d.id }}">{{ d }}</a></td></tr>
-			{% endfor %}
-		  </tbody>
-		</table>
-		{% elif count == 0 %}
-	  <p><small>There are no entries.</small></p>
-      {% elif query %}
-	  <p><small>No directories matched your search criteria.</small></p>
-	  {% endif %}
+            {% paged_block template_name="tncapp/paging/default_list" list_producer="dir_list" stat_producer="dir_stat" var_name="object_list" url_name="directory" page_size="50" with_filter=True %}
+        </div>
 	</div>
 
     <div class="span9" id="content">

@@ -164,7 +164,8 @@ def test_sessions(get_sessions, from_diff_to_now, to_diff_to_now, expected):
     date_from = calendar.timegm((now + timedelta(days=from_diff_to_now)).utctimetuple())
     date_to = calendar.timegm((now + timedelta(days=to_diff_to_now)).utctimetuple())
     results = get_sessions(1, date_from, date_to)
-    assert len(results) == expected, 'not exactly %i sessions found in the given time range' % expected
+    assert len(results) == expected, '%i instead of %i sessions found in the given time range' % \
+            (len(results), expected)
 
 
 def test_tags_for_session(db, client):

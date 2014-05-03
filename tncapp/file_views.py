@@ -41,9 +41,6 @@ def files(request):
     """
     context = {}
     context['title'] = _('Files')
-    context['count'] = File.objects.count()
-    files = File.objects.all().order_by('directory__path', 'name')
-    context['files'] = paginate(files, request)
     return render(request, 'tncapp/files.html', context)
 
 
@@ -61,10 +58,6 @@ def file(request, fileID):
 
     context = {}
     context['title'] = _('Files')
-    context['count'] = File.objects.count()
-    files = File.objects.all().order_by('directory__path', 'name')
-
-    context['files'] = paginate(files, request)
 
     if file:
         context['file'] = file
@@ -121,45 +114,3 @@ def delete_hash(request, file_hashID):
 
     messages.success(request, _('Hash deleted!'))
     return redirect('/files/%d' % file.id)
-
-
-@require_GET
-@login_required
-def search(request):
-    """
-    Filter files
-    """
-    context = {}
-    context['title'] = _('Files')
-    context['count'] = File.objects.count()
-    files = File.objects.all().order_by('name')
-
-    q = request.GET.get('q', None)
-    if q != '':
-        context['query'] = q
-        q1 = Q(name__icontains=q)
-        q2 = Q(directory__path__icontains=q)
-        files = File.objects.filter(q1 | q2)
-    else:
-        return redirect('/files')
-
-    context['files'] = paginate(files, request)
-    return render(request, 'tncapp/files.html', context)
-
-
-def paginate(items, request):
-    """
-    Paginated browsing
-    """
-    paginator = Paginator(items, 50)  # Show 50 packages per page
-    page = request.GET.get('page')
-    try:
-        files = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        files = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        files = paginator.page(paginator.num_pages)
-
-    return files

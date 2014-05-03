@@ -41,9 +41,7 @@ def packages(request):
     context = {}
     context['title'] = _('Packages')
     context['count'] = Package.objects.count()
-    packages = Package.objects.all().order_by('name')
 
-    context['packages'] = paginate(packages, request)
     return render(request, 'tncapp/packages.html', context)
 
 
@@ -62,8 +60,6 @@ def package(request, packageID):
     context = {}
     context['title'] = _('Packages')
     context['count'] = Package.objects.count()
-    packages = Package.objects.all().order_by('name')
-    context['packages'] = paginate(packages, request)
 
     if package:
         context['package'] = package
@@ -83,9 +79,6 @@ def add(request):
     """
     context = {}
     context['title'] = _('New package')
-    context['count'] = Package.objects.count()
-    packages = Package.objects.all().order_by('name')
-    context['packages'] = paginate(packages, request)
     context['package'] = Package()
     return render(request, 'tncapp/packages.html', context)
 
@@ -168,43 +161,3 @@ def toggle_version(request, versionID):
 
     version.save()
     return HttpResponse(_('Yes' if version.blacklist else 'No'))
-
-
-@require_GET
-@login_required
-def search(request):
-    """
-    Filter packages
-    """
-    context = {}
-    context['title'] = _('Packages')
-    context['count'] = Package.objects.count()
-    packages = Package.objects.all().order_by('name')
-
-    q = request.GET.get('q', None)
-    if q != '':
-        context['query'] = q
-        packages = Package.objects.filter(name__icontains=q)
-    else:
-        return redirect('/packages')
-
-    context['packages'] = paginate(packages, request)
-    return render(request, 'tncapp/packages.html', context)
-
-
-def paginate(items, request):
-    """
-    Paginated browsing
-    """
-    paginator = Paginator(items, 50)  # Show 50 packages per page
-    page = request.GET.get('page')
-    try:
-        packages = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        packages = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        packages = paginator.page(paginator.num_pages)
-
-    return packages

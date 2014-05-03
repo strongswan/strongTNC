@@ -3,6 +3,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 import binascii
 import calendar
+import os
 from datetime import datetime, timedelta
 
 from django.utils import timezone
@@ -128,11 +129,17 @@ class Product(models.Model):
     """
     name = models.CharField(max_length=255, db_index=True)
 
+    class Meta:
+        db_table = 'products'
+
     def __unicode__(self):
         return self.name
 
-    class Meta:
-        db_table = 'products'
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return self.name
 
 
 class Regid(models.Model):
@@ -144,11 +151,11 @@ class Regid(models.Model):
     """
     name = models.CharField(max_length=255, db_index=True)
 
-    def __unicode__(self):
-        return self.name
-
     class Meta:
         db_table = 'regids'
+
+    def __unicode__(self):
+        return self.name
 
 
 class Tag(models.Model):
@@ -162,11 +169,11 @@ class Tag(models.Model):
     unique_sw_id = models.TextField(db_index=True)
     value = models.TextField()
 
-    def __unicode__(self):
-        return '%s_%s' % (self.regid.name, self.unique_sw_id)
-
     class Meta:
         db_table = 'tags'
+
+    def __unicode__(self):
+        return '%s_%s' % (self.regid.name, self.unique_sw_id)
 
 
 class Device(models.Model):
@@ -179,7 +186,19 @@ class Device(models.Model):
     created = EpochField(null=True, blank=True)
     trusted = models.BooleanField(default=False)
 
+    class Meta:
+        db_table = 'devices'
+
     def __unicode__(self):
+        if self.description:
+            return '%s (%s)' % (self.description, self.value[:10])
+        else:
+            return self.value
+
+    def list_repr(self):
+        """
+        String representation in lists
+        """
         if self.description:
             return '%s (%s)' % (self.description, self.value[:10])
         else:
@@ -250,9 +269,6 @@ class Device(models.Model):
             if self.is_due_for(enforcement):
                 enforcement.policy.create_work_item(enforcement, session)
 
-    class Meta:
-        db_table = 'devices'
-
 
 class Group(models.Model):
     """
@@ -267,6 +283,15 @@ class Group(models.Model):
     class Meta:
         db_table = 'groups'
 
+    def __unicode__(self):
+        return self.name
+
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return self.name
+
     def get_parents(self):
         """
         Recursively get all parent groups.
@@ -275,9 +300,6 @@ class Group(models.Model):
             return []
         return [self.parent] + self.parent.get_parents()
 
-    def __unicode__(self):
-        return self.name
-
 
 class Directory(models.Model):
     """
@@ -285,12 +307,18 @@ class Directory(models.Model):
     """
     path = models.CharField(max_length=255, unique=True)
 
-    def __unicode__(self):
-        return self.path
-
     class Meta:
         db_table = 'directories'
         verbose_name_plural = 'directories'
+
+    def __unicode__(self):
+        return self.path
+
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return self.path
 
 
 class File(models.Model):
@@ -300,11 +328,49 @@ class File(models.Model):
     name = models.CharField(max_length=255, db_index=True)
     directory = models.ForeignKey(Directory, db_column='dir')
 
+    class Meta:
+        db_table = 'files'
+
     def __unicode__(self):
         return '%s/%s' % (self.directory.path, self.name)
 
-    class Meta:
-        db_table = 'files'
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return '%s/%s' % (self.directory.path, self.name)
+
+    @classmethod
+    def filter(cls, search_term):
+        path_part, file_part = os.path.split(search_term)
+
+        files = dirs = None
+
+        # collecting the data from two tables
+        if file_part and not path_part:
+            files = cls.objects.filter(name__icontains=file_part)
+            dirs = Directory.objects.filter(path__icontains=file_part)
+
+        if path_part and not file_part:
+            dirs = Directory.objects.filter(path__icontains=path_part)
+
+        if path_part and file_part:
+            files = cls.objects.filter(name__icontains=file_part)
+            dirs = Directory.objects.filter(path__icontains=search_term)
+
+        resulting_files = []
+
+        # prepare results from collected data
+        if files and not dirs:
+            resulting_files = files
+
+        if dirs and not files:
+            resulting_files = cls.objects.filter(directory__in=dirs)
+
+        if dirs and files:
+            resulting_files = files | cls.objects.filter(directory__in=dirs)
+
+        return resulting_files
 
 
 class Algorithm(models.Model):
@@ -313,11 +379,17 @@ class Algorithm(models.Model):
     """
     name = models.CharField(max_length=20)
 
+    class Meta:
+        db_table = 'algorithms'
+
     def __unicode__(self):
         return self.name
 
-    class Meta:
-        db_table = 'algorithms'
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return self.name
 
 
 class FileHash(models.Model):
@@ -337,6 +409,12 @@ class FileHash(models.Model):
     def __unicode__(self):
         return '%s (%s)' % (self.hash, self.algorithm)
 
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return '%s (%s)' % (self.hash, self.algorithm)
+
 
 class Package(models.Model):
     """
@@ -344,11 +422,17 @@ class Package(models.Model):
     """
     name = models.CharField(max_length=255, db_index=True)
 
+    class Meta:
+        db_table = 'packages'
+
     def __unicode__(self):
         return self.name
 
-    class Meta:
-        db_table = 'packages'
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return self.name
 
 
 class Version(models.Model):
@@ -362,12 +446,18 @@ class Version(models.Model):
     blacklist = models.IntegerField(null=True, blank=True)
     time = EpochField()
 
-    def __unicode__(self):
-        return self.release
-
     class Meta:
         db_table = 'versions'
         index_together = [('package', 'product')]
+
+    def __unicode__(self):
+        return self.release
+
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return self.release
 
 
 class Policy(models.Model):
@@ -385,11 +475,22 @@ class Policy(models.Model):
     dir = models.ForeignKey(Directory, null=True, blank=True,
             related_name='policies', on_delete=models.PROTECT, db_column='dir')
 
+    class Meta:
+        db_table = 'policies'
+        verbose_name_plural = 'Policies'
+
+    def __unicode__(self):
+        return self.name
+
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return self.name
+
     def create_work_item(self, enforcement, session):
         """
         Generate a workitem for a session.
-
-        TODO do we even need to create workitems?
 
         """
         item = WorkItem(result=None, type=self.type, recommendation=None,
@@ -404,9 +505,6 @@ class Policy(models.Model):
             item.noresult = enforcement.noresult
 
         item.save()
-
-    def __unicode__(self):
-        return self.name
 
     action = [
         'ALLOW',
@@ -468,10 +566,6 @@ class Policy(models.Model):
         'TPM Remote Attestation': lambda p: p.argument or '',
     }
 
-    class Meta:
-        db_table = 'policies'
-        verbose_name_plural = 'Policies'
-
 
 class Enforcement(models.Model):
     """
@@ -485,12 +579,18 @@ class Enforcement(models.Model):
     noresult = models.IntegerField(db_column='rec_noresult', null=True, blank=True,
             choices=ACTION_CHOICES)
 
-    def __unicode__(self):
-        return '%s on %s' % (self.policy.name, self.group.name)
-
     class Meta:
         db_table = 'enforcements'
         unique_together = [('policy', 'group')]
+
+    def __unicode__(self):
+        return '%s on %s' % (self.policy.name, self.group.name)
+
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return '%s on %s' % (self.policy.name, self.group.name)
 
 
 class Identity(models.Model):
@@ -500,13 +600,19 @@ class Identity(models.Model):
     type = models.IntegerField()
     data = models.TextField(db_column='value')
 
-    def __unicode__(self):
-        return self.data
-
     class Meta:
         db_table = 'identities'
         unique_together = [('type', 'data')]
         verbose_name_plural = 'identities'
+
+    def __unicode__(self):
+        return self.data
+
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return self.data
 
 
 class Session(models.Model):
@@ -519,13 +625,19 @@ class Session(models.Model):
     device = models.ForeignKey(Device, related_name='sessions', db_column='device')
     recommendation = models.IntegerField(db_column='rec', null=True, choices=ACTION_CHOICES)
 
-    def __unicode__(self):
-        return 'Session %s by %s' % (self.connection_id, self.identity)
-
     class Meta:
         db_table = u'sessions'
         get_latest_by = 'time'
         ordering = ['-time']
+
+    def __unicode__(self):
+        return 'Session %s by %s' % (self.connection_id, self.identity)
+
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return 'Session %s by %s' % (self.connection_id, self.identity)
 
 
 class WorkItem(models.Model):
@@ -545,6 +657,15 @@ class WorkItem(models.Model):
     class Meta:
         db_table = 'workitems'
 
+    def __unicode__(self):
+        return 'Workitem %i of session %i, enforcement %s' % (self.pk, self.session.pk, self.enforcement)
+
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return 'Workitem %i' % self.pk
+
 
 class Result(models.Model):
     """
@@ -558,6 +679,15 @@ class Result(models.Model):
     class Meta:
         db_table = 'results'
         get_latest_by = 'session__time'
+
+    def __unicode__(self):
+        return 'Result of Session %i: %s' % (self.session.pk, self.result)
+
+    def list_repr(self):
+        """
+        String representation in lists
+        """
+        return 'Result of Session %i: %s' % (self.session.pk, self.result)
 
 
 # EXTRA TABLES, TODO REMOVE AFTER STRONGSWAN / STRONGTNC SPLIT

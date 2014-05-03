@@ -41,9 +41,6 @@ def enforcements(request):
     """
     context = {}
     context['title'] = _('Enforcements')
-    context['count'] = Enforcement.objects.count()
-    enforcements = Enforcement.objects.all().order_by('policy')
-    context['enforcements'] = paginate(enforcements, request)
 
     return render(request, 'tncapp/enforcements.html', context)
 
@@ -62,9 +59,6 @@ def enforcement(request, enforcementID):
 
     context = {}
     context['title'] = _('Enforcements')
-    context['count'] = Enforcement.objects.count()
-    enforcements = Enforcement.objects.all().order_by('policy')
-    context['enforcements'] = paginate(enforcements, request)
 
     if enforcement:
         context['enforcement'] = enforcement
@@ -89,8 +83,6 @@ def add(request):
     context['count'] = Enforcement.objects.count()
     context['groups'] = Group.objects.all().order_by('name')
     context['policies'] = Policy.objects.all().order_by('name')
-    enforcements = Enforcement.objects.all().order_by('policy')
-    context['enforcements'] = paginate(enforcements, request)
     enforcement = Enforcement()
     enforcement.max_age = 0
     context['enforcement'] = enforcement
@@ -208,44 +200,3 @@ def delete(request, enforcementID):
 
     messages.success(request, _('Enforcement deleted!'))
     return redirect('/enforcements')
-
-
-@require_GET
-@login_required
-def search(request):
-    """
-    Filter enforcements
-    """
-    context = {}
-    context['title'] = _('Enforcements')
-    context['count'] = Enforcement.objects.count()
-    enforcements = Enforcement.objects.all().order_by('policy')
-
-    q = request.GET.get('q', None)
-    if q != '':
-        context['query'] = q
-        condition = Q(policy__name__icontains=q) | Q(group__name__icontains=q)
-        enforcements = Enforcement.objects.filter(condition)
-    else:
-        return redirect('/enforcements')
-
-    context['enforcements'] = paginate(enforcements, request)
-    return render(request, 'tncapp/enforcements.html', context)
-
-
-def paginate(items, request):
-    """
-    Paginated browsing
-    """
-    paginator = Paginator(items, 50)  # Show 50 packages per page
-    page = request.GET.get('page')
-    try:
-        enforcements = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        enforcements = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        enforcements = paginator.page(paginator.num_pages)
-
-    return enforcements

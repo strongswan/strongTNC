@@ -40,10 +40,6 @@ def products(request):
     """
     context = {}
     context['title'] = _('Products')
-    context['count'] = Product.objects.count()
-    products = Product.objects.all().order_by('name')
-
-    context['products'] = paginate(products, request)
     return render(request, 'tncapp/products.html', context)
 
 
@@ -61,10 +57,6 @@ def product(request, productID):
 
     context = {}
     context['title'] = _('Products')
-    context['count'] = Product.objects.count()
-    products = Product.objects.all().order_by('name')
-
-    context['products'] = paginate(products, request)
 
     if product:
         context['product'] = product
@@ -86,10 +78,7 @@ def add(request):
     """
     context = {}
     context['title'] = _('New product')
-    context['count'] = Product.objects.count()
     context['groups'] = Group.objects.all().order_by('name')
-    products = Product.objects.all().order_by('name')
-    context['products'] = paginate(products, request)
     context['product'] = Product()
     return render(request, 'tncapp/products.html', context)
 
@@ -171,43 +160,3 @@ def delete(request, productID):
 
     messages.success(request, _('Product deleted!'))
     return redirect('/products')
-
-
-@require_GET
-@login_required
-def search(request):
-    """
-    Filter products
-    """
-    context = {}
-    context['title'] = _('Product')
-    context['count'] = Product.objects.count()
-    products = Product.objects.all().order_by('name')
-
-    q = request.GET.get('q', None)
-    if q != '':
-        context['query'] = q
-        products = Product.objects.filter(name__icontains=q)
-    else:
-        return redirect('/products')
-
-    context['products'] = paginate(products, request)
-    return render(request, 'tncapp/products.html', context)
-
-
-def paginate(items, request):
-    """
-    Paginated browsing
-    """
-    paginator = Paginator(items, 50)  # Show 50 products per page
-    page = request.GET.get('page')
-    try:
-        products = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        products = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        products = paginator.page(paginator.num_pages)
-
-    return products

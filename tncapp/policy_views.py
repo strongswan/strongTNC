@@ -40,10 +40,6 @@ def policies(request):
     """
     context = {}
     context['title'] = _('Policies')
-    context['count'] = Policy.objects.count()
-    policies = Policy.objects.all().order_by('name')
-
-    context['policies'] = paginate(policies, request)
     return render(request, 'tncapp/policies.html', context)
 
 
@@ -61,10 +57,6 @@ def policy(request, policyID):
 
     context = {}
     context['title'] = _('Policies')
-    context['count'] = Policy.objects.count()
-    policies = Policy.objects.all().order_by('name')
-
-    context['policies'] = paginate(policies, request)
 
     if policy:
         context['policy'] = policy
@@ -97,8 +89,6 @@ def add(request):
     Add new policy
     """
     context = {}
-    policies = Policy.objects.all().order_by('name')
-    context['policies'] = paginate(policies, request)
     context['title'] = _('New policy')
     context['count'] = Policy.objects.count()
     context['types'] = Policy.types
@@ -244,28 +234,6 @@ def delete(request, policyID):
     return redirect('/policies')
 
 
-@require_GET
-@login_required
-def search(request):
-    """
-    Filter policies
-    """
-    context = {}
-    context['title'] = _('Policies')
-    context['count'] = Policy.objects.count()
-    policies = Policy.objects.all().order_by('name')
-
-    q = request.GET.get('q', None)
-    if q != '':
-        context['query'] = q
-        policies = Policy.objects.filter(name__icontains=q)
-    else:
-        return redirect('/policies')
-
-    context['policies'] = paginate(policies, request)
-    return render(request, 'tncapp/policies.html', context)
-
-
 def normalize_ranges_whitespace(ranges):
     """
     Reduce multiple whitespace-chars to exactly one space.
@@ -302,21 +270,3 @@ def check_range(ranges):
             if (not 0 <= upper <= 65535) or lower > upper:
                 return False
     return True
-
-
-def paginate(items, request):
-    """
-    Paginated browsing
-    """
-    paginator = Paginator(items, 50)  # Show 50 policies per page
-    page = request.GET.get('page')
-    try:
-        policies = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        policies = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        policies = paginator.page(paginator.num_pages)
-
-    return policies
