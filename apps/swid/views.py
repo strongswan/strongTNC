@@ -3,16 +3,17 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 from django.views.generic import ListView, DetailView
 
+from apps.auth.mixins import LoginRequiredMixin
 from tncapp import models as tnc_models
 from . import models
 
 
-class RegidListView(ListView):
+class RegidListView(LoginRequiredMixin, ListView):
     queryset = models.Entity.objects.order_by('regid')
     template_name = 'swid/regid_list.html'
 
 
-class RegidDetailView(DetailView):
+class RegidDetailView(LoginRequiredMixin, DetailView):
     model = models.Entity
     template_name = 'swid/regid_detail.html'
 
@@ -22,12 +23,12 @@ class RegidDetailView(DetailView):
         return context
 
 
-class SwidTagListView(ListView):
+class SwidTagListView(LoginRequiredMixin, ListView):
     queryset = models.Tag.objects.order_by('unique_id')
     template_name = 'swid/tags_list.html'
 
 
-class SwidTagDetailView(DetailView):
+class SwidTagDetailView(LoginRequiredMixin, DetailView):
     model = models.Tag
     template_name = 'swid/tags_detail.html'
 
