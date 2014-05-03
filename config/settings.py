@@ -184,6 +184,7 @@ INSTALLED_APPS = (
 
     # Own apps
     'tncapp',
+    'apps.auth',
     'apps.swid',
 )
 if DEBUG_TOOLBAR:
