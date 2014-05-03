@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from dajaxice.decorators import dajaxice_register
 
 from . import models
-from apps.swid.model_queries import get_installed_tags_with_time
+from apps.swid import models as swid_models
 
 
 @dajaxice_register()
@@ -29,7 +29,8 @@ def sessions_for_device(request, device_id, date_from, date_to):
 
 @dajaxice_register()
 def tags_for_session(request, session_id):
-    installed_tags = get_installed_tags_with_time(session_id)
+    session = models.Session.objects.get(pk=session_id)
+    installed_tags = swid_models.Tag.get_installed_tags_with_time(session)
     tags = [
         {
             'name': tag.package_name,
