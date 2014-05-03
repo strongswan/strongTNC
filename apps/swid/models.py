@@ -35,6 +35,36 @@ class Tag(models.Model):
         return ['%s_%s' % (entity_role.entity.regid, self.unique_id)
                 for entity_role in self.entityrole_set.filter(role=2)]
 
+    @classmethod
+    def get_installed_tags_with_time(cls, session):
+        """
+        Return all measured tags upto the given session with their first
+        reported time.
+
+        All tags installed by previous sessions are also included
+
+        Args:
+            session (tncapp.models.Session):
+                The session object
+
+        Returns:
+            A tuple ``(tag, time)``. The ``tag`` is a :class:`Tag` instance,
+            the ``time`` is the datetime object when the tag was first measured
+            to be installed.
+
+        """
+        device = session.device
+        device_sessions = device.sessions.filter(time__lte=session.time).order_by('time')
+        tags = []
+        tag_set = set()
+        for session in device_sessions.all():
+            for tag in session.tag_set.all():
+                if tag not in tag_set:
+                    tag_set.add(tag)
+                    tags.append((tag, session.time))
+
+        return tags
+
     class Meta:
         db_table = TABLE_PREFIX + 'tags'
 
