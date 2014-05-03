@@ -4,6 +4,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 from django.views.generic import ListView, DetailView
 
 from apps.auth.mixins import LoginRequiredMixin
+from tncapp import models as tnc_models
 from . import models
 
 
@@ -35,4 +36,14 @@ class SwidTagDetailView(LoginRequiredMixin, DetailView):
         context = super(SwidTagDetailView, self).get_context_data(**kwargs)
         context['object_list'] = self.model.objects.order_by('unique_id')
         context['entityroles'] = self.object.entityrole_set.all()
+        return context
+
+
+class SwidInventoryView(DetailView):
+    template_name = 'swid/swid_inventory.html'
+    model = tnc_models.Device
+
+    def get_context_data(self, **kwargs):
+        context = super(SwidInventoryView, self).get_context_data(**kwargs)
+        context['current_session'] = self.object.sessions.latest()
         return context
