@@ -38,32 +38,30 @@ class Tag(models.Model):
     @classmethod
     def get_installed_tags_with_time(cls, session):
         """
-        Return all measured tags upto the given session with their first
+        Return all measured tags up to the given session with their first
         reported time.
 
-        All tags installed by previous sessions are also included
+        Only sessions using the same device are included. All tags installed by
+        previous sessions are also returned.
 
         Args:
             session (tncapp.models.Session):
                 The session object
 
         Returns:
-            A tuple ``(tag, time)``. The ``tag`` is a :class:`Tag` instance,
-            the ``time`` is the datetime object when the tag was first measured
-            to be installed.
+            A list of tuples ``(tag, time)``. The ``tag`` is a :class:`Tag`
+            instance, the ``time`` is the datetime object when the tag was
+            first measured to be installed.
 
         """
         device = session.device
-        device_sessions = device.sessions.filter(time__lte=session.time).order_by('time')
-        tags = []
-        tag_set = set()
-        for session in device_sessions.all():
+        device_sessions = session.device.sessions.filter(time__lte=session.time).order_by('time')
+        tags = {}
+        for session in device_sessions.all().prefetch_related('tag_set'):
             for tag in session.tag_set.all():
-                if tag not in tag_set:
-                    tag_set.add(tag)
-                    tags.append((tag, session.time))
-
-        return tags
+                if tag not in tags:
+                    tags[tag] = session.time
+        return list(tags.items())
 
     class Meta:
         db_table = TABLE_PREFIX + 'tags'
