@@ -28,7 +28,7 @@
                             <tbody>
                             {% for tag in object_list %}
                                 <tr>
-                                    <td><a href="{% url 'swid_tag_detail' tag.pk %}">{{ tag.unique_id }}</a></td>
+                                    <td><a href="{% url 'tag_detail' tag.pk %}">{{ tag.unique_id }}</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
