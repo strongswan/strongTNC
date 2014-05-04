@@ -66,7 +66,7 @@ def process_swid_tag(tag_xml):
     parser = etree.XMLParser(target=parser_target, ns_clean=True)
 
     # Parse XML, save tag into database
-    tag, file_pks = etree.fromstring(tag_xml, parser)
+    tag, file_pks = etree.fromstring(tag_xml.encode('utf8'), parser)
     # Parse and prettify the tag before saving
     tag.swid_xml = prettify_xml(tag_xml)
     tag.save()  # We need to save before we can add many-to-many relations
@@ -76,7 +76,7 @@ def process_swid_tag(tag_xml):
     return tag
 
 
-def prettify_xml(xml, xml_declaration=True, encoding='UTF-8'):
+def prettify_xml(xml, xml_declaration=True):
     """
     Create a correctly indented (pretty) XML string from a parsable XML input.
 
@@ -86,15 +86,13 @@ def prettify_xml(xml, xml_declaration=True, encoding='UTF-8'):
         xml_declaration (bool):
             Wheter a XML declaration should be added or not.
             Recommended for standalone documents.
-        encoding (str):
-            Value for the encoding attribute in the XML declaration.
 
     Returns:
         A prettified version of the given XML string.
 
     """
-    xml_bytes = xml.encode(encoding)
+    xml_bytes = xml.encode('utf8')
     return etree.tostring(etree.fromstring(xml_bytes),
                           pretty_print=True,
                           xml_declaration=xml_declaration,
-                          encoding=encoding,)
+                          encoding='UTF-8')
