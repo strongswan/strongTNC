@@ -10,9 +10,9 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Policy
 from apps.devices.models import Group
 from apps.filesystem.models import File, Directory
+from .models import Policy
 
 
 @require_GET
@@ -23,7 +23,7 @@ def policies(request):
     """
     context = {}
     context['title'] = _('Policies')
-    return render(request, 'tncapp/policies.html', context)
+    return render(request, 'policies/policies.html', context)
 
 
 @require_GET
@@ -61,7 +61,7 @@ def policy(request, policyID):
         context['groups'] = groups
         context['title'] = _('Policy ') + policy.name
 
-    return render(request, 'tncapp/policies.html', context)
+    return render(request, 'policies/policies.html', context)
 
 
 @require_GET
@@ -77,7 +77,7 @@ def add(request):
     context['types'] = Policy.types
     context['action'] = Policy.action
     context['policy'] = Policy()
-    return render(request, 'tncapp/policies.html', context)
+    return render(request, 'policies/policies.html', context)
 
 
 @require_POST

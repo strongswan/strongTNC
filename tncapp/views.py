@@ -15,10 +15,10 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from apps.swid import utils as swid_utils
+from apps.policies.models import Policy, Enforcement
 from apps.devices.models import Device, Group, Product
 from apps.packages.models import Package
-from tncapp.models import Session, Result, Action, Enforcement
-from tncapp.models import Policy, WorkItem, WorkItemType
+from tncapp.models import Session, Result, Action, WorkItem, WorkItemType
 
 
 @require_GET
