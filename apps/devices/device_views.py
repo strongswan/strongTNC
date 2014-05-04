@@ -11,7 +11,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 
-from tncapp.models import Session, Result, WorkItemType
+from apps.core.models import Session, Result
+from apps.core.types import WorkItemType
 from apps.policies.models import Policy
 from .models import Device, Group, Product
 
@@ -57,7 +58,7 @@ def device(request, deviceID):
 
 @require_GET
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def add(request):
     """
     Add new device
@@ -72,7 +73,7 @@ def add(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def save(request):
     """
     Insert/update a device
@@ -130,7 +131,7 @@ def save(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def delete(request, deviceID):
     """
     Delete a device

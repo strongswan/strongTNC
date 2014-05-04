@@ -23,7 +23,7 @@ class LoginRequiredMixin(object):
 
 class WritePermissionRequiredMixin(LoginRequiredMixin):
     """
-    Ensure that user has the ``tncapp.write_access`` permission in order to
+    Ensure that user has the ``auth.write_access`` permission in order to
     access the view.
 
     This mixin extends the :class:`LoginRequiredMixin`, as there is no use in
@@ -40,6 +40,6 @@ class WritePermissionRequiredMixin(LoginRequiredMixin):
             template_name = 'swid/regid_list.html'
 
     """
-    @method_decorator(permission_required('tncapp.write_access', raise_exception=True))
+    @method_decorator(permission_required('auth.write_access', raise_exception=True))
     def dispatch(self, *args, **kwargs):
         return super(WritePermissionRequiredMixin, self).dispatch(*args, **kwargs)

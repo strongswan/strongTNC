@@ -6,12 +6,12 @@ from django.utils import timezone
 import pytest
 from model_mommy import mommy
 
-from tncapp import views as tncapp_views
-from apps.swid import utils
-
-from tncapp.models import Session, WorkItem, WorkItemType
+from apps.core.models import Session, WorkItem
+from apps.core.types import WorkItemType
 from apps.swid.models import Tag
 from apps.filesystem.models import File, Directory
+from apps.swid import utils
+from apps.swid import views
 
 
 ### FIXTURES ###
@@ -127,7 +127,7 @@ def test_tag_files(swidtag, filename, directories, files, filecount):
 
 
 def test_import_from_db(session):
-    tncapp_views.import_swid_tags(session)
+    views.import_swid_tags(session)
     unique_ids = [
         'Ubuntu_13.10-x86_64-xserver-xorg-video-vesa-1:2.3.2-0ubuntu3',
         'Ubuntu_13.10-x86_64-xserver-xorg-video-vmware-1:13.0.1-0ubuntu2',

@@ -16,7 +16,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         code = pytest.main(sys.argv)
     else:
-        code = pytest.main(['tests', 'tncapp'])
+        code = pytest.main(['tests', 'apps'])
 
     # Show coverage report
     cov.stop()

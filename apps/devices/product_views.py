@@ -52,7 +52,7 @@ def product(request, productID):
 
 @require_GET
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def add(request):
     """
     Add new Product
@@ -66,7 +66,7 @@ def add(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def save(request):
     """
     Insert/update a product
@@ -108,7 +108,7 @@ def save(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def check(request):
     """
     Check if product name is unique
@@ -131,7 +131,7 @@ def check(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def delete(request, productID):
     """
     Delete a product

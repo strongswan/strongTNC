@@ -57,7 +57,7 @@ def group(request, groupID):
 
 @require_GET
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def add(request):
     """
     Add new group
@@ -73,7 +73,7 @@ def add(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def save(request):
     """
     Insert/update a group
@@ -126,7 +126,7 @@ def save(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def check(request):
     """
     Check if group name is unique
@@ -149,7 +149,7 @@ def check(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def delete(request, groupID):
     """
     Delete a group

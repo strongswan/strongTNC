@@ -16,7 +16,7 @@ University of Applied Sciences Rapperswil in spring 2013.
 SWID Tag Support
 ----------------
 
-Support for SWID tags as well as some refactorings and UI improvements were
+Support for SWID tags as well as large refactorings and UI improvements were
 implemented during a bachelor's thesis at HSR University of Applied Sciences
 Rapperswil in spring 2014.
 

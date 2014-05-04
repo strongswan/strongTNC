@@ -50,7 +50,7 @@ def file(request, fileID):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def save(request):
     """
     Insert/update view
@@ -69,7 +69,7 @@ def save(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def delete(request, fileID):
     """
     Delete a file
@@ -83,7 +83,7 @@ def delete(request, fileID):
 
 @require_GET
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def delete_hash(request, file_hashID):
     """
     Delete a file hash

@@ -7,8 +7,8 @@ from django.db import transaction
 
 from lxml import etree
 
-from . import models
-from apps.filesystem import models as filesystem_models
+from apps.filesystem.models import Directory, File
+from .models import Tag
 
 
 class SwidParser(object):
@@ -16,7 +16,7 @@ class SwidParser(object):
     A SAX-like target parser for SWID XML files.
     """
     def __init__(self):
-        self.tag = models.Tag()
+        self.tag = Tag()
         self.file_pks = []
 
     def start(self, tag, attrib):
@@ -34,8 +34,8 @@ class SwidParser(object):
             # Store directories and files
             dirname = attrib['location']
             filename = attrib['name']
-            d, _ = filesystem_models.Directory.objects.get_or_create(path=dirname)
-            f, _ = filesystem_models.File.objects.get_or_create(name=filename, directory=d)
+            d, _ = Directory.objects.get_or_create(path=dirname)
+            f, _ = File.objects.get_or_create(name=filename, directory=d)
             self.file_pks.append(f.pk)
 
     def close(self):
@@ -79,7 +79,7 @@ def process_swid_tag(tag_xml):
     block_count = int(math.ceil(len(file_pks) / block_size))
     tag.files = []  # Clear previously linked files first
     for i in xrange(block_count):
-        TagFile = models.Tag.files.through  # The m2m intermediate model
+        TagFile = Tag.files.through  # The m2m intermediate model
         TagFile.objects.bulk_create([  # Create all the intermediate objects in a single query
             TagFile(tag_id=tag.pk, file_id=j)
             for j in file_pks[i * block_size:(i + 1) * block_size]
