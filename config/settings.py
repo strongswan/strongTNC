@@ -184,8 +184,15 @@ INSTALLED_APPS = (
 
     # Own apps
     'tncapp',
+    'apps.front',
+    'apps.core',
     'apps.auth',
+    'apps.policies',
+    'apps.devices',
+    'apps.packages',
+    'apps.filesystem',
     'apps.swid',
+    'apps.tpm',
 )
 if DEBUG_TOOLBAR:
     INSTALLED_APPS += ('debug_toolbar',)
