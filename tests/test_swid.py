@@ -89,7 +89,7 @@ def test_tag_version(swidtag, filename, version):
 def test_tag_xml(swidtag, filename):
     with open('tests/test_tags/%s' % filename, 'r') as swid_file:
         swid_tag_xml = swid_file.read()
-        swid_tag_xml_pretty = utils.prettify_xml(swid_tag_xml.decode('utf-8'))
+        swid_tag_xml_pretty = utils.prettify_xml(swid_tag_xml.decode('utf8'))
         assert swidtag.swid_xml == swid_tag_xml_pretty
 
 

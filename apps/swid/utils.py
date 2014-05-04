@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
+import math
+
 from django.db import transaction
 
 from lxml import etree
@@ -70,8 +72,18 @@ def process_swid_tag(tag_xml):
     # Parse and prettify the tag before saving
     tag.swid_xml = prettify_xml(tag_xml)
     tag.save()  # We need to save before we can add many-to-many relations
-    tag.files = file_pks
-    tag.save()
+
+    # SQLite does not support >999 SQL parameters per query, so we need
+    # to do manual chunking.
+    block_size = 950
+    block_count = int(math.ceil(len(file_pks) / block_size))
+    tag.files = []  # Clear previously linked files first
+    for i in xrange(block_count):
+        TagFile = models.Tag.files.through  # The m2m intermediate model
+        TagFile.objects.bulk_create([  # Create all the intermediate objects in a single query
+            TagFile(tag_id=tag.pk, file_id=j)
+            for j in file_pks[i * block_size:(i + 1) * block_size]
+        ])
 
     return tag
 
