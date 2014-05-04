@@ -31,11 +31,6 @@ class SessionAdmin(admin.ModelAdmin):
     list_filter = ('recommendation',)
 
 
-class VersionAdmin(admin.ModelAdmin):
-    list_display = ('release', 'package', 'product')
-    list_filter = ('security', 'product')
-
-
 class WorkItemAdmin(admin.ModelAdmin):
     list_display = ('id', 'type', 'session', 'enforcement')
     list_filter = ('type', 'session')
@@ -43,9 +38,7 @@ class WorkItemAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Enforcement, EnforcementAdmin)
 admin.site.register(models.Identity, IdentityAdmin)
-admin.site.register(models.Package)
 admin.site.register(models.Policy, PolicyAdmin)
 admin.site.register(models.Result, ResultAdmin)
 admin.site.register(models.Session, SessionAdmin)
-admin.site.register(models.Version, VersionAdmin)
 admin.site.register(models.WorkItem, WorkItemAdmin)

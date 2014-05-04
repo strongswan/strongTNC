@@ -16,7 +16,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from apps.swid import utils as swid_utils
 from apps.devices.models import Device, Group, Product
-from tncapp.models import Session, Result, Action, Enforcement, Package
+from apps.packages.models import Package
+from tncapp.models import Session, Result, Action, Enforcement
 from tncapp.models import Policy, WorkItem, WorkItemType
 
 

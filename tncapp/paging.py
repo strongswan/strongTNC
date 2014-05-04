@@ -5,8 +5,9 @@ import math
 
 from django.db.models import Q
 
-from tncapp.models import Enforcement, Package, Policy
+from tncapp.models import Enforcement, Policy
 from apps.devices.models import Device, Product
+from apps.packages.models import Package
 from apps.filesystem.models import File, Directory
 from apps.swid.models import Tag, Entity
 

@@ -3,8 +3,7 @@ Defines regular expressions for URL's that are served by the web app.
 """
 
 from django.conf.urls import patterns, url, include
-import policy_views, enforcement_views
-import package_views, search_views, views
+import policy_views, enforcement_views, search_views, views
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from dajaxice.core import dajaxice_autodiscover, dajaxice_config
@@ -20,15 +19,6 @@ urlpatterns = patterns('',
     url(r'^logout/?$', views.logout, name='logout'),
 
     url(r'^search/?$', search_views.search, name='search'),
-
-    url(r'^packages/?$', package_views.packages, name='packages'),
-    url(r'^packages/(?P<packageID>\d+)/?$', package_views.package, name='package'),
-    url(r'^packages/add/?$', package_views.add, name='add'),
-    url(r'^packages/save/?$', package_views.save, name='save'),
-    url(r'^packages/(?P<packageID>\d+)/delete/?$', package_views.delete, name='delete'),
-    url(r'^packages/check/?$', package_views.check, name='check'),
-
-    url(r'^versions/(?P<versionID>\d+)/toggle/?$', package_views.toggle_version, name='toggle_version'),
 
     url(r'^policies/?$', policy_views.policies, name='policies'),
     url(r'^policies/(?P<policyID>\d+)/?$', policy_views.policy, name='policy'),

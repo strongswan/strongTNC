@@ -1,35 +1,16 @@
-#
-# Copyright (C) 2013 Marco Tanner
-# Copyright (C) 2013 Stefan Rohner
-# HSR University of Applied Sciences Rapperswil
-#
-# This file is part of strongTNC.  strongTNC is free software: you can
-# redistribute it and/or modify it under the terms of the GNU Affero General
-# Public License as published by the Free Software Foundation, either version 3
-# of the License, or (at your option) any later version.
-#
-# strongTNC is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-# details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
-#
-
-"""
-Provides CRUD for packages
-"""
+# -*- coding: utf-8 -*-
+from __future__ import print_function, division, absolute_import, unicode_literals
 
 import re
+
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from models import Package, Version
+
+from .models import Package, Version
 
 
 @require_GET
@@ -42,7 +23,7 @@ def packages(request):
     context['title'] = _('Packages')
     context['count'] = Package.objects.count()
 
-    return render(request, 'tncapp/packages.html', context)
+    return render(request, 'packages/packages.html', context)
 
 
 @require_GET
@@ -67,7 +48,7 @@ def package(request, packageID):
         context['versions'] = versions
         context['title'] = _('Package ') + package.name
 
-    return render(request, 'tncapp/packages.html', context)
+    return render(request, 'packages/packages.html', context)
 
 
 @require_GET
@@ -80,7 +61,7 @@ def add(request):
     context = {}
     context['title'] = _('New package')
     context['package'] = Package()
-    return render(request, 'tncapp/packages.html', context)
+    return render(request, 'packages/packages.html', context)
 
 
 @require_POST
