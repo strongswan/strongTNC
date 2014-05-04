@@ -3,7 +3,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 from django.views.generic import ListView, DetailView
 
-from apps.core.models import WorkItem
+from apps.core.models import WorkItem, Session
 from apps.core.types import WorkItemType
 from apps.auth.mixins import LoginRequiredMixin
 from apps.devices.models import Device
@@ -49,7 +49,10 @@ class SwidInventoryView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SwidInventoryView, self).get_context_data(**kwargs)
-        context['current_session'] = self.object.sessions.latest()
+        try:
+            context['current_session'] = self.object.sessions.latest()
+        except Session.DoesNotExist:
+            context['current_session'] = None
         return context
 
 
