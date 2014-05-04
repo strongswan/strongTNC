@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 
 from apps.devices.models import Group
-from tncapp.models import Enforcement, Policy
+from .models import Enforcement, Policy
 
 
 @require_GET
@@ -23,7 +23,7 @@ def enforcements(request):
     context = {}
     context['title'] = _('Enforcements')
 
-    return render(request, 'tncapp/enforcements.html', context)
+    return render(request, 'policies/enforcements.html', context)
 
 
 @require_GET
@@ -49,7 +49,7 @@ def enforcement(request, enforcementID):
         context['title'] = _('Enforcement ') + str(enforcement)
         context['policies'] = Policy.objects.all().order_by('name')
 
-    return render(request, 'tncapp/enforcements.html', context)
+    return render(request, 'policies/enforcements.html', context)
 
 
 @require_GET
@@ -68,7 +68,7 @@ def add(request):
     enforcement.max_age = 0
     context['enforcement'] = enforcement
     context['actions'] = Policy.action
-    return render(request, 'tncapp/enforcements.html', context)
+    return render(request, 'policies/enforcements.html', context)
 
 
 @require_POST

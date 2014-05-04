@@ -3,12 +3,13 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 
-from tncapp.models import WorkItem, Session, Policy, Enforcement, Action, Identity, Result
+from tncapp.models import WorkItem, Session, Action, Identity, Result
+from apps.policies.models import Policy, Enforcement
 from apps.devices.models import Device, Group, Product
 from apps.packages.models import Package, Version
 from apps.filesystem.models import File, Directory
 from tncapp.views import generate_results, purge_dead_sessions
-from tncapp.policy_views import check_range
+from apps.policies.policy_views import check_range
 
 
 class TncappTest(TestCase):

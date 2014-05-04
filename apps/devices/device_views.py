@@ -11,7 +11,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 
-from tncapp.models import Session, Policy, Result, WorkItemType
+from tncapp.models import Session, Result, WorkItemType
+from apps.policies.models import Policy
 from .models import Device, Group, Product
 
 
