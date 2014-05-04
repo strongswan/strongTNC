@@ -244,7 +244,7 @@ $(document).ready(function () {
     formatResult: function(o){return o.file},
     query: function (query) {
       autocompleteDelay.callback = query.callback;
-      autocompleteDelay.ajaxFunction = Dajaxice.tncapp.files_autocomplete;
+      autocompleteDelay.ajaxFunction = Dajaxice.apps.filesystem.files_autocomplete;
       autocompleteDelay.queryUpdate(query.term);
     }
   });
@@ -260,7 +260,7 @@ $(document).ready(function () {
     formatResult: function(o){return o.directory},
     query: function (query) {
       autocompleteDelay.callback = query.callback;
-      autocompleteDelay.ajaxFunction = Dajaxice.tncapp.directories_autocomplete;
+      autocompleteDelay.ajaxFunction = Dajaxice.apps.filesystem.directories_autocomplete;
       autocompleteDelay.queryUpdate(query.term);
     }
   });

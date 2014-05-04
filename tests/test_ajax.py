@@ -11,8 +11,9 @@ from django.utils import timezone
 import pytest
 from model_mommy import mommy
 
-from tncapp import models as tnc_models
-from apps.swid import models as swid_models
+from tncapp.models import Session
+from apps.filesystem.models import File, Directory
+from apps.swid.models import Tag
 
 
 ### Helper functions ###
@@ -47,33 +48,33 @@ def files_and_directories_test_data(transactional_db):
     Create Directory and File objects in the test database.
     """
     # Directories
-    root_dir = tnc_models.Directory.objects.create(path='/')
-    bin_dir = tnc_models.Directory.objects.create(path='/bin')
-    usr_dir = tnc_models.Directory.objects.create(path='/usr')
-    usr_bin_dir = tnc_models.Directory.objects.create(path='/usr/bin')
-    etc_dir = tnc_models.Directory.objects.create(path='/etc')
-    tnc_models.Directory.objects.create(path='/system/lib/etc')
-    tnc_models.Directory.objects.create(path='/usr/lib')
+    root_dir = Directory.objects.create(path='/')
+    bin_dir = Directory.objects.create(path='/bin')
+    usr_dir = Directory.objects.create(path='/usr')
+    usr_bin_dir = Directory.objects.create(path='/usr/bin')
+    etc_dir = Directory.objects.create(path='/etc')
+    Directory.objects.create(path='/system/lib/etc')
+    Directory.objects.create(path='/usr/lib')
 
     # Files
     for name in ['rootfile', 'etcetera']:
-        tnc_models.File.objects.create(directory=root_dir, name=name)
+        File.objects.create(directory=root_dir, name=name)
     for name in ['bash', 'chmod']:
-        tnc_models.File.objects.create(directory=bin_dir, name=name)
+        File.objects.create(directory=bin_dir, name=name)
     for name in ['user1', 'user2']:
-        tnc_models.File.objects.create(directory=usr_dir, name=name)
+        File.objects.create(directory=usr_dir, name=name)
     for name in ['2to3', 'alsamixer']:
-        tnc_models.File.objects.create(directory=usr_bin_dir, name=name)
-    tnc_models.File.objects.create(directory=etc_dir, name='hosts')
+        File.objects.create(directory=usr_bin_dir, name=name)
+    File.objects.create(directory=etc_dir, name='hosts')
 
 
 @pytest.fixture
 def sessions_test_data(transactional_db):
     now = timezone.now()
-    mommy.make(tnc_models.Session, id=1, time=now - timedelta(days=1), device__id=1)
-    mommy.make(tnc_models.Session, id=2, time=now + timedelta(days=1), device__id=1)
-    mommy.make(tnc_models.Session, id=3, time=now + timedelta(days=3), device__id=1)
-    mommy.make(tnc_models.Session, id=4, time=now - timedelta(days=3), device__id=1)
+    mommy.make(Session, id=1, time=now - timedelta(days=1), device__id=1)
+    mommy.make(Session, id=2, time=now + timedelta(days=1), device__id=1)
+    mommy.make(Session, id=3, time=now + timedelta(days=3), device__id=1)
+    mommy.make(Session, id=4, time=now - timedelta(days=3), device__id=1)
 
 
 @pytest.fixture
@@ -126,7 +127,7 @@ def get_completions(client, files_and_directories_test_data):
     ('/saberthoothtigerdinozord', [])
 ])
 def test_files_autocomplete(get_completions, search_term, expected):
-    results = get_completions(search_term, 'tncapp.files_autocomplete', 'file')
+    results = get_completions(search_term, 'apps.filesystem.files_autocomplete', 'file')
     assert sorted(results) == sorted(expected)
 
 
@@ -149,7 +150,7 @@ def test_files_autocomplete(get_completions, search_term, expected):
     ('/saberthoothtigerdinozord', [])
 ])
 def test_directory_autocomplete(get_completions, search_term, expected):
-    results = get_completions(search_term, 'tncapp.directories_autocomplete', 'directory')
+    results = get_completions(search_term, 'apps.filesystem.directories_autocomplete', 'directory')
     assert sorted(results) == sorted(expected)
 
 
@@ -176,12 +177,12 @@ def test_tags_for_session(db, client):
     now = timezone.now()
     for i in range(1, 5):
         time = now + timedelta(days=i)
-        session = mommy.make(tnc_models.Session, pk=i, time=time, device__id=1)
-        tag = mommy.make(swid_models.Tag, package_name='name%d' % i)
+        session = mommy.make(Session, pk=i, time=time, device__id=1)
+        tag = mommy.make(Tag, package_name='name%d' % i)
         tag.sessions.add(session)
 
     # The second session has two tags
-    tag = mommy.make(swid_models.Tag, package_name='name5')
+    tag = mommy.make(Tag, package_name='name5')
     tag.sessions.add(2)
 
     # Test first session

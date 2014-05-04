@@ -1,32 +1,14 @@
-#
-# Copyright (C) 2013 Marco Tanner
-# Copyright (C) 2013 Stefan Rohner
-# HSR University of Applied Sciences Rapperswil
-#
-# This file is part of strongTNC.  strongTNC is free software: you can
-# redistribute it and/or modify it under the terms of the GNU Affero General
-# Public License as published by the Free Software Foundation, either version 3
-# of the License, or (at your option) any later version.
-#
-# strongTNC is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-# details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
-#
-
-"""
-Defines backend-views for site-wide search
-"""
+# -*- coding: utf-8 -*-
+from __future__ import print_function, division, absolute_import, unicode_literals
 
 from django.views.decorators.http import require_GET
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
-from models import Group, Policy, Enforcement, Device, Package, Product, File
+
+from apps.filesystem.models import File
+from .models import Group, Policy, Enforcement, Device, Package, Product
 
 
 @require_GET

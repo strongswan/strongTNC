@@ -8,7 +8,7 @@ from django.db import transaction
 from lxml import etree
 
 from . import models
-from tncapp import models as tncapp_models
+from apps.filesystem import models as filesystem_models
 
 
 class SwidParser(object):
@@ -34,8 +34,8 @@ class SwidParser(object):
             # Store directories and files
             dirname = attrib['location']
             filename = attrib['name']
-            d, _ = tncapp_models.Directory.objects.get_or_create(path=dirname)
-            f, _ = tncapp_models.File.objects.get_or_create(name=filename, directory=d)
+            d, _ = filesystem_models.Directory.objects.get_or_create(path=dirname)
+            f, _ = filesystem_models.File.objects.get_or_create(name=filename, directory=d)
             self.file_pks.append(f.pk)
 
     def close(self):

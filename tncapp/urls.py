@@ -1,29 +1,10 @@
-#
-# Copyright (C) 2013 Marco Tanner
-# Copyright (C) 2013 Stefan Rohner
-# HSR University of Applied Sciences Rapperswil
-#
-# This file is part of strongTNC.  strongTNC is free software: you can
-# redistribute it and/or modify it under the terms of the GNU Affero General
-# Public License as published by the Free Software Foundation, either version 3
-# of the License, or (at your option) any later version.
-#
-# strongTNC is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-# details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
-#
-
 """
-Defines regular expressions for URL's that are served by the web app
+Defines regular expressions for URL's that are served by the web app.
 """
 
 from django.conf.urls import patterns, url, include
 import group_views, device_views, product_views, policy_views, enforcement_views
-import package_views, directory_views, file_views, search_views, views
+import package_views, search_views, views
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from dajaxice.core import dajaxice_autodiscover, dajaxice_config
@@ -57,19 +38,6 @@ urlpatterns = patterns('',
     url(r'^devices/(?P<deviceID>\d+)/report/?$', device_views.report, name='report'),
 
     url(r'^sessions/(?P<sessionID>\d+)/?$', device_views.session, name='session'),
-
-    url(r'^directories/?$', directory_views.directories, name='directories'),
-    url(r'^directories/(?P<directoryID>\d+)/?$', directory_views.directory, name='directory'),
-    url(r'^directories/add/?$', directory_views.add, name='add'),
-    url(r'^directories/save/?$', directory_views.save, name='save'),
-    url(r'^directories/(?P<directoryID>\d+)/delete/?$', directory_views.delete, name='delete'),
-
-    url(r'^files/?$', file_views.files, name='files'),
-    url(r'^files/(?P<fileID>\d+)/?$', file_views.file, name='file'),
-    url(r'^files/save/?$', file_views.save, name='save'),
-    url(r'^files/(?P<fileID>\d+)/delete/?$', file_views.delete, name='delete'),
-
-    url(r'^file_hashes/(?P<file_hashID>\d+)/delete/?$', file_views.delete_hash, name='delete'),
 
     url(r'^packages/?$', package_views.packages, name='packages'),
     url(r'^packages/(?P<packageID>\d+)/?$', package_views.package, name='package'),

@@ -5,8 +5,12 @@ import math
 
 from django.db.models import Q
 
-from tncapp import models
-from apps.swid import models as swid_models
+from tncapp.models import Device, Enforcement, Package, Policy, Product
+from apps.filesystem.models import File, Directory
+from apps.swid.models import Tag, Entity
+
+
+# TODO split up into apps
 
 
 # **************** #
@@ -18,7 +22,7 @@ class ProducerFactory(object):
 
     Example usage::
 
-        device_producer_factory = ProducerFactory(models.Device, 'description__icontains')
+        device_producer_factory = ProducerFactory(Device, 'description__icontains')
         device_list_producer = device_producer_factory.list()
         device_stat_producer = device_producer_factory.stat()
 
@@ -66,30 +70,30 @@ class ProducerFactory(object):
 # ************************* #
 # DEVICE LIST/STAT PRODUCER #
 # ************************* #
-device_producer_factory = ProducerFactory(models.Device, 'description__icontains')
+device_producer_factory = ProducerFactory(Device, 'description__icontains')
 
 
 # **************************** #
 # DIRECTORY LIST/STAT PRODUCER #
 # **************************** #
-directory_producer_factory = ProducerFactory(models.Directory, 'path__icontains')
+directory_producer_factory = ProducerFactory(Directory, 'path__icontains')
 
 
 # ****************************** #
 # ENFORCEMENT LIST/STAT PRODUCER #
 # ****************************** #
 def enforcement_list_producer(from_idx, to_idx, filter_query):
-    enforcement_list = models.Enforcement.objects.all()
+    enforcement_list = Enforcement.objects.all()
     if filter_query:
-        enforcement_list = models.Enforcement.objects.filter(
+        enforcement_list = Enforcement.objects.filter(
             Q(policy__name__icontains=filter_query) | Q(group__name__icontains=filter_query))
     return enforcement_list[from_idx:to_idx]
 
 
 def enforcement_stat_producer(page_size, filter_query):
-    count = models.Enforcement.objects.count()
+    count = Enforcement.objects.count()
     if filter_query:
-        enforcement_list = models.Enforcement.objects.filter(
+        enforcement_list = Enforcement.objects.filter(
             Q(policy__name__icontains=filter_query) | Q(group__name__icontains=filter_query))
         count = enforcement_list.count()
     return math.ceil(count / page_size)
@@ -99,47 +103,47 @@ def enforcement_stat_producer(page_size, filter_query):
 # FILE LIST/STAT PRODUCER #
 # *********************** #
 def file_list_producer(from_idx, to_idx, filter_query):
-    file_list = models.File.objects.all()
+    file_list = File.objects.all()
     if filter_query:
-        file_list = models.File.filter(filter_query)
+        file_list = File.filter(filter_query)
     return file_list[from_idx:to_idx]
 
 
 def file_stat_producer(page_size, filter_query):
-    count = models.File.objects.count()
+    count = File.objects.count()
     if filter_query:
-        count = models.File.filter(filter_query).count()
+        count = File.filter(filter_query).count()
     return math.ceil(count / page_size)
 
 
 # ************************** #
 # PACKAGE LIST/STAT PRODUCER #
 # ************************** #
-package_producer_factory = ProducerFactory(models.Package, 'name__icontains')
+package_producer_factory = ProducerFactory(Package, 'name__icontains')
 
 
 # ************************* #
 # POLICY LIST/STAT PRODUCER #
 # ************************* #
-policy_producer_factory = ProducerFactory(models.Policy, 'name__icontains')
+policy_producer_factory = ProducerFactory(Policy, 'name__icontains')
 
 
 # ************************** #
 # PRODUCT LIST/STAT PRODUCER #
 # ************************** #
-product_producer_factory = ProducerFactory(models.Product, 'name__icontains')
+product_producer_factory = ProducerFactory(Product, 'name__icontains')
 
 
 # ************************ #
 # REGID LIST/STAT PRODUCER #
 # ************************ #
-regid_producer_factory = ProducerFactory(swid_models.Entity, 'regid__icontains')
+regid_producer_factory = ProducerFactory(Entity, 'regid__icontains')
 
 
 # ************************ #
 # SWID LIST/STAT PRODUCER #
 # ************************ #
-swid_producer_factory = ProducerFactory(swid_models.Tag, 'unique_id__icontains')
+swid_producer_factory = ProducerFactory(Tag, 'unique_id__icontains')
 
 
 # ************* #

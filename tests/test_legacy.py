@@ -1,27 +1,11 @@
-#
-# Copyright (C) 2013 Marco Tanner
-# HSR University of Applied Sciences Rapperswil
-#
-# This file is part of strongTNC.  strongTNC is free software: you can
-# redistribute it and/or modify it under the terms of the GNU Affero General
-# Public License as published by the Free Software Foundation, either version 3
-# of the License, or (at your option) any later version.
-#
-# strongTNC is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-# details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with strongTNC.  If not, see <http://www.gnu.org/licenses/>.
-#
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.test import TestCase
 from django.utils import timezone
 
-from tncapp.models import (File, WorkItem, Device, Group, Product, Session,
-    Policy, Enforcement, Action, Package, Directory, Version, Identity, Result)
+from tncapp.models import WorkItem, Device, Group, Product, Session, Policy
+from tncapp.models import Enforcement, Action, Package, Version, Identity, Result
+from apps.filesystem.models import File, Directory
 from tncapp.views import generate_results, purge_dead_sessions
 from tncapp.policy_views import check_range
 
@@ -281,7 +265,6 @@ class TncappTest(TestCase):
         self.assertEqual(False, check_range('1,2,a,4'))
         self.assertEqual(False, check_range('1-10, 25555-25000'))
         self.assertEqual(False, check_range('1-65536'))
-
 
     def test_purge_dead_sessions(self):
         device = Device.objects.get(pk=1)
