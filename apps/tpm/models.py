@@ -3,7 +3,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 from django.db import models
 
-from tncapp.models import HashField
+from apps.core.fields import HashField
 
 
 class Component(models.Model):
