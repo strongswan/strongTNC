@@ -1,0 +1,232 @@
+{% extends "front/base.html" %}
+
+{% load i18n %}
+{% block title %}{%trans "Statistics" %}{% endblock %}
+
+{% block hero %}
+<h1>{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="page-header">
+        <h3>{% trans "Overview" %}</h2>
+      </div>
+      <table class="table well">
+        <tbody>
+          <tr>
+            <td>Sessions:</td>
+            <td width="30%"><strong>{{ sessions }}</strong></td>
+            <td>Enforcements:</td>
+            <td width="30%"><strong>{{ enforcements }}</strong></td>
+            <td>Results:</td>
+            <td width="30%"><strong>{{ results }}</strong></td>
+          </tr>
+          <tr>
+            <td>Devices:</td>
+            <td width="30%"><strong>{{ devices }}</strong></td>
+            <td>Packages:</td>
+            <td width="30%"><strong>{{ packages }}</strong></td>
+            <td>Products:</td>
+            <td width="30%"><strong>{{ products }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row-fluid">
+    <div class="page-header">
+      <h3>{% trans "Devices by product" %}</h2>
+    </div>
+    <div id="barchart"></div>
+  </div>
+
+  <div class="row-fluid">
+    <div class="page-header">
+      <h3>{% trans "Recommendation" %}</h2>
+    </div>
+     <h4>{% trans "Recommendation by session" %}</h4>
+    <div class="container-fluid">
+      <div class="span4">
+        <table class="table table-condensed">
+          <tr><td><strong>OS</strong></td><td width="30%"><strong>Devices</strong></td></tr>
+          {% for r in rec_count_session %}
+          <tr>
+            <td>{{ r.recommendation }}</td>
+            <td width="30%">{{ r.num }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      <div class="span8">
+        <div id="piechart_session"></div>
+      </div>
+    </div>
+    <h4>{% trans "Recommendation by result" %}</h4>
+    <div class="container-fluid">
+      <div class="span4">
+        <table class="table table-condensed">
+          <tr><td><strong>OS</strong></td><td width="30%"><strong>Devices</strong></td></tr>
+          {% for r in rec_count_result %}
+          <tr>
+            <td>{{ r.recommendation }}</td>
+            <td width="30%">{{ r.num }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      <div class="span8">
+        <div id="piechart_result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script type="text/javascript">
+  $(function () {
+      $('#barchart').highcharts({
+          chart: {
+              type: 'bar'
+          },
+          title: {
+              text: 'Ranking'
+          },
+          xAxis: {
+              categories: [
+                {% for os in OSranking %}
+                  '{{ os }}',
+                {% endfor %}
+                ],
+              title: {
+                  text: null
+              }
+          },
+          yAxis: {
+              min: 0,
+              title: {
+                  text: 'Devices',
+                  align: 'high'
+              },
+              labels: {
+                  overflow: 'justify'
+              }
+          },
+          tooltip: {
+              valueSuffix: ' devices'
+          },
+          plotOptions: {
+              bar: {
+                  dataLabels: {
+                      enabled: true
+                  }
+              }
+          },
+          legend: {
+              layout: 'vertical',
+              align: 'right',
+              verticalAlign: 'top',
+              x: -100,
+              y: 100,
+              floating: true,
+              borderWidth: 1,
+              backgroundColor: '#FFFFFF',
+              shadow: true
+          },
+          credits: {
+              enabled: false
+          },
+          series: [{
+              name: 'Number of devices',
+              data: [
+                {% for os in OSranking %}
+                  {{ os.num }},
+                {% endfor %}]
+          }]
+      });
+
+      $('#piechart_session').highcharts({
+          chart: {
+              plotBackgroundColor: null,
+              plotBorderWidth: null,
+              plotShadow: false
+          },
+          title: {
+              text: ''
+          },
+          tooltip: {
+              pointFormat: '{series.name}: <b>{point.y}</b>',
+              percentageDecimals: 1
+          },
+          plotOptions: {
+              pie: {
+                  allowPointSelect: true,
+                  cursor: 'pointer',
+                  dataLabels: {
+                      enabled: true,
+                      color: '#000000',
+                      connectorColor: '#000000',
+                      formatter: function() {
+                          return '<b>'+ this.point.name +'</b>: '+ this.point.y;
+                      }
+                  }
+              }
+          },
+          series: [{
+              type: 'pie',
+              name: 'Recommendation',
+              data: [
+                {% for r in rec_count_session %}
+                  ['{{ r.recommendation }}', {{ r.num }}],
+                {% endfor %}
+              ]
+          }]
+      });
+
+
+      $('#piechart_result').highcharts({
+          chart: {
+              plotBackgroundColor: null,
+              plotBorderWidth: null,
+              plotShadow: false
+          },
+          title: {
+              text: ''
+          },
+          tooltip: {
+              pointFormat: '{series.name}: <b>{point.y}</b>',
+              percentageDecimals: 1
+          },
+          plotOptions: {
+              pie: {
+                  allowPointSelect: true,
+                  cursor: 'pointer',
+                  dataLabels: {
+                      enabled: true,
+                      color: '#000000',
+                      connectorColor: '#000000',
+                      formatter: function() {
+                          return '<b>'+ this.point.name +'</b>: '+ this.point.y;
+                      }
+                  }
+              }
+          },
+          series: [{
+              type: 'pie',
+              name: 'Recommendation',
+              data: [
+                {% for r in rec_count_result %}
+                  ['{{ r.recommendation }}', {{ r.num }}],
+                {% endfor %}
+              ]
+          }]
+      });
+  });
+
+</script>
+
+{% endblock %}

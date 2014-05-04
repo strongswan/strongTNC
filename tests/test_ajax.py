@@ -11,7 +11,7 @@ from django.utils import timezone
 import pytest
 from model_mommy import mommy
 
-from tncapp.models import Session
+from apps.core.models import Session
 from apps.filesystem.models import File, Directory
 from apps.swid.models import Tag
 
@@ -24,7 +24,7 @@ def ajax_request(client, endpoint, payload):
 
     Args:
         endpoint (str):
-            The AJAX endpoint, e.g. ``tncapp.sessions_for_device``.
+            The AJAX endpoint, e.g. ``apps.devices.sessions_for_device``.
         payload (dict):
             The HTTP POST arguments.
 
@@ -81,7 +81,7 @@ def sessions_test_data(transactional_db):
 def get_sessions(client, sessions_test_data):
     def _query(device_id, date_from, date_to):
         payload = {'device_id': device_id, 'date_from': date_from, 'date_to': date_to}
-        response_data = ajax_request(client, 'tncapp.sessions_for_device', payload)
+        response_data = ajax_request(client, 'apps.devices.sessions_for_device', payload)
         return response_data['sessions']
     return _query
 
@@ -187,7 +187,7 @@ def test_tags_for_session(db, client):
 
     # Test first session
     payload = {'session_id': 1}
-    data = ajax_request(client, 'tncapp.tags_for_session', payload)
+    data = ajax_request(client, 'apps.swid.tags_for_session', payload)
     assert data['swid-tag-count'] == 1
     assert len(data['swid-tags']) == 1
     assert data['swid-tags'][0]['name'] == 'name1'
@@ -195,7 +195,7 @@ def test_tags_for_session(db, client):
 
     # Test second session
     payload = {'session_id': 2}
-    data = ajax_request(client, 'tncapp.tags_for_session', payload)
+    data = ajax_request(client, 'apps.swid.tags_for_session', payload)
     assert data['swid-tag-count'] == 3
     assert len(data['swid-tags']) == 3
     names = sorted([t['name'] for t in data['swid-tags']])
@@ -207,6 +207,6 @@ def test_tags_for_session(db, client):
 
     # Test all sessions
     payload = {'session_id': 4}
-    data = ajax_request(client, 'tncapp.tags_for_session', payload)
+    data = ajax_request(client, 'apps.swid.tags_for_session', payload)
     assert data['swid-tag-count'] == 5
     assert len(data['swid-tags']) == 5

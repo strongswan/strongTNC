@@ -53,7 +53,7 @@ def package(request, packageID):
 
 @require_GET
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def add(request):
     """
     Add a package
@@ -66,7 +66,7 @@ def add(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def save(request):
     """
     Insert/update a package
@@ -92,7 +92,7 @@ def save(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def check(request):
     """
     Check if package name is unique
@@ -115,7 +115,7 @@ def check(request):
 
 @require_POST
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def delete(request, packageID):
     """
     Delete a package
@@ -129,7 +129,7 @@ def delete(request, packageID):
 
 @require_GET
 @login_required
-@permission_required('tncapp.write_access', raise_exception=True)
+@permission_required('auth.write_access', raise_exception=True)
 def toggle_version(request, versionID):
     """
     Toggle the blacklist state of a package version

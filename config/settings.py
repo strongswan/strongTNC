@@ -183,7 +183,6 @@ INSTALLED_APPS = (
     'dajaxice',
 
     # Own apps
-    'tncapp',
     'apps.front',
     'apps.core',
     'apps.auth',

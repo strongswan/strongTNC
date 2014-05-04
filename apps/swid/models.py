@@ -19,7 +19,7 @@ class Tag(models.Model):
                                  help_text='The uniqueID, e.g. "fedora_19-x86_64-strongswan-5.1.2-4.fc19"')
     swid_xml = models.TextField(help_text='The full SWID tag XML')
     files = models.ManyToManyField('filesystem.File', blank=True, verbose_name='list of files')
-    sessions = models.ManyToManyField('tncapp.Session', verbose_name='list of sessions')
+    sessions = models.ManyToManyField('core.Session', verbose_name='list of sessions')
 
     class Meta:
         db_table = TABLE_PREFIX + 'tags'
@@ -54,7 +54,7 @@ class Tag(models.Model):
         previous sessions are also returned.
 
         Args:
-            session (tncapp.models.Session):
+            session (apps.core.models.Session):
                 The session object
 
         Returns:

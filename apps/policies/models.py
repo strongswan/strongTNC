@@ -3,7 +3,8 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 from django.db import models
 
-from tncapp.models import WorkItem, ACTION_CHOICES
+from apps.core.models import WorkItem
+from apps.core.types import ACTION_CHOICES
 
 
 class Policy(models.Model):

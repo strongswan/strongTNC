@@ -7,7 +7,8 @@ from django.utils import timezone
 from django.db import models
 
 from apps.core.fields import EpochField
-from tncapp.models import Result, Action
+from apps.core.models import Result
+from apps.core.types import Action
 
 
 class Product(models.Model):

@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model, login as django_login
 from django.core.urlresolvers import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 
-from tncapp.permissions import GlobalPermission
+from apps.auth.permissions import GlobalPermission
 
 
 @pytest.fixture
@@ -57,7 +57,7 @@ def test_login(client, strongtnc_users, test_user, username, password, success):
     """
     Test whether valid logins succeed and invalid logins fail.
     """
-    url = reverse('login')
+    url = reverse('auth:login')
     data = {'access_level': username, 'password': password}
     response = client.post(url, data=data)
     if success is True:

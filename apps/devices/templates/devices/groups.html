@@ -1,4 +1,4 @@
-{% extends "tncapp/base.html" %}
+{% extends "front/base.html" %}
 
 {% load i18n %}
 {% load permissions %}
@@ -15,7 +15,7 @@
     <div class="row-fluid">
       <div class="span3" id="line">
 	<h4>Group
-      {% if 'tncapp.write_access' in perms %}
+      {% if 'auth.write_access' in perms %}
 	  <div class="pull-right">
 	    <a class="btn btn-primary btn-mini" href="/groups/add"
 	    value="addNew" rel="tooltip" title="add new">
@@ -75,7 +75,7 @@
         {% endfor %}
       </select>
 
-      {% if 'tncapp.write_access' in perms %}
+      {% if 'auth.write_access' in perms %}
       <div class="btn-group btn-group-vertical">
         <button type="button" onclick="add_member()" class="btn"><i class="icon-forward"></i></button>
         <button type="button" onclick="remove_member()" class="btn"><i class="icon-backward"></i></button>
@@ -93,7 +93,7 @@
     </div>
   </form>
 
-  {% if 'tncapp.write_access' in perms %}
+  {% if 'auth.write_access' in perms %}
   <hr>
 
   <div class="btn-toolbar" style="margin: 0;">
