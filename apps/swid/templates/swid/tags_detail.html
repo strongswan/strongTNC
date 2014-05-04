@@ -44,7 +44,7 @@
                                 <td><strong>{% trans 'Regids' %}</strong></td>
                                 <td>
                                     {% for er in entityroles %}
-                                        {{ er.entity.regid }}
+                                        <a href="{% url 'regid_detail' er.entity.pk %}">{{ er.entity.regid }}</a>
                                         {% if not forloop.last %}
                                             <br/>
                                         {% endif %}
