@@ -50,22 +50,27 @@ var Pager = function() {
         this.getPage();
 
         $(window).on('hashchange', function() {
-            if(!this.loading) {
-                this.grabURLParams();
-                this.getPage();
+            if(!this.loading && this.hasURLParam()) {
+                if(this.grabURLParams()) {
+                    this.getPage();
+                }
             }
         }.bind(this));
     };
 
     this.grabURLParams = function() {
+        var changed = false;
         var currPageIdx = parseInt(this.getURLParam(this.pageParam));
         if(!isNaN(currPageIdx)) {
+            var idxChanged = this.currentPageIdx != currPageIdx;
             this.currentPageIdx = currPageIdx;
         }
         var filter = this.getURLParam(this.filterParam);
         if(filter) {
+            var filterChanged = this.getFilterQuery() != filter;
             this.$filterInput.val(filter);
         }
+        return changed || idxChanged || filterChanged;
     };
 
     // grab next page
@@ -193,6 +198,13 @@ var Pager = function() {
             return param;
         }
         return '';
+    };
+
+    this.hasURLParam = function() {
+        var params = HashQuery.getHashQueryObject()
+        for (var key in params) {
+            if (hasOwnProperty.call(params, key)) return true;
+        }
     };
 
     this.isPageIdxInRange = function() {
