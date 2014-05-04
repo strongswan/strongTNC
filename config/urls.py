@@ -9,6 +9,7 @@ from django.contrib import admin
 urlpatterns = patterns('',
     url(r'', include('tncapp.urls')),
     url(r'', include('apps.devices.urls', namespace='devices')),
+    url(r'', include('apps.packages.urls', namespace='packages')),
     url(r'', include('apps.filesystem.urls', namespace='filesystem')),
     url(r'', include('apps.swid.urls', app_name='swid')),
 )

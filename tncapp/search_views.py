@@ -8,8 +8,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
 from apps.devices.models import Group, Device, Product
+from apps.packages.models import Package
 from apps.filesystem.models import File
-from tncapp.models import Policy, Enforcement, Package
+from tncapp.models import Policy, Enforcement
 
 
 @require_GET
