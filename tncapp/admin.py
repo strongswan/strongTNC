@@ -64,8 +64,6 @@ class WorkItemAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Algorithm, AlgorithmAdmin)
-admin.site.register(models.Component)
-admin.site.register(models.ComponentHash)
 admin.site.register(models.Device, DeviceAdmin)
 admin.site.register(models.Directory)
 admin.site.register(models.Enforcement, EnforcementAdmin)
