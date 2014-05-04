@@ -18,7 +18,7 @@ class Tag(models.Model):
     unique_id = models.CharField(max_length=255, db_index=True,
                                  help_text='The uniqueID, e.g. "fedora_19-x86_64-strongswan-5.1.2-4.fc19"')
     swid_xml = models.TextField(help_text='The full SWID tag XML')
-    files = models.ManyToManyField('tncapp.File', blank=True, verbose_name='list of files')
+    files = models.ManyToManyField('filesystem.File', blank=True, verbose_name='list of files')
     sessions = models.ManyToManyField('tncapp.Session', verbose_name='list of sessions')
 
     class Meta:
@@ -63,7 +63,6 @@ class Tag(models.Model):
             first measured to be installed.
 
         """
-        device = session.device
         device_sessions = session.device.sessions.filter(time__lte=session.time).order_by('time')
         tags = {}
         for session in device_sessions.all().prefetch_related('tag_set'):
@@ -71,12 +70,6 @@ class Tag(models.Model):
                 if tag not in tags:
                     tags[tag] = session.time
         return list(tags.items())
-
-    class Meta:
-        db_table = TABLE_PREFIX + 'tags'
-
-    def __unicode__(self):
-        return self.unique_id
 
 
 class EntityRole(models.Model):

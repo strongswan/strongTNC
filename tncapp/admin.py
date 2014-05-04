@@ -6,10 +6,6 @@ from django.contrib import admin
 from . import models
 
 
-class AlgorithmAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
-
-
 class DeviceAdmin(admin.ModelAdmin):
     list_display = ('description', 'value', 'created')
     list_filter = ('product', 'trusted')
@@ -18,15 +14,6 @@ class DeviceAdmin(admin.ModelAdmin):
 class EnforcementAdmin(admin.ModelAdmin):
     list_display = ('policy', 'group', 'fail', 'noresult')
     list_filter = ('group', 'fail', 'noresult')
-
-
-class FileHashAdmin(admin.ModelAdmin):
-    list_display = ('file', 'algorithm', 'hash')
-    list_filter = ('algorithm', 'product')
-
-
-class FileAdmin(admin.ModelAdmin):
-    search_fields = ('directory__path', 'name')
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -63,12 +50,8 @@ class WorkItemAdmin(admin.ModelAdmin):
     list_filter = ('type', 'session')
 
 
-admin.site.register(models.Algorithm, AlgorithmAdmin)
 admin.site.register(models.Device, DeviceAdmin)
-admin.site.register(models.Directory)
 admin.site.register(models.Enforcement, EnforcementAdmin)
-admin.site.register(models.File, FileAdmin)
-admin.site.register(models.FileHash, FileHashAdmin)
 admin.site.register(models.Group, GroupAdmin)
 admin.site.register(models.Identity, IdentityAdmin)
 admin.site.register(models.Package)

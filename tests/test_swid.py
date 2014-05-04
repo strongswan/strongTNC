@@ -6,10 +6,13 @@ from django.utils import timezone
 import pytest
 from model_mommy import mommy
 
-from tncapp import models as tncapp_models
 from tncapp import views as tncapp_views
-from apps.swid import models
 from apps.swid import utils
+
+from tncapp.models import Session, WorkItem, WorkItemType
+from apps.swid.models import Tag
+from apps.filesystem.models import File, Directory
+
 
 ### FIXTURES ###
 
@@ -31,14 +34,16 @@ def swidtag(request, transactional_db):
 
 @pytest.fixture
 def session(transactional_db):
-    test_session = mommy.make(tncapp_models.Session, time=timezone.now())
-    workitem = mommy.make(tncapp_models.WorkItem, type=tncapp_models.WorkItemType.SWIDT, session=test_session)
+    test_session = mommy.make(Session, time=timezone.now())
+    workitem = mommy.make(WorkItem, type=WorkItemType.SWIDT,
+                          session=test_session)
 
     with open('tests/test_tags/multiple-swid-tags.txt', 'r') as f:
         workitem.result = f.read()
         workitem.save()
 
     return test_session
+
 
 ### SWID XML PROCESSING TESTS ###
 
@@ -116,8 +121,8 @@ def test_tag_xml(swidtag, filename):
     ], 35),
 ])
 def test_tag_files(swidtag, filename, directories, files, filecount):
-    assert tncapp_models.File.objects.filter(name__in=files).count() == len(files)
-    assert tncapp_models.Directory.objects.filter(path__in=directories).count() == len(directories)
+    assert File.objects.filter(name__in=files).count() == len(files)
+    assert Directory.objects.filter(path__in=directories).count() == len(directories)
     assert swidtag.files.count() == filecount
 
 
@@ -132,4 +137,4 @@ def test_import_from_db(session):
     ]
 
     for unique_id in unique_ids:
-        assert models.Tag.objects.filter(unique_id=unique_id).exists()
+        assert Tag.objects.filter(unique_id=unique_id).exists()

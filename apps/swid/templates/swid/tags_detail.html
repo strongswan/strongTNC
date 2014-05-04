@@ -106,7 +106,7 @@
                             <tbody>
                             {% for file in object.files.all %}
                                 <tr>
-                                    <td><a href="{% url 'file' file.pk %}">{{ file.directory.path }}/{{ file.name }}</a>
+                                    <td><a href="{% url 'filesystem:file_detail' file.pk %}">{{ file.directory.path }}/{{ file.name }}</a>
                                     </td>
                                 </tr>
                             {% endfor %}

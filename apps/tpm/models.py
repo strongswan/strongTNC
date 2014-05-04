@@ -22,7 +22,7 @@ class ComponentHash(models.Model):
     device = models.ForeignKey('tncapp.Device', db_column='key')
     seq_no = models.IntegerField()
     pcr = models.IntegerField()
-    algorithm = models.ForeignKey('tncapp.Algorithm', db_column='algo')
+    algorithm = models.ForeignKey('filesystem.Algorithm', db_column='algo')
     hash = HashField()
 
     class Meta:
