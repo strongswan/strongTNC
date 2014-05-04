@@ -142,40 +142,6 @@ class Product(models.Model):
         return self.name
 
 
-class Regid(models.Model):
-    """
-    SWID Registration ID.
-
-    DEPRECATED, will be replaced with SWID tables.
-
-    """
-    name = models.CharField(max_length=255, db_index=True)
-
-    class Meta:
-        db_table = 'regids'
-
-    def __unicode__(self):
-        return self.name
-
-
-class Tag(models.Model):
-    """
-    SWID Tag.
-
-    DEPRECATED, will be replaced with SWID tables.
-
-    """
-    regid = models.ForeignKey(Regid, db_column='regid', related_name='tags')
-    unique_sw_id = models.TextField(db_index=True)
-    value = models.TextField()
-
-    class Meta:
-        db_table = 'tags'
-
-    def __unicode__(self):
-        return '%s_%s' % (self.regid.name, self.unique_sw_id)
-
-
 class Device(models.Model):
     """
     An Android Device identified by its AndroidID.
