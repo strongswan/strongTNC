@@ -83,7 +83,7 @@
                             <tbody>
                             {% for session in object.sessions.all %}
                                 <tr>
-                                    <td><a href="{% url 'device' session.device.pk %}">{{ session.device }}</a></td>
+                                    <td><a href="{% url 'devices:device_detail' session.device.pk %}">{{ session.device }}</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>

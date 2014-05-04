@@ -7,8 +7,9 @@ from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
+from apps.devices.models import Group, Device, Product
 from apps.filesystem.models import File
-from .models import Group, Policy, Enforcement, Device, Package, Product
+from tncapp.models import Policy, Enforcement, Package
 
 
 @require_GET

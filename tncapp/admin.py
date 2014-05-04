@@ -6,18 +6,9 @@ from django.contrib import admin
 from . import models
 
 
-class DeviceAdmin(admin.ModelAdmin):
-    list_display = ('description', 'value', 'created')
-    list_filter = ('product', 'trusted')
-
-
 class EnforcementAdmin(admin.ModelAdmin):
     list_display = ('policy', 'group', 'fail', 'noresult')
     list_filter = ('group', 'fail', 'noresult')
-
-
-class GroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'parent')
 
 
 class IdentityAdmin(admin.ModelAdmin):
@@ -50,13 +41,10 @@ class WorkItemAdmin(admin.ModelAdmin):
     list_filter = ('type', 'session')
 
 
-admin.site.register(models.Device, DeviceAdmin)
 admin.site.register(models.Enforcement, EnforcementAdmin)
-admin.site.register(models.Group, GroupAdmin)
 admin.site.register(models.Identity, IdentityAdmin)
 admin.site.register(models.Package)
 admin.site.register(models.Policy, PolicyAdmin)
-admin.site.register(models.Product)
 admin.site.register(models.Result, ResultAdmin)
 admin.site.register(models.Session, SessionAdmin)
 admin.site.register(models.Version, VersionAdmin)
