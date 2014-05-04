@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Policy, Group
+from .models import Policy
+from apps.devices.models import Group
 from apps.filesystem.models import File, Directory
 
 

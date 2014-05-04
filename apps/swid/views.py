@@ -4,17 +4,17 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 from django.views.generic import ListView, DetailView
 
 from apps.auth.mixins import LoginRequiredMixin
-from tncapp import models as tnc_models
-from . import models
+from apps.devices.models import Device
+from .models import Entity, Tag
 
 
 class RegidListView(LoginRequiredMixin, ListView):
-    queryset = models.Entity.objects.order_by('regid')
+    queryset = Entity.objects.order_by('regid')
     template_name = 'swid/regid_list.html'
 
 
 class RegidDetailView(LoginRequiredMixin, DetailView):
-    model = models.Entity
+    model = Entity
     template_name = 'swid/regid_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -24,12 +24,12 @@ class RegidDetailView(LoginRequiredMixin, DetailView):
 
 
 class SwidTagListView(LoginRequiredMixin, ListView):
-    queryset = models.Tag.objects.order_by('unique_id')
+    queryset = Tag.objects.order_by('unique_id')
     template_name = 'swid/tags_list.html'
 
 
 class SwidTagDetailView(LoginRequiredMixin, DetailView):
-    model = models.Tag
+    model = Tag
     template_name = 'swid/tags_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -41,7 +41,7 @@ class SwidTagDetailView(LoginRequiredMixin, DetailView):
 
 class SwidInventoryView(DetailView):
     template_name = 'swid/swid_inventory.html'
-    model = tnc_models.Device
+    model = Device
 
     def get_context_data(self, **kwargs):
         context = super(SwidInventoryView, self).get_context_data(**kwargs)

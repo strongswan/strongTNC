@@ -7,15 +7,16 @@ from datetime import datetime
 from django.template.loader import render_to_string
 from dajaxice.decorators import dajaxice_register
 
-from . import models
 from . import paging as paging_functions
-from apps.swid import models as swid_models
+from apps.devices.models import Device
+from apps.swid.models import Tag
+from tncapp.models import Session
 
 
 @dajaxice_register()
 def sessions_for_device(request, device_id, date_from, date_to):
     dateobj_from, dateobj_to = map(datetime.utcfromtimestamp, [date_from, date_to])
-    device = models.Device.objects.get(pk=device_id)
+    device = Device.objects.get(pk=device_id)
     sessions = device.sessions.filter(time__lte=dateobj_to, time__gte=dateobj_from)
 
     data = {'sessions': [
@@ -28,8 +29,8 @@ def sessions_for_device(request, device_id, date_from, date_to):
 
 @dajaxice_register()
 def tags_for_session(request, session_id):
-    session = models.Session.objects.get(pk=session_id)
-    installed_tags = swid_models.Tag.get_installed_tags_with_time(session)
+    session = Session.objects.get(pk=session_id)
+    installed_tags = Tag.get_installed_tags_with_time(session)
     tags = [
         {
             'name': tag.package_name,

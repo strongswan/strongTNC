@@ -3,8 +3,9 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 
-from tncapp.models import WorkItem, Device, Group, Product, Session, Policy
-from tncapp.models import Enforcement, Action, Package, Version, Identity, Result
+from tncapp.models import WorkItem, Session, Policy, Enforcement, Action
+from tncapp.models import Package, Version, Identity, Result
+from apps.devices.models import Device, Group, Product
 from apps.filesystem.models import File, Directory
 from tncapp.views import generate_results, purge_dead_sessions
 from tncapp.policy_views import check_range

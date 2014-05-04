@@ -19,7 +19,7 @@ class Component(models.Model):
 class ComponentHash(models.Model):
     # TODO missing "id" primary key in database
     component = models.ForeignKey(Component)
-    device = models.ForeignKey('tncapp.Device', db_column='key')
+    device = models.ForeignKey('devices.Device', db_column='key')
     seq_no = models.IntegerField()
     pcr = models.IntegerField()
     algorithm = models.ForeignKey('filesystem.Algorithm', db_column='algo')
