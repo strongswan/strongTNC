@@ -5,15 +5,15 @@ from django.conf.urls import url, patterns, include
 
 from rest_framework import routers
 
-from . import views
+from apps.swid.viewsets import EntityViewSet, TagViewSet
 
 
 # Create router
 router = routers.DefaultRouter()
 
 # Register resources
-router.register(r'swid-entities', views.EntityViewSet)
-router.register(r'swid-tags', views.TagViewSet)
+router.register(r'swid-entities', EntityViewSet)
+router.register(r'swid-tags', TagViewSet)
 
 # Generate URL configuration
 urlpatterns = router.urls
