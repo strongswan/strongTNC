@@ -193,6 +193,7 @@ INSTALLED_APPS = (
     'apps.filesystem',
     'apps.swid',
     'apps.tpm',
+    'apps.api',
 )
 if DEBUG_TOOLBAR:
     INSTALLED_APPS += ('debug_toolbar',)

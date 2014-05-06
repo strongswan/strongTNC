@@ -30,7 +30,9 @@ urlpatterns += patterns('',
 
 # API URLs
 urlpatterns += patterns('',
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # Warning: API URLs are not namespaced. The feature is still in the works:
+    # github.com/tomchristie/django-rest-framework/pull/1143
+    url(r'^api/', include('apps.api.urls')),
 )
 
 # Admin URLs. Only in DEBUG mode for now.
