@@ -23,6 +23,16 @@ urlpatterns = patterns('',
     url(r'', include('apps.swid.urls', app_name='swid')),
 )
 
+# AJAX URLs
+urlpatterns += patterns('',
+    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
+)
+
+# API URLs
+urlpatterns += patterns('',
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+)
+
 # Admin URLs. Only in DEBUG mode for now.
 if settings.DEBUG:
     admin.autodiscover()
@@ -30,11 +40,6 @@ if settings.DEBUG:
         url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
         url(r'^admin/', include(admin.site.urls)),
     )
-
-# AJAX URLs
-urlpatterns += patterns('',
-    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
-)
 
 # Static and media files. This should only be used in DEBUG mode. For live
 # deployment, serve your static files directly using the webserver (e.g. Nginx
