@@ -6,13 +6,15 @@ from rest_framework import serializers
 from apps.swid import models as swid_models
 
 
-class EntitySerializer(serializers.ModelSerializer):
+class EntitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = swid_models.Entity
-        fields = ('id', 'name', 'regid')
+        fields = ('id', 'url', 'name', 'regid')
 
 
-class TagSerializer(serializers.ModelSerializer):
+class TagSerializer(serializers.HyperlinkedModelSerializer):
+    entity_set = serializers.HyperlinkedRelatedField(many=True, view_name='entity-detail')
+
     class Meta:
         model = swid_models.Tag
-        fields = ('id', 'package_name', 'version', 'unique_id', 'swid_xml')
+        fields = ('id', 'url', 'package_name', 'version', 'unique_id', 'entity_set', 'swid_xml')
