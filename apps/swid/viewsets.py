@@ -3,16 +3,15 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 from rest_framework import viewsets
 
-from apps.swid import models as swid_models
-
+from . import models
 from . import serializers
 
 
 class EntityViewSet(viewsets.ReadOnlyModelViewSet):
-    model = swid_models.Entity
+    model = models.Entity
     serializer_class = serializers.EntitySerializer
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    model = swid_models.Tag
+    model = models.Tag
     serializer_class = serializers.TagSerializer
