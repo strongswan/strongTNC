@@ -73,11 +73,16 @@ class Tag(models.Model):
 
 
 class EntityRole(models.Model):
+    PUBLISHER = 0
+    LICENSOR = 1
+    TAGCREATOR = 2
+
     ROLE_CHOICES = (
-        (0, 'Publisher'),
-        (1, 'Licensor'),
-        (2, 'Tag Creator'),
+        (PUBLISHER, 'Publisher'),
+        (LICENSOR, 'Licensor'),
+        (TAGCREATOR, 'Tag Creator'),
     )
+
     tag = models.ForeignKey('Tag')
     entity = models.ForeignKey('Entity')
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
@@ -90,6 +95,15 @@ class EntityRole(models.Model):
 
     def list_repr(self):
         return '%s as %s' % (self.entity, dict(EntityRole.ROLE_CHOICES)[self.role])
+
+    @classmethod
+    def xml_attr_to_choice(cls, value):
+        if value == 'tagcreator':
+            return EntityRole.TAGCREATOR
+        elif value == 'licensor':
+            return EntityRole.LICENSOR
+        elif value == 'publisher':
+            return EntityRole.PUBLISHER
 
 
 class Entity(models.Model):

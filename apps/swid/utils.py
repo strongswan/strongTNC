@@ -8,6 +8,7 @@ from django.db import transaction
 from lxml import etree
 
 from apps.filesystem.models import Directory, File
+from apps.swid.models import Entity, EntityRole
 from .models import Tag
 
 
@@ -15,8 +16,11 @@ class SwidParser(object):
     """
     A SAX-like target parser for SWID XML files.
     """
+
     def __init__(self):
         self.tag = Tag()
+        self.entities = []
+        self.entity_role = EntityRole()
         self.file_pks = []
 
     def start(self, tag, attrib):
@@ -37,12 +41,21 @@ class SwidParser(object):
             d, _ = Directory.objects.get_or_create(path=dirname)
             f, _ = File.objects.get_or_create(name=filename, directory=d)
             self.file_pks.append(f.pk)
+        elif clean_tag == 'Entity':
+            entity_role = EntityRole()
+            regid = attrib['regid']
+            name = attrib['name']
+            entity, _ = Entity.objects.get_or_create(regid=regid, name=name)
+            role = EntityRole.xml_attr_to_choice(attrib['role'])
+
+            entity_role.role = role
+            self.entities.append((entity, entity_role))
 
     def close(self):
         """
         Fired when parsing is complete.
         """
-        return self.tag, self.file_pks
+        return self.tag, self.file_pks, self.entities
 
 
 @transaction.atomic
@@ -68,10 +81,18 @@ def process_swid_tag(tag_xml):
     parser = etree.XMLParser(target=parser_target, ns_clean=True)
 
     # Parse XML, save tag into database
-    tag, file_pks = etree.fromstring(tag_xml.encode('utf8'), parser)
+    tag, file_pks, entities = etree.fromstring(tag_xml.encode('utf8'), parser)
     # Parse and prettify the tag before saving
     tag.swid_xml = prettify_xml(tag_xml)
     tag.save()  # We need to save before we can add many-to-many relations
+
+    for entity, entity_role in entities:
+        entity.save()
+
+        # Wireup EntityRole object
+        entity_role.tag = tag
+        entity_role.entity = entity
+        entity_role.save()
 
     # SQLite does not support >999 SQL parameters per query, so we need
     # to do manual chunking.
@@ -81,8 +102,8 @@ def process_swid_tag(tag_xml):
     for i in xrange(block_count):
         TagFile = Tag.files.through  # The m2m intermediate model
         TagFile.objects.bulk_create([  # Create all the intermediate objects in a single query
-            TagFile(tag_id=tag.pk, file_id=j)
-            for j in file_pks[i * block_size:(i + 1) * block_size]
+                                       TagFile(tag_id=tag.pk, file_id=j)
+                                       for j in file_pks[i * block_size:(i + 1) * block_size]
         ])
 
     return tag
