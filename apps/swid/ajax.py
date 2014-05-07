@@ -18,9 +18,10 @@ def tags_for_session(request, session_id):
             'name': tag.package_name,
             'version': tag.version,
             'unique-id': tag.unique_id,
-            'installed': first_reported.strftime('%b %d %H:%M:%S %Y'),
+            'installed': session.time.strftime('%b %d %H:%M:%S %Y'),
+            'session-id': session.pk,
         }
-        for tag, first_reported in installed_tags
+        for tag, session in installed_tags
     ]
     data = {'swid-tag-count': len(tags), 'swid-tags': tags}
     return json.dumps(data)

@@ -68,7 +68,7 @@ class Tag(models.Model):
         for session in device_sessions.all().prefetch_related('tag_set'):
             for tag in session.tag_set.all():
                 if tag not in tags:
-                    tags[tag] = session.time
+                    tags[tag] = session
         return list(tags.items())
 
 
