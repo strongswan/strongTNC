@@ -6,7 +6,7 @@ function AjaxTagsLoader() {
         Dajaxice.apps.swid.tags_for_session(this.fillTable, {
             'session_id': sessionID
         });
-    }
+    };
 
     this.fillTable = function (data) {
         var tableBody = $("#swid-tags").find("tbody");
@@ -21,13 +21,14 @@ function AjaxTagsLoader() {
                     record['version'] +
                     "</td><td>" +
                     record['unique-id'] +
-                    "</td><td>" +
+                    "</td><td><a href='/sessions/" +
+                    record['session-id'] + "'>"+
                     record['installed'] +
-                    "</td></tr>";
+                    "</a></td></tr>";
         });
         tableBody.append(rows);
         ajaxSpinner.disable();
-    }
+    };
 }
 
 function AjaxSessionsLoader(from, to) {
@@ -38,7 +39,7 @@ function AjaxSessionsLoader(from, to) {
         ajaxSpinner.disable();
         session_data = data.sessions;
         $("#num-of-sessions").text(data.sessions.length);
-    }
+    };
 
     this.loadSessions = function () {
         var fromTimestamp = Math.floor(this.fromDatepicker.datepicker("getDate").getTime() / 1000);
@@ -49,7 +50,7 @@ function AjaxSessionsLoader(from, to) {
             'date_from': fromTimestamp,
             'date_to': toTimestamp
         });
-    }
+    };
 }
 
 function setupResetButton() {
@@ -60,7 +61,7 @@ function setupResetButton() {
 
 function setupRangeShortcutsDropdown(sessionManager) {
     $("#calendar-shortcuts").change(function () {
-        $("#from").datepicker("setDate", $(this).val())
+        $("#from").datepicker("setDate", $(this).val());
         $("#to").datepicker("setDate", new Date());
         $("#sessions").select2("val", "");
         sessionManager.loadSessions();
@@ -93,7 +94,6 @@ function setUpSelect(tagLoader) {
     })
 }
 
-
 function setupDatepicker(sessionsLoader) {
 
 
@@ -121,7 +121,7 @@ function setupDatepicker(sessionsLoader) {
 }
 
 $(document).ready(function () {
-    var sessionsLoader = new AjaxSessionsLoader($("#from"), $("#to"))
+    var sessionsLoader = new AjaxSessionsLoader($("#from"), $("#to"));
     var tagsLoader = new AjaxTagsLoader();
     setUpSelect(tagsLoader);
     setupDatepicker(sessionsLoader);
