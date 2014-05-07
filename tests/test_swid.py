@@ -8,7 +8,7 @@ from model_mommy import mommy
 
 from apps.core.models import Session, WorkItem
 from apps.core.types import WorkItemType
-from apps.swid.models import Tag
+from apps.swid.models import Tag, EntityRole, Entity
 from apps.filesystem.models import File, Directory
 from apps.swid import utils
 from apps.swid import views
@@ -81,6 +81,19 @@ def test_tag_unique_id(swidtag, filename, unique_id):
 ])
 def test_tag_version(swidtag, filename, version):
     assert swidtag.version == version
+
+
+@pytest.mark.parametrize(['filename', 'tagroles'], [
+    ('strongswan.short.swidtag', [EntityRole.TAGCREATOR]),
+    ('strongswan.full.swidtag', [EntityRole.TAGCREATOR, EntityRole.PUBLISHER]),
+    ('cowsay.short.swidtag', [EntityRole.TAGCREATOR]),
+    ('cowsay.full.swidtag', [EntityRole.TAGCREATOR, EntityRole.LICENSOR]),
+    ('strongswan-tnc-imcvs.short.swidtag', [EntityRole.TAGCREATOR]),
+    ('strongswan-tnc-imcvs.full.swidtag', [EntityRole.TAGCREATOR]),
+])
+def test_tag_entity_roles(swidtag, filename, tagroles):
+    roles = [i.role for i in swidtag.entityrole_set.all()]
+    assert sorted(roles) == sorted(tagroles)
 
 
 @pytest.mark.parametrize('filename', [
