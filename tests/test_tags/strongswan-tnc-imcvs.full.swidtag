@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SoftwareIdentity name="strongswan-tnc-imcvs" uniqueId="fedora_19-x86_64-strongswan-tnc-imcvs-5.1.2-4.fc19" version="5.1.2-4.fc19" versionScheme="alphanumeric" xmlns="http://standards.iso.org/iso/19770/-2/2014/schema.xsd">
+  <Entity name="strongSwan" regid="regid.2004-03.org.strongswan" role="tagcreator"/>
+  <Payload>
+    <File location="/usr/lib64/strongswan/imcvs" name="imc-attestation.so"/>
+    <File location="/usr/lib64/strongswan/imcvs" name="imc-os.so"/>
+    <File location="/usr/lib64/strongswan/imcvs" name="imc-scanner.so"/>
+    <File location="/usr/lib64/strongswan/imcvs" name="imc-swid.so"/>
+    <File location="/usr/lib64/strongswan/imcvs" name="imc-test.so"/>
+    <File location="/usr/lib64/strongswan/imcvs" name="imv-attestation.so"/>
+    <File location="/usr/lib64/strongswan/imcvs" name="imv-os.so"/>
+    <File location="/usr/lib64/strongswan/imcvs" name="imv-scanner.so"/>
+    <File location="/usr/lib64/strongswan/imcvs" name="imv-swid.so"/>
+    <File location="/usr/lib64/strongswan/imcvs" name="imv-test.so"/>
+    <File location="/usr/lib64/strongswan" name="libimcv.so.0"/>
+    <File location="/usr/lib64/strongswan" name="libimcv.so.0.0.0"/>
+    <File location="/usr/lib64/strongswan" name="libpts.so.0"/>
+    <File location="/usr/lib64/strongswan" name="libpts.so.0.0.0"/>
+    <File location="/usr/lib64/strongswan" name="libradius.so.0"/>
+    <File location="/usr/lib64/strongswan" name="libradius.so.0.0.0"/>
+    <File location="/usr/lib64/strongswan" name="libtnccs.so.0"/>
+    <File location="/usr/lib64/strongswan" name="libtnccs.so.0.0.0"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-eap-radius.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-eap-tnc.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-pkcs7.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-sqlite.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-tnc-ifmap.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-tnc-imc.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-tnc-imv.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-tnc-pdp.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-tnc-tnccs.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-tnccs-11.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-tnccs-20.so"/>
+    <File location="/usr/lib64/strongswan/plugins" name="libstrongswan-tnccs-dynamic.so"/>
+    <File location="/usr/libexec/strongswan" name="attest"/>
+    <File location="/usr/libexec/strongswan" name="pacman"/>
+    <File location="/usr/libexec/strongswan" name="pt-tls-client"/>
+    <File location="/usr/libexec/strongswan" name="regid.2004-03.org.strongswan_strongSwan-5-1-2.swidtag"/>
+    <File location="/usr/share/regid.2004-03.org.strongswan" name="regid.2004-03.org.strongswan_strongSwan-5-1-2.swidtag"/>
+  </Payload>
+</SoftwareIdentity>

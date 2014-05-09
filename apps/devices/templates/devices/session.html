@@ -1,0 +1,85 @@
+{% extends "front/base.html" %}
+
+{% load i18n %}
+{% block title %}{{title}}{% endblock %}
+
+{% block hero %}
+<h1>{{ title }}</h1>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row-fluid">
+    <h4>{% trans 'Session Info' %}</h4>
+
+    <!-- ...or table (with or without border) -->
+    <div class="row-fluid">
+      <div class="span6">
+        <table class="table" border="0">
+          <tbody>
+            <tr>
+              <td><strong>{% trans 'ID' %}</strong></td>
+              <td>{{ session.id }}</td>
+            </tr>
+            <tr>
+              <td><strong>{% trans 'Device' %}</strong></td>
+              <td>{{ session.device }}</td>
+            </tr>
+            <tr>
+              <td><strong>{% trans 'User' %}</strong></td>
+              <td>{{ session.identity.data }}</td>
+            </tr>
+            <tr>
+              <td><strong>{% trans 'Time' %}</strong></td>
+              <td>{{ session.time|date:'M d H:i:s Y' }}</td>
+            </tr>
+            <tr>
+              <td><strong>{% trans 'Result' %}</strong></td>
+              <td>{{ recommendation }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div><!--/span5-->
+    </div><!--/row-->
+
+      <div>
+          {% if swid_measurement %}
+              <a href="{% url 'inventory' session.device.pk %}#session-id={{ session.pk }}"
+                 class="btn btn-primary"
+                 type="button"><i class="icon-file icon-white"></i> {% trans 'View SWID tags' %}</a>
+          {% else %}
+              <a href="#" class="btn btn-primary disabled" type="button"
+                 title="{% trans 'No SWID tags measured in this session' %}"><i
+                      class="icon-file icon-white"></i> {% trans 'View SWID tags' %}
+              </a>
+          {% endif %}
+      </div>
+
+      {% if results %}
+    <hr>
+    <h4>{% trans 'Results' %}</h4>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <td>{% trans "Policy" %}</td>
+          <td>{% trans "Result" %}</td>
+          <td>{% trans "IMV Comment" %}</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+        <tr>
+          <td><a href="/policies/{{ r.0.policy.id }}">{{ r.0.policy }}</a></td>
+          <td>{{ r.1 }}</td>
+          <td>{{ r.0.result }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+
