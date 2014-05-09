@@ -20,7 +20,6 @@ class SwidParser(object):
     def __init__(self):
         self.tag = Tag()
         self.entities = []
-        self.entity_role = EntityRole()
         self.file_pks = []
 
     def start(self, tag, attrib):
@@ -102,8 +101,8 @@ def process_swid_tag(tag_xml):
     for i in xrange(block_count):
         TagFile = Tag.files.through  # The m2m intermediate model
         TagFile.objects.bulk_create([  # Create all the intermediate objects in a single query
-                                       TagFile(tag_id=tag.pk, file_id=j)
-                                       for j in file_pks[i * block_size:(i + 1) * block_size]
+            TagFile(tag_id=tag.pk, file_id=j)
+            for j in file_pks[i * block_size:(i + 1) * block_size]
         ])
 
     return tag

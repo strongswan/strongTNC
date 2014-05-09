@@ -99,11 +99,11 @@ class EntityRole(models.Model):
     @classmethod
     def xml_attr_to_choice(cls, value):
         if value == 'tagcreator':
-            return EntityRole.TAGCREATOR
+            return cls.TAGCREATOR
         elif value == 'licensor':
-            return EntityRole.LICENSOR
+            return cls.LICENSOR
         elif value == 'publisher':
-            return EntityRole.PUBLISHER
+            return cls.PUBLISHER
 
 
 class Entity(models.Model):
