@@ -1,0 +1,23 @@
+{% load i18n %}
+{% if object_list %}
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Unique ID</th>
+            <th>Package name</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for obj in object_list %}
+            <tr>
+                <td><a href="{% url url_name obj.pk %}{{ url_hash }}">{{ obj.list_repr }}</a></td>
+                <td>{{ obj.package_name }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>
+        <small>There are no entries.</small>
+    </p>
+{% endif %}
