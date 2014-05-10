@@ -3,10 +3,12 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 from django.views.generic import ListView, DetailView
 
-from apps.core.models import Session
+from apps.core.models import Session, WorkItem
+from apps.core.types import WorkItemType
 from apps.auth.mixins import LoginRequiredMixin
 from apps.devices.models import Device
 from .models import Entity, Tag
+from . import utils
 
 
 class RegidListView(LoginRequiredMixin, ListView):
@@ -52,3 +54,25 @@ class SwidInventoryView(DetailView):
         except Session.DoesNotExist:
             context['current_session'] = None
         return context
+
+
+class SwidLogView(DetailView):
+    template_name = 'swid/swid_log.html'
+    model = Device
+
+    def get_context_data(self, **kwargs):
+        context = super(SwidLogView, self).get_context_data(**kwargs)
+        return context
+
+
+def import_swid_tags(session):
+    workitem = WorkItem.objects.get(session=session, type=WorkItemType.SWIDT)
+    result = workitem.result
+
+    if not result:
+        raise ValueError('No SWID tags provided')
+
+    swid_tags = result.splitlines()
+
+    for swid_tag in swid_tags:
+        utils.process_swid_tag(swid_tag.encode('utf-8'))

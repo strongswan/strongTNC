@@ -125,6 +125,15 @@ table.sortable th.sorter-false {
 .ajax-paged .paging-buttons {
     margin: 10px 0 20px 0;
 }
+
 pre.raw-xml {
     font-size: 10px;
+}
+
+.displ-none {
+    display: none;
+}
+
+.table.statsTable td.title {
+    width: 290px;
 }

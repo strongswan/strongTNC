@@ -11,6 +11,11 @@
 
 
 {% block content %}
+    <div class="row-fluid">
+        <a href="{% url 'swid:swid_log' object.pk %}" class="btn btn-primary btn-mini">
+            <i class="icon-file icon-white"></i>{% trans 'View SWID log' %}
+        </a>
+    </div>
     {% if current_session == None %}
         {# This means that the device has no related sessions. #}
         <div class="row-fluid">
@@ -68,23 +73,7 @@
                 <h4>Measured Software Tags</h4>
             </div>
             Total: <span id="swid-tag-count"></span>
-
-            <div class="control-group">
-                <div class="controls">
-                    <button class="btn btn-primary">View Installation Log</button>
-                </div>
-            </div>
-            <div class="row-fluid">
-                <form class="form-search pull-center" action="#" method="get">
-                    <div class="input-append">
-                        <input class="input input-small search-query" name="q" placeholder="Filter" value=""
-                               autofocus=""
-                               type="text">
-                        <button type="submit" class="btn"><i class="icon-search"></i></button>
-                    </div>
-                </form>
-
-            </div>
+           <br/>
             <div class="row-fluid">
                 <table role="grid" id="swid-tags"
                        class="table table-hover table-striped sortable">
