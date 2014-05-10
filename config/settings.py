@@ -76,6 +76,8 @@ try:
 except (NoSectionError, NoOptionError):
     TIME_ZONE = None
 
+DEFAULT_DATETIME_FORMAT_STRING = '%b %d %H:%M:%S %Y'
+
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 try:

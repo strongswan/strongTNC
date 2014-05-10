@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from django.utils import timezone
 from django.db import models
@@ -122,6 +122,10 @@ class Device(models.Model):
         for enforcement in minforcements:
             if self.is_due_for(enforcement):
                 enforcement.policy.create_work_item(enforcement, session)
+
+    def get_sessions_in_range(self, from_timestamp, to_timestamp):
+        dateobj_from, dateobj_to = map(datetime.utcfromtimestamp, [from_timestamp, to_timestamp])
+        return self.sessions.filter(time__lte=dateobj_to, time__gte=dateobj_from).order_by('-time')
 
 
 class Group(models.Model):

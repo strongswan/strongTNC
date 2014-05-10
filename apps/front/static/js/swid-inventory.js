@@ -108,6 +108,7 @@ function setupDatepicker(sessionsLoader) {
 
     sessionsLoader.fromDatepicker.datepicker({
         defaultDate: "-1w",
+        dateFormat: "dd/mm/yy",
         changeMonth: true,
         numberOfMonths: 1,
         onClose: function (selectedDate) {
@@ -118,6 +119,7 @@ function setupDatepicker(sessionsLoader) {
 
     sessionsLoader.toDatepicker.datepicker({
         changeMonth: true,
+        dateFormat: "dd/mm/yy",
         numberOfMonths: 1,
         onClose: function (selectedDate) {
             sessionsLoader.fromDatepicker.datepicker("option", "maxDate", selectedDate);

@@ -45,13 +45,13 @@ class Session(models.Model):
         ordering = ['-time']
 
     def __unicode__(self):
-        return 'Session %s by %s' % (self.connection_id, self.identity)
+        return 'Session %s by %s' % (self.pk, self.identity)
 
     def list_repr(self):
         """
         String representation in lists
         """
-        return 'Session %s by %s' % (self.connection_id, self.identity)
+        return 'Session %s by %s' % (self.pk, self.identity)
 
 
 class WorkItem(models.Model):
