@@ -39,6 +39,7 @@ class SwidTagDetailView(LoginRequiredMixin, DetailView):
         context = super(SwidTagDetailView, self).get_context_data(**kwargs)
         context['object_list'] = self.model.objects.order_by('unique_id')
         context['entityroles'] = self.object.entityrole_set.all()
+        context['devices'] = self.object.get_devices_with_reported_session()
         return context
 
 

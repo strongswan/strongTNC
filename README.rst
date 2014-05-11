@@ -80,6 +80,10 @@ Run the tests::
 
     ./runtests.py
 
+Setup a database with test data::
+
+    $ ./manage.py shell
+    >>> execfile('tests/create_test_db.py')
 
 License
 -------
