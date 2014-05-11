@@ -9,20 +9,29 @@ function AjaxTagsLoader() {
     };
 
     this.fillTable = function (data) {
+        var selectedSession = $("#sessions").select2("data").id;
         var tableBody = $("#swid-tags").find("tbody");
         $("#swid-tag-count").text(data['swid-tag-count']);
         tableBody.empty();
         var rows = '';
         $.each(data['swid-tags'], function (i, record) {
+
+            // Mark tags that were added in the selected session
+            if (record['session-id'] == selectedSession) {
+                rows += "<tr class=\"warning\">";
+            }
+            else {
+                rows += "<tr>";
+            }
             rows +=
-                "<tr><td>" +
+                "<td>" +
                     record['name'] +
                     "</td><td>" +
                     record['version'] +
                     "</td><td>" +
                     record['unique-id'] +
                     "</td><td><a href='/sessions/" +
-                    record['session-id'] + "'>"+
+                    record['session-id'] + "'>" +
                     record['installed'] +
                     "</a></td></tr>";
         });
@@ -86,7 +95,7 @@ function setUpSelect(tagLoader) {
             placeholder: "Select a Session",
             width: "element",
             minimumResultsForSearch: -1,
-            formatNoMatches : "No Session found in the given time range"
+            formatNoMatches: "No Session found in the given time range"
         }
     );
     $("#sessions").on("select2-selecting", function (event) {
