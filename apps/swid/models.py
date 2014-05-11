@@ -71,6 +71,12 @@ class Tag(models.Model):
                     tags[tag] = session
         return list(tags.items())
 
+    def get_devices_with_reported_session(self):
+        devices_dict = {}
+        for session in self.sessions.order_by('-time'):
+            devices_dict[session.device] = session
+        return devices_dict
+
 
 class EntityRole(models.Model):
     PUBLISHER = 0
