@@ -5,7 +5,7 @@ import os
 try:
     from ConfigParser import RawConfigParser, NoSectionError, NoOptionError
 except ImportError:  # py3
-    from configparser import ConfigParser, NoSectionError, NoOptionError
+    from configparser import RawConfigParser, NoSectionError, NoOptionError
 
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
