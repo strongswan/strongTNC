@@ -10,6 +10,8 @@ except ImportError:  # py3
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 
+import dj_database_url
+
 
 # Read configuration from ini
 config = RawConfigParser()
@@ -23,36 +25,39 @@ else:
             'to your likings.')
 
 
+# Debug variables
 DEBUG = config.getboolean('debug', 'DEBUG')
 TEMPLATE_DEBUG = config.getboolean('debug', 'TEMPLATE_DEBUG')
 DEBUG_TOOLBAR = config.getboolean('debug', 'DEBUG_TOOLBAR')
 
+# Admins and managers
 if DEBUG:
     ADMINS = tuple()
 else:
     ADMINS = tuple(config.items('admins'))
-
 MANAGERS = ADMINS
 
+# Allowed hosts (only used in production)
 try:
     ALLOWED_HOSTS = list(config.items('allowed hosts'))
 except (NoSectionError, NoOptionError):
     ALLOWED_HOSTS = []
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'ipsec.config.db',
-    },
-
-    'meta': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'django.db',
-    },
-}
-
+# Database configuration
+DATABASES = {}
+try:
+    DATABASES['default'] = dj_database_url.parse(config.get('db', 'STRONGTNC_DB_URL'))
+except (NoSectionError, NoOptionError):
+    kwargs = {'env': 'STRONGTNC_DB_URL', 'default': 'sqlite:///ipsec.config.db'}
+    DATABASES['default'] = dj_database_url.config(**kwargs)
+try:
+    DATABASES['meta'] = dj_database_url.parse(config.get('db', 'DJANGO_DB_URL'))
+except (NoSectionError, NoOptionError):
+    kwargs = {'env': 'DJANGO_DB_URL', 'default': 'sqlite:///django.db'}
+    DATABASES['meta'] = dj_database_url.config(**kwargs)
 DATABASE_ROUTERS = ['config.router.DBRouter']
 
+# Auth URLs
 LOGIN_URL = '/login'
 
 # Local time zone for this installation. Choices can be found here:
