@@ -27,6 +27,8 @@ multiple Python installations side-by-side, inside a directory. A quickstart
 guide can be found `here
 <https://blog.dbrgn.ch/2012/9/18/virtualenv-quickstart/>`__.
 
+**Environment, Dependencies**
+
 First, create a virtualenv::
 
     cd /path/to/strongTNC/
@@ -37,14 +39,21 @@ Then install the dependencies::
 
     pip install -r requirements.txt
 
+**Configuration**
+
 Create a local `settings.ini` file::
 
     cp config/settings.sample.ini config/settings.ini
     $EDITOR config/settings.ini
 
+If this is not a production setup, change the ``DEBUG`` setting in
+``settings.ini`` from 0 to 1.
+
 Set the default passwords::
 
     ./manage.py setpassword
+
+**Development**
 
 Now you can start the development server. ::
 
@@ -56,7 +65,7 @@ If you want to use the django debug toolbar, install it via pip::
 
     pip install django-debug-toolbar
 
-Then start the server with the setting ``DEBUG_TOOLBAR=1`` (in
+Then start the server with the setting ``DEBUG_TOOLBAR = 1`` (in
 ``settings.ini``).
 
 
