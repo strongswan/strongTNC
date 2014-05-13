@@ -12,3 +12,4 @@ lxml==3.3.5
 # API
 djangorestframework==2.3.13
 django-filter==0.7
+djangorestframework-camel-case==0.1.3
