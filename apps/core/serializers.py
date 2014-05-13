@@ -9,7 +9,7 @@ from . import models
 class IdentitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Identity
-        fields = ('id', 'url', 'type', 'data')
+        fields = ('id', 'uri', 'type', 'data')
 
 
 class SessionSerializer(serializers.HyperlinkedModelSerializer):
@@ -18,4 +18,4 @@ class SessionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = models.Session
-        fields = ('id', 'url', 'time', 'identity', 'connection_id', 'device', 'recommendation')
+        fields = ('id', 'uri', 'time', 'identity', 'connection_id', 'device', 'recommendation')
