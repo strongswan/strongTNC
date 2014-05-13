@@ -9,7 +9,7 @@ from . import models
 class EntitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Entity
-        fields = ('id', 'url', 'name', 'regid')
+        fields = ('id', 'uri', 'name', 'regid')
 
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
@@ -17,4 +17,4 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = models.Tag
-        fields = ('id', 'url', 'package_name', 'version', 'unique_id', 'entity_set', 'swid_xml')
+        fields = ('id', 'uri', 'package_name', 'version', 'unique_id', 'entity_set', 'swid_xml')

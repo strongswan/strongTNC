@@ -269,4 +269,6 @@ REST_FRAMEWORK = {
 
     'DEFAULT_MODEL_SERIALIZER_CLASS':
         'rest_framework.serializers.HyperlinkedModelSerializer',
+
+    'URL_FIELD_NAME': 'uri',
 }
