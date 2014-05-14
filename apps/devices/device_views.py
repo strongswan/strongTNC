@@ -102,6 +102,8 @@ def save(request):
     if not re.match(r'^\d+$', productID):
         return HttpResponse(status=400)
 
+    trusted = True if request.POST.get('device-trusted', False) == 'on' else False
+
     try:
         product = Product.objects.get(pk=productID)
     except Product.DoesNotExist:
@@ -109,12 +111,13 @@ def save(request):
 
     if deviceID == 'None':
         device = Device.objects.create(value=value, description=description,
-                product=product, created=timezone.now())
+                product=product, created=timezone.now(), trusted=trusted)
     else:
         device = get_object_or_404(Device, pk=deviceID)
         device.value = value
         device.description = description
         device.product = product
+        device.trusted = trusted
         device.save()
 
     if device_groups:
