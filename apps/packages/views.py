@@ -59,6 +59,7 @@ def add(request):
     Add a package
     """
     context = {}
+    context['add'] = True
     context['title'] = _('New package')
     context['package'] = Package()
     return render(request, 'packages/packages.html', context)
