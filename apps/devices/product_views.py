@@ -58,6 +58,7 @@ def add(request):
     Add new Product
     """
     context = {}
+    context['add'] = True
     context['title'] = _('New product')
     context['groups'] = Group.objects.all().order_by('name')
     context['product'] = Product()
