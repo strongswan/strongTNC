@@ -41,14 +41,20 @@ class SwidParser(object):
             f, _ = File.objects.get_or_create(name=filename, directory=d)
             self.file_pks.append(f.pk)
         elif clean_tag == 'Entity':
-            entity_role = EntityRole()
+            # Store entities
             regid = attrib['regid']
             name = attrib['name']
+            role = attrib['role']
+            entity_role = EntityRole()
             entity, _ = Entity.objects.get_or_create(regid=regid, name=name)
-            role = EntityRole.xml_attr_to_choice(attrib['role'])
+            role = EntityRole.xml_attr_to_choice(role)
 
             entity_role.role = role
             self.entities.append((entity, entity_role))
+
+            # Use regid of first entity with tagcreator role to construct software-id
+            if role == EntityRole.TAGCREATOR:
+                self.tag.software_id = '%s_%s' % (regid, self.tag.unique_id)
 
     def close(self):
         """
@@ -101,8 +107,8 @@ def process_swid_tag(tag_xml):
     for i in xrange(block_count):
         TagFile = Tag.files.through  # The m2m intermediate model
         TagFile.objects.bulk_create([  # Create all the intermediate objects in a single query
-            TagFile(tag_id=tag.pk, file_id=j)
-            for j in file_pks[i * block_size:(i + 1) * block_size]
+                                       TagFile(tag_id=tag.pk, file_id=j)
+                                       for j in file_pks[i * block_size:(i + 1) * block_size]
         ])
 
     return tag

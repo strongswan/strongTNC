@@ -20,6 +20,10 @@ class Tag(models.Model):
     swid_xml = models.TextField(help_text='The full SWID tag XML')
     files = models.ManyToManyField('filesystem.File', blank=True, verbose_name='list of files')
     sessions = models.ManyToManyField('core.Session', verbose_name='list of sessions')
+    software_id = models.TextField(max_length=255, db_index=True,
+                                   help_text='The Software ID, format: {regid}_{uniqueID} '
+                                             'e.g regid.2004-03.org.strongswan_\
+                                             fedora_19-x86_64-strongswan-5.1.2-4.fc19')
 
     class Meta:
         db_table = TABLE_PREFIX + 'tags'
@@ -29,20 +33,6 @@ class Tag(models.Model):
 
     def list_repr(self):
         return self.unique_id
-
-    def get_software_ids(self):
-        """
-        Return the software IDs of the tag.
-
-        A software ID consists of the regid and the unique_id. Because there
-        can be multiple roles per tag, there can also be multiple software IDs.
-
-        Returns:
-            List of software ID strings.
-
-        """
-        return ['%s_%s' % (entity_role.entity.regid, self.unique_id)
-                for entity_role in self.entityrole_set.filter(role=2)]
 
     @classmethod
     def get_installed_tags_with_time(cls, session):

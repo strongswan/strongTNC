@@ -52,14 +52,9 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><strong>{% trans 'Software IDs' %}</strong></td>
+                                <td><strong>{% trans 'Software ID' %}</strong></td>
                                 <td>
-                                    {% for er in object.get_software_ids %}
-                                        {{ er }}
-                                        {% if not forloop.last %}
-                                            <br/>
-                                        {% endif %}
-                                    {% endfor %}
+                                    {{ object.software_id }}
                                 </td>
                             </tr>
                             </tbody>
