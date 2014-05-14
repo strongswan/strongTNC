@@ -33,11 +33,11 @@
 
     <div class="span9" id="content">
       {% if product %}
-      <h4>Product Info</h4>
       <form class="form-horizontal" method="POST" action="/products/save" id="productform">
         {% csrf_token %}
         <input type="hidden" id="productId" name="productId" value="{{ product.id }}" />
-
+        {% if add %}
+        <h4>{% trans 'Add new product' %}</h4>
         <div class="control-group">
           <label class="control-label" for="name">{% trans "Name" %}</label>
           <div class="controls">
@@ -45,8 +45,12 @@
               rel="tooltip" title="{% trans 'Product Name' %}" value="{{ product.name }}" {% input_editability %}>
           </div>
         </div>
-
         <hr>
+        {% else %}
+            <div class="row-fluid">
+                <h3>{% trans 'Product info:' %} {{ product.name}}</h3>
+            </div>
+        {% endif %}
 
         <h4>{% trans "Assign Default Groups" %}
           <a class="btn-small" href="#" rel="tooltip"
