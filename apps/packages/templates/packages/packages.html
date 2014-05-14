@@ -33,20 +33,24 @@
 
     <div class="span9" id="content">
       {% if package %}
-      <h4>Package Info</h4>
       <form class="form-horizontal" method="POST" action="/packages/save" id="packageform">
       {% csrf_token %}
-
+      {% if add %}
+      <h4>{% trans 'Add new package' %}</h4>
       <div class="control-group" id="name-group">
-	<label class="control-label" for="id">{% trans "Name" %}</label>
-	<div class="controls">
-	  <input type="hidden" id="packageId" name="packageId" value="{{package.id}}" />
-	  <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}" rel="tooltip"
-        title="{% trans 'Package Name' %}" value="{{ package.name }}" {% input_editability %}>
-	</div>
+	    <label class="control-label" for="id">{% trans "Name" %}</label>
+	    <div class="controls">
+	      <input type="hidden" id="packageId" name="packageId" value="{{package.id}}" />
+	      <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}" rel="tooltip"
+                 title="{% trans 'Package Name' %}" value="{{ package.name }}" {% input_editability %}>
+	    </div>
       </div>
-
       <hr>
+      {% else %}
+      <div class="row-fluid">
+        <h3>{% trans 'Package info:' %} {{ package.name }}</h3>
+      </div>
+      {% endif %}
 
       <h4>{% trans "Versions:" %}
 	<a class="btn-small" href="#" rel="tooltip"
@@ -92,9 +96,11 @@
       <hr>
 
       <div class="btn-toolbar" style="margin: 0;">
+      {% if add %}
 	<div class="btn-group">
 	  <a class="btn btn-success" type="submit" onclick="save_package()"><i class="icon-ok icon-white"></i> {%trans "Save" %}</a>
 	</div><!-- /btn-group -->
+      {% endif %}
       {% if package.id %}
 	<div class="btn-group">
 	  <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
