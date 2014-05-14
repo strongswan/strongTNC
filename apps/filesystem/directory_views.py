@@ -56,6 +56,7 @@ def add(request):
     Add a directory
     """
     context = {}
+    context['add'] = True
     context['title'] = _('New directory')
     context['directory'] = Directory()
     return render(request, 'filesystem/directories.html', context)
