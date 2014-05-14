@@ -33,11 +33,11 @@
 
     <div class="span9" id="content">
 	  {% if directory %}
-	  <h4>Directory Info</h4>
 	  <form class="form-horizontal" method="POST" action="/directories/save" id="directoryform">
 	  {% csrf_token %}
       <input type="hidden" id="directoryId" name="directoryId" value="{{directory.id}}" />
-
+      {% if add %}
+      <h3>{% trans 'Add new directory' %}</h3>
 	  <div class="control-group">
 	    <label class="control-label" for="id">{% trans "Path" %}</label>
 	    <div class="controls">
@@ -45,16 +45,21 @@
 	      title="{% trans 'Directory path' %}" value="{{ directory.path}}" {% input_editability %}>
 	    </div>
 	  </div>
+      {% else %}
+      <div class="row-fluid">
+          <h3>{% trans 'Directory info:' %} {{ directory.path}}</h3>
+      </div>
+      {% endif %}
 
       {% if 'auth.write_access' in perms %}
-	  <hr>
-
 	  <div class="btn-toolbar" style="margin: 0;">
+        {% if add %}
         <div class="btn-group">
-          <button class="btn btn-success" type="submit" onclick="save_product()">
+          <button class="btn btn-success" type="submit">
           <i class="icon-ok icon-white"></i> {%trans "Save" %}</button>
         </div><!-- /btn-group -->
-	    {% if directory.id %}
+	    {% endif %}
+        {% if directory.id %}
         <div class="btn-group">
 	      <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i class="icon-remove icon-white"></i> {%trans "Delete" %}</a>
 	    </div><!-- /btn-group -->
@@ -104,21 +109,6 @@
     <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete directory</a>
   </div>
 </div>
-
-  <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-	<div class="modal-header">
-	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	  <h3 id="deleteModalLabel">Update directory</h3>
-	</div>
-	<div class="modal-body">
-	  <h4>Warning</h4>
-	  <p>You have changed the blabla</p>
-	</div>
-	<div class="modal-footer">
-	  <a class="btn" data-dismiss="modal">Cancel</a>
-	  <a class="btn btn-success" onclick="directoryform.submit()" >Continue</a>
-	</div>
-  </div>
 
 </div><!--content-->
     </div><!--/row-->
