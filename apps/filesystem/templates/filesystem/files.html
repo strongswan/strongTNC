@@ -25,20 +25,12 @@
 
     <div class="span9" id="content">
 	{% if file %}
-	<h4>File Info</h4>
 	<form class="form-horizontal" method="POST" action="/files/save" id="fileform">
 	  {% csrf_token %}
-
-	<div class="control-group">
-	  <label class="control-label" for="name">Name</label>
-	  <div class="controls controls-row">
-	    <label class="help-inline" style="margin-bottom: -5px"><strong>{{ file.directory }}/{{ file.name }}</strong></label>
-	  </div>
-	</div>
-
+    <div class="row-fluid">
+      <h3>{% trans 'File info:' %} {{ file.directory }}/{{ file.name }}</h3>
+    </div>
     {% if 'auth.write_access' in perms %}
-	<hr>
-
 	<div class="btn-toolbar" style="margin: 0;">
 	  {% if file.id %}
           <div class="btn-group">
