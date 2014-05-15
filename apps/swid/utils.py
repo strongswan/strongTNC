@@ -4,6 +4,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 import math
 
 from django.db import transaction
+from django.core.exceptions import ValidationError
 
 from lxml import etree
 
@@ -61,7 +62,7 @@ class SwidParser(object):
         Fired when parsing is complete.
         """
         if not self.tag.software_id:
-            msg = 'A SWID tag without a `tagcreator` (%s) entity is currently not supported.'
+            msg = 'A SWID tag (%s) without a `tagcreator` entity is currently not supported.'
             raise ValueError(msg % self.tag.unique_id)
         return self.tag, self.files, self.entities
 
@@ -81,7 +82,8 @@ def process_swid_tag(tag_xml):
            The SWID tag as an XML string.
 
     Returns:
-       The newly created Tag model instance.
+       A tuple containing the newly created Tag model instance and a flag
+       whether a pre-existing tag was replaced or not.
 
     """
     # Instantiate parser
@@ -90,23 +92,44 @@ def process_swid_tag(tag_xml):
 
     # Parse XML, save tag into database
     tag, files, entities = etree.fromstring(tag_xml.encode('utf8'), parser)
-    # Parse and prettify the tag before saving
     tag.swid_xml = prettify_xml(tag_xml)
+
+    # Check whether tag already exists
+    try:
+        old_tag = Tag.objects.get(software_id=tag.software_id)
+    except Tag.DoesNotExist:
+        replaced = False
+    else:
+        old_tag.files = files
+        old_tag.swid_xml = tag.swid_xml
+        tag = old_tag
+        replaced = True
+        tag.entity_set.clear()
+
+    # Validate and save
+    try:
+        tag.full_clean()
+    except ValidationError as e:
+        msgs = []
+        for field, errors in e.error_dict.iteritems():
+            error_str = ' '.join([m for err in errors for m in err.messages])
+            msgs.append('%s: %s' % (field, error_str))
+        raise ValueError(' '.join(msgs))
     tag.save()  # We need to save before we can add many-to-many relations
 
+    # Add entities
     for entity, entity_role in entities:
-        entity.save()
-
-        # Wireup EntityRole object
         entity_role.tag = tag
         entity_role.entity = entity
+        entity_role.full_clean()
+        entity.save()
         entity_role.save()
 
     # SQLite does not support >999 SQL parameters per query, so we need
     # to do manual chunking.
     chunked_bulk_create(tag.files, files, 980)
 
-    return tag
+    return tag, replaced
 
 
 def prettify_xml(xml, xml_declaration=True):

@@ -29,7 +29,7 @@ def swidtag(request, transactional_db):
     filename = request.getfuncargvalue('filename')
     with open('tests/test_tags/%s' % filename, 'r') as f:
         tag_xml = f.read()
-        return utils.process_swid_tag(tag_xml)
+        return utils.process_swid_tag(tag_xml)[0]
 
 
 @pytest.fixture
@@ -137,17 +137,3 @@ def test_tag_files(swidtag, filename, directories, files, filecount):
     assert File.objects.filter(name__in=files).count() == len(files)
     assert Directory.objects.filter(path__in=directories).count() == len(directories)
     assert swidtag.files.count() == filecount
-
-
-def test_import_from_db(session):
-    views.import_swid_tags(session)
-    unique_ids = [
-        'Ubuntu_13.10-x86_64-xserver-xorg-video-vesa-1:2.3.2-0ubuntu3',
-        'Ubuntu_13.10-x86_64-xserver-xorg-video-vmware-1:13.0.1-0ubuntu2',
-        'Ubuntu_13.10-x86_64-xterm-278-1ubuntu3',
-        'Ubuntu_13.10-x86_64-xtrlock-2.3',
-        'Ubuntu_13.10-x86_64-xul-ext-ubufox-2.8-0ubuntu1',
-    ]
-
-    for unique_id in unique_ids:
-        assert Tag.objects.filter(unique_id=unique_id).exists()

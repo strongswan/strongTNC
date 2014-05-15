@@ -30,12 +30,11 @@ class TagAddView(views.APIView):
     The SWID tags should be submitted in a JSON formatted list, with the
     ``Content-Type`` header set to ``application/json; charset=utf-8``.
 
-    TODO: Rename file to api_views.py
     """
     parser_classes = (JSONParser,)  # Only JSON data is supported
 
     def post(self, request):
-        # Validate request parameters
+        # Validate request data
         tags = request.DATA
         if not isinstance(tags, list):
             data = {
@@ -45,14 +44,25 @@ class TagAddView(views.APIView):
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         # Process tags
+        stats = {'added': 0, 'replaced': 0}
         for tag in tags:
             try:
-                utils.process_swid_tag(tag)
+                tag, replaced = utils.process_swid_tag(tag)
             except XMLSyntaxError:
                 data = {'status': 'error', 'message': 'Invalid XML'}
                 return Response(data, status=status.HTTP_400_BAD_REQUEST)
+            except ValueError as e:
+                data = {'status': 'error', 'message': unicode(e)}
+                return Response(data, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                # Update stats
+                if replaced:
+                    stats['replaced'] += 1
+                else:
+                    stats['added'] += 1
+
         data = {
             'status': 'success',
-            'message': 'Processed %d SWID tags.' % len(tags),
+            'message': 'Added {0[added]} SWID tags, replaced {0[replaced]} SWID tags.'.format(stats),
         }
         return Response(data, status=status.HTTP_200_OK)

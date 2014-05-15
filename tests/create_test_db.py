@@ -30,8 +30,11 @@ filename = "tests/test_tags/ubuntu_full_swid.txt"
 with open(filename, 'r') as f:
     for line in f:
         tag_xml = line.strip().decode('utf8')
-        tag = utils.process_swid_tag(tag_xml)
-        print('Processed {0}'.format(tag))
+        tag, replaced = utils.process_swid_tag(tag_xml)
+        if replaced:
+            print('Replaced {0}'.format(tag))
+        else:
+            print('Added {0}'.format(tag))
 
 
 # WIRE UP SOME SESSIONS WITH TAGS
