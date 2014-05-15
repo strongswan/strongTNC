@@ -60,6 +60,9 @@ class SwidParser(object):
         """
         Fired when parsing is complete.
         """
+        if not self.tag.software_id:
+            msg = 'A SWID tag without a `tagcreator` (%s) entity is currently not supported.'
+            raise ValueError(msg % self.tag.unique_id)
         return self.tag, self.files, self.entities
 
 
