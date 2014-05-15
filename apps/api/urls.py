@@ -6,7 +6,7 @@ from django.conf.urls import url, patterns, include
 from rest_framework import routers
 
 from apps.core.viewsets import IdentityViewSet, SessionViewSet
-from apps.swid.viewsets import EntityViewSet, TagViewSet
+from apps.swid.viewsets import EntityViewSet, TagViewSet, TagAddView
 
 
 # Create router
@@ -24,5 +24,5 @@ urlpatterns = router.urls
 
 # API URLs
 urlpatterns += patterns('',
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^swid/add-tags/', TagAddView.as_view(), name='swid-add-tags'),
 )
