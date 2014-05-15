@@ -12,9 +12,15 @@ class EntitySerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'uri', 'name', 'regid')
 
 
+class EntityRoleSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = models.EntityRole
+        fields = ('entity', 'role')
+
+
 class TagSerializer(serializers.HyperlinkedModelSerializer):
-    entity_set = serializers.HyperlinkedRelatedField(many=True, view_name='entity-detail')
+    entities = EntityRoleSerializer(source='entityrole_set', many=True)
 
     class Meta:
         model = models.Tag
-        fields = ('id', 'uri', 'package_name', 'version', 'unique_id', 'entity_set', 'swid_xml')
+        fields = ('id', 'uri', 'package_name', 'version', 'unique_id', 'entities', 'swid_xml')
