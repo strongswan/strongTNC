@@ -137,3 +137,7 @@ pre.raw-xml {
 .table.statsTable td.title {
     width: 290px;
 }
+
+.table .siwd-new-icon {
+    width: 20px;
+}

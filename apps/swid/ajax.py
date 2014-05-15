@@ -4,6 +4,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 import json
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from dajaxice.decorators import dajaxice_register
 
@@ -16,7 +17,11 @@ from apps.devices.models import Device
 @dajaxice_register
 @ajax_login_required
 def tags_for_session(request, session_id):
-    session = Session.objects.get(pk=session_id)
+    try:
+        session = Session.objects.get(pk=session_id)
+    except Session.DoesNotExist:
+        return json.dumps({})
+
     installed_tags = Tag.get_installed_tags_with_time(session)
     tags = [
         {
@@ -25,6 +30,7 @@ def tags_for_session(request, session_id):
             'unique-id': tag.unique_id,
             'installed': session.time.strftime(settings.DEFAULT_DATETIME_FORMAT_STRING),
             'session-id': session.pk,
+            'tag-url': reverse('swid:tag_detail', args=[tag.pk]),
         }
         for tag, session in installed_tags
     ]
@@ -77,3 +83,16 @@ def session_tag_difference(curr_session, prev_session):
         'added_tags': added_tags,
         'removed_tags': removed_tags
     }
+
+
+@dajaxice_register()
+def session_info(request, session_id):
+    try:
+        session = Session.objects.get(pk=session_id)
+    except Session.DoesNotExist:
+        return json.dumps({})
+
+    detail = {'id': session.pk,
+              'time': session.time.strftime('%b %d %H:%M:%S %Y')}
+
+    return json.dumps(detail)

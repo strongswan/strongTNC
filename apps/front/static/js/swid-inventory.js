@@ -9,41 +9,49 @@ function AjaxTagsLoader() {
     };
 
     this.fillTable = function (data) {
-        var selectedSession = $("#sessions").select2("data").id;
-        var tableBody = $("#swid-tags").find("tbody");
-        $("#swid-tag-count").text(data['swid-tag-count']);
-        tableBody.empty();
+        var selectedSession = HashQuery.getHashQueryObject()['session-id'];
+        var table = $("#swid-tags");
+        var tableBody = table.find("tbody");
         var rows = '';
+        var newCount = 0;
+
+
+        tableBody.empty();
         $.each(data['swid-tags'], function (i, record) {
 
             // Mark tags that were added in the selected session
             if (record['session-id'] == selectedSession) {
-                rows += "<tr class=\"warning\">";
+                rows += "<tr class=\"success\">";
+                rows += "<td title=\"First reported in the selected session\"><i class=\"icon-plus-sign\"></i></td>";
+                ++newCount;
             }
             else {
-                rows += "<tr>";
+                rows += "<tr><td></td>";
             }
             rows +=
                 "<td>" +
                     record['name'] +
                     "</td><td>" +
                     record['version'] +
-                    "</td><td>" +
+                    "</td><td><a href=\"" +
+                    record['tag-url']+"\">"+
                     record['unique-id'] +
-                    "</td><td><a href='/sessions/" +
+                    "</a></td><td><a href='/sessions/" +
                     record['session-id'] + "'>" +
                     record['installed'] +
                     "</a></td></tr>";
         });
+
+        $("#swid-tag-count").text(data['swid-tag-count']);
+        $("#swid-newtag-count").text(newCount);
         tableBody.append(rows);
+        table.show();
         ajaxSpinner.disable();
     };
 }
 
-function AjaxSessionsLoader(from, to) {
+function AjaxSessionsLoader() {
     this.deviceId = $("#device-id").val();
-    this.fromDatepicker = from;
-    this.toDatepicker = to;
     this.updateSelect = function (data) {
         ajaxSpinner.disable();
         session_data = data.sessions;
@@ -51,8 +59,9 @@ function AjaxSessionsLoader(from, to) {
     };
 
     this.loadSessions = function () {
-        var fromTimestamp = Math.floor(this.fromDatepicker.datepicker("getDate").getTime() / 1000);
-        var toTimestamp = Math.floor(this.toDatepicker.datepicker("getDate").getTime() / 1000);
+        var fromTimestamp = parseInt(HashQuery.getHashQueryObject()['from']);
+        var toTimestamp = parseInt(HashQuery.getHashQueryObject()['to']);
+        if (!fromTimestamp || !toTimestamp) return;
         ajaxSpinner.enable();
         Dajaxice.apps.devices.sessions_for_device(this.updateSelect, {
             'device_id': this.deviceId,
@@ -68,16 +77,21 @@ function setupResetButton() {
     })
 }
 
-function setupRangeShortcutsDropdown(sessionManager) {
+function setupRangeShortcutsDropdown(fromDatepicker, toDatepicker) {
     $("#calendar-shortcuts").change(function () {
-        $("#from").datepicker("setDate", $(this).val());
-        $("#to").datepicker("setDate", new Date());
-        $("#sessions").select2("val", "");
-        sessionManager.loadSessions();
-    });
+            fromDatepicker.datepicker("setDate", $(this).val());
+            toDatepicker.datepicker("setDate", new Date());
+            HashQuery.setHashKey({
+                'from': fromDatepicker.datepicker("getDate").getTime() / 1000,
+                'to': toDatepicker.datepicker("getDate").getTime() / 1000
+            }, true);
+
+            HashQuery.sendChanged('from', fromDatepicker.datepicker("getDate"));
+        }
+    );
 }
 
-function setUpSelect(tagLoader) {
+function setUpSelect() {
     var convertResultToString = function (sessionObject) {
         return sessionObject.time;
     };
@@ -99,43 +113,116 @@ function setUpSelect(tagLoader) {
         }
     );
     $("#sessions").on("select2-selecting", function (event) {
-        tagLoader.loadTags(event.val);
-    })
+        HashQuery.setHashKey({'session-id': event.val})
+    });
 }
 
-function setupDatepicker(sessionsLoader) {
-
-
-    sessionsLoader.fromDatepicker.datepicker({
+function setupDatepicker(fromDatepicker, toDatepicker) {
+    fromDatepicker.datepicker({
         defaultDate: "-1w",
         dateFormat: "dd/mm/yy",
         changeMonth: true,
         numberOfMonths: 1,
-        onClose: function (selectedDate) {
-            sessionsLoader.toDatepicker.datepicker("option", "minDate", selectedDate);
-            sessionsLoader.loadSessions();
+        onSelect: function (selectedDate) {
+            toDatepicker.datepicker("option", "minDate", selectedDate);
+            var fromTimestamp = $(this).datepicker("getDate").getTime() / 1000;
+            HashQuery.setHashKey({'from': fromTimestamp});
         }
     });
 
-    sessionsLoader.toDatepicker.datepicker({
+    toDatepicker.datepicker({
         changeMonth: true,
         dateFormat: "dd/mm/yy",
+        defaultDate: new Date(),
         numberOfMonths: 1,
-        onClose: function (selectedDate) {
-            sessionsLoader.fromDatepicker.datepicker("option", "maxDate", selectedDate);
-            sessionsLoader.loadSessions()
+        onSelect: function (selectedDate) {
+            var toTimestamp = $(this).datepicker("getDate").getTime() / 1000;
+            HashQuery.setHashKey({'to': toTimestamp});
+            fromDatepicker.datepicker("option", "maxDate", selectedDate);
         }
     });
 
-    sessionsLoader.fromDatepicker.datepicker("setDate", '-1w');
-    sessionsLoader.toDatepicker.datepicker("setDate", new Date());
+    fromDatepicker.datepicker("setDate", '-1w');
+    toDatepicker.datepicker("setDate", new Date());
+
+    $("#from-btn").click(function () {
+        fromDatepicker.datepicker("show");
+    });
+
+    $("#to-btn").click(function () {
+        toDatepicker.datepicker("show");
+    });
+
+}
+
+function loadSingleSession(fromDatepicker, toDatepicker, sessionId) {
+    Dajaxice.apps.swid.session_info(function (data) {
+
+        $("#for-session").text(data.time);
+        session_data = [
+            {"id": data.id, "time": data.time}
+        ];
+        $("#sessions").select2("val", data.id);
+        $("#num-of-sessions").text("1");
+        fromDatepicker.datepicker("setDate", null);
+        toDatepicker.datepicker("setDate", null);
+        HashQuery.sendChanged('session-id', data.id);
+
+    }, {
+        'session_id': sessionId
+    });
 }
 
 $(document).ready(function () {
-    var sessionsLoader = new AjaxSessionsLoader($("#from"), $("#to"));
+    var fromDatepicker = $("#from");
+    var toDatepicker = $("#to");
+    var sessionDropdown = $("#sessions");
+
+    $("#swid-tags").hide();
+    var sessionsLoader = new AjaxSessionsLoader();
     var tagsLoader = new AjaxTagsLoader();
-    setUpSelect(tagsLoader);
-    setupDatepicker(sessionsLoader);
-    setupRangeShortcutsDropdown(sessionsLoader);
+
+    // setup components
+    setupDatepicker(fromDatepicker, toDatepicker);
+    setUpSelect();
+    setupRangeShortcutsDropdown(fromDatepicker, toDatepicker);
     setupResetButton();
+
+    // register event listeners
+    HashQuery.addChangedListener('session-id', function (key, value) {
+        var logLink = $("#swid-log-link");
+        var old_link = logLink.prop("href").split("#")[0];
+        logLink.prop("href", old_link + "#session-id=" + value);
+
+        tagsLoader.loadTags(value);
+        var result = $.grep(session_data, function (e) {
+            return e.id == value
+        });
+
+        // session-id is not available in the sessions dropdown
+        if (!result.length) {
+            var sessionId = HashQuery.getHashQueryObject()['session-id']
+            loadSingleSession(fromDatepicker, toDatepicker, sessionId);
+        }
+        else {
+            sessionDropdown.select2("val", value);
+            var timeString = sessionDropdown.select2("data")["time"];
+            $("#for-session").text(timeString);
+        }
+    });
+
+    HashQuery.addChangedListener('from', function (key, value) {
+        sessionsLoader.loadSessions();
+    });
+
+    HashQuery.addChangedListener('to', function (key, value) {
+        sessionsLoader.loadSessions();
+    });
+
+    // view was called from session view
+    if (HashQuery.getHashQueryObject()['session-id']) {
+        var sessionId = HashQuery.getHashQueryObject()['session-id']
+        loadSingleSession(fromDatepicker, toDatepicker, sessionId);
+    }
+
 });
