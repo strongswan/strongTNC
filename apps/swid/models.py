@@ -22,8 +22,8 @@ class Tag(models.Model):
     sessions = models.ManyToManyField('core.Session', verbose_name='list of sessions')
     software_id = models.TextField(max_length=255, db_index=True,
                                    help_text='The Software ID, format: {regid}_{uniqueID} '
-                                             'e.g regid.2004-03.org.strongswan_\
-                                             fedora_19-x86_64-strongswan-5.1.2-4.fc19')
+                                             'e.g regid.2004-03.org.strongswan_'
+                                             'fedora_19-x86_64-strongswan-5.1.2-4.fc19')
 
     class Meta:
         db_table = TABLE_PREFIX + 'tags'

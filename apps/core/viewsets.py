@@ -3,12 +3,12 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from . import models
-from apps.swid import models as swid_models
 from apps.core import models as core_models
+from apps.swid import models as swid_models
+from apps.swid.utils import chunked_bulk_create
+from . import models
 from . import serializers
 
 
