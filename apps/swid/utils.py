@@ -20,7 +20,7 @@ class SwidParser(object):
     def __init__(self):
         self.tag = Tag()
         self.entities = []
-        self.file_pks = []
+        self.files = []
 
     def start(self, tag, attrib):
         """
@@ -39,7 +39,7 @@ class SwidParser(object):
             filename = attrib['name']
             d, _ = Directory.objects.get_or_create(path=dirname)
             f, _ = File.objects.get_or_create(name=filename, directory=d)
-            self.file_pks.append(f.pk)
+            self.files.append(f)
         elif clean_tag == 'Entity':
             # Store entities
             regid = attrib['regid']
@@ -60,7 +60,7 @@ class SwidParser(object):
         """
         Fired when parsing is complete.
         """
-        return self.tag, self.file_pks, self.entities
+        return self.tag, self.files, self.entities
 
 
 @transaction.atomic
@@ -86,7 +86,7 @@ def process_swid_tag(tag_xml):
     parser = etree.XMLParser(target=parser_target, ns_clean=True)
 
     # Parse XML, save tag into database
-    tag, file_pks, entities = etree.fromstring(tag_xml.encode('utf8'), parser)
+    tag, files, entities = etree.fromstring(tag_xml.encode('utf8'), parser)
     # Parse and prettify the tag before saving
     tag.swid_xml = prettify_xml(tag_xml)
     tag.save()  # We need to save before we can add many-to-many relations
@@ -101,15 +101,7 @@ def process_swid_tag(tag_xml):
 
     # SQLite does not support >999 SQL parameters per query, so we need
     # to do manual chunking.
-    block_size = 950
-    block_count = int(math.ceil(len(file_pks) / block_size))
-    tag.files = []  # Clear previously linked files first
-    for i in xrange(block_count):
-        TagFile = Tag.files.through  # The m2m intermediate model
-        TagFile.objects.bulk_create([  # Create all the intermediate objects in a single query
-                                       TagFile(tag_id=tag.pk, file_id=j)
-                                       for j in file_pks[i * block_size:(i + 1) * block_size]
-        ])
+    chunked_bulk_create(tag.files, files, 980)
 
     return tag
 
@@ -134,3 +126,22 @@ def prettify_xml(xml, xml_declaration=True):
                           pretty_print=True,
                           xml_declaration=xml_declaration,
                           encoding='UTF-8')
+
+
+def chunked_bulk_create(manager, objects, block_size):
+    """
+    Add items to a reverse FK relation in chunks.
+
+    Args:
+        manager:
+            The target model manager.
+        objects:
+            The objects to add to the target model.
+        block_size:
+            Number of objects per block.
+
+    """
+    block_count = int(math.ceil(len(objects) / block_size))
+    for i in xrange(block_count):
+        pk_slice = objects[i * block_size:(i + 1) * block_size]
+        manager.add(*pk_slice)
