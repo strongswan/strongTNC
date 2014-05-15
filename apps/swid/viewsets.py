@@ -15,3 +15,4 @@ class EntityViewSet(viewsets.ReadOnlyModelViewSet):
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.Tag
     serializer_class = serializers.TagSerializer
+    filter_fields = ('package_name', 'version', 'unique_id')
