@@ -32,6 +32,9 @@ urlpatterns += patterns('',
 urlpatterns += patterns('',
     # Warning: API URLs are not namespaced. The feature is still in the works:
     # github.com/tomchristie/django-rest-framework/pull/1143
+    #
+    # Note: If there will be a version 2 of the API in the future, versioning
+    # should probably be done via Accept-header.
     url(r'^api/', include('apps.api.urls')),
 )
 
