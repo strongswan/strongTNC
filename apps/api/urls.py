@@ -5,8 +5,8 @@ from django.conf.urls import url, patterns, include
 
 from rest_framework import routers
 
-from apps.core.viewsets import IdentityViewSet, SessionViewSet
-from apps.swid.viewsets import EntityViewSet, TagViewSet, TagAddView
+from apps.core.api_views import IdentityViewSet, SessionViewSet
+from apps.swid.api_views import EntityViewSet, TagViewSet, TagAddView
 
 
 # Create router
