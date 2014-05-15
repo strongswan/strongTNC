@@ -137,3 +137,32 @@ def test_tag_files(swidtag, filename, directories, files, filecount):
     assert File.objects.filter(name__in=files).count() == len(files)
     assert Directory.objects.filter(path__in=directories).count() == len(directories)
     assert swidtag.files.count() == filecount
+
+
+@pytest.mark.parametrize('filename', [
+    'strongswan.full.swidtag',
+])
+def test_tag_replacement(swidtag, filename):
+    with open('tests/test_tags/strongswan.full.swidtag.singleentity') as f:
+        xml = f.read()
+        tag, replaced = utils.process_swid_tag(xml)
+        assert tag.software_id == swidtag.software_id
+        assert replaced == True
+        assert len(tag.entity_set.all()) == 1
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize('filename', [
+    'strongswan.full.swidtag.notagcreator',
+    'strongswan.full.swidtag.nouniqueid',
+    'strongswan.full.swidtag.emptyuniqueid',
+    'strongswan.full.swidtag.emptyregid'
+])
+def test_invalid_tags(filename):
+    with open('tests/test_tags/invalid_tags/%s' % filename) as f:
+        xml = f.read()
+        # an invalid tag should raise an ValueError
+        with pytest.raises(ValueError):
+            tag, replaced = utils.process_swid_tag(xml)
+        assert len(Tag.objects.all()) == 0
+        assert len(Entity.objects.all()) == 0

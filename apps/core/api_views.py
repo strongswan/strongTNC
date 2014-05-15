@@ -35,7 +35,7 @@ class SessionViewSet(viewsets.ReadOnlyModelViewSet):
         found_tags = []
         missing_tags = []
 
-        # look for matching tags
+        # Look for matching tags
         for software_id in software_ids:
             try:
                 tag = swid_models.Tag.objects.get(software_id=software_id)
@@ -44,10 +44,14 @@ class SessionViewSet(viewsets.ReadOnlyModelViewSet):
                 missing_tags.append(software_id)
 
         if missing_tags:
+            # Some tags are missing
             return Response(data=missing_tags, status=status.HTTP_412_PRECONDITION_FAILED)
-
         else:
-            # all tags are available: link them with a session
-            session = core_models.Session.objects.get(pk=pk)
+            # All tags are available: link them with a session
+            try:
+                session = core_models.Session.objects.get(pk=pk)
+            except core_models.Session.DoesNotExist:
+                data = {'status': 'error', 'message': 'Session with id "%s" not found.' % pk}
+                return Response(data=data, status=status.HTTP_404_NOT_FOUND)
             chunked_bulk_create(session.tag_set, found_tags, 980)
             return Response(data=[], status=status.HTTP_200_OK)
