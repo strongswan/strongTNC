@@ -49,6 +49,5 @@ class SessionViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             # all tags are available: link them with a session
             session = core_models.Session.objects.get(pk=pk)
-            session.tag_set.add(*found_tags)
-            session.save()
+            chunked_bulk_create(session.tag_set, found_tags, 980)
             return Response(data=[], status=status.HTTP_200_OK)
