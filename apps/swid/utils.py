@@ -91,7 +91,11 @@ def process_swid_tag(tag_xml):
     parser = etree.XMLParser(target=parser_target, ns_clean=True)
 
     # Parse XML, save tag into database
-    tag, files, entities = etree.fromstring(tag_xml.encode('utf8'), parser)
+    try:
+        tag, files, entities = etree.fromstring(tag_xml.encode('utf8'), parser)
+    except KeyError as ke:
+        raise ValueError('Invalid tag: missing %s property' % ke.message)
+
     tag.swid_xml = prettify_xml(tag_xml)
 
     # Check whether tag already exists
@@ -100,30 +104,34 @@ def process_swid_tag(tag_xml):
     except Tag.DoesNotExist:
         replaced = False
     else:
+        old_tag.package_name = tag.package_name
+        old_tag.version = tag.version
+        old_tag.unique_id = tag.unique_id
         old_tag.files = files
         old_tag.swid_xml = tag.swid_xml
         tag = old_tag
-        replaced = True
         tag.entity_set.clear()
+        replaced = True
 
-    # Validate and save
+    # Validate and save tag and entity
     try:
         tag.full_clean()
+        tag.save()  # We need to save before we can add many-to-many relations
+
+        # Add entities
+        for entity, entity_role in entities:
+            entity.full_clean()
+            entity.save()
+            entity_role.tag = tag
+            entity_role.entity = entity
+            entity_role.full_clean()
+            entity_role.save()
     except ValidationError as e:
         msgs = []
         for field, errors in e.error_dict.iteritems():
             error_str = ' '.join([m for err in errors for m in err.messages])
             msgs.append('%s: %s' % (field, error_str))
         raise ValueError(' '.join(msgs))
-    tag.save()  # We need to save before we can add many-to-many relations
-
-    # Add entities
-    for entity, entity_role in entities:
-        entity_role.tag = tag
-        entity_role.entity = entity
-        entity_role.full_clean()
-        entity.save()
-        entity_role.save()
 
     # SQLite does not support >999 SQL parameters per query, so we need
     # to do manual chunking.
