@@ -72,8 +72,8 @@ def save(request):
     """
     Insert/update a product
     """
-    productID = request.POST['productId']
-    if not (productID == 'None' or re.match(r'^\d+$', productID)):
+    product_id = request.POST['productId']
+    if not (product_id == 'None' or re.match(r'^\d+$', product_id)):
         return HttpResponse(status=400)
 
     defaults = []
@@ -84,27 +84,25 @@ def save(request):
         if not re.match(r'^\d+$', default):
             return HttpResponse(status=400)
 
-    name = request.POST['name']
-    if not re.match(r'^[\S ]+$', name):
-        return HttpResponse(status=400)
-
-    if productID == 'None':
-        product = Product.objects.create(name=name)
+    if product_id == 'None':
+        name = request.POST.get('name')
+        if not re.match(r'^[\S ]+$', name):
+            return HttpResponse(status=400)
+        product_entry = Product.objects.create(name=name)
     else:
-        product = get_object_or_404(Product, pk=productID)
-        product.name = name
-        product.save()
+        product_entry = get_object_or_404(Product, pk=product_id)
+        product_entry.save()
 
     if defaults:
-        product.default_groups.clear()
+        product_entry.default_groups.clear()
         defaults = Group.objects.filter(id__in=defaults)
         for default in defaults:
-            product.default_groups.add(default)
+            product_entry.default_groups.add(default)
 
-        product.save()
+        product_entry.save()
 
     messages.success(request, _('Product saved!'))
-    return redirect('/products/%d' % product.id)
+    return redirect('/products/%d' % product_entry.id)
 
 
 @require_POST
