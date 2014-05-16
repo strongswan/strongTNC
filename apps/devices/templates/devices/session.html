@@ -49,10 +49,7 @@
                  class="btn btn-primary"
                  type="button"><i class="icon-file icon-white"></i> {% trans 'View SWID tags' %}</a>
           {% else %}
-              <a href="#" class="btn btn-primary disabled" type="button"
-                 title="{% trans 'No SWID tags measured in this session' %}"><i
-                      class="icon-file icon-white"></i> {% trans 'View SWID tags' %}
-              </a>
+              <p class="label label-info">{% trans 'No SWID tags associated' %}</p>
           {% endif %}
       </div>
 
