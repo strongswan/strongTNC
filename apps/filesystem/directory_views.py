@@ -67,25 +67,20 @@ def add(request):
 @permission_required('auth.write_access', raise_exception=True)
 def save(request):
     """
-    Insert/update view
+    Insert view
     """
-    directoryID = request.POST['directoryId']
-    if not (directoryID == 'None' or re.match(r'^\d+$', directoryID)):
+    directory_id = request.POST['directoryId']
+    if not directory_id == 'None':
         return HttpResponse(status=400)
 
     path = request.POST['path']
     if not re.match(r'^[\S]+$', path):
         return HttpResponse(status=400)
 
-    if directoryID == 'None':
-        directory = Directory.objects.create(path=path)
-    else:
-        directory = get_object_or_404(Directory, pk=directoryID)
-        directory.path = path
-        directory.save()
+    dirctory_entry = Directory.objects.create(path=path)
 
-    messages.success(request, _('Directory saved!'))
-    return redirect('/directories/%d' % directory.id)
+    messages.success(request, _('Directory created!'))
+    return redirect('/directories/%d' % dirctory_entry.id)
 
 
 @require_POST

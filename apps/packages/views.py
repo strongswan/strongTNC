@@ -70,25 +70,20 @@ def add(request):
 @permission_required('auth.write_access', raise_exception=True)
 def save(request):
     """
-    Insert/update a package
+    Insert a package
     """
-    packageID = request.POST['packageId']
-    if not (packageID == 'None' or re.match(r'^\d+$', packageID)):
+    package_id = request.POST['packageId']
+    if not (package_id == 'None'):
         return HttpResponse(status=400)
 
-    name = request.POST['name']
+    name = request.POST.get('name')
     if not re.match(r'^[\S]+$', name):
         return HttpResponse(status=400)
 
-    if packageID == 'None':
-        package = Package.objects.create(name=name)
-    else:
-        package = get_object_or_404(Package, pk=packageID)
-        package.name = name
-        package.save()
+    package_entry = Package.objects.create(name=name)
 
     messages.success(request, _('Package saved!'))
-    return redirect('/packages/%d' % package.id)
+    return redirect('/packages/%d' % package_entry.id)
 
 
 @require_POST
