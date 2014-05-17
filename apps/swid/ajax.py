@@ -5,11 +5,13 @@ import json
 
 from dajaxice.decorators import dajaxice_register
 
-from apps.swid.models import Tag
+from apps.core.decorators import ajax_login_required
 from apps.core.models import Session
+from .models import Tag
 
 
-@dajaxice_register()
+@dajaxice_register
+@ajax_login_required
 def tags_for_session(request, session_id):
     session = Session.objects.get(pk=session_id)
     installed_tags = Tag.get_installed_tags_with_time(session)

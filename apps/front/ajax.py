@@ -6,10 +6,12 @@ import json
 from django.template.loader import render_to_string
 from dajaxice.decorators import dajaxice_register
 
+from apps.core.decorators import ajax_login_required
 from . import paging as paging_functions
 
 
-@dajaxice_register()
+@dajaxice_register
+@ajax_login_required
 def paging(request, template, list_producer, stat_producer, var_name, url_name,
            current_page, page_size, filter_query, pager_id):
     """

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
+import urllib
 import pytest
+import json
 
 from django.contrib.auth import get_user_model, login as django_login
 from django.core.urlresolvers import reverse
@@ -152,3 +154,23 @@ def test_write_permission_enforced(client, strongtnc_users, url, method):
     else:
         print('Status code: %d' % response.status_code)
         assert response.status_code == 403, 'readonly-user should not have access to %s' % url
+
+
+@pytest.mark.parametrize('endpoint, payload', [
+    ('apps.filesystem.files_autocomplete', {'search_term': 'bash'}),
+    ('apps.filesystem.directories_autocomplete', {'search_term': 'bash'}),
+    ('apps.swid.tags_for_session', {'session_id': 1}),
+    ('apps.devices.sessions_for_device', {'device_id': 1, 'date_from': '', 'date_to': ''}),
+    ('apps.front.paging', {'template': '', 'list_producer': '', 'stat_producer': '', 'var_name': '',
+        'url_name': '', 'current_page': '', 'page_size': '', 'filter_query': '', 'pager_id': ''}),
+])
+def test_ajax_login_required(client, endpoint, payload):
+    url = '/dajaxice/%s/' % endpoint
+    data = {'argv': json.dumps(payload)}
+
+    response = client.post(url, data=urllib.urlencode(data),
+                           content_type='application/x-www-form-urlencoded',
+                           HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+    assert response.status_code == 200
+    assert response.content == 'DAJAXICE_EXCEPTION'

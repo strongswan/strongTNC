@@ -6,6 +6,7 @@ import json
 import calendar
 from datetime import timedelta
 
+from django.contrib.auth.models import User
 from django.utils import timezone
 
 import pytest
@@ -34,6 +35,12 @@ def ajax_request(client, endpoint, payload):
     """
     url = '/dajaxice/%s/' % endpoint
     data = {'argv': json.dumps(payload)}
+
+    # check if test user exists, in case a test calls this function twice
+    if not User.objects.filter(username='tester').count():
+        User.objects.create_user(username='tester', password='tester')
+    client.login(username='tester', password='tester')
+
     response = client.post(url, data=urllib.urlencode(data),
                            content_type='application/x-www-form-urlencoded',
                            HTTP_X_REQUESTED_WITH='XMLHttpRequest')

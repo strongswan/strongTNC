@@ -5,10 +5,12 @@ import json
 
 from dajaxice.decorators import dajaxice_register
 
+from apps.core.decorators import ajax_login_required
 from .models import File, Directory
 
 
-@dajaxice_register()
+@dajaxice_register
+@ajax_login_required
 def files_autocomplete(request, search_term):
     """
     Provides the autocomplete backend for the file dropdown in the policy view.
@@ -44,7 +46,8 @@ def files_autocomplete(request, search_term):
     return json.dumps(results)
 
 
-@dajaxice_register()
+@dajaxice_register
+@ajax_login_required
 def directories_autocomplete(request, search_term):
     """
     Provides the autocomplete backend for the directories dropdown in the policy view.
