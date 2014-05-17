@@ -155,7 +155,12 @@ var Pager = function() {
     this.addFilter = function() {
         this.$filterInput = $('.filter-input', this.$ctx);
         var $filterButton = $('.filter-button', this.$ctx);
+        var $filterClearButton = $('.filter-clear-button', this.$ctx);
         $filterButton.on('click', this.filterQuery.bind(this));
+        $filterClearButton.on('click', (function() {
+            this.$filterInput.val('');
+            this.filterQuery();
+        }).bind(this));
         this.$filterInput.on('keypress', (function(e) {
             if(e.which == 13) {
                 this.filterQuery();
