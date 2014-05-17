@@ -27,6 +27,15 @@ multiple Python installations side-by-side, inside a directory. A quickstart
 guide can be found `here
 <https://blog.dbrgn.ch/2012/9/18/virtualenv-quickstart/>`__.
 
+**Non-Python Dependencies**
+
+You need to install the following packages in order to be able to build all the
+needed Python dependencies:
+
+- python headers (Debian: ``python-dev``)
+- libxml (Debian: ``libxml2-dev``)
+- libxslt (Debian: ``libxslt-dev``)
+
 **Environment, Dependencies**
 
 First, create a virtualenv::
