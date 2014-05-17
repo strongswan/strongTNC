@@ -186,21 +186,27 @@ def save(request):
 def check(request):
     """
     Check if policy name is unique
+
+    Used for form validation with jQuery validator,
+    http://jqueryvalidation.org/remote-method/
+
+    Returns:
+    - true for valid policy name
+    - false for invalid policy name
+
     """
-    response = False
+    is_valid = False
     if request.is_ajax():
-        policy_name = request.POST['name']
-        policy_id = request.POST['policy']
-        if policy_id == 'None':
-            policy_id = ''
+        policy_name = request.POST.get('name')
+        policy_id = request.POST.get('policy')
 
         try:
-            policy = Policy.objects.get(name=policy_name)
-            response = (str(policy.id) == policy_id)
+            policy_obj = Policy.objects.get(name=policy_name)
+            is_valid = (str(policy_obj.id) == policy_id)
         except Policy.DoesNotExist:
-            response = True
+            is_valid = True
 
-    return HttpResponse(("%s" % response).lower())
+    return HttpResponse(("%s" % is_valid).lower())
 
 
 @require_POST

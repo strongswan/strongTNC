@@ -146,6 +146,39 @@ def delete(request, deviceID):
     return redirect('devices:device_list')
 
 
+@require_POST
+@login_required
+@permission_required('auth.write_access', raise_exception=True)
+def check(request):
+    """
+    Check devices for uniqueness
+
+    Used for form validation with jQuery validator,
+    http://jqueryvalidation.org/remote-method/
+
+    Returns:
+    - true for valid device name
+    - false for invalid device name
+    """
+    is_valid = False
+    if request.is_ajax():
+        product_id = request.POST.get('product')
+        product_id = int(product_id) if product_id != '' else -1
+        device_value = request.POST.get('value')
+        device_id = request.POST.get('device')
+        if device_id == 'None':
+            device_id = ''
+        device_id = int(device_id) if device_id != '' else -1
+
+        try:
+            d = Device.objects.get(value=device_value, product=product_id)
+            is_valid = (d.id == device_id)
+        except Device.DoesNotExist:
+            is_valid = True
+
+    return HttpResponse(("%s" % is_valid).lower())
+
+
 @require_GET
 @login_required
 def report(request, deviceID):

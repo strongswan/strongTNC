@@ -153,9 +153,6 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        // global variable used in validate_rules.js
-        csrftoken = '{{ csrf_token }}';
-
         $('.slct2-dropdown').select2({
             'width': 'element',
             'minimumResultsForSearch': 15
@@ -199,12 +196,28 @@
                 [0, 0]
             ]
         });
+
+        // add global validation methods.
+        // http://jqueryvalidation.org
+        // validation rules can be found in `[app]/static/js`
+        $.validator.addMethod("regex",
+            function (value, element, regexp) {
+                var re = new RegExp(regexp);
+                return this.optional(element) || re.test(value);
+            }, "Please check your input."
+        );
+
+        $.validator.addMethod("directory",
+            function (value, element) {
+                var re = new RegExp(/^\/.*/);
+                return this.optional(element) || re.test(value);
+            }, "Not a valid absolute path."
+        );
     });
 
 </script>
 {% block footer_js %}
 <script src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
-<script src="{{ STATIC_URL }}js/validate_rules.js"></script>
 <script src="{{ STATIC_URL }}js/ajax-utils.js"></script>
 <script src="{{ STATIC_URL }}js/common.js"></script>
 {% endblock %}

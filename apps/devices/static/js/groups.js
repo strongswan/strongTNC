@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    initValidation();
+
     $('#groupSaveButton').on('click', saveGroup);
     $('#addMemberButton').on('click', addMember);
     $('#removeMemberButton').on('click', removeMember);
@@ -8,8 +10,10 @@ $(document).ready(function() {
 
 function saveGroup() {
     var $groupform = $("#groupform");
+    var id = 'memberlist';
     if ($groupform.valid()) {
-        $('<input />').attr('type', 'hidden').attr('name', 'memberlist').attr('value',
+        $('#'+id).remove();
+        $('<input />').attr('type', 'hidden').attr('id',id).attr('name', id).attr('value',
             $("#member_select").find("option").map(function () {
                 return this.value;
             }).get().join()).appendTo("#groupform");
@@ -31,4 +35,40 @@ function removeMember() {
         $("#device_select").append("<option value='" + elem.value + "'>" + elem.text + "</option>")
     });
     $memberSelect.find("> option:selected").remove()
+}
+
+function initValidation() {
+    $('#groupform').validate({
+        onkeyup: false,
+        rules: {
+            'name': {
+                required: true,
+                maxlength: 255,
+                remote: {
+                    url: "/groups/check",
+                    type: "post",
+                    data: {
+                        group: function () {
+                            return $('#groupId').val();
+                        },
+                        name: function () {
+                            return $("#name").val();
+                        },
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]', '#groupform').val()
+                    }
+                }
+            }
+        },
+        messages: {
+            'name': {
+                remote: "A group with this name already exists!"
+            }
+        },
+        highlight: function (element) {
+            $(element).closest('.control-group').removeClass('success').addClass('error');
+        },
+        success: function (element) {
+            element.addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+        }
+    });
 }

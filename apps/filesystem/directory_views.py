@@ -77,7 +77,7 @@ def save(request):
     if not re.match(r'^[\S]+$', path):
         return HttpResponse(status=400)
 
-    dirctory_entry = Directory.objects.create(path=path)
+    directory_entry = Directory.objects.create(path=path)
 
     messages.success(request, _('Directory created!'))
     return redirect('filesystem:directory_detail', directory_entry.pk)
@@ -95,3 +95,32 @@ def delete(request, directoryID):
 
     messages.success(request, _('Directory deleted!'))
     return redirect('filesystem:directory_list')
+
+
+@require_POST
+@login_required
+@permission_required('auth.write_access', raise_exception=True)
+def check(request):
+    """
+    Check if directory name is unique
+
+    Used for form validation with jQuery validator,
+    http://jqueryvalidation.org/remote-method/
+
+    Returns:
+        - true for valid directory name
+        - false for invalid directory name
+
+    """
+    is_valid = False
+    if request.is_ajax():
+        directory_path = request.POST.get('path')
+        directory_id = request.POST.get('directory')
+
+        try:
+            dir_obj = Directory.objects.get(path=directory_path)
+            is_valid = (str(dir_obj.id) == directory_id)
+        except Directory.DoesNotExist:
+            is_valid = True
+
+    return HttpResponse(("%s" % is_valid).lower())

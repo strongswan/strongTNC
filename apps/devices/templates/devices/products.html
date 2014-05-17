@@ -33,8 +33,7 @@
 
             <div class="span9" id="content">
                 {% if product %}
-                    <form class="form-horizontal" method="POST" action="{% url 'devices:product_save' %}"
-                          id="productform">
+                    <form class="form-horizontal" method="POST" action="{% url 'devices:product_save' %}" id="productform">
                         {% csrf_token %}
                         <input type="hidden" id="productId" name="productId" value="{{ product.id }}"/>
                         {% if add %}
@@ -65,7 +64,8 @@
                             <label class="control-label" for="group_select">{% trans "Groups" %}</label>
 
                             <div class="controls">
-                                <select data-placeholder="Click to add a group..." id="group_select" multiple
+                                <select data-placeholder="Click to add a group..." id="group_select" name="group_select"
+                                        multiple
                                         class="slct2-dropdown" tabindex="8"
                                         rel="tooltip"
                                         title="{% trans 'Click into the field to add groups or close them to remove.' %}" {% input_editability %}>

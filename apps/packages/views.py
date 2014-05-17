@@ -92,21 +92,28 @@ def save(request):
 def check(request):
     """
     Check if package name is unique
+
+    Used for form validation with jQuery validator,
+    http://jqueryvalidation.org/remote-method/
+
+    Returns:
+    - true for valid package name
+    - false for invalid package name
     """
-    response = False
+    is_valid = False
     if request.is_ajax():
-        package_name = request.POST['name']
-        package_id = request.POST['package']
+        package_name = request.POST.get('name')
+        package_id = request.POST.get('package')
         if package_id == 'None':
             package_id = ''
 
         try:
-            package = Package.objects.get(name=package_name)
-            response = (str(package.id) == package_id)
+            package_obj = Package.objects.get(name=package_name)
+            is_valid = (str(package_obj.id) == package_id)
         except Package.DoesNotExist:
-            response = True
+            is_valid = True
 
-    return HttpResponse(("%s" % response).lower())
+    return HttpResponse(("%s" % is_valid).lower())
 
 
 @require_POST
