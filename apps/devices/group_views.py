@@ -131,21 +131,27 @@ def save(request):
 def check(request):
     """
     Check if group name is unique
+
+    Used for form validation with jQuery validator,
+    http://jqueryvalidation.org/remote-method/
+
+    Returns:
+        - true for valid group name
+        - false for invalid group name
+
     """
-    response = False
+    is_valid = False
     if request.is_ajax():
-        group_name = request.POST['name']
-        group_id = request.POST['group']
-        if group_id == 'None':
-            group_id = ''
+        group_name = request.POST.get('name')
+        group_id = request.POST.get('group')
 
         try:
-            group = Group.objects.get(name=group_name)
-            response = (str(group.id) == group_id)
+            group_obj = Group.objects.get(name=group_name)
+            is_valid = (str(group_obj.id) == group_id)
         except Group.DoesNotExist:
-            response = True
+            is_valid = True
 
-    return HttpResponse(("%s" % response).lower())
+    return HttpResponse(("%s" % is_valid).lower())
 
 
 @require_POST

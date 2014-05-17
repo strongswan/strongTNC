@@ -32,15 +32,14 @@
             <div class="span9" id="content">
                 {% if device %}
                     <h4>Device Info</h4>
-                    <form class="form-horizontal" method="POST" action="{% url 'devices:device_save' %}"
-                          id="deviceform">
+                    <form class="form-horizontal" method="POST" action="{% url 'devices:device_save' %}" id="deviceform">
                         {% csrf_token %}
 
                         <div class="control-group">
-                            <label class="control-label" for="id">{% trans "ID" %}</label>
+                            <label class="control-label" for="value">{% trans "ID" %}</label>
 
                             <div class="controls">
-                                <input type="hidden" name="deviceId" value="{{ device.id }}"/>
+                                <input type="hidden" id="deviceId" name="deviceId" value="{{ device.id }}"/>
                                 <input type="text" id="value" name="value" placeholder="{% trans 'ID' %}" rel="tooltip"
                                        title="{% trans 'Device ID' %}"
                                        value="{{ device.value }}" {% input_editability %}>
@@ -98,7 +97,8 @@
                             <label class="control-label" for="group_select2">{% trans "Groups" %}</label>
 
                             <div class="controls">
-                                <select data-placeholder="Click to add a group..." id="group_select2" multiple
+                                <select data-placeholder="Click to add a group..." id="group_select2" name="group_select2"
+                                        multiple
                                         class="slct2-dropdown" tabindex="8"
                                         rel="tooltip"
                                         title="{% trans 'Click into the field to add groups or close them to remove.' %}" {% input_editability %}>

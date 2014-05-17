@@ -14,4 +14,5 @@ urlpatterns = patterns('',
     url(r'^directories/add/?$', directory_views.add, name='directory_add'),
     url(r'^directories/save/?$', directory_views.save, name='directory_save'),
     url(r'^directories/(?P<directoryID>\d+)/delete/?$', directory_views.delete, name='directory_delete'),
+    url(r'^directories/check/?$', directory_views.check, name='directory_check'),
 )

@@ -32,8 +32,7 @@
 
             <div class="span9" id="content">
                 {% if directory %}
-                    <form class="form-horizontal" method="POST" action="{% url 'filesystem:directory_save' %}"
-                          id="directoryform">
+                    <form class="form-horizontal" method="POST" action="{% url 'filesystem:directory_save' %}" id="directoryform">
                         {% csrf_token %}
                         <input type="hidden" id="directoryId" name="directoryId" value="{{ directory.id }}"/>
                         {% if add %}
@@ -106,7 +105,7 @@
                         <div class="modal-body">
                             <h4>Warning</h4>
 
-                            <p>Are you sure to delete this file?</p>
+                            <p>Are you sure to delete this directory?</p>
                         </div>
                         <form method="POST" action="{% url 'filesystem:directory_delete' directory.pk %}"
                               id="deleteform">
@@ -121,4 +120,9 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block footer_js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/directories.js"></script>
 {% endblock %}

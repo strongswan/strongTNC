@@ -123,10 +123,12 @@ def test_login_required(client, strongtnc_users, url):
     ('/enforcements/1/delete/', 'post'),
     # Check views
     ('/groups/check/', 'post'),
+    ('/devices/check/', 'post'),
     ('/packages/check/', 'post'),
     ('/products/check/', 'post'),
     ('/policies/check/', 'post'),
     ('/enforcements/check/', 'post'),
+    ('/directories/check/', 'post'),
     # Other views
     ('/versions/1/toggle/', 'get'),
 ])

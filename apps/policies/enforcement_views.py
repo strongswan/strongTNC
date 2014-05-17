@@ -147,26 +147,32 @@ def save(request):
 def check(request):
     """
     Check enforcement for uniqueness
+
+    Used for form validation with jQuery validator,
+    http://jqueryvalidation.org/remote-method/
+
+    Returns:
+    - true for valid enforcement name
+    - false for invalid einforcement name
     """
-    response = False
+    is_valid = False
     if request.is_ajax():
-        policy_id = request.POST['policy']
+        policy_id = request.POST.get('policy')
         policy_id = int(policy_id) if policy_id != '' else -1
-        group_id = request.POST['group']
+        group_id = request.POST.get('group')
         group_id = int(group_id) if group_id != '' else -1
-        enforcement_id = request.POST['enforcement']
+        enforcement_id = request.POST.get('enforcement')
         if enforcement_id == 'None':
             enforcement_id = ''
         enforcement_id = int(enforcement_id) if enforcement_id != '' else -1
 
         try:
             e = Enforcement.objects.get(policy=policy_id, group=group_id)
-
-            response = (e.id == enforcement_id)
+            is_valid = (e.id == enforcement_id)
         except Enforcement.DoesNotExist:
-            response = True
+            is_valid = True
 
-    return HttpResponse(("%s" % response).lower())
+    return HttpResponse(("%s" % is_valid).lower())
 
 
 @require_POST

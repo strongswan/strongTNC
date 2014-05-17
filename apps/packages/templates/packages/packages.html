@@ -33,8 +33,7 @@
 
             <div class="span9" id="content">
                 {% if package %}
-                    <form class="form-horizontal" method="POST" action="{% url 'packages:package_save' %}"
-                          id="packageform">
+                    <form class="form-horizontal" method="POST" action="{% url 'packages:package_save' %}" id="packageform">
                         {% csrf_token %}
                         {% if add %}
                             <h4>{% trans 'Add new package' %}</h4>
