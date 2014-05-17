@@ -5,7 +5,6 @@ from django.utils import timezone
 
 from apps.core.models import WorkItem, Session, Identity, Result
 from apps.core.types import Action
-from apps.core.views import generate_results, purge_dead_sessions
 from apps.policies.models import Policy, Enforcement
 from apps.policies.policy_views import check_range
 from apps.devices.models import Device, Group, Product
@@ -171,48 +170,6 @@ class TncappTest(TestCase):
         meas.save()
         self.assertEqual(False, device.is_due_for(e))
 
-    def test_generate_results(self):
-
-        g = Group.objects.get(name='B1.1.1')
-        p1 = Policy.objects.get(name='bash')
-        e1 = Enforcement.objects.create(group=g, policy=p1, max_age=3)
-
-        g = Group.objects.get(name='L1.3.1')
-        p2 = Policy.objects.get(name='usrbin')
-        e2 = Enforcement.objects.create(group=g, policy=p2, max_age=2)
-
-        p3 = Policy.objects.get(name='ports')
-        e3 = Enforcement.objects.create(group=g, policy=p3, max_age=4)
-
-        device = Device.objects.get(value='def')
-        user = Identity.objects.create(data='foobar', type=5)
-        session = Session.objects.create(device=device,
-                time=timezone.now(), connection_id=123, identity=user)
-
-        WorkItem.objects.create(session=session, arg_str='asdf',
-                fail=3, noresult=0, result='OK', recommendation=1, enforcement=e1,
-                type=1)
-        WorkItem.objects.create(session=session, arg_str='blubber',
-                fail=3, noresult=0, result='FAIL', recommendation=3, enforcement=e2,
-                type=2)
-        WorkItem.objects.create(session=session, arg_str='sauce',
-                fail=3, noresult=0, result='', enforcement=e3,
-                type=2)
-
-        generate_results(session)
-
-        result = Result.objects.get(session=session, policy=p1)
-        self.assertEqual('OK', result.result)
-        self.assertEqual(1, result.recommendation)
-
-        result = Result.objects.get(session=session, policy=p2)
-        self.assertEqual('FAIL', result.result)
-        self.assertEqual(3, result.recommendation)
-
-        result = Result.objects.get(session=session, policy=p3)
-        self.assertEqual('', result.result)
-        self.assertEqual(3, result.recommendation)
-
     def test_imv_login(self):
         #This is no longer a simple test unit and dealt with in simIMV.py run
         # simIMV.run_test() to execute the test
@@ -268,31 +225,3 @@ class TncappTest(TestCase):
         self.assertEqual(False, check_range('1,2,a,4'))
         self.assertEqual(False, check_range('1-10, 25555-25000'))
         self.assertEqual(False, check_range('1-65536'))
-
-    def test_purge_dead_sessions(self):
-        device = Device.objects.get(pk=1)
-        id = Identity.objects.create(data='user', type=5)
-
-        time = timezone.now() - timedelta(days=20)
-        Session.objects.create(device=device, identity=id, time=time, connection_id=1)
-
-        time = timezone.now() - timedelta(days=7)
-        Session.objects.create(device=device, identity=id, time=time, connection_id=2)
-
-        time = timezone.now() - timedelta(days=3)
-        Session.objects.create(device=device, identity=id, time=time, connection_id=3)
-
-        time = timezone.now() - timedelta(days=10)
-        Session.objects.create(device=device, identity=id, time=time, connection_id=4,
-                recommendation=Action.BLOCK)
-
-        time = timezone.now() - timedelta(days=10)
-        Session.objects.create(device=device, identity=id, time=time, connection_id=5,
-                recommendation=Action.ALLOW)
-
-        purge_dead_sessions()
-        sessions = Session.objects.all()
-
-        self.assertEqual(3, len(sessions))
-        for session in sessions:
-            self.assertTrue(session.id in (3, 4, 5))
