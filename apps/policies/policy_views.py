@@ -177,7 +177,7 @@ def save(request):
     policy.save()
 
     messages.success(request, _('Policy saved!'))
-    return redirect('/policies/%d' % policy.id)
+    return redirect('policies:policy_detail', policy.pk)
 
 
 @require_POST
@@ -214,7 +214,7 @@ def delete(request, policyID):
     policy.delete()
 
     messages.success(request, _('Policy deleted!'))
-    return redirect('/policies')
+    return redirect('policies:policy_list')
 
 
 def normalize_ranges_whitespace(ranges):

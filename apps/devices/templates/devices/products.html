@@ -18,7 +18,7 @@
       <h4>{% trans "Product" %}
         {% if 'auth.write_access' in perms %}
         <div class="pull-right">
-          <a class="btn btn-primary btn-mini" href="/products/add"
+          <a class="btn btn-primary btn-mini" href="{% url 'devices:product_add' %}"
           value="addNew" rel="tooltip" title="add new">
             <i class="icon-plus-sign icon-white"></i>
           </a>
@@ -33,7 +33,7 @@
 
     <div class="span9" id="content">
       {% if product %}
-      <form class="form-horizontal" method="POST" action="/products/save" id="productform">
+      <form class="form-horizontal" method="POST" action="{% url 'devices:product_save' %}" id="productform">
         {% csrf_token %}
         <input type="hidden" id="productId" name="productId" value="{{ product.id }}" />
         {% if add %}
@@ -94,6 +94,7 @@
   </div><!--/row-->
 </div>
 
+{% if product.pk %}
 <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
 	<div class="modal-header">
 	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -103,7 +104,7 @@
 	  <h4>Warning</h4>
 	  <p>Are you sure to delete this product?</p>
 	</div>
-        <form method="POST" action="/products/{{ product.id }}/delete" id="deleteform">
+        <form method="POST" action="{% url 'devices:product_delete' product.id %}" id="deleteform">
           {% csrf_token %}
         </form>
         <div class="modal-footer">
@@ -111,6 +112,8 @@
           <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete product</a>
         </div>
       </div>
+{% endif %}
+
 <script type="text/javascript">
   function save_product(){
     $('<input />').attr('type', 'hidden').attr('name', 'defaultlist').attr('value',

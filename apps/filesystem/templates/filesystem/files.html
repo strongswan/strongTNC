@@ -25,7 +25,7 @@
 
     <div class="span9" id="content">
 	{% if file %}
-	<form class="form-horizontal" method="POST" action="/files/save" id="fileform">
+    <form class="form-horizontal" method="POST" action="{% url 'filesystem:file_save' %}" id="fileform">
 	  {% csrf_token %}
     <div class="row-fluid">
       <h3>{% trans 'File info:' %} {{ file.directory }}/{{ file.name }}</h3>
@@ -64,7 +64,7 @@
 	  <td title="{{h.hash}}">{{h.hash|truncatechars:40}}</td>
     {% if 'auth.write_access' in perms %}
       <td>
-        <a class="btn btn-danger btn-mini" href="/file_hashes/{{ h.id }}/delete" data-toggle="modal"><i class="icon-remove icon-white"></i></a>
+        <a class="btn btn-danger btn-mini" href="{% url 'filesystem:filehash_delete' h.pk %}" data-toggle="modal"><i class="icon-remove icon-white"></i></a>
       </td>
     {% endif %}
 	</tr>
@@ -79,6 +79,7 @@
 
 {% if 'auth.write_access' in perms %}
 
+{% if file.pk %}
 <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -88,7 +89,7 @@
     <h4>Warning</h4>
     <p>Are you sure to delete this file?</p>
   </div>
-  <form method="POST" action="/files/{{ file.id }}/delete" id="deleteform">
+  <form method="POST" action="{% url 'filesystem:file_delete' file.pk %}" id="deleteform">
     {% csrf_token %}
   </form>
   <div class="modal-footer">
@@ -96,21 +97,7 @@
     <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete file</a>
   </div>
 </div>
-
-<div id="delHashModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3 id="deleteModalLabel">Are you sure to delete this hash?</h3>
-  </div>
-  <div class="modal-body">
-    <h4>Warning</h4>
-    <p>Are you sure to delete this hash?</p>
-  </div>
-  <div class="modal-footer">
-    <a class="btn" data-dismiss="modal">Cancel</a>
-    <a class="btn btn-danger" href="/file_hashes/{{ h.id }}/delete">Delete hash</a>
-  </div>
-</div>
+{% endif %}
 
 {% endif %}
 

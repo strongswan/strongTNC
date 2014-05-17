@@ -18,7 +18,7 @@
       <h4>{% trans "Enforcement" %}
     {% if 'auth.write_access' in perms %}
 	<div class="pull-right">
-	  <a class="btn btn-primary btn-mini" href="/enforcements/add"
+      <a class="btn btn-primary btn-mini" href="{% url 'policies:enforcement_add' %}"
 	  value="addNew" rel="tooltip" title="add new">
 	    <i class="icon-plus-sign icon-white"></i>
 	  </a>
@@ -34,7 +34,7 @@
       <div class="span9" id="content">
     {% if enforcement %}
 	<h4>Enforcement Info</h4>
-  <form class="form-horizontal" method="POST" action="/enforcements/save" id="enforcementform">
+  <form class="form-horizontal" method="POST" action="{% url 'policies:enforcement_save' %}" id="enforcementform">
     {% csrf_token %}
     <input type="hidden" id="enforcementId" name="enforcementId" value="{{enforcement.id}}" />
 
@@ -120,6 +120,7 @@
   {% endif %}
   </form>
 
+{% if enforcement.pk %}
   <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -129,7 +130,7 @@
       <h4>Warning</h4>
       <p>Are you sure to delete this enforcement?</p>
     </div>
-    <form method="POST" action="/enforcements/{{ enforcement.id }}/delete" id="deleteform">
+    <form method="POST" action="{% url 'policies:enforcement_delete' enforcement.pk %}" id="deleteform">
       {% csrf_token %}
     </form>
     <div class="modal-footer">
@@ -137,6 +138,7 @@
       <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete enforcement</a>
     </div>
   </div>
+{% endif %}
 
 </div><!--content-->
 </div><!--/row-->

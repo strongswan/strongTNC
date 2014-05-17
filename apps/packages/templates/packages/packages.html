@@ -18,7 +18,7 @@
       <h4>{% trans "Package" %}
     {% if 'auth.write_access' in perms %}
 	<div class="pull-right">
-	  <a class="btn btn-primary btn-mini" href="/packages/add"
+      <a class="btn btn-primary btn-mini" href="{% url 'packages:package_add' %}"
 	  value="addNew" rel="tooltip" title="add new">
 	    <i class="icon-plus-sign icon-white"></i>
 	  </a>
@@ -33,7 +33,7 @@
 
     <div class="span9" id="content">
       {% if package %}
-      <form class="form-horizontal" method="POST" action="/packages/save" id="packageform">
+      <form class="form-horizontal" method="POST" action="{% url 'packages:package_save' %}" id="packageform">
       {% csrf_token %}
       {% if add %}
       <h4>{% trans 'Add new package' %}</h4>
@@ -111,6 +111,7 @@
       {% endif %}
       </form>
 
+{% if package.pk %}
       <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
 	<div class="modal-header">
 	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -120,7 +121,7 @@
 	  <h4>Warning</h4>
 	  <p>Are you sure to delete this package?</p>
 	</div>
-	<form method="POST" action="/packages/{{ package.id }}/delete" id="deleteform">
+    <form method="POST" action="{% url 'packages:package_delete' package.pk %}" id="deleteform">
 	  {% csrf_token %}
 	</form>
 	<div class="modal-footer">
@@ -144,6 +145,7 @@
 	  <a class="btn btn-success" onclick="packageform.submit()" >Continue</a>
 	</div>
       </div>
+{% endif %}
 
       </div><!--content-->
 	  </div><!--/row-->

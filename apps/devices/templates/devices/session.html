@@ -45,7 +45,7 @@
 
       <div>
           {% if swid_measurement %}
-              <a href="{% url 'inventory' session.device.pk %}#session-id={{ session.pk }}"
+              <a href="{% url 'swid:inventory' session.device.pk %}#session-id={{ session.pk }}"
                  class="btn btn-primary"
                  type="button"><i class="icon-file icon-white"></i> {% trans 'View SWID tags' %}</a>
           {% else %}
@@ -67,7 +67,7 @@
       <tbody>
         {% for r in results %}
         <tr>
-          <td><a href="/policies/{{ r.0.policy.id }}">{{ r.0.policy }}</a></td>
+            <td><a href="{% url 'policies:policy_detail' r.0.policy.id %}">{{ r.0.policy }}</a></td>
           <td>{{ r.1 }}</td>
           <td>{{ r.0.result }}</td>
         </tr>

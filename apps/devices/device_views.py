@@ -129,7 +129,7 @@ def save(request):
         device.save()
 
     messages.success(request, _('Device saved!'))
-    return redirect('/devices/%d' % device.id)
+    return redirect('devices:device_detail', device.pk)
 
 
 @require_POST
@@ -143,7 +143,7 @@ def delete(request, deviceID):
     device.delete()
 
     messages.success(request, _('Device deleted!'))
-    return redirect('/devices')
+    return redirect('devices:device_list')
 
 
 @require_GET
