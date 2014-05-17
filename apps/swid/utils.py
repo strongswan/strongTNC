@@ -107,7 +107,8 @@ def process_swid_tag(tag_xml):
         old_tag.package_name = tag.package_name
         old_tag.version = tag.version
         old_tag.unique_id = tag.unique_id
-        old_tag.files = files
+        old_tag.files.clear()
+        chunked_bulk_create(old_tag.files, files, 980)
         old_tag.swid_xml = tag.swid_xml
         tag = old_tag
         tag.entity_set.clear()
