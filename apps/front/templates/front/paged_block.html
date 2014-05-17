@@ -5,17 +5,17 @@
      data-var-name="{{ var_name }}"
      data-url-name="{{ url_name }}"
      data-page-size="{{ page_size }}"
-     {% if with_filter %}
+    {% if with_filter %}
      data-filter="true"
-     {% endif %}
+    {% endif %}
     >
 
     {% if with_filter %}
-    <div class="input-append">
-        <input type="text" class="filter-input input input-small" placeholder="Filter" />
-        <button class="filter-button btn"><i class="icon-search"></i></button>
-    </div>
-    <br />
+        <div class="input-append">
+            <input type="text" class="filter-input input input-small" placeholder="Filter"/>
+            <button class="filter-button btn"><i class="icon-search"></i></button>
+        </div>
+        <br/>
     {% endif %}
 
 
