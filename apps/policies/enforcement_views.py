@@ -138,7 +138,7 @@ def save(request):
         enforcement.save()
 
     messages.success(request, _('Enforcement saved!'))
-    return redirect('/enforcements/%d' % enforcement.id)
+    return redirect('policies:enforcement_detail', enforcement.pk)
 
 
 @require_POST
@@ -180,4 +180,4 @@ def delete(request, enforcementID):
     enforcement.delete()
 
     messages.success(request, _('Enforcement deleted!'))
-    return redirect('/enforcements')
+    return redirect('policies:enforcement_list')

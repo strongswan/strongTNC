@@ -14,7 +14,7 @@
   <div class="container-fluid">
     <div class="row-fluid">
       <div class="span12">
-        <form class="form-search" action="/search" method="get">
+        <form class="form-search" action="{% url 'front:search' %}" method="get">
           <input type="text" class="input search-query" name="q" value="{{ query }}" autofocus>
           <input type="submit" class="btn btn-small" value="Search">
         </form>
@@ -33,7 +33,7 @@
                 <p><small>Found <strong>{{ groups|length }}</strong> group{{ groups|pluralize }}.</small></p>
                 <ul class="unstyled">
                   {% for group in groups %}
-                  <li><a href="/groups/{{ group.id }}">{{ group }}</a></li>
+                  <li><a href="{% url 'devices:group_detail' group.pk %}">{{ group }}</a></li>
                   {% endfor %}
                 </ul>
               </div>
@@ -54,7 +54,7 @@
                 <p><small>Found <strong>{{ policies|length }}</strong> policy{{ policies|pluralize }}.</small></p>
                 <ul class="unstyled">
                   {% for policy in policies %}
-                  <li><a href="/policies/{{ policy.id }}">{{ policy }}</a></li>
+                  <li><a href="{% url 'policies:policy_detail' policy.pk %}">{{ policy }}</a></li>
                   {% endfor %}
                 </ul>
               </div>
@@ -75,7 +75,7 @@
                 <p><small>Found <strong>{{ enforcements|length }}</strong> enforcement{{ enforcements|pluralize }}.</small></p>
                 <ul class="unstyled">
                   {% for enforcement in enforcements %}
-                  <li><a href="/enforcements/{{ enforcement.id }}">{{ enforcement }}</a></li>
+                  <li><a href="{% url 'policies:enforcement_detail' enforcement.pk %}">{{ enforcement }}</a></li>
                   {% endfor %}
                 </ul>
               </div>
@@ -96,7 +96,7 @@
                 <p><small>Found <strong>{{ devices|length }}</strong> device{{ devices|pluralize }}.</small></p>
                 <ul class="unstyled">
                   {% for device in devices %}
-                  <li><a href="/devices/{{ device.id }}">{{ device }}</a></li>
+                  <li><a href="{% url 'devices:device_detail' device.pk %}">{{ device }}</a></li>
                   {% endfor %}
                 </ul>
               </div>
@@ -117,7 +117,7 @@
                 <p><small>Found <strong>{{ packages|length }}</strong> package{{ packages|pluralize }}.</small></p>
                 <ul class="unstyled">
                   {% for package in packages %}
-                  <li><a href="/packages/{{ package.id }}">{{ package }}</a></li>
+                  <li><a href="{% url 'packages:package_detail' package.pk %}">{{ package }}</a></li>
                   {% endfor %}
                 </ul>
               </div>
@@ -138,7 +138,7 @@
                 <p><small>Found <strong>{{ products|length }}</strong> product{{ products|pluralize }}.</small></p>
                 <ul class="unstyled">
                   {% for product in products %}
-                  <li><a href="/products/{{ product.id }}">{{ product }}</a></li>
+                  <li><a href="{% url 'devices:product_detail' product.pk %}">{{ product }}</a></li>
                   {% endfor %}
                 </ul>
               </div>
@@ -159,7 +159,7 @@
                 <p><small>Found <strong>{{ files|length }}</strong> file{{ files|pluralize }}.</small></p>
                 <ul class="unstyled">
                   {% for file in files %}
-                  <li><a href="/files/{{ file.id }}">{{ file }}</a></li>
+                  <li><a href="{% url 'filesystem:file_detail' file.pk %}">{{ file }}</a></li>
                   {% endfor %}
                 </ul>
               </div>

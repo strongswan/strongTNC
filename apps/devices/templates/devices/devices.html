@@ -18,7 +18,7 @@
       <h4>{% trans "Device" %}
     {% if 'auth.write_access' in perms %}
 	<div class="pull-right">
-	  <a class="btn btn-primary btn-mini" href="/devices/add"
+      <a class="btn btn-primary btn-mini" href="{% url 'devices:device_add' %}"
 	  value="addNew" rel="tooltip" title="add new">
 	    <i class="icon-plus-sign icon-white"></i>
 	  </a>
@@ -33,7 +33,7 @@
       <div class="span9" id="content">
     {% if device %}
 	<h4>Device Info</h4>
-  <form class="form-horizontal" method="POST" action="/devices/save" id="deviceform">
+  <form class="form-horizontal" method="POST" action="{% url 'devices:device_save' %}" id="deviceform">
     {% csrf_token %}
 
     <div class="control-group">
@@ -115,10 +115,10 @@
                 </div><!-- /btn-group -->
             {% endif %}
             <div class="btn-group">
-                <a href="/devices/{{ device.id }}/report" class="btn btn-primary"><i class="icon-file icon-white"></i> {%trans "View device report"%}</a>
+                <a href="{% url 'devices:device_report' device.id %}" class="btn btn-primary"><i class="icon-file icon-white"></i> {%trans "View device report"%}</a>
             </div>
             <div class="btn-group">
-                <a href="{% url 'inventory' device.id %}" class="btn btn-primary"><i class="icon-file icon-white"></i> {%trans "View SWID inventory"%}</a>
+                <a href="{% url 'swid:inventory' device.id %}" class="btn btn-primary"><i class="icon-file icon-white"></i> {%trans "View SWID inventory"%}</a>
             </div>
         {% endif %}
     </div><!-- /btn-toolbar-->
@@ -126,6 +126,7 @@
     {% endif %}
   </form>
 
+{% if device.pk %}
   <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -135,7 +136,7 @@
       <h4>Warning</h4>
       <p>If you remove this device, it will appear in the list with default settings.</p>
     </div>
-    <form method="POST" action="/devices/{{ device.id }}/delete" id="deleteform">
+    <form method="POST" action="{% url 'devices:device_delete' device.pk %}" id="deleteform">
       {% csrf_token %}
     </form>
     <div class="modal-footer">
@@ -143,6 +144,7 @@
       <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete device</a>
     </div>
   </div>
+{% endif %}
 
 </div><!--content-->
     </div><!--/row-->

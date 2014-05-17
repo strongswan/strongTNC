@@ -83,7 +83,7 @@ def save(request):
     package_entry = Package.objects.create(name=name)
 
     messages.success(request, _('Package saved!'))
-    return redirect('/packages/%d' % package_entry.id)
+    return redirect('packages:package_detail', package_entry.pk)
 
 
 @require_POST
@@ -120,7 +120,7 @@ def delete(request, packageID):
     package.delete()
 
     messages.success(request, _('Package deleted!'))
-    return redirect('/packages')
+    return redirect('packages:package_list')
 
 
 @require_GET

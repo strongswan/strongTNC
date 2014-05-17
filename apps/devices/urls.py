@@ -11,7 +11,7 @@ urlpatterns = patterns('',
 
     url(r'^devices/(?P<deviceID>\d+)/report/?$', device_views.report, name='device_report'),
 
-    url(r'^sessions/(?P<sessionID>\d+)/?$', device_views.session, name='device_session'),
+    url(r'^sessions/(?P<sessionID>\d+)/?$', device_views.session, name='session_detail'),
 
     url(r'^groups/?$', group_views.groups, name='group_list'),
     url(r'^groups/(?P<groupID>\d+)/?$', group_views.group, name='group_detail'),

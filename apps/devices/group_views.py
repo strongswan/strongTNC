@@ -5,6 +5,7 @@ import re
 
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
+from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
@@ -121,7 +122,7 @@ def save(request):
     group.save()
 
     messages.success(request, _('Group saved!'))
-    return redirect('/groups/%d' % group.id)
+    return redirect('devices:group_detail', group.pk)
 
 
 @require_POST
@@ -163,7 +164,7 @@ def delete(request, groupID):
         messages.error(request,
             _('Sorry, this is the default group and cannot be deleted'))
 
-    return redirect('/groups')
+    return redirect('devices:group_list')
 
 
 def group_tree():
@@ -187,13 +188,14 @@ def add_children(parent):
     Recursion method for group_tree()
     """
     sub = ''
+    url = reverse('devices:group_detail', args=[parent.id])
     if parent.membergroups.all():
         sub += '<dd><dl>\n'
-        sub += '<dt><a href="/groups/%d">%s</a></dt>\n' % (parent.id, parent)
+        sub += '<dt><a href="%s">%s</a></dt>\n' % (url, parent)
         for child in parent.membergroups.all():
             sub += add_children(child)
         sub += '</dl></dd>'
     else:
-        sub += '<dd><a href="/groups/%d">%s</a></dd>\n' % (parent.id, parent)
+        sub += '<dd><a href="%s">%s</a></dd>\n' % (url, parent)
 
     return sub

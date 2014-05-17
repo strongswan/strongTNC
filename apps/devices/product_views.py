@@ -102,7 +102,7 @@ def save(request):
         product_entry.save()
 
     messages.success(request, _('Product saved!'))
-    return redirect('/products/%d' % product_entry.id)
+    return redirect('devices:product_detail', product_entry.pk)
 
 
 @require_POST
@@ -139,4 +139,4 @@ def delete(request, productID):
     product.delete()
 
     messages.success(request, _('Product deleted!'))
-    return redirect('/products')
+    return redirect('devices:product_list')

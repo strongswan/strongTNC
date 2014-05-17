@@ -80,7 +80,7 @@ def save(request):
     dirctory_entry = Directory.objects.create(path=path)
 
     messages.success(request, _('Directory created!'))
-    return redirect('/directories/%d' % dirctory_entry.id)
+    return redirect('filesystem:directory_detail', directory_entry.pk)
 
 
 @require_POST
@@ -94,4 +94,4 @@ def delete(request, directoryID):
     directory.delete()
 
     messages.success(request, _('Directory deleted!'))
-    return redirect('/directories')
+    return redirect('filesystem:directory_list')

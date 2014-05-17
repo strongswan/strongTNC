@@ -64,7 +64,7 @@ def save(request):
         return HttpResponse(status=400)
 
     messages.success(request, _('File saved!'))
-    return redirect('/files/%d' % file.id)
+    return redirect('filessystem:file_detail', file.pk)
 
 
 @require_POST
@@ -78,7 +78,7 @@ def delete(request, fileID):
     file.delete()
 
     messages.success(request, _('File deleted!'))
-    return redirect('/files')
+    return redirect('filesystem:file_list')
 
 
 @require_GET
@@ -93,4 +93,4 @@ def delete_hash(request, file_hashID):
     hash.delete()
 
     messages.success(request, _('Hash deleted!'))
-    return redirect('/files/%d' % file.id)
+    return redirect('filesystem:file_detail', file.pk)

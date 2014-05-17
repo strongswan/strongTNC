@@ -44,7 +44,7 @@
                                 <td><strong>{% trans 'Regids' %}</strong></td>
                                 <td>
                                     {% for er in entityroles %}
-                                        <a href="{% url 'regid_detail' er.entity.pk %}">{{ er.entity.regid }}</a>
+                                        <a href="{% url 'swid:regid_detail' er.entity.pk %}">{{ er.entity.regid }}</a>
                                         {% if not forloop.last %}
                                             <br/>
                                         {% endif %}
@@ -83,7 +83,7 @@
                                         <a href="{% url 'devices:device_detail' device.pk %}">{{ device.description }}</a>
                                     </td>
                                     <td>
-                                        <a href="{% url 'devices:device_session' session.pk %}">{{ session.time|date:"M d G H s o" }}</a>
+                                        <a href="{% url 'devices:session_detail' session.pk %}">{{ session.time|date:"M d G H s o" }}</a>
                                     </td>
                                 </tr>
                             {% endfor %}
