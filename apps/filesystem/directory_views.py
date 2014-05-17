@@ -39,7 +39,7 @@ def directory(request, directoryID):
     context = {}
     context['title'] = _('Directories')
 
-    if directories:
+    if directory:
         context['directory'] = directory
         context['title'] = _('Directory ') + directory.path
         files = File.objects.filter(directory=directory).order_by('name')
