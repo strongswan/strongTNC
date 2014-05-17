@@ -6,10 +6,12 @@ from datetime import datetime
 
 from dajaxice.decorators import dajaxice_register
 
-from apps.devices.models import Device
+from apps.core.decorators import ajax_login_required
+from .models import Device
 
 
-@dajaxice_register()
+@dajaxice_register
+@ajax_login_required
 def sessions_for_device(request, device_id, date_from, date_to):
     dateobj_from, dateobj_to = map(datetime.utcfromtimestamp, [date_from, date_to])
     device = Device.objects.get(pk=device_id)
