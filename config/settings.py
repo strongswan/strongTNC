@@ -13,6 +13,9 @@ from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
 
 
+# Project root
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+
 # Read configuration from ini
 config = RawConfigParser()
 if os.path.exists('config/settings.ini'):
@@ -103,7 +106,14 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+try:
+    _static_root = config.get('paths', 'STATIC_ROOT')
+    if _static_root.startswith('/'):
+        STATIC_ROOT = _static_root
+    else:
+        STATIC_ROOT = os.path.join(PROJECT_ROOT, _static_root)
+except (NoSectionError, NoOptionError):
+    STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
