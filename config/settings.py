@@ -42,7 +42,8 @@ MANAGERS = ADMINS
 
 # Allowed hosts (only used in production)
 try:
-    ALLOWED_HOSTS = list(config.items('allowed hosts'))
+    _allowed_hosts = config.get('security', 'ALLOWED_HOSTS')
+    ALLOWED_HOSTS = [x for x in _allowed_hosts.replace(' ', '').split(',') if x]
 except (NoSectionError, NoOptionError):
     ALLOWED_HOSTS = []
 
@@ -144,7 +145,7 @@ STATICFILES_FINDERS = (
 
 # Make this unique, and don't share it with anybody.
 try:
-    SECRET_KEY = config.get('secrets', 'SECRET_KEY')
+    SECRET_KEY = config.get('security', 'SECRET_KEY')
 except (NoSectionError, NoOptionError):
     if DEBUG:
         SECRET_KEY = 'DEBUGGING-SECRETKEY'
