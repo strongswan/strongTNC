@@ -18,6 +18,7 @@ class Identity(models.Model):
         db_table = 'identities'
         unique_together = [('type', 'data')]
         verbose_name_plural = 'identities'
+        ordering = ('data',)
 
     def __unicode__(self):
         return self.data
@@ -42,7 +43,7 @@ class Session(models.Model):
     class Meta:
         db_table = u'sessions'
         get_latest_by = 'time'
-        ordering = ['-time']
+        ordering = ('-time',)
 
     def __unicode__(self):
         return 'Session %s by %s' % (self.pk, self.identity)

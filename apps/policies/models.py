@@ -25,6 +25,7 @@ class Policy(models.Model):
     class Meta:
         db_table = 'policies'
         verbose_name_plural = 'Policies'
+        ordering = ('name',)
 
     def __unicode__(self):
         return self.name

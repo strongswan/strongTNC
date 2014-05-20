@@ -19,6 +19,7 @@ class Product(models.Model):
 
     class Meta:
         db_table = 'products'
+        ordering = ('name',)
 
     def __unicode__(self):
         return self.name
@@ -42,6 +43,7 @@ class Device(models.Model):
 
     class Meta:
         db_table = 'devices'
+        ordering = ('description',)
 
     def __unicode__(self):
         if self.description:
@@ -140,6 +142,7 @@ class Group(models.Model):
 
     class Meta:
         db_table = 'groups'
+        ordering = ('name',)
 
     def __unicode__(self):
         return self.name

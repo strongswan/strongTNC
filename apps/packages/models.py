@@ -14,6 +14,7 @@ class Package(models.Model):
 
     class Meta:
         db_table = 'packages'
+        ordering = ('name',)
 
     def __unicode__(self):
         return self.name
@@ -39,6 +40,7 @@ class Version(models.Model):
     class Meta:
         db_table = 'versions'
         index_together = [('package', 'product')]
+        ordering = ('release',)
 
     def __unicode__(self):
         return self.release

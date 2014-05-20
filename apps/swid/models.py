@@ -27,6 +27,7 @@ class Tag(models.Model):
 
     class Meta:
         db_table = TABLE_PREFIX + 'tags'
+        ordering = ('unique_id',)
 
     def __unicode__(self):
         return self.unique_id
@@ -110,6 +111,7 @@ class Entity(models.Model):
     class Meta:
         db_table = TABLE_PREFIX + 'entities'
         verbose_name_plural = 'entities'
+        ordering = ('regid',)
 
     def __unicode__(self):
         return self.name

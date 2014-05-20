@@ -17,6 +17,7 @@ class Directory(models.Model):
     class Meta:
         db_table = 'directories'
         verbose_name_plural = 'directories'
+        ordering = ('path',)
 
     def __unicode__(self):
         return self.path
@@ -37,6 +38,7 @@ class File(models.Model):
 
     class Meta:
         db_table = 'files'
+        ordering = ('name',)
 
     def __unicode__(self):
         return '%s/%s' % (self.directory.path, self.name)
@@ -48,7 +50,7 @@ class File(models.Model):
         return '%s/%s' % (self.directory.path, self.name)
 
     @classmethod
-    def filter(cls, search_term):
+    def filter(cls, search_term, order_by=Meta.ordering):
         path_part, file_part = os.path.split(search_term)
 
         files = dirs = None
@@ -77,7 +79,10 @@ class File(models.Model):
         if dirs and files:
             resulting_files = files | cls.objects.filter(directory__in=dirs)
 
-        return resulting_files
+        try:
+            return resulting_files.order_by(*order_by)
+        except AttributeError:  # It's a plain list
+            return resulting_files
 
 
 class Algorithm(models.Model):
@@ -88,6 +93,7 @@ class Algorithm(models.Model):
 
     class Meta:
         db_table = 'algorithms'
+        ordering = ('name',)
 
     def __unicode__(self):
         return self.name
