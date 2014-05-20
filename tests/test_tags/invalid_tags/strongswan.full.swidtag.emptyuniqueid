@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SoftwareIdentity name="strongswan" uniqueId="" version="4.5.2-1.5+deb7u3" versionScheme="alphanumeric" xmlns="http://standards.iso.org/iso/19770/-2/2014/schema.xsd">
+  <Entity name="strongSwan" regid="regid.2004-03.org.strongswan" role="tagcreator"/>
+  <Entity name="HSR" regid="regid.2004-03.org.strongswan" role="publisher"/>
+  <Payload>
+    <File location="/usr/share/doc/strongswan" name="README.gz"/>
+    <File location="/usr/share/doc/strongswan" name="copyright"/>
+    <File location="/usr/share/doc/strongswan" name="changelog.Debian.gz"/>
+    <File location="/usr/share/doc/strongswan" name="CREDITS.gz"/>
+    <File location="/usr/share/doc/strongswan" name="README.Debian.gz"/>
+    <File location="/usr/share/doc/strongswan" name="NEWS.Debian.gz"/>
+    <File location="/usr/share/doc/strongswan" name="changelog.gz"/>
+  </Payload>
+</SoftwareIdentity>

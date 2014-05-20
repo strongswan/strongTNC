@@ -1,0 +1,15 @@
+{% if object_list %}
+    <table class="table table-hover">
+        <tbody>
+        {% for obj in object_list %}
+            <tr>
+                <td><a href="{% url url_name obj.pk %}{{ url_hash }}">{{ obj.list_repr }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>
+        <small>There are no entries.</small>
+    </p>
+{% endif %}

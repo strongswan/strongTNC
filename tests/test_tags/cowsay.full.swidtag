@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SoftwareIdentity name="cowsay" uniqueId="debian_7.4-x86_64-cowsay-3.03+dfsg1-4" version="3.03+dfsg1-4" versionScheme="alphanumeric" xmlns="http://standards.iso.org/iso/19770/-2/2014/schema.xsd">
+  <Entity name="strongSwan" regid="regid.2004-03.org.strongswan" role="tagcreator"/>
+  <Entity name="strongSwan" regid="regid.2004-03.org.strongswan" role="licensor"/>
+  <Payload>
+    <File location="/usr/games" name="cowsay"/>
+    <File location="/usr/share/man/man6" name="cowsay.6.gz"/>
+    <File location="/usr/share/cowsay/cows" name="bud-frogs.cow"/>
+    <File location="/usr/share/cowsay/cows" name="pony.cow"/>
+    <File location="/usr/share/cowsay/cows" name="calvin.cow"/>
+    <File location="/usr/share/cowsay/cows" name="sodomized-sheep.cow"/>
+    <File location="/usr/share/cowsay/cows" name="vader-koala.cow"/>
+    <File location="/usr/share/cowsay/cows" name="cower.cow"/>
+    <File location="/usr/share/cowsay/cows" name="stimpy.cow"/>
+    <File location="/usr/share/cowsay/cows" name="luke-koala.cow"/>
+    <File location="/usr/share/cowsay/cows" name="moofasa.cow"/>
+    <File location="/usr/share/cowsay/cows" name="default.cow"/>
+    <File location="/usr/share/cowsay/cows" name="koala.cow"/>
+    <File location="/usr/share/cowsay/cows" name="unipony-smaller.cow"/>
+    <File location="/usr/share/cowsay/cows" name="stegosaurus.cow"/>
+    <File location="/usr/share/cowsay/cows" name="hellokitty.cow"/>
+    <File location="/usr/share/cowsay/cows" name="pony-smaller.cow"/>
+    <File location="/usr/share/cowsay/cows" name="mech-and-cow.cow"/>
+    <File location="/usr/share/cowsay/cows" name="duck.cow"/>
+    <File location="/usr/share/cowsay/cows" name="dragon-and-cow.cow"/>
+    <File location="/usr/share/cowsay/cows" name="elephant.cow"/>
+    <File location="/usr/share/cowsay/cows" name="flaming-sheep.cow"/>
+    <File location="/usr/share/cowsay/cows" name="eyes.cow"/>
+    <File location="/usr/share/cowsay/cows" name="sheep.cow"/>
+    <File location="/usr/share/cowsay/cows" name="milk.cow"/>
+    <File location="/usr/share/cowsay/cows" name="suse.cow"/>
+    <File location="/usr/share/cowsay/cows" name="cock.cow"/>
+    <File location="/usr/share/cowsay/cows" name="bong.cow"/>
+    <File location="/usr/share/cowsay/cows" name="cheese.cow"/>
+    <File location="/usr/share/cowsay/cows" name="elephant-in-snake.cow"/>
+    <File location="/usr/share/cowsay/cows" name="kitty.cow"/>
+    <File location="/usr/share/cowsay/cows" name="kosh.cow"/>
+    <File location="/usr/share/cowsay/cows" name="apt.cow"/>
+    <File location="/usr/share/cowsay/cows" name="vader.cow"/>
+    <File location="/usr/share/cowsay/cows" name="beavis.zen.cow"/>
+    <File location="/usr/share/cowsay/cows" name="turtle.cow"/>
+    <File location="/usr/share/cowsay/cows" name="dragon.cow"/>
+    <File location="/usr/share/cowsay/cows" name="bunny.cow"/>
+    <File location="/usr/share/cowsay/cows" name="skeleton.cow"/>
+    <File location="/usr/share/cowsay/cows" name="moose.cow"/>
+    <File location="/usr/share/cowsay/cows" name="ghostbusters.cow"/>
+    <File location="/usr/share/cowsay/cows" name="kiss.cow"/>
+    <File location="/usr/share/cowsay/cows" name="head-in.cow"/>
+    <File location="/usr/share/cowsay/cows" name="daemon.cow"/>
+    <File location="/usr/share/cowsay/cows" name="snowman.cow"/>
+    <File location="/usr/share/cowsay/cows" name="ren.cow"/>
+    <File location="/usr/share/cowsay/cows" name="meow.cow"/>
+    <File location="/usr/share/cowsay/cows" name="unipony.cow"/>
+    <File location="/usr/share/cowsay/cows" name="turkey.cow"/>
+    <File location="/usr/share/cowsay/cows" name="gnu.cow"/>
+    <File location="/usr/share/cowsay/cows" name="mutilated.cow"/>
+    <File location="/usr/share/cowsay/cows" name="tux.cow"/>
+    <File location="/usr/share/cowsay/cows" name="www.cow"/>
+    <File location="/usr/share/cowsay/cows" name="three-eyes.cow"/>
+    <File location="/usr/share/doc/cowsay/examples" name="cowsay_random"/>
+    <File location="/usr/share/doc/cowsay" name="README"/>
+    <File location="/usr/share/doc/cowsay" name="copyright"/>
+    <File location="/usr/share/doc/cowsay" name="changelog.Debian.gz"/>
+    <File location="/usr/share/doc/cowsay" name="changelog.gz"/>
+    <File location="/usr/games" name="cowthink"/>
+    <File location="/usr/share/man/man6" name="cowthink.6.gz"/>
+  </Payload>
+</SoftwareIdentity>
