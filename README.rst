@@ -62,10 +62,12 @@ Set the default passwords::
 
     ./manage.py setpassword
     
-In order to use the /admin view, create a superuser account:
+In order to use the /admin view, create a superuser account::
+
     ./manage.py createsuperuser --database meta
     
-Change the passwort of a user:
+Change the passwort of a user::
+
     ./manage.py changepassword admin-user --database meta
 
 **Development**
