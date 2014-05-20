@@ -4,7 +4,7 @@ pytz==2014.2
 dj-database-url==0.3.0
 
 # AJAX
-django-dajaxice-ng==0.5.6.5
+django-dajaxice==0.6
 
 # Parsing
 lxml==3.3.5
