@@ -1,6 +1,7 @@
 {% extends "front/base.html" %}
 
 {% load i18n %}
+{% load paged_block %}
 {% block title %}{{ title }}{% endblock %}
 
 {% block hero %}
@@ -19,11 +20,11 @@
                         <tbody>
                         <tr>
                             <td><strong>{% trans 'ID' %}</strong></td>
-                            <td>{{ device.value }}</td>
+                            <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.value }}</a></td>
                         </tr>
                         <tr>
                             <td><strong>{% trans 'Description' %}</strong></td>
-                            <td>{{ device.description }}</td>
+                            <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.description }}</a></td>
                         </tr>
                         <tr>
                             <td><strong>{% trans 'Last user' %}</strong></td>
@@ -31,7 +32,12 @@
                         </tr>
                         <tr>
                             <td><strong>{% trans 'Last session' %}</strong></td>
-                            <td>{{ last_session|date:'M d H:i:s Y' }}</td>
+                            <td>{% if last_session %}
+                                    {{ last_session|date:'M d H:i:s Y' }}
+                                {% else %}
+                                    {% trans 'None' %}
+                                {% endif %}
+                                </td>
                         </tr>
                         <tr>
                             <td><strong>{% trans 'Last assessment' %}</strong></td>
@@ -99,28 +105,11 @@
                 </table>
             {% endif %}
 
-            {% if sessions %}
-                <hr>
-                <h4>{% trans 'Last 50 Sessions' %}</h4>
-                <table class="table table-striped sortable" data-sortlist="[[0,1]]">
-                    <thead>
-                    <tr>
-                        <th class="sorter-strongTNCDate">{% trans "Time" %}</th>
-                        <th>{% trans "Result" %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for s in sessions %}
-                        <tr>
-                            <td><a
-                                href="{% url 'devices:session_detail' s.0.pk %}">{{ s.0.time|date:'M d H:i:s Y' }}</a>
-                            </td>
-                            <td>{{ s.1 }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
+
+            <hr>
+            <h4>{% trans 'Sessions' %}</h4>
+            {% paged_block config_name="device_session_list_config" producer_args=paging_args %}
+
         </div>
     </div>
 {% endblock %}

@@ -1,0 +1,23 @@
+{% load i18n %}
+{% if sessions.count %}
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>{% trans "Time" %}</th>
+        <th>{% trans "Result" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for s in sessions %}
+        <tr>
+            <td><a
+                href="{% url url_name s.pk %}">{{ s.time|date:'M d H:i:s Y' }}</a>
+            </td>
+            <td>{{ s.get_recommendation_display }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>{% trans 'No sessions reported for this device.' %}</p>
+{% endif %}

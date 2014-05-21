@@ -185,42 +185,36 @@ def report(request, deviceID):
     """
     Generate device report for given device
     """
-    device = get_object_or_404(Device, pk=deviceID)
+    current_device = get_object_or_404(Device, pk=deviceID)
 
     context = {}
-    context['device'] = device
-    context['title'] = _('Report for ') + str(device)
+    context['device'] = current_device
+    context['title'] = _('Report for ') + str(current_device)
+    context['paging_args'] = {'device_id': current_device.pk}
 
-    sessions = Session.objects.filter(device=device).order_by('-time')
-    context['session_count'] = len(sessions)
-    context['definition_set'] = list(device.groups.all())
-    context['inherit_set'] = list(device.get_inherit_set())
+    context['session_count'] = Session.objects.filter(device=current_device).count()
+    context['definition_set'] = list(current_device.groups.all())
+    context['inherit_set'] = list(current_device.get_inherit_set())
 
     if context['session_count'] > 0:
-        context['sessions'] = []
-        for session in sessions[:50]:
-            context['sessions'].append((session,
-                Policy.action[session.recommendation]))
-
-        session = sessions.latest('time')
-        context['last_session'] = session.time
-        context['last_user'] = session.identity.data
-        context['last_result'] = Policy.action[session.recommendation]
+        latest_session = Session.objects.latest('time')
+        context['last_session'] = latest_session.time
+        context['last_user'] = latest_session.identity.data
+        context['last_result'] = latest_session.get_recommendation_display()
     else:
-        context['last_session'] = _('Never')
-        context['last_user'] = _('No one')
-        context['last_result'] = _('N/A')
+        context['last_session'] = False
+        context['last_user'] = _('None')
+        context['last_result'] = _('None')
 
     enforcements = []
     for group in context['definition_set'] + context['inherit_set']:
         for e in group.enforcements.all():
             try:
-                result = Result.objects.filter(
-                        session__device=device, policy=e.policy).latest()
-                enforcements.append((e, Policy.action[result.recommendation],
-                    device.is_due_for(e)))
+                result = Result.objects.filter(session__device=current_device, policy=e.policy).latest()
+                enforcements.append((e, result.get_recommendation_display(),
+                    current_device.is_due_for(e)))
             except Result.DoesNotExist:
-                enforcements.append((e, _('N/A'), True))
+                enforcements.append((e, _('None'), True))
 
     context['enforcements'] = enforcements
 

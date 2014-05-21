@@ -90,7 +90,7 @@ class Result(models.Model):
     session = models.ForeignKey(Session, db_column='session', related_name='results')
     policy = models.ForeignKey('policies.Policy', db_column='policy', related_name='results')
     result = models.TextField()
-    recommendation = models.IntegerField(db_column='rec')
+    recommendation = models.IntegerField(db_column='rec', choices=types.ACTION_CHOICES)
 
     class Meta:
         db_table = 'results'
