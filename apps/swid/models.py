@@ -13,7 +13,7 @@ TABLE_PREFIX = 'swid_'
 class Tag(models.Model):
     package_name = models.CharField(max_length=255, db_index=True,
                                     help_text='The name of the software, e.g. "strongswan"')
-    version = models.CharField(max_length=32,
+    version = models.CharField(max_length=255,
                                help_text='The version of the software, e.g. "5.1.2-4.fc19"')
     unique_id = models.CharField(max_length=255, db_index=True,
                                  help_text='The uniqueID, e.g. "fedora_19-x86_64-strongswan-5.1.2-4.fc19"')
