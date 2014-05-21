@@ -109,7 +109,7 @@ class FileHash(models.Model):
     """
     A file hash.
     """
-    file = models.ForeignKey(File, db_column='file')
+    file = models.ForeignKey(File, on_delete=models.CASCADE, db_column='file')
     product = models.ForeignKey('devices.Product', db_column='product')
     device = models.IntegerField(null=False, default=0)  # TODO convert to nullable(?) FK
     algorithm = models.ForeignKey(Algorithm, db_column='algo', on_delete=models.PROTECT)

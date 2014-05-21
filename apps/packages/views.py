@@ -40,13 +40,14 @@ def package(request, packageID):
 
     context = {}
     context['title'] = _('Packages')
-    context['count'] = Package.objects.count()
 
     if package:
         context['package'] = package
         versions = package.versions.all().order_by('release')
         context['versions'] = versions
         context['title'] = _('Package ') + package.name
+        if versions.count():
+            context['has_dependencies'] = True
 
     return render(request, 'packages/packages.html', context)
 

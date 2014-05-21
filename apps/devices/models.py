@@ -160,3 +160,13 @@ class Group(models.Model):
         if not self.parent:
             return []
         return [self.parent] + self.parent.get_parents()
+
+    def get_children(self):
+        """
+        Recursively get all child groups.
+        """
+        result = list(Group.objects.filter(parent=self))
+        for child in result:
+            result += list(child.get_children())
+
+        return result

@@ -175,29 +175,6 @@ class TncappTest(TestCase):
         # simIMV.run_test() to execute the test
         pass
 
-    def test_policy_file_protection(self):
-        file = File.objects.get(name='bash')
-
-        policy = Policy.objects.create(name='binbash', type=1, argument='%d' % file.id,
-                file=file, fail=Action.BLOCK, noresult=Action.ALLOW)
-
-        from django.db.models.deletion import ProtectedError
-        self.assertRaises(ProtectedError, file.delete)
-        policy.delete()
-        file.delete()
-
-    def test_policy_dir_protection(self):
-        dir = Directory.objects.get(path='/bin')
-
-        policy = Policy.objects.create(name='binhashes', type=2,
-                argument='%d' % dir.id, dir=dir, fail=Action.BLOCK,
-                noresult=Action.ALLOW)
-
-        from django.db.models.deletion import ProtectedError
-        self.assertRaises(ProtectedError, dir.delete)
-        policy.delete()
-        dir.delete()
-
     def test_check_range(self):
         self.assertEqual(True, check_range('1'))
         self.assertEqual(True, check_range('65535'))

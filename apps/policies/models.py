@@ -17,10 +17,9 @@ class Policy(models.Model):
     fail = models.IntegerField(db_column='rec_fail', choices=ACTION_CHOICES)
     noresult = models.IntegerField(db_column='rec_noresult', choices=ACTION_CHOICES)
     file = models.ForeignKey('filesystem.File', null=True, blank=True,
-            related_name='policies', on_delete=models.PROTECT,
-            db_column='file')
+            related_name='policies', on_delete=models.CASCADE, db_column='file')
     dir = models.ForeignKey('filesystem.Directory', null=True, blank=True,
-            related_name='policies', on_delete=models.PROTECT, db_column='dir')
+            related_name='policies', on_delete=models.CASCADE, db_column='dir')
 
     class Meta:
         db_table = 'policies'
@@ -119,7 +118,8 @@ class Enforcement(models.Model):
     """
     Rule to enforce a policy on a group.
     """
-    policy = models.ForeignKey(Policy, related_name='enforcements', db_column='policy')
+    policy = models.ForeignKey(Policy, related_name='enforcements',
+                               on_delete=models.CASCADE, db_column='policy')
     group = models.ForeignKey('devices.Group', related_name='enforcements', db_column='group_id')
     max_age = models.IntegerField()
     fail = models.IntegerField(db_column='rec_fail', null=True, blank=True,

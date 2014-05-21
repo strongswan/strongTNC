@@ -9,8 +9,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
 
 from .models import Directory, File
+from apps.policies.models import Policy, Enforcement
 
 
 @require_GET
@@ -44,6 +46,11 @@ def directory(request, directoryID):
         context['title'] = _('Directory ') + directory.path
         files = File.objects.filter(directory=directory).order_by('name')
         context['files'] = files
+        policies = Policy.objects.filter(Q(dir=directory) | Q(file__in=files))
+        if policies.count() or files.count():
+            context['has_dependencies'] = True
+            context['policies'] = policies
+            context['enforcements'] = Enforcement.objects.filter(policy__in=policies)
 
     return render(request, 'filesystem/directories.html', context)
 

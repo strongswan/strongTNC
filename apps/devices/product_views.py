@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Product, Group
+from .models import Product, Group, Device
+from apps.packages.models import Version
 
 
 @require_GET
@@ -46,6 +47,12 @@ def product(request, productID):
         groups = Group.objects.exclude(id__in=defaults.values_list('id', flat=True))
         context['groups'] = groups
         context['title'] = _('Product ') + product.name
+        devices = Device.objects.filter(product=product)
+        versions = Version.objects.filter(product=product)
+        if devices.count() or versions.count():
+            context['has_dependencies'] = True
+            context['devices'] = devices
+            context['versions'] = versions
 
     return render(request, 'devices/products.html', context)
 

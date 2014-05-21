@@ -3,6 +3,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 import re
 
+from django.db.models import Q
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.core.urlresolvers import reverse
@@ -12,6 +13,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 
 from .models import Group, Device
+from apps.policies.models import Enforcement
 
 
 @require_GET
@@ -52,6 +54,14 @@ def group(request, groupID):
 
         context['devices'] = devices
         context['title'] = _('Group ') + context['group'].name
+
+        child_groups = group.get_children()
+        enfocements = Enforcement.objects.filter(Q(group=group) | Q(group__in=child_groups))
+
+        if len(child_groups) or enfocements.count():
+            context['has_dependencies'] = True
+            context['enforcements'] = enfocements
+            context['child_groups'] = child_groups
 
     return render(request, 'devices/groups.html', context)
 

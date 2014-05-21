@@ -213,6 +213,22 @@
                 return this.optional(element) || re.test(value);
             }, "Not a valid absolute path."
         );
+
+        // checkbox in the save-delete modal
+        $('#sure').click(function() {
+            var $this = $(this);
+            var $deleteButton = $('#deleteButton');
+            if ($this.is(':checked')) {
+                $deleteButton.attr('disabled', false);
+                $deleteButton.on('click', function() {
+                    deleteform.submit();
+                });
+            } else {
+                $deleteButton.attr('disabled', true);
+                $deleteButton.off('click');
+            }
+        });
+
     });
 
 </script>

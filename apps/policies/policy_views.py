@@ -43,8 +43,6 @@ def policy(request, policyID):
 
     if policy:
         context['policy'] = policy
-        enforcements = policy.enforcements.all().order_by('id')
-        context['enforcements'] = enforcements
         context['types'] = Policy.types
         context['action'] = Policy.action
         try:
@@ -57,8 +55,11 @@ def policy(request, policyID):
         except Directory.DoesNotExist:
             pass
 
-        groups = Group.objects.exclude(id__in=enforcements.values_list('id', flat=True))
-        context['groups'] = groups
+        enforcements = policy.enforcements.all()
+        if enforcements.count():
+            context['has_dependencies'] = True
+            context['enforcements'] = enforcements
+
         context['title'] = _('Policy ') + policy.name
 
     return render(request, 'policies/policies.html', context)

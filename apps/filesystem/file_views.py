@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 
 from .models import File, FileHash
+from apps.policies.models import Policy, Enforcement
 
 
 @require_GET
@@ -44,6 +45,12 @@ def file(request, fileID):
         context['title'] = _('File ') + file.name
         file_hashes = file.filehash_set.all().order_by('product', 'algorithm')
         context['file_hashes'] = file_hashes
+
+        policies = Policy.objects.filter(file=file)
+        if file_hashes.count() or policies.count():
+            context['has_dependencies'] = True
+            context['policies'] = policies
+            context['enforcements'] = Enforcement.objects.filter(policy__in=policies)
 
     return render(request, 'filesystem/files.html', context)
 
