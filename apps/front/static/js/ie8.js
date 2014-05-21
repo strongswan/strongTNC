@@ -25,3 +25,9 @@ if (!Function.prototype.bind) {
         return fBound;
     };
 }
+
+/******
+ * Add hasOwnProperty to window object for IE8
+ * for .bind()
+ *******/
+window.hasOwnProperty = window.hasOwnProperty || Object.prototype.hasOwnProperty;
