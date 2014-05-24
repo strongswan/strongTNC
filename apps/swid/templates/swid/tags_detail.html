@@ -83,7 +83,7 @@
                                         <a href="{% url 'devices:device_detail' device.pk %}">{{ device.description }}</a>
                                     </td>
                                     <td>
-                                        <a href="{% url 'devices:session_detail' session.pk %}">{{ session.time|date:"M d G H s o" }}</a>
+                                        <a href="{% url 'devices:session_detail' session.pk %}">{{ session.time|date:"M d H:i:s Y" }}</a>
                                     </td>
                                 </tr>
                             {% endfor %}
