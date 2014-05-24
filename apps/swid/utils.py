@@ -47,7 +47,8 @@ class SwidParser(object):
             name = attrib['name']
             role = attrib['role']
             entity_role = EntityRole()
-            entity, _ = Entity.objects.get_or_create(regid=regid, name=name)
+            entity, _ = Entity.objects.get_or_create(regid=regid)
+            entity.name = name
             role = EntityRole.xml_attr_to_choice(role)
 
             entity_role.role = role
