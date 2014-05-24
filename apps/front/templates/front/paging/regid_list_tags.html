@@ -11,7 +11,17 @@
         {% for obj in object_list %}
             <tr>
                 <td><a href="{% url url_name obj.pk %}{{ url_hash }}">{{ obj.list_repr }}</a></td>
-                <td>{{ obj.package_name }}</td>
+                <td>
+                    {% if obj.get_matching_packages %}
+                        <a href="{% url 'packages:package_detail' obj.get_matching_packages.0.pk %}">
+                            {{ obj.package_name }}
+                        </a>
+                    {% else %}
+                        <span title="{% trans 'No matching package found' %}">
+                            {{ obj.package_name }}
+                        </span>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
         </tbody>

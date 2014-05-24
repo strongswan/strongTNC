@@ -19,7 +19,18 @@
                             <tbody>
                             <tr>
                                 <td><strong>{% trans 'Name' %}</strong></td>
-                                <td>{{ object.package_name }}</td>
+                                <td>
+                                    {% if object.get_matching_packages %}
+                                        <a href="{% url 'packages:package_detail' object.get_matching_packages.0.pk %}">
+                                            {{ object.package_name }}
+                                        </a>
+                                    {% else %}
+                                        {{ object.package_name }}
+                                        <a title="{% trans 'No matching package found' %}"
+                                           data-toggle="tooltip" href="#">
+                                            <i class="icon-info-sign"></i></a>
+                                    {% endif %}
+                                </td>
                             </tr>
                             <tr>
                                 <td><strong>{% trans 'Version' %}</strong></td>

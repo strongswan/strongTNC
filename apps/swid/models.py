@@ -3,6 +3,8 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 from django.db import models
 
+from apps.packages.models import Package
+
 
 TABLE_PREFIX = 'swid_'
 
@@ -67,6 +69,9 @@ class Tag(models.Model):
         for session in self.sessions.order_by('-time'):
             devices_dict[session.device] = session
         return devices_dict
+
+    def get_matching_packages(self):
+        return Package.objects.filter(name=self.package_name)
 
 
 class EntityRole(models.Model):
