@@ -65,7 +65,7 @@
                                 <select id="product" class="slct2-dropdown" name="product"
                                         rel="tooltip" title="{% trans 'Device product (operating system)' %}"
                                     {% input_editability %}>
-                                    <option value="">{% trans "Select one..." %}</option>
+                                    <option value="">{% trans "Choose product" %}</option>
                                     {% for p in products %}
                                         <option value="{{ p.id }}"
                                             {% if p.id == device.product.id %}

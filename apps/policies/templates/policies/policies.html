@@ -54,7 +54,7 @@
                             <div class="controls">
                                 <select id="type" name="type" class="slct2-dropdown" rel="tooltip"
                                         title="{% trans 'Policy Type' %}" {% input_editability %}>
-                                    <option value="-1">{% trans 'Select one...' %}</option>
+                                    <option value="-1">{% trans 'Choose type' %}</option>
                                     {% for t in types %}
                                         <option value="{{ forloop.counter0 }}"
                                             {% if policy.type == forloop.counter0 %}
@@ -69,6 +69,7 @@
 
                             <div class="controls">
                                 <input type="hidden" id="file" name="file" class="slct2-autocomplete"
+                                       placeholder="{% trans 'Choose file' %}"
                                        value="{% if file %}{{ file.id }}{% endif %}" {% input_editability %} />
                             </div>
                         </div>
@@ -80,6 +81,7 @@
                                 <input type="hidden" id="dir" name="dir" class="slct2-autocomplete"
                                        value="{% if dir %}{{ dir.id }}{% endif %}"
                                        rel="tooltip"
+                                       placeholder="{% trans 'Choose directory' %}"
                                        title="{% trans 'Directory to check' %}"
                                     {% input_editability %} />
                             </div>
@@ -159,7 +161,7 @@
                             <div class="controls">
                                 <select id="fail" name="fail" class="slct2-dropdown" rel="tooltip"
                                         title="{% trans 'Recommendation when a client does not meet the policy requirement' %}" {% input_editability %}>
-                                    <option value="">{% trans 'Select one...' %}</option>
+                                    <option value="">{% trans 'Choose action' %}</option>
                                     {% for a in action %}
                                         <option value="{{ forloop.counter0 }}"
                                             {% if policy.fail == forloop.counter0 %}
@@ -176,7 +178,7 @@
                             <div class="controls">
                                 <select id="noresult" name="noresult" class="slct2-dropdown" rel="tooltip"
                                         title="{% trans 'Recommendation when the policy does not apply to the client' %}" {% input_editability %}>
-                                    <option value="">{% trans 'Select one...' %}</option>
+                                    <option value="">{% trans 'Choose action' %}</option>
                                     {% for a in action %}
                                         <option value="{{ forloop.counter0 }}"
                                             {% if policy.noresult == forloop.counter0 %}

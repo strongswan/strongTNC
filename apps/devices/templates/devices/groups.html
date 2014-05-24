@@ -48,7 +48,7 @@
                             <div class="controls">
                                 <select name="parent" id="parent" class="slct2-dropdown" rel="tooltip"
                                         title="select a parental group" {% input_editability %}>
-                                    <option value="">Select one...</option>
+                                    <option value="">{% trans 'None' %}</option>
                                     {% for g in groups %}
                                         {% if group.id != g.id %}
                                             <option value={{ g.id }}
