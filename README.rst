@@ -27,6 +27,17 @@ multiple Python installations side-by-side, inside a directory. A quickstart
 guide can be found `here
 <https://blog.dbrgn.ch/2012/9/18/virtualenv-quickstart/>`__.
 
+**Non-Python Dependencies**
+
+You need to install the following packages in order to be able to build all the
+needed Python dependencies:
+
+- python headers (Debian: ``python-dev``)
+- libxml (Debian: ``libxml2-dev``)
+- libxslt (Debian: ``libxslt-dev``)
+
+**Environment, Dependencies**
+
 First, create a virtualenv::
 
     cd /path/to/strongTNC/
@@ -37,14 +48,29 @@ Then install the dependencies::
 
     pip install -r requirements.txt
 
+**Configuration**
+
 Create a local `settings.ini` file::
 
     cp config/settings.sample.ini config/settings.ini
     $EDITOR config/settings.ini
 
+If this is not a production setup, change the ``DEBUG`` setting in
+``settings.ini`` from 0 to 1.
+
 Set the default passwords::
 
     ./manage.py setpassword
+    
+If you want to use the Django-Admin view (``/admin``), create a superuser account::
+
+    ./manage.py createsuperuser --database meta
+    
+In case you want to change the password of a user::
+
+    ./manage.py changepassword admin-user --database meta
+
+**Development**
 
 Now you can start the development server. ::
 
@@ -56,7 +82,7 @@ If you want to use the django debug toolbar, install it via pip::
 
     pip install django-debug-toolbar
 
-Then start the server with the setting ``DEBUG_TOOLBAR=1`` (in
+Then start the server with the setting ``DEBUG_TOOLBAR = 1`` (in
 ``settings.ini``).
 
 
@@ -71,6 +97,10 @@ Run the tests::
 
     ./runtests.py
 
+Setup a database with test data::
+
+    $ ./manage.py shell
+    >>> execfile('tests/create_test_db.py')
 
 License
 -------

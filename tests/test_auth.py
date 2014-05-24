@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
+import urllib
 import pytest
+import json
 
 from django.contrib.auth import get_user_model, login as django_login
 from django.core.urlresolvers import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 
-from tncapp.permissions import GlobalPermission
+from apps.auth.permissions import GlobalPermission
 
 
 @pytest.fixture
@@ -57,7 +59,7 @@ def test_login(client, strongtnc_users, test_user, username, password, success):
     """
     Test whether valid logins succeed and invalid logins fail.
     """
-    url = reverse('login')
+    url = reverse('auth:login')
     data = {'access_level': username, 'password': password}
     response = client.post(url, data=data)
     if success is True:
@@ -68,12 +70,34 @@ def test_login(client, strongtnc_users, test_user, username, password, success):
         assert response.status_code == 200, msg
 
 
+@pytest.mark.parametrize('url', [
+    # SWID views
+    '/regids/',
+    '/regids/1/',
+    '/swid-tags/',
+    '/swid-tags/1/',
+])
+def test_login_required(client, strongtnc_users, url):
+    # Test as anonymous
+    response = client.get(url)
+    assert response.status_code == 302, 'Unauthenticated user should not have access to %s' % url
+
+    # Test as readonly
+    client.login(username='readonly-user', password='readonly')
+    response = client.get(url)
+    assert response.status_code != 302, 'Readonly user should have access to %s' % url
+
+    # Test as admin
+    client.login(username='admin-user', password='admin')
+    response = client.get(url)
+    assert response.status_code != 302, 'Admin user should have access to %s' % url
+
+
 @pytest.mark.parametrize('url, method', [
     # Add views
     ('/groups/add/', 'get'),
     ('/devices/add/', 'get'),
     ('/directories/add/', 'get'),
-    ('/regids/add/', 'get'),
     ('/packages/add/', 'get'),
     ('/products/add/', 'get'),
     ('/policies/add/', 'get'),
@@ -83,8 +107,6 @@ def test_login(client, strongtnc_users, test_user, username, password, success):
     ('/devices/save/', 'post'),
     ('/directories/save/', 'post'),
     ('/files/save/', 'post'),
-    ('/regids/save/', 'post'),
-    ('/tags/save/', 'post'),
     ('/packages/save/', 'post'),
     ('/products/save/', 'post'),
     ('/policies/save/', 'post'),
@@ -95,22 +117,22 @@ def test_login(client, strongtnc_users, test_user, username, password, success):
     ('/directories/1/delete/', 'post'),
     ('/files/1/delete/', 'post'),
     ('/file_hashes/1/delete/', 'get'),
-    ('/regids/1/delete/', 'post'),
-    ('/tags/1/delete/', 'post'),
     ('/packages/1/delete/', 'post'),
     ('/products/1/delete/', 'post'),
     ('/policies/1/delete/', 'post'),
     ('/enforcements/1/delete/', 'post'),
     # Check views
     ('/groups/check/', 'post'),
+    ('/devices/check/', 'post'),
     ('/packages/check/', 'post'),
     ('/products/check/', 'post'),
     ('/policies/check/', 'post'),
     ('/enforcements/check/', 'post'),
+    ('/directories/check/', 'post'),
     # Other views
     ('/versions/1/toggle/', 'get'),
 ])
-def test_permission_enforced(client, strongtnc_users, url, method):
+def test_write_permission_enforced(client, strongtnc_users, url, method):
     do_request = getattr(client, method)
 
     # Test as admin
@@ -134,3 +156,23 @@ def test_permission_enforced(client, strongtnc_users, url, method):
     else:
         print('Status code: %d' % response.status_code)
         assert response.status_code == 403, 'readonly-user should not have access to %s' % url
+
+
+@pytest.mark.parametrize('endpoint, payload', [
+    ('apps.filesystem.files_autocomplete', {'search_term': 'bash'}),
+    ('apps.filesystem.directories_autocomplete', {'search_term': 'bash'}),
+    ('apps.swid.tags_for_session', {'session_id': 1}),
+    ('apps.devices.sessions_for_device', {'device_id': 1, 'date_from': '', 'date_to': ''}),
+    ('apps.front.paging', {'template': '', 'list_producer': '', 'stat_producer': '', 'var_name': '',
+        'url_name': '', 'current_page': '', 'page_size': '', 'filter_query': '', 'pager_id': ''}),
+])
+def test_ajax_login_required(client, endpoint, payload):
+    url = '/dajaxice/%s/' % endpoint
+    data = {'argv': json.dumps(payload)}
+
+    response = client.post(url, data=urllib.urlencode(data),
+                           content_type='application/x-www-form-urlencoded',
+                           HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+    assert response.status_code == 200
+    assert response.content == 'DAJAXICE_EXCEPTION'

@@ -1,0 +1,259 @@
+{% extends "front/base.html" %}
+
+{% load i18n %}
+{% block title %}{% trans "Overview" %}{% endblock %}
+
+{% block hero %}
+    <h1>{% trans "Welcome to strongTNC!" %}</h1>
+    <p class="lead">
+        strongTNC is a Trusted Network Connect (TNC) extension for the strongSwan VPN solution. It allows
+        the definition and enforcement of TNC policies that apply to all VPN clients and must be fulfilled with each
+        connection attempt.
+    </p>
+{% endblock %}
+
+{% block content %}
+    <div class="span8">
+        <div class="page-header">
+            <h2>Getting started</h2>
+        </div>
+        <p>
+            strongSwan VPN Clients <strong>(Clients)</strong> can be assigned to groups, according as operating system,
+            company structure
+            or individual preferences of the administrator. There can be rules <strong>(Policies)</strong> defined like
+            all available
+            operating system updates have to be installed on the client or certain applications must not be installed on
+            the client. Thus,
+            these policies can be applied/enforced on the groups <strong>(Enforcements)</strong> which gets checked by
+            <strong>strongTNC</strong>
+            when the client
+            starts a connection attempt.
+        </p>
+        <ul class="thumbnails">
+            <li class="span4">
+                <a class="thumbnail" id="overview" href="#" data-toggle="modal" data-target="#overviewModal">
+                    <div class="label">
+                        <p>Overview</p>
+                    </div>
+                    <img src="{{ STATIC_URL }}img/overview.png" alt="Overview">
+                </a>
+            </li>
+        </ul>
+
+        <h3>1. Set up groups</h3>
+
+        <p>
+            A group <i class="icon-user"></i> is defined by his name and can have a parental group. A client that has a
+            membership of a group is
+            automatically a member in all parental groups of the group.
+        </p>
+
+        <p>
+            To create a new group click the add button.
+            <a class="btn btn-primary btn-mini" rel="tooltip" title="add new"><i class="icon-plus-sign icon-white"></i></a>
+        </p>
+
+        <p>
+            Give a name, select a parental group and assign the devices belonging to this group.
+            <a class="btn btn-mini" rel="tooltip" title="add device"><i class="icon-forward"></i></a>
+        </p>
+
+        <hr>
+        <h3>2. Enforce your policies</h3>
+        <h4>Add a policy</h4>
+
+        <p>
+            Lay down your rules and define a policy <i class="icon-warning-sign"></i> with the following properties:
+        </p>
+
+        <div class="tabbable">
+            <ul id="policy_tab" class="nav nav-tabs">
+                <li class="active"><a href="#name" data-toggle="tab">Name</a></li>
+                <li><a href="#type" data-toggle="tab">Type</a></li>
+                <li><a href="#argument" data-toggle="tab">Argument</a></li>
+                <li><a href="#actions" data-toggle="tab">Actions</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="name">
+                    <p>Enter here the name of the policy.</p>
+                </div>
+                <div class="tab-pane fade in " id="type">
+                    <p>strongTNC provides the following policy types. Select one:</p>
+			<pre class="prettyprint">
+PCKGS - Installed Packages
+UNSRC - Unknown Source
+FWDEN - Forwarding Enabled
+PWDEN - Factory Default Password Enabled
+FREFM - File Reference Measurement
+FMEAS - File Measurement
+FMETA - File Metadata
+DREFM - Directory Reference Measurement
+DMEAS - Directory Measurement
+DMETA - Directory Metadata
+TCPOP - TCP Ports allowed to be Open
+TCPBL - TCP Ports to be Blocked
+UDPOP - UDP Ports allowed to be Open
+UDPBL - UDP Ports to be Blocked
+SWIDT - SWID Tag Inventory
+TPMRA - TPM Remote Attestation</pre>
+                </div>
+                <div class="tab-pane fade in " id="argument">
+                    <p>Depends of the type. For example set a port range or chose a file for FileExist policy.</p>
+                </div>
+                <div class="tab-pane fade in " id="actions">
+                    <dl>
+                        <dt>Fail-Action</dt>
+                        <dd>Determines how the system acts if client breaks the rules.</dd>
+                    </dl>
+                    <dl>
+                        <dt>Noresult-Action</dt>
+                        <dd>Determines how the system acts if a measurement cannot be executed on the client.</dd>
+                    </dl>
+                    <dl>
+                        <dt>Actions</dt>
+                        <dd>
+                            <table class="table table-bordered table-striped">
+                                <tbody>
+                                <tr>
+                                    <td><span class="label label-success">ALLOW</span></td>
+                                    <td>Grant admission</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="label label-important">BLOCK</span></td>
+                                    <td>Block device, decline connection</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="label label-warning">ISOLATE</span></td>
+                                    <td>Isolate device, connection to a special network</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="label">NONE</span></td>
+                                    <td>No recommendation</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <h4>Create enforcements</h4>
+
+        <p>
+            Assign groups to policies. Enforcements <i class="icon-list-alt"></i> apply a policy to a group.
+        </p>
+
+        <p>
+            Specify a time intervall in days to define how many times the policy should be tested. If you want to define
+            a fail or noresult action especially for this enforcement, you can choose one. Otherwise it will be inherited
+            from the policy settings.
+        </p>
+
+        <hr>
+
+        <h3>3. Manage devices</h3>
+
+        <p>
+            All known devices <i class="icon-phone"></i> are listed here in this area. New clients will be added
+            automatically. You can assign clients
+            to groups where additional policies are applied. Choose what kind of product this device is. For a better
+            identification of your devices add a description.
+        </p>
+
+        <p>
+            To keep the overview which policy take effect on which group membership of the client as well as the results
+            of the last checks you can review the 'device report'.
+            <a class="btn btn-mini btn-primary"><i class="icon-file icon-white"></i> View device report</a>
+        </p>
+
+        <hr>
+
+        <h3>4. Supervise your system</h3>
+        <dl class="dl-horizontal">
+            <dt><i class="icon-gift"></i> Packages</dt>
+            <dd>
+                <p>
+                    This page contains a list of all known software packages and their versions. You can define
+                    packages which are blacklisted and should be checked with the blacklisted package policy.
+                </p>
+            </dd>
+        </dl>
+        <dl class="dl-horizontal">
+            <dt><i class="icon-briefcase"></i> Products</dt>
+            <dd>
+                <p>
+                    All these products are client operating systems, installed on the scanned devices. This list grows
+                    automatically if clients with other operating systems appears.
+                </p>
+
+                <p>
+                    In this area you can add default groups to operating systems. If a client with a specific os connects
+                    the first time, the default group of the product will be assigned automatically. Therefore you can
+                    configure a default policy for different operating systems.
+                </p>
+            </dd>
+        </dl>
+        <dl class="dl-horizontal">
+            <dt><i class="icon-file"></i> Files</dt>
+            <dd>
+                <p>Here you can find all file references in the database.</p>
+            </dd>
+        </dl>
+        <dl class="dl-horizontal">
+            <dt><i class="icon-folder-open"></i> Directories</dt>
+            <dd>
+                <p>Define a list of directories that can be remotely measured.</p>
+            </dd>
+        </dl>
+        <dl class="dl-horizontal">
+            <dt><i class="icon-tasks"></i> Statistics</dt>
+            <dd>
+                <p>Check out facts and figures over your system.</p>
+            </dd>
+        </dl>
+    </div><!--/span-->
+
+    <div class="span4">
+        <div class="page-header">
+            <h2>Links</h2>
+        </div>
+        <ul class="nav nav-list">
+            <li class="nav-header">strongTNC</li>
+            <li><a href="https://github.com/strongswan/strongTNC" target="_blank"><i class="icon-star"></i> strongTNC @GithHub</a></li>
+            <li class="nav-header">strongSwan</li>
+            <li><a href="http://www.strongswan.org" target="_blank"><i class="icon-star"></i> strongswan.org</a></li>
+            <li><a href="https://github.com/strongswan" target="_blank"><i class="icon-star"></i> strongswan @GitHub</a></li>
+            <li class="nav-header">TNC</li>
+            <li><a href="http://wiki.strongswan.org/projects/strongswan/wiki/TrustedNetworkConnect" target="_blank">
+                <i class="icon-star"></i> Android BYOD Security based on Trusted Network Connect </a>
+            </li>
+            <li><a href="http://wiki.strongswan.org/projects/strongswan/wiki/BYOD" target="_blank">
+                <i class="icon-star"></i> Trusted Network Connect Architecture</a>
+            </li>
+            <li><a href="http://security.hsr.ch/projects/SA_2012_strongSwan-Android4-Client-with-Endpoint-Assessment.pdf"
+                target="_blank"><i class="icon-star"></i>
+                    Christoph B&uuml;hler & Patrick L&ouml;tscher, strongSwan
+                    Android 4 Client with Endpoint Assessment, HSR Studienarbeit HS12
+                </a>
+            </li>
+        </ul>
+
+        <div id="overviewModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+             aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="deleteModalLabel">Overview</h3>
+            </div>
+            <div class="modal-body">
+                <img src="{{ STATIC_URL }}img/overview.png" alt="Overview" class="img-rounded">
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $('#policy_tab').find('a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    </script>
+{% endblock %}

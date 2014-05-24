@@ -1,6 +1,6 @@
 [run]
 source =
-    tncapp
+    apps
 omit =
     */migrations/*
     */tests/*

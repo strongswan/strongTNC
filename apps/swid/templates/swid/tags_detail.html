@@ -1,0 +1,143 @@
+{% extends 'swid/tags_list.html' %}
+
+{% load i18n %}
+
+{% block title %}{{ object.unique_id }}{% endblock %}
+
+{% block hero %}
+    <h1>{{ object.unique_id }}</h1>
+{% endblock %}
+
+{% block detail %}
+    <div class="container-fluid">
+        <div class="row-fluid">
+            {% if object %}
+                <h4>Tag Info</h4>
+                <div class="row-fluid">
+                    <div class="span8">
+                        <table class="table" border="0">
+                            <tbody>
+                            <tr>
+                                <td><strong>{% trans 'Name' %}</strong></td>
+                                <td>{{ object.package_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Version' %}</strong></td>
+                                <td>{{ object.version }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Unique ID' %}</strong></td>
+                                <td>{{ object.unique_id }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Entities' %}</strong></td>
+                                <td>
+                                    {% for er in entityroles %}
+                                        {{ er.entity.name }} ({{ er.get_role_display }})
+                                        {% if not forloop.last %}
+                                            <br/>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Regids' %}</strong></td>
+                                <td>
+                                    {% for er in entityroles %}
+                                        <a href="{% url 'swid:regid_detail' er.entity.pk %}">{{ er.entity.regid }}</a>
+                                        {% if not forloop.last %}
+                                            <br/>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Software ID' %}</strong></td>
+                                <td>
+                                    {{ object.software_id }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <a class="btn btn-primary" href="#swidTagXmlModal" data-toggle="modal">
+                            <i class="icon-file icon-white"></i>{% trans 'View raw SWID tag' %}
+                        </a>
+                    </div>
+                </div>
+                <hr>
+
+                <h4>{% trans 'Reported by Devices' %}</h4>
+                <div class="row-fluid">
+                    {% if object.sessions.count %}
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>{% trans 'Description' %}</th>
+                                <th>{% trans 'First reported' %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for device, session in devices.items %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'devices:device_detail' device.pk %}">{{ device.description }}</a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'devices:session_detail' session.pk %}">{{ session.time|date:"M d H:i:s Y" }}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>No files found</p>
+                    {% endif %}
+                </div>
+                <hr>
+
+                <h4>Files</h4>
+                <div class="row-fluid">
+                    {% if object.files.count %}
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>{% trans 'Name' %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for file in object.files.all %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'filesystem:file_detail' file.pk %}">{{ file.directory.path }}/{{ file.name }}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>No files found</p>
+                    {% endif %}
+                </div>
+                <hr>
+
+                <div id="swidTagXmlModal" class="modal hide fade" tabindex="-1" role="dialog"
+                     aria-hidden="true">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-hidden="true">&times;</button>
+                        <h3 id="deleteModalLabel">{% trans 'SWID tag' %}: {{ object.unique_id }}</h3>
+                    </div>
+                    <div class="modal-body">
+                        <pre class="raw-xml">{{ object.swid_xml }}</pre>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-info" data-dismiss="modal">Ok</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+

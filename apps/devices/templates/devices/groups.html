@@ -1,0 +1,154 @@
+{% extends "front/base.html" %}
+
+{% load i18n %}
+{% load permissions %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block hero %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="line">
+                <h4>Group
+                    {% if 'auth.write_access' in perms %}
+                        <div class="pull-right">
+                            <a class="btn btn-primary btn-mini" href="{% url 'devices:group_add' %}"
+                               rel="tooltip" title="add new">
+                                <i class="icon-plus-sign icon-white"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </h4>
+                <hr>
+                {{ grouptree|safe }}
+            </div>
+
+            <div class="span9" id="content">
+                {% if group %}
+                    <h4>Group Info</h4>
+                    <form class="form-horizontal" method="POST" action="{% url 'devices:group_save' %}" id="groupform">
+                        {% csrf_token %}
+                        <div class="control-group">
+                            <label class="control-label" for="name">Name</label>
+
+                            <div class="controls">
+                                <input type="hidden" id="groupId" name="groupId" value="{{ group.id }}"/>
+                                <input type="text" id="name" name="name" placeholder="Name"
+                                       value="{{ group }}" rel="tooltip" title="enter the name of the group" {% input_editability %}>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="parent">Parent Group</label>
+
+                            <div class="controls">
+                                <select name="parent" id="parent" class="slct2-dropdown" rel="tooltip"
+                                        title="select a parental group" {% input_editability %}>
+                                    <option value="">Select one...</option>
+                                    {% for g in groups %}
+                                        {% if group.id != g.id %}
+                                            <option value={{ g.id }}
+                                                        {% if group.parent.id == g.id %}
+                                                            selected="selected"
+                                                        {% endif %}
+                                                >{{ g }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h4>Assign Devices</h4>
+
+                        <div class="row-fluid">
+
+                            <select class="input-xlarge" size="5" name="selectionField" id="device_select"
+                                    multiple
+                                    data-content="Select one or more devices and click the forward button to add it."
+                                    rel="popover"
+                                    data-placement="bottom" data-original-title="Available devices"
+                                    data-trigger="hover" {% input_editability %}>
+                                {% for d in devices %}
+                                    <option value="{{ d.id }}">{{ d }}</option>
+                                {% endfor %}
+                            </select>
+
+                            {% if 'auth.write_access' in perms %}
+                                <div class="btn-group btn-group-vertical">
+                                    <button type="button" id="addMemberButton" class="btn"><i
+                                        class="icon-forward"></i></button>
+                                    <button type="button" id="removeMemberButton" class="btn"><i
+                                        class="icon-backward"></i></button>
+                                </div>
+                            {% endif %}
+
+                            <select class="input-xlarge" size="5" name="selectionField" id="member_select"
+                                    multiple
+                                    data-content="Devices that belongs to this group.
+                                    Select one or more devices and click the backward  button to remove it."
+                                    rel="popover" data-placement="bottom" data-original-title="Members"
+                                    data-trigger="hover" {% input_editability %}>
+                                {% for m in group_members %}
+                                    <option value="{{ m.id }}">{{ m }}</option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+                    </form>
+
+                    {% if 'auth.write_access' in perms %}
+                        <hr>
+
+                        <div class="btn-toolbar" style="margin: 0;">
+                            <div class="btn-group">
+                                <a class="btn btn-success" id="groupSaveButton" href="#"><i
+                                    class="icon-ok icon-white"></i> Save</a>
+                            </div>
+
+                            {% if group.id %}
+                                <div class="btn-group">
+                                    <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i
+                                        class="icon-remove icon-white"></i> Delete</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                {% if group.pk %}
+                    <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog"
+                         aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3 id="deleteModalLabel">Are you sure to delete this group?</h3>
+                        </div>
+                        <div class="modal-body">
+                            <h4>Warning</h4>
+
+                            <p>If you delete this group the devices in it will be assigned to the default group.</p>
+                        </div>
+                        <form method="POST" action="{% url 'devices:group_delete' group.pk %}" id="deleteform">
+                            {% csrf_token %}
+                        </form>
+                        <div class="modal-footer">
+                            <a class="btn" data-dismiss="modal">Cancel</a>
+                            <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete group</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/groups.js"></script>
+{% endblock %}
+

@@ -1,0 +1,36 @@
+<div class="ajax-paged"
+     data-template="{{ template_name }}"
+     data-list-producer="{{ list_producer }}"
+     data-stat-producer="{{ stat_producer }}"
+     data-var-name="{{ var_name }}"
+     data-url-name="{{ url_name }}"
+     data-page-size="{{ page_size }}"
+    {% if with_filter %}
+     data-filter="true"
+    {% endif %}
+    >
+
+    {% if with_filter %}
+        <div class="input-append span6">
+            <input type="text" class="filter-input input-block-level" placeholder="Filter"/>
+            <button class="filter-clear-button btn"><i class="icon-remove"></i></button>
+            <button class="filter-button btn"><i class="icon-search"></i></button>
+        </div>
+        <br/>
+    {% endif %}
+
+
+    <div class="paging-buttons hidden">
+        <button class="paging-prev btn btn-mini"><i class="icon-chevron-left"></i></button>
+        <span class="paging-current">1</span>/<span class="paging-page-count">0</span>
+        <button class="paging-next btn btn-mini"><i class="icon-chevron-right"></i></button>
+    </div>
+
+    <div class="paged-content"></div>
+
+    <div class="paging-buttons hidden">
+        <button class="paging-prev btn btn-mini"><i class="icon-chevron-left"></i></button>
+        <span class="paging-current">1</span>/<span class="paging-page-count">0</span>
+        <button class="paging-next btn btn-mini"><i class="icon-chevron-right"></i></button>
+    </div>
+</div>

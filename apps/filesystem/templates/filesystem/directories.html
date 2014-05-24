@@ -1,0 +1,128 @@
+{% extends "front/base.html" %}
+
+{% load i18n %}
+{% load permissions %}
+{% load paged_block %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block hero %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="line">
+                <h4>{% trans "Directory" %}
+                    {% if 'auth.write_access' in perms %}
+                        <div class="pull-right">
+                            <a class="btn btn-primary btn-mini" href="{% url 'filesystem:directory_add' %}"
+                               rel="tooltip" title="add new">
+                                <i class="icon-plus-sign icon-white"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </h4>
+                <hr>
+                <div class="row-fluid">
+                    {% paged_block template_name="front/paging/default_list" list_producer="dir_list" stat_producer="dir_stat" var_name="object_list" url_name="filesystem:directory_detail" page_size="50" with_filter=True %}
+                </div>
+            </div>
+
+            <div class="span9" id="content">
+                {% if directory %}
+                    <form class="form-horizontal" method="POST" action="{% url 'filesystem:directory_save' %}" id="directoryform">
+                        {% csrf_token %}
+                        <input type="hidden" id="directoryId" name="directoryId" value="{{ directory.id }}"/>
+                        {% if add %}
+                            <h3>{% trans 'Add new directory' %}</h3>
+                            <div class="control-group">
+                                <label class="control-label" for="id">{% trans "Path" %}</label>
+
+                                <div class="controls">
+                                    <input type="text" id="path" name="path" placeholder="{% trans 'Path' %}"
+                                           rel="tooltip"
+                                           title="{% trans 'Directory path' %}"
+                                           value="{{ directory.path }}" {% input_editability %}>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="row-fluid">
+                                <h3>{% trans 'Directory info:' %} {{ directory.path }}</h3>
+                            </div>
+                        {% endif %}
+
+                        {% if 'auth.write_access' in perms %}
+                            <div class="btn-toolbar" style="margin: 0;">
+                                {% if add %}
+                                    <div class="btn-group">
+                                        <button class="btn btn-success" type="submit">
+                                            <i class="icon-ok icon-white"></i> {% trans "Save" %}</button>
+                                    </div>
+                                {% endif %}
+                                {% if directory.id %}
+                                    <div class="btn-group">
+                                        <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i
+                                            class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        <hr>
+
+                        <h4>Files</h4>
+                        {% if files %}
+                            <div class="row-fluid">
+                                <table id="versions" class="table table-hover table-striped">
+                                    <thead>
+                                    <tr>
+                                        <td>{% trans 'Name' %}</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for f in files %}
+                                        <tr>
+                                            <td><a href="{% url 'filesystem:file_detail' f.pk %}">{{ f.name }}</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
+                    </form>
+
+                {% endif %}
+
+                {% if directory.pk %}
+                    <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog"
+                         aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3 id="deleteModalLabel">Are you sure to delete this directory?</h3>
+                        </div>
+                        <div class="modal-body">
+                            <h4>Warning</h4>
+
+                            <p>Are you sure to delete this directory?</p>
+                        </div>
+                        <form method="POST" action="{% url 'filesystem:directory_delete' directory.pk %}"
+                              id="deleteform">
+                            {% csrf_token %}
+                        </form>
+                        <div class="modal-footer">
+                            <a class="btn" data-dismiss="modal">Cancel</a>
+                            <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete directory</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/directories.js"></script>
+{% endblock %}

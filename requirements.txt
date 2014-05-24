@@ -1,3 +1,15 @@
+# Base system
 Django>=1.6,<1.7
 pytz==2014.2
-django-dajaxice-ng==0.5.6.5
+dj-database-url==0.3.0
+
+# AJAX
+django-dajaxice==0.6
+
+# Parsing
+lxml==3.3.5
+
+# API
+djangorestframework==2.3.13
+django-filter==0.7
+djangorestframework-camel-case==0.1.3

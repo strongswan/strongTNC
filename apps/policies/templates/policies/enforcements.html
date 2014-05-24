@@ -1,0 +1,168 @@
+{% extends "front/base.html" %}
+
+{% load i18n %}
+{% load permissions %}
+{% load paged_block %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block hero %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="line">
+                <h4>{% trans "Enforcement" %}
+                    {% if 'auth.write_access' in perms %}
+                        <div class="pull-right">
+                            <a class="btn btn-primary btn-mini" href="{% url 'policies:enforcement_add' %}"
+                               rel="tooltip" title="add new">
+                                <i class="icon-plus-sign icon-white"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </h4>
+                <hr>
+                <div class="row-fluid">
+                    {% paged_block template_name="front/paging/default_list" list_producer="enforcement_list" stat_producer="enforcement_stat" var_name="object_list" url_name="policies:enforcement_detail" page_size="50" with_filter=True %}
+                </div>
+            </div>
+
+            <div class="span9" id="content">
+                {% if enforcement %}
+                    <h4>Enforcement Info</h4>
+                    <form class="form-horizontal" method="POST" action="{% url 'policies:enforcement_save' %}" id="enforcementform">
+                        {% csrf_token %}
+                        <input type="hidden" id="enforcementId" name="enforcementId" value="{{ enforcement.id }}"/>
+
+                        <div class="control-group">
+                            <label class="control-label" for="policy">{% trans "Policy" %}</label>
+
+                            <div class="controls">
+                                <select name="policy" id="policy" class="slct2-dropdown" rel="tooltip"
+                                        title="{% trans 'Policy to enforce' %}" {% input_editability %}>
+                                    <option value=''>{% trans 'Select one...' %}</option>
+                                    {% for p in policies %}
+                                        <option value="{{ p.id }}" {% if p.id == enforcement.policy.id %} selected {% endif %}>
+                                            {{ p }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="group">{% trans "Group" %}</label>
+
+                            <div class="controls">
+                                <select name="group" id="group" class="slct2-dropdown" rel="tooltip"
+                                        title="{% trans 'Group to enforce policy on' %}" {% input_editability %}>
+                                    <option value=''>{% trans 'Select one...' %}</option>
+                                    {% for g in groups %}
+                                        <option value="{{ g.id }}" {% if g.id == enforcement.group.id %} selected {% endif %}>
+                                            {{ g }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="max_age">{% trans "Max. age in seconds" %}</label>
+
+                            <div class="controls">
+                                <input type="text" name="max_age" id="max_age" value="{{ enforcement.max_age }}"
+                                       rel="tooltip"
+                                       title="{% trans 'Policy will be executed every x seconds' %}" {% input_editability %} />
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="fail">{% trans "Fail Action" %}</label>
+
+                            <div class="controls">
+                                <select name="fail" id="fail" class="slct2-dropdown" rel="tooltip"
+                                        title="{% trans 'Action if requirements are not met' %}" {% input_editability %}>
+                                    <option value="-1">{% trans 'Inherit from policy' %}</option>
+                                    {% for a in actions %}
+                                        <option value="{{ forloop.counter0 }}"
+                                            {% if forloop.counter0 == enforcement.fail %}
+                                                selected {% endif %}>
+                                            {{ a }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="noresult">{% trans "Noresult Action" %}</label>
+
+                            <div class="controls">
+                                <select name="noresult" id="noresult" class="slct2-dropdown" rel="tooltip"
+                                        title="{% trans 'Action if policy does not apply' %}" {% input_editability %}>
+                                    <option value="-1"> {% trans 'Inherit from policy' %}</option>
+                                    {% for a in actions %}
+                                        <option value="{{ forloop.counter0 }}"
+                                            {% if forloop.counter0 == enforcement.noresult %} selected {% endif %}>
+                                            {{ a }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        {% if 'auth.write_access' in perms %}
+                            <hr>
+
+                            <div class="btn-toolbar" style="margin: 0;">
+                                <div class="btn-group">
+                                    <button class="btn btn-success" type="submit"><i
+                                        class="icon-ok icon-white"></i> {% trans "Save" %}</button>
+                                </div>
+
+                                {% if enforcement.id %}
+                                    <div class="btn-group">
+                                        <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i
+                                            class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </form>
+                {% endif %}
+
+
+                {% if enforcement.pk %}
+                    <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog"
+                         aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3 id="deleteModalLabel">Are you sure to delete this enforcement?</h3>
+                        </div>
+                        <div class="modal-body">
+                            <h4>Warning</h4>
+
+                            <p>Are you sure to delete this enforcement?</p>
+                        </div>
+                        <form method="POST" action="{% url 'policies:enforcement_delete' enforcement.pk %}"
+                              id="deleteform">
+                            {% csrf_token %}
+                        </form>
+                        <div class="modal-footer">
+                            <a class="btn" data-dismiss="modal">Cancel</a>
+                            <a class="btn btn-danger" onclick="deleteform.submit()" href="#">Delete enforcement</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/enforcements.js"></script>
+{% endblock %}

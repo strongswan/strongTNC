@@ -2,8 +2,8 @@ language:  python
 python:
    - "2.7"
 install:
-   - pip install -r requirements-tests.txt
+   - CFLAGS="-O0" pip install -r requirements-tests.txt
 script:
    - cp config/settings.sample.ini config/settings.ini
-   - sed -i 's/DEBUG=0/DEBUG=1/' config/settings.ini
+   - sed -i 's/DEBUG\s*=\s*0/DEBUG = 1/' config/settings.ini
    - ./runtests.py
