@@ -166,3 +166,25 @@ def test_invalid_tags(filename):
             tag, replaced = utils.process_swid_tag(xml)
         assert len(Tag.objects.all()) == 0
         assert len(Entity.objects.all()) == 0
+
+
+@pytest.mark.parametrize('filename',[
+    'strongswan.full.swidtag'
+])
+def test_entity_name_update(swidtag, filename):
+    assert(Entity.objects.count() == 1)
+    new_xml = swidtag.swid_xml.replace('name="strongSwan"', 'name="strongswan123"')
+    tag, replaced = utils.process_swid_tag(new_xml)
+    assert(Entity.objects.count() == 1)
+    assert(Tag.objects.count() == 1)
+    assert(replaced)
+
+    new_xml = swidtag.swid_xml.replace('name="strongSwan" regid="regid.2004-03.org.strongswan"',
+                                       'name="strongSwan" regid="regid.2005-03.org.strongswan"')
+    tag, replaced = utils.process_swid_tag(new_xml)
+
+    # a new entity with a different regid should be created
+    # also a new tag is create because the software id has changed
+    assert(Entity.objects.count() == 2)
+    assert(Tag.objects.count() == 2)
+    assert(not replaced)
