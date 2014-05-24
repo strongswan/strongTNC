@@ -5,6 +5,7 @@ import json
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.timezone import localtime
 
 from dajaxice.decorators import dajaxice_register
 
@@ -28,7 +29,7 @@ def tags_for_session(request, session_id):
             'name': tag.package_name,
             'version': tag.version,
             'unique-id': tag.unique_id,
-            'installed': session.time.strftime(settings.DEFAULT_DATETIME_FORMAT_STRING),
+            'installed': localtime(session.time).strftime(settings.DEFAULT_DATETIME_FORMAT_STRING),
             'session-id': session.pk,
             'tag-url': reverse('swid:tag_detail', args=[tag.pk]),
         }
@@ -56,7 +57,8 @@ def get_tag_log(request, device_id, from_timestamp, to_timestamp):
         result = [
             {
                 'session_id': d['session'].pk,
-                'session_date': d['session'].time.strftime(settings.DEFAULT_DATETIME_FORMAT_STRING),
+                'session_date': localtime(d['session'].time).strftime(
+                    settings.DEFAULT_DATETIME_FORMAT_STRING),
                 'added_tags': [{'unique_id': t.unique_id, 'tag_id': t.pk} for t in d['added_tags']],
                 'removed_tags': [{'unique_id': t.unique_id, 'tag_id': t.pk} for t in d['removed_tags']],
                 'tag_count': len(d['added_tags']) + len(d['removed_tags']),
@@ -93,6 +95,6 @@ def session_info(request, session_id):
         return json.dumps({})
 
     detail = {'id': session.pk,
-              'time': session.time.strftime('%b %d %H:%M:%S %Y')}
+              'time': localtime(session.time).strftime('%b %d %H:%M:%S %Y')}
 
     return json.dumps(detail)

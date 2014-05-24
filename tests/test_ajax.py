@@ -9,6 +9,7 @@ from datetime import timedelta
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.dateformat import format
+from django.utils.timezone import localtime
 
 import pytest
 from model_mommy import mommy
@@ -183,7 +184,7 @@ def test_tags_for_session(db, client):
     Test whether the ``tags_for_session`` ajax endpoint works properly.
     """
     # Prepare 4 sessions and related tags
-    now = timezone.now()
+    now = localtime(timezone.now())
     for i in range(1, 5):
         time = now + timedelta(days=i)
         session = mommy.make(Session, pk=i, time=time, device__id=1)
