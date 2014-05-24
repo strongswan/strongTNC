@@ -8,29 +8,25 @@ from dajaxice.decorators import dajaxice_register
 
 from apps.core.decorators import ajax_login_required
 from . import paging as paging_functions
+from apps.swid.paging import regid_detail_paging, regid_list_paging, swid_list_paging
+from apps.filesystem.paging import dir_list_paging, file_list_paging
+from apps.policies.paging import policy_list_paging, enforcement_list_paging
+from apps.packages.paging import package_list_paging
+from apps.devices.paging import device_list_paging, product_list_paging
 
 
 @dajaxice_register
 @ajax_login_required
-def paging(request, template, list_producer, stat_producer, var_name, url_name,
-           current_page, page_size, filter_query, pager_id):
+def paging(request, config_name, current_page, filter_query, pager_id, producer_args):
     """
     Returns paged tables.
 
     Args:
-        template (str):
-            Name of the table template to be used, without .html extension.
-
-        list_producer (str):
-            Name of the key for the list producer function. The list producer is the function
-            which creates the paged list.
-
-        stat_producer (str);
-            Name of the key for the stat producer function. The stat producer is the function
-            which returns information about the page count.
-
-        var_name (str):
-            Name of the list variable used in the templated.
+        config_name (str):
+            Name of the paging config to be used. This name is the key in of the config
+            dictionary.
+            The config holds values such as the list/stat-producer, template_name,
+            var_name, url_name, page_size and so on.
 
         current_page (int):
             Current page index, 0 based.
@@ -41,6 +37,12 @@ def paging(request, template, list_producer, stat_producer, var_name, url_name,
         filter_query (str):
             Query to filter the paged list/table.
 
+        pager_id (int):
+            Id of the current pager, used to identify the pager in the url via hash-query.
+
+        producer_args (dict):
+            Dictionary with dynamic custom arguments which are passed to the producers.
+
     Returns:
         A json object:
         {
@@ -50,62 +52,56 @@ def paging(request, template, list_producer, stat_producer, var_name, url_name,
         }
 
     """
-    # register list producer
-    list_producer_dict = {
-        'device_list': paging_functions.device_producer_factory.list(),
-        'dir_list': paging_functions.directory_producer_factory.list(),
-        'enforcement_list': paging_functions.enforcement_list_producer,
-        'file_list': paging_functions.file_list_producer,
-        'pkg_list': paging_functions.package_producer_factory.list(),
-        'policy_list': paging_functions.policy_producer_factory.list(),
-        'product_list': paging_functions.product_producer_factory.list(),
-        'regid_list': paging_functions.regid_producer_factory.list(),
-        'swid_list': paging_functions.swid_producer_factory.list(),
+    # TODO: extract this to somewhere else
+    # register configs
+    paging_conf_dict = {
+        'regid_list_config': regid_list_paging,
+        'regid_detail_config': regid_detail_paging,
+        'swid_list_config': swid_list_paging,
+        'dir_list_config': dir_list_paging,
+        'file_list_config': file_list_paging,
+        'policy_list_config': policy_list_paging,
+        'enforcement_list_config': enforcement_list_paging,
+        'package_list_config': package_list_paging,
+        'device_list_config': device_list_paging,
+        'product_list_config': product_list_paging,
     }
 
-    # register stat producer
-    stat_producer_dict = {
-        'device_stat': paging_functions.device_producer_factory.stat(),
-        'dir_stat': paging_functions.directory_producer_factory.stat(),
-        'enforcement_stat': paging_functions.enforcement_stat_producer,
-        'file_stat': paging_functions.file_stat_producer,
-        'pkg_stat': paging_functions.package_producer_factory.stat(),
-        'policy_stat': paging_functions.policy_producer_factory.stat(),
-        'product_stat': paging_functions.product_producer_factory.stat(),
-        'regid_stat': paging_functions.regid_producer_factory.stat(),
-        'swid_stat': paging_functions.swid_producer_factory.stat(),
-    }
+    conf = paging_conf_dict[config_name]
+    page_size = conf.get('page_size', 50)
 
     # get page count from stat producer
-    sp = stat_producer_dict.get(stat_producer)
+    sp = conf.get('stat_producer')
     if sp is None:
-        raise ValueError('Invalid stat producer: %s' % stat_producer)
-    page_count = sp(page_size, filter_query)
+        raise ValueError('Invalid stat producer')
+    page_count = sp(page_size, filter_query, producer_args, conf.get('static_producer_args'))
 
     from_idx = current_page * page_size
     to_idx = from_idx + page_size
 
     # get element list form list producer
-    lp = list_producer_dict.get(list_producer)
+    lp = conf.get('list_producer')
     if lp is None:
-        raise ValueError('Invalid list producer: %s' % list_producer)
-    element_list = lp(from_idx, to_idx, filter_query)
+        raise ValueError('Invalid list producer')
+    element_list = lp(from_idx, to_idx, filter_query, producer_args, conf.get('static_producer_args'))
 
+    var_name = conf.get('var_name', 'object_list')
     template_context = {
         var_name: element_list,
         'current_page': current_page,
         'page_count': page_count,
         'filter_query': filter_query,
         'pager_id': pager_id,
-        'url_name': url_name,
+        'url_name': conf.get('url_name'),
         'url_hash': paging_functions.get_url_hash(pager_id, current_page, filter_query),
     }
 
     # render the given template with the element list to a html string
+    template_name = conf.get('template_name', 'front/paging/default_list')
     response = {
         'current_page': current_page,
         'page_count': page_count,
-        'html': render_to_string(template + '.html', template_context)
+        'html': render_to_string(template_name + '.html', template_context)
     }
 
     return json.dumps(response)

@@ -37,7 +37,7 @@
             <h4>SWID Tags</h4>
 
             <div class="row-fluid">
-                {% paged_block template_name="front/paging/regid_list_tags" list_producer="swid_list" stat_producer="swid_stat" var_name="object_list" url_name="swid:tag_detail" page_size="50" with_filter=True %}
+                {% paged_block config_name='regid_detail_config' producer_args=paging_args with_filter=True %}
             </div>
         </div>
     {% endif %}

@@ -27,7 +27,7 @@
                 </h4>
                 <hr>
                 <div class="row-fluid">
-                    {% paged_block template_name="front/paging/default_list" list_producer="policy_list" stat_producer="policy_stat" var_name="object_list" url_name="policies:policy_detail" page_size="50" with_filter=True %}
+                    {% paged_block config_name="policy_list_config" with_filter=True %}
                 </div>
             </div>
 

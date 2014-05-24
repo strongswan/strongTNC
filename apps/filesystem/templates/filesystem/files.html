@@ -18,7 +18,7 @@
                 <h4>{% trans "File" %}</h4>
                 <hr>
                 <div class="row-fluid">
-                    {% paged_block template_name="front/paging/default_list" list_producer="file_list" stat_producer="file_stat" var_name="object_list" url_name="filesystem:file_detail" page_size="50" with_filter=True %}
+                    {% paged_block config_name='file_list_config' with_filter=True %}
                 </div>
 
             </div>

@@ -23,6 +23,7 @@ class RegidDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(RegidDetailView, self).get_context_data(**kwargs)
         context['object_list'] = self.model.objects.order_by('regid')
+        context['paging_args'] = {'entity_id': self.object.pk}
         return context
 
 

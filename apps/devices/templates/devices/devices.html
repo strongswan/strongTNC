@@ -26,7 +26,7 @@
                 </h4>
                 <hr>
                 <div class="row-fluid">
-                    {% paged_block template_name="front/paging/default_list" list_producer="device_list" stat_producer="device_stat" var_name="object_list" url_name="devices:device_detail" page_size="50" with_filter=True %}
+                    {% paged_block config_name="device_list_config" with_filter=True %}
                 </div>
             </div>
             <div class="span9" id="content">

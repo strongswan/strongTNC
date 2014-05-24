@@ -17,14 +17,10 @@ var Pager = function() {
         }
 
         // get setup values
-        this.template = this.$ctx.data('template');
-        this.pageSize = this.$ctx.data('page-size');
+        this.config = this.$ctx.data('config');
         this.filter = this.$ctx.data('filter');
+        this.args = this.$ctx.data('args');
         this.currentPageIdx = 0;
-        this.listProducer = this.$ctx.data('list-producer');
-        this.statProducer = this.$ctx.data('stat-producer');
-        this.varName = this.$ctx.data('var-name');
-        this.urlName = this.$ctx.data('url-name');
 
         // get containers and buttons
         this.$buttonContainer = $('.paging-buttons', this.$ctx);
@@ -178,15 +174,11 @@ var Pager = function() {
 
     this.getParamObject = function(filterQuery) {
         return {
-            'template': this.template,
-            'list_producer': this.listProducer,
-            'stat_producer': this.statProducer,
+            'config_name': this.config,
             'current_page': this.currentPageIdx,
-            'var_name': this.varName,
-            'url_name': this.urlName,
-            'page_size': this.pageSize,
             'filter_query': filterQuery,
-            'pager_id': this.uid
+            'pager_id': this.uid,
+            'producer_args': this.args
         };
     };
 
