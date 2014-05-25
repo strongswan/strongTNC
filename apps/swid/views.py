@@ -22,13 +22,12 @@ class RegidDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(RegidDetailView, self).get_context_data(**kwargs)
-        context['object_list'] = self.model.objects.order_by('regid')
         context['paging_args'] = {'entity_id': self.object.pk}
         return context
 
 
 class SwidTagListView(LoginRequiredMixin, ListView):
-    queryset = Tag.objects.order_by('unique_id')
+    model = Tag
     template_name = 'swid/tags_list.html'
 
 
@@ -38,7 +37,6 @@ class SwidTagDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SwidTagDetailView, self).get_context_data(**kwargs)
-        context['object_list'] = self.model.objects.order_by('unique_id')
         context['entityroles'] = self.object.entityrole_set.all()
         context['devices'] = self.object.get_devices_with_reported_session()
         return context
