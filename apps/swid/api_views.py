@@ -6,18 +6,19 @@ from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from lxml.etree import XMLSyntaxError
 
-from apps.swid import utils
-from . import models
-from . import serializers
+from . import utils, serializers
+
+from .models import Entity, Tag
+from apps.core.models import Session
 
 
 class EntityViewSet(viewsets.ReadOnlyModelViewSet):
-    model = models.Entity
+    model = Entity
     serializer_class = serializers.EntitySerializer
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    model = models.Tag
+    model = Tag
     serializer_class = serializers.TagSerializer
     filter_fields = ('package_name', 'version', 'unique_id')
 
@@ -33,7 +34,7 @@ class TagAddView(views.APIView):
     """
     parser_classes = (JSONParser,)  # Only JSON data is supported
 
-    def post(self, request):
+    def post(self, request, format=None):
         # Validate request data
         tags = request.DATA
         if not isinstance(tags, list):
@@ -66,3 +67,41 @@ class TagAddView(views.APIView):
             'message': 'Added {0[added]} SWID tags, replaced {0[replaced]} SWID tags.'.format(stats),
         }
         return Response(data, status=status.HTTP_200_OK)
+
+
+class SwidMeasurementView(views.APIView):
+    """
+    Link the given software-ids with the current session.
+
+    If no corresponding tag is available for one or more software-ids, return
+    these software-ids with HTTP status code 412 Precondition failed.
+
+    This view is defined on a session detail page. The ``pk`` argument is the
+    session ID.
+
+    """
+    def post(self, request, pk, format=None):
+        software_ids = request.DATA
+        found_tags = []
+        missing_tags = []
+
+        # Look for matching tags
+        for software_id in software_ids:
+            try:
+                tag = Tag.objects.get(software_id=software_id)
+                found_tags.append(tag)
+            except Tag.DoesNotExist:
+                missing_tags.append(software_id)
+
+        if missing_tags:
+            # Some tags are missing
+            return Response(data=missing_tags, status=status.HTTP_412_PRECONDITION_FAILED)
+        else:
+            # All tags are available: link them with a session
+            try:
+                session = Session.objects.get(pk=pk)
+            except Session.DoesNotExist:
+                data = {'status': 'error', 'message': 'Session with id "%s" not found.' % pk}
+                return Response(data=data, status=status.HTTP_404_NOT_FOUND)
+            utils.chunked_bulk_create(session.tag_set, found_tags, 980)
+            return Response(data=[], status=status.HTTP_200_OK)
