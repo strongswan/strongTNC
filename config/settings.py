@@ -234,7 +234,11 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
     },
     'loggers': {
         'django.request': {
@@ -244,6 +248,15 @@ LOGGING = {
         },
     }
 }
+try:
+    if config.getboolean('debug', 'SQL_DEBUG'):
+        # This will cause all SQL queries to be printed
+        LOGGING['loggers']['django.db.backends'] = {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+except (NoSectionError, NoOptionError):
+    pass
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'debug',
