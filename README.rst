@@ -2,8 +2,12 @@ strongTNC
 =========
 
 .. image:: https://travis-ci.org/strongswan/strongTNC.png?branch=master
-	:target: https://travis-ci.org/strongswan/strongTNC
-	:alt: Build status
+   :target: https://travis-ci.org/strongswan/strongTNC
+   :alt: Build status
+
+.. image:: https://coveralls.io/repos/strongswan/strongTNC/badge.png?branch=master
+   :target: https://coveralls.io/r/strongswan/strongTNC
+   :alt: Test coverage
 
 .. image:: https://landscape.io/github/strongswan/strongTNC/master/landscape.png
    :target: https://landscape.io/github/strongswan/strongTNC/master
