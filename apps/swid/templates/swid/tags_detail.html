@@ -42,19 +42,12 @@
                         <tr>
                             <td class="noWrap"><strong>{% trans 'Entities' %}</strong></td>
                             <td>
-                                {% for er in entityroles %}
-                                    {{ er.entity.name }} ({{ er.get_role_display }})
-                                    {% if not forloop.last %}
-                                        <br/>
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="noWrap"><strong>{% trans 'Regids' %}</strong></td>
-                            <td>
-                                {% for er in entityroles %}
-                                    <a href="{% url 'swid:regid_detail' er.entity.pk %}">{{ er.entity.regid }}</a>
+                                {% regroup entityroles|dictsort:"entity.name" by entity.pk as entity_list %}
+                                {% for entity in entity_list %}
+                                    <a href="{% url 'swid:regid_detail' entity.grouper %}"
+                                       title="{{ entity.grouper }}"> {{ entity.list.0.entity.name }}
+                                    </a>
+                                    ({% for role in entity.list %}{{ role.get_role_display }}{% if not forloop.last %},{% endif %}{% endfor %})
                                     {% if not forloop.last %}
                                         <br/>
                                     {% endif %}
@@ -72,6 +65,7 @@
                     <a class="btn btn-primary" href="#swidTagXmlModal" data-toggle="modal">
                         <i class="icon-file icon-white"></i>{% trans 'View raw SWID tag' %}
                     </a>
+                </div>
                 </div>
                 <hr>
 
@@ -99,7 +93,7 @@
                             </tbody>
                         </table>
                     {% else %}
-                        <p>No files found</p>
+                        <p>No devices found</p>
                     {% endif %}
                 </div>
                 <hr>
@@ -129,11 +123,9 @@
                 </div>
                 <hr>
 
-                <div id="swidTagXmlModal" class="modal hide fade" tabindex="-1" role="dialog"
-                     aria-hidden="true">
+                <div id="swidTagXmlModal" class="modal hide fade" tabindex="-1" role="dialog">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"
-                                aria-hidden="true">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h3 id="deleteModalLabel">{% trans 'SWID tag' %}: {{ object.unique_id }}</h3>
                     </div>
                     <div class="modal-body">
@@ -144,9 +136,7 @@
                     </div>
                 </div>
             {% endif %}
-        </div>
     </div>
-
 {% endblock %}
 
 
