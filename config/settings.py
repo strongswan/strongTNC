@@ -5,11 +5,16 @@ import os
 try:
     from ConfigParser import RawConfigParser, NoSectionError, NoOptionError
 except ImportError:  # py3
-    from configparser import ConfigParser, NoSectionError, NoOptionError
+    from configparser import RawConfigParser, NoSectionError, NoOptionError
 
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 
+import dj_database_url
+
+
+# Project root
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
 # Read configuration from ini
 config = RawConfigParser()
@@ -23,36 +28,40 @@ else:
             'to your likings.')
 
 
+# Debug variables
 DEBUG = config.getboolean('debug', 'DEBUG')
 TEMPLATE_DEBUG = config.getboolean('debug', 'TEMPLATE_DEBUG')
 DEBUG_TOOLBAR = config.getboolean('debug', 'DEBUG_TOOLBAR')
 
+# Admins and managers
 if DEBUG:
     ADMINS = tuple()
 else:
     ADMINS = tuple(config.items('admins'))
-
 MANAGERS = ADMINS
 
+# Allowed hosts (only used in production)
 try:
-    ALLOWED_HOSTS = list(config.items('allowed hosts'))
+    _allowed_hosts = config.get('security', 'ALLOWED_HOSTS')
+    ALLOWED_HOSTS = [x for x in _allowed_hosts.replace(' ', '').split(',') if x]
 except (NoSectionError, NoOptionError):
     ALLOWED_HOSTS = []
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'ipsec.config.db',
-    },
-
-    'meta': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'django.db',
-    },
-}
-
+# Database configuration
+DATABASES = {}
+try:
+    DATABASES['default'] = dj_database_url.parse(config.get('db', 'STRONGTNC_DB_URL'))
+except (NoSectionError, NoOptionError):
+    kwargs = {'env': 'STRONGTNC_DB_URL', 'default': 'sqlite:///ipsec.config.db'}
+    DATABASES['default'] = dj_database_url.config(**kwargs)
+try:
+    DATABASES['meta'] = dj_database_url.parse(config.get('db', 'DJANGO_DB_URL'))
+except (NoSectionError, NoOptionError):
+    kwargs = {'env': 'DJANGO_DB_URL', 'default': 'sqlite:///django.db'}
+    DATABASES['meta'] = dj_database_url.config(**kwargs)
 DATABASE_ROUTERS = ['config.router.DBRouter']
 
+# Auth URLs
 LOGIN_URL = '/login'
 
 # Local time zone for this installation. Choices can be found here:
@@ -67,6 +76,8 @@ try:
     TIME_ZONE = config.get('localization', 'TIME_ZONE')
 except (NoSectionError, NoOptionError):
     TIME_ZONE = None
+
+DEFAULT_DATETIME_FORMAT_STRING = '%b %d %H:%M:%S %Y'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -98,7 +109,14 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+try:
+    _static_root = config.get('paths', 'STATIC_ROOT')
+    if _static_root.startswith('/'):
+        STATIC_ROOT = _static_root
+    else:
+        STATIC_ROOT = os.path.join(PROJECT_ROOT, _static_root)
+except (NoSectionError, NoOptionError):
+    STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -127,7 +145,7 @@ STATICFILES_FINDERS = (
 
 # Make this unique, and don't share it with anybody.
 try:
-    SECRET_KEY = config.get('secrets', 'SECRET_KEY')
+    SECRET_KEY = config.get('security', 'SECRET_KEY')
 except (NoSectionError, NoOptionError):
     if DEBUG:
         SECRET_KEY = 'DEBUGGING-SECRETKEY'
@@ -180,8 +198,20 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'tncapp',
     'dajaxice',
+    'rest_framework',
+
+    # Own apps
+    'apps.front',
+    'apps.core',
+    'apps.auth',
+    'apps.policies',
+    'apps.devices',
+    'apps.packages',
+    'apps.filesystem',
+    'apps.swid',
+    'apps.tpm',
+    'apps.api',
 )
 if DEBUG_TOOLBAR:
     INSTALLED_APPS += ('debug_toolbar',)
@@ -229,4 +259,28 @@ def show_debug_toolbar(request):
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
     'SHOW_TOOLBAR_CALLBACK': 'config.settings.show_debug_toolbar',
+}
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'djangorestframework_camel_case.CamelCaseJSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'djangorestframework_camel_case.CamelCaseJSONParser',
+        'rest_framework.parsers.FormParser',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+    ),
+    'DEFAULT_MODEL_SERIALIZER_CLASS': 'rest_framework.serializers.HyperlinkedModelSerializer',
+    'URL_FIELD_NAME': 'uri',
 }

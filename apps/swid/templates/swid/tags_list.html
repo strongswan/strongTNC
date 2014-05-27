@@ -1,0 +1,28 @@
+{% extends "front/base.html" %}
+
+{% load i18n %}
+{% load paged_block %}
+
+{% block title %}SWID tags{% endblock %}
+
+{% block hero %}
+    <h1>SWID tags</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="line">
+                <h4>{% trans "Tag" %}</h4>
+                <hr>
+                <div class="row-fluid">
+                    {% paged_block config_name="swid_list_config" with_filter=True %}
+                </div>
+            </div>
+
+            <div class="span9" id="content">
+                {% block detail %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
