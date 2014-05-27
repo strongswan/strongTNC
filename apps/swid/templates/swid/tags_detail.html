@@ -88,10 +88,10 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for device, session in devices.items %}
+                            {% for device, session in reported_devices %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'devices:device_detail' device.pk %}">{{ device.description }}</a>
+                                        <a href="{% url 'devices:device_detail' device.pk %}">{{ device.list_repr }}</a>
                                     </td>
                                     <td>
                                         <a href="{% url 'devices:session_detail' session.pk %}">{{ session.time|date:"M d H:i:s Y" }}</a>

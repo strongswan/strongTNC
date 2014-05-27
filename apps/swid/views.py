@@ -38,7 +38,8 @@ class SwidTagDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(SwidTagDetailView, self).get_context_data(**kwargs)
         context['entityroles'] = self.object.entityrole_set.all()
-        context['devices'] = self.object.get_devices_with_reported_session()
+        context['reported_devices'] = sorted(self.object.get_devices_with_reported_session().items(),
+                                             key=lambda (device, session): device.description)
         return context
 
 
