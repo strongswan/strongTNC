@@ -7,12 +7,17 @@
         <tr>
             <th>{% trans 'Unique ID' %}</th>
             <th>{% trans 'Package name' %}</th>
+            <th>{% trans 'Version' %}</th>
         </tr>
         </thead>
         <tbody>
         {% for obj in object_list %}
             <tr>
-                <td><a href="{% url url_name obj.pk %}{{ url_hash }}">{{ obj.list_repr|highlight:filter_query }}</a></td>
+                <td>
+                    <a href="{% url url_name obj.pk %}{{ url_hash }}">
+                        {{ obj.list_repr|highlight:filter_query }}
+                    </a>
+                </td>
                 <td>
                     {% if obj.get_matching_packages %}
                         <a href="{% url 'packages:package_detail' obj.get_matching_packages.0.pk %}">
@@ -24,6 +29,7 @@
                         </span>
                     {% endif %}
                 </td>
+                <td>{{ obj.version|highlight:filter_query }}</td>
             </tr>
         {% endfor %}
         </tbody>
