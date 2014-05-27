@@ -106,6 +106,8 @@ class EntityRole(models.Model):
             return cls.LICENSOR
         elif value == 'publisher':
             return cls.PUBLISHER
+        else:
+            raise ValueError('Unknown role: %s' % value)
 
 
 class Entity(models.Model):

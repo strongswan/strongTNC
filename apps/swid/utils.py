@@ -45,18 +45,19 @@ class SwidParser(object):
             # Store entities
             regid = attrib['regid']
             name = attrib['name']
-            role = attrib['role']
-            entity_role = EntityRole()
-            entity, _ = Entity.objects.get_or_create(regid=regid)
-            entity.name = name
-            role = EntityRole.xml_attr_to_choice(role)
+            roles = attrib['role']
+            for role in roles.split():
+                entity, _ = Entity.objects.get_or_create(regid=regid)
+                entity.name = name
 
-            entity_role.role = role
-            self.entities.append((entity, entity_role))
+                role_id = EntityRole.xml_attr_to_choice(role)
+                entity_role = EntityRole()
+                entity_role.role = role_id
+                self.entities.append((entity, entity_role))
 
-            # Use regid of first entity with tagcreator role to construct software-id
-            if role == EntityRole.TAGCREATOR:
-                self.tag.software_id = '%s_%s' % (regid, self.tag.unique_id)
+                # Use regid of last entity with tagcreator role to construct software-id
+                if role_id == EntityRole.TAGCREATOR:
+                    self.tag.software_id = '%s_%s' % (regid, self.tag.unique_id)
 
     def close(self):
         """

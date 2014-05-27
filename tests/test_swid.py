@@ -86,6 +86,8 @@ def test_tag_version(swidtag, filename, version):
 @pytest.mark.parametrize(['filename', 'tagroles'], [
     ('strongswan.short.swidtag', [EntityRole.TAGCREATOR]),
     ('strongswan.full.swidtag', [EntityRole.TAGCREATOR, EntityRole.PUBLISHER]),
+    ('strongswan.full.swidtag.combinedrole',
+        [EntityRole.TAGCREATOR, EntityRole.PUBLISHER, EntityRole.LICENSOR]),
     ('cowsay.short.swidtag', [EntityRole.TAGCREATOR]),
     ('cowsay.full.swidtag', [EntityRole.TAGCREATOR, EntityRole.LICENSOR]),
     ('strongswan-tnc-imcvs.short.swidtag', [EntityRole.TAGCREATOR]),
@@ -169,7 +171,7 @@ def test_invalid_tags(filename):
 
 
 @pytest.mark.parametrize('filename',[
-    'strongswan.full.swidtag'
+    'strongswan.full.swidtag',
 ])
 def test_entity_name_update(swidtag, filename):
     assert(Entity.objects.count() == 1)
@@ -188,3 +190,16 @@ def test_entity_name_update(swidtag, filename):
     assert(Entity.objects.count() == 2)
     assert(Tag.objects.count() == 2)
     assert(not replaced)
+
+
+@pytest.mark.parametrize('value', ['publisher', 'licensor', 'tagcreator'])
+def test_valid_role(value):
+    try:
+        EntityRole.xml_attr_to_choice(value)
+    except ValueError:
+        pytest.fail('Role %s should be valid.' % value)
+
+
+def test_invalid_role():
+    with pytest.raises(ValueError):
+        EntityRole.xml_attr_to_choice('licensee')
