@@ -82,15 +82,13 @@ class SwidMeasurementView(views.APIView):
     """
     def post(self, request, pk, format=None):
         software_ids = request.DATA
-        found_tags = []
         missing_tags = []
+        found_tags = Tag.objects.filter(software_id__in=software_ids)
 
         # Look for matching tags
+        found_software_ids = [t.software_id for t in found_tags]
         for software_id in software_ids:
-            try:
-                tag = Tag.objects.get(software_id=software_id)
-                found_tags.append(tag)
-            except Tag.DoesNotExist:
+            if software_id not in found_software_ids:
                 missing_tags.append(software_id)
 
         if missing_tags:
