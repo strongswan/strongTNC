@@ -39,34 +39,37 @@ var Pager = function() {
             this.addFilter();
         }
 
-        // if url parameter were set, get them
-        this.grabURLParams();
+        // register hashChanged events
+        HashQuery.addChangedListener(this.pageParam, this.grabPageParam.bind(this));
+        HashQuery.addChangedListener(this.filterParam, this.grabFilterParam.bind(this));
 
         // get initial page
+        this.initial = true;
+        this.getInitalURLParam();
         this.getPage();
 
-        $(window).on('hashchange', function() {
-            if(!this.loading && this.hasURLParam()) {
-                if(this.grabURLParams()) {
-                    this.getPage();
-                }
-            }
-        }.bind(this));
     };
 
-    this.grabURLParams = function() {
-        var changed = false;
-        var currPageIdx = parseInt(this.getURLParam(this.pageParam));
+    this.grabPageParam = function(key, value) {
+        var currPageIdx = parseInt(value);
         if(!isNaN(currPageIdx)) {
             var idxChanged = this.currentPageIdx != currPageIdx;
             this.currentPageIdx = currPageIdx;
         }
-        var filter = this.getURLParam(this.filterParam);
+        if(idxChanged) {
+            this.getPage();
+        }
+    };
+
+    this.grabFilterParam = function(key, value) {
+        var filter = value;
         if(filter) {
             var filterChanged = this.getFilterQuery() != filter;
             this.$filterInput.val(filter);
         }
-        return changed || idxChanged || filterChanged;
+        if(filterChanged) {
+            this.getPage();
+        }
     };
 
     // grab next page
@@ -107,7 +110,8 @@ var Pager = function() {
     this.pagingCallback = function(data) {
         this.statsUpdate(data);
         this.$contentContainer.html(data.html);
-        this.setURLParam(this.pageParam, this.currentPageIdx);
+        this.setURLParam(this.pageParam, this.currentPageIdx, this.initial);
+        this.initial = false;
         this.loading = false;
     };
 
@@ -130,7 +134,6 @@ var Pager = function() {
             this.$nextButton.prop('disabled', true);
             this.$prevButton.prop('disabled', true);
         }
-
     };
 
     this.getFilterQuery = function() {
@@ -145,7 +148,7 @@ var Pager = function() {
     this.filterQuery = function() {
         this.currentPageIdx = 0;
         this.getPage();
-        this.setURLParam(this.filterParam, this.getFilterQuery());
+        this.setURLParam(this.filterParam, this.getFilterQuery(), false);
     };
 
     this.addFilter = function() {
@@ -182,25 +185,26 @@ var Pager = function() {
         };
     };
 
-    this.setURLParam = function(key, value) {
-        var params = HashQuery.getHashQueryObject();
-        params[key] = value;
-        HashQuery.setHashQueryObject(params);
+    this.setURLParam = function(hashKey, hashValue, avoidHistory) {
+        var hashKeyObj = {};
+        hashKeyObj[hashKey] = hashValue;
+        HashQuery.setHashKey(hashKeyObj, false, avoidHistory);
     };
 
-    this.getURLParam = function(key) {
+    this.getInitalURLParam = function() {
         var params = HashQuery.getHashQueryObject();
-        var param = params[key];
-        if(param) {
-            return param;
-        }
-        return '';
-    };
-
-    this.hasURLParam = function() {
-        var params = HashQuery.getHashQueryObject()
         for (var key in params) {
-            if (hasOwnProperty.call(params, key)) return true;
+            if (hasOwnProperty.call(params, key)) {
+                if(key == this.pageParam) {
+                    var currIdx = parseInt(params[key]);
+                    if(!isNaN(currIdx)) {
+                        this.currentPageIdx = currIdx;
+                    }
+                }
+                if(key == this.filterParam) {
+                    this.$filterInput.val(params[key]);
+                }
+            }
         }
     };
 

@@ -23,7 +23,7 @@ HashQuery.sendChanged = function (key, value) {
     for (var i = 0; i < listeners.length; ++i) {
         listeners[i](key, value);
     }
-}
+};
 
 HashQuery.notifyAll = function () {
     if (HashQuery.ignoreEvents) {
@@ -55,28 +55,32 @@ HashQuery.addChangedListener = function (tag, callback) {
     }
 };
 
-HashQuery.setHashKey = function (obj, ignoreEvents) {
+HashQuery.setHashKey = function (obj, ignoreEvents, avoidBrowserHistory) {
     var current_obj = HashQuery.getHashQueryObject();
     for (var key in obj) {
         current_obj[key] = obj[key];
     }
-    HashQuery.setHashQueryObject(current_obj, ignoreEvents);
-}
+    HashQuery.setHashQueryObject(current_obj, ignoreEvents, avoidBrowserHistory);
+};
 
 // sets a key/value javascript object as pseudo
 // query string after the url-hash
-HashQuery.setHashQueryObject = function (obj, ignoreEvents) {
+HashQuery.setHashQueryObject = function (obj, ignoreEvents, avoidBrowserHistory) {
     var hash = '#';
     for (var key in obj) {
         hash +=
             encodeURIComponent(key) +
-                "=" +
-                encodeURIComponent(obj[key]) +
-                "&";
+            "=" +
+            encodeURIComponent(obj[key]) +
+            "&";
 
     }
     HashQuery.ignoreEvents = ignoreEvents;
-    window.location.hash = hash.slice(0, -1);
+    if(avoidBrowserHistory) {
+        window.location.replace(hash.slice(0, -1));
+    } else {
+        window.location.hash = hash.slice(0, -1);
+    }
 };
 
 window.addEventListener("hashchange", HashQuery.notifyAll, false);
