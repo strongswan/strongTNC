@@ -15,9 +15,9 @@
             <h4>{% trans 'Device Infos' %}</h4>
 
             <div class="row-fluid">
-                <div class="span6">
+                <div class="span7">
                     <table class="table" border="0">
-                        <tbody>
+                        <tbody class="noWrap">
                         <tr>
                             <td><strong>{% trans 'ID' %}</strong></td>
                             <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.value }}</a></td>
@@ -32,7 +32,7 @@
                         </tr>
                         <tr>
                             <td><strong>{% trans 'Last session' %}</strong></td>
-                            <td>{% if last_session %}
+                            <td class="dateWidth">{% if last_session %}
                                     {{ last_session|date:'M d H:i:s Y' }}
                                 {% else %}
                                     {% trans 'None' %}

@@ -14,66 +14,64 @@
             {% if object %}
                 <h4>Tag Info</h4>
                 <div class="row-fluid">
-                    <div class="span8">
-                        <table class="table" border="0">
-                            <tbody>
-                            <tr>
-                                <td><strong>{% trans 'Name' %}</strong></td>
-                                <td>
-                                    {% if object.get_matching_packages %}
-                                        <a href="{% url 'packages:package_detail' object.get_matching_packages.0.pk %}">
-                                            {{ object.package_name }}
-                                        </a>
-                                    {% else %}
+                    <table class="table" border="0">
+                        <tbody>
+                        <tr>
+                            <td class="noWrap"><strong>{% trans 'Name' %}</strong></td>
+                            <td>
+                                {% if object.get_matching_packages %}
+                                    <a href="{% url 'packages:package_detail' object.get_matching_packages.0.pk %}">
                                         {{ object.package_name }}
-                                        <a title="{% trans 'No matching package found' %}"
-                                           data-toggle="tooltip" href="#">
-                                            <i class="icon-info-sign"></i></a>
+                                    </a>
+                                {% else %}
+                                    {{ object.package_name }}
+                                    <a title="{% trans 'No matching package found' %}"
+                                       data-toggle="tooltip" href="#">
+                                        <i class="icon-info-sign"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="noWrap"><strong>{% trans 'Version' %}</strong></td>
+                            <td>{{ object.version }}</td>
+                        </tr>
+                        <tr>
+                            <td class="noWrap"><strong>{% trans 'Unique ID' %}</strong></td>
+                            <td>{{ object.unique_id }}</td>
+                        </tr>
+                        <tr>
+                            <td class="noWrap"><strong>{% trans 'Entities' %}</strong></td>
+                            <td>
+                                {% for er in entityroles %}
+                                    {{ er.entity.name }} ({{ er.get_role_display }})
+                                    {% if not forloop.last %}
+                                        <br/>
                                     {% endif %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>{% trans 'Version' %}</strong></td>
-                                <td>{{ object.version }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>{% trans 'Unique ID' %}</strong></td>
-                                <td>{{ object.unique_id }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>{% trans 'Entities' %}</strong></td>
-                                <td>
-                                    {% for er in entityroles %}
-                                        {{ er.entity.name }} ({{ er.get_role_display }})
-                                        {% if not forloop.last %}
-                                            <br/>
-                                        {% endif %}
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>{% trans 'Regids' %}</strong></td>
-                                <td>
-                                    {% for er in entityroles %}
-                                        <a href="{% url 'swid:regid_detail' er.entity.pk %}">{{ er.entity.regid }}</a>
-                                        {% if not forloop.last %}
-                                            <br/>
-                                        {% endif %}
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>{% trans 'Software ID' %}</strong></td>
-                                <td>
-                                    {{ object.software_id }}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <a class="btn btn-primary" href="#swidTagXmlModal" data-toggle="modal">
-                            <i class="icon-file icon-white"></i>{% trans 'View raw SWID tag' %}
-                        </a>
-                    </div>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="noWrap"><strong>{% trans 'Regids' %}</strong></td>
+                            <td>
+                                {% for er in entityroles %}
+                                    <a href="{% url 'swid:regid_detail' er.entity.pk %}">{{ er.entity.regid }}</a>
+                                    {% if not forloop.last %}
+                                        <br/>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="noWrap"><strong>{% trans 'Software ID' %}</strong></td>
+                            <td>
+                                {{ object.software_id }}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <a class="btn btn-primary" href="#swidTagXmlModal" data-toggle="modal">
+                        <i class="icon-file icon-white"></i>{% trans 'View raw SWID tag' %}
+                    </a>
                 </div>
                 <hr>
 
@@ -84,7 +82,7 @@
                             <thead>
                             <tr>
                                 <th>{% trans 'Description' %}</th>
-                                <th>{% trans 'First reported' %}</th>
+                                <th class="dateWidth">{% trans 'First reported' %}</th>
                             </tr>
                             </thead>
                             <tbody>

@@ -141,3 +141,13 @@ pre.raw-xml {
 .table .siwd-new-icon {
     width: 20px;
 }
+
+td.dateWidth,
+th.dateWidth {
+    min-width: 150px;
+}
+
+.noWrap,
+.noWrap {
+    white-space: nowrap;
+}

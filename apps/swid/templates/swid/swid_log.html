@@ -54,28 +54,28 @@
 
     <h3>{% trans 'Changes summary' %}</h3>
     <div class="row-fluid">
-        <div class="span4">
+        <div class="span7">
             <table class="table statsTable" border="0">
                 <tbody>
                 <tr>
-                    <td class="title"><strong>{% trans 'Added SWID tags' %}</strong></td>
+                    <td class="title noWrap"><strong>{% trans 'Added SWID tags' %}</strong></td>
                     <td class="addedTags">0</td>
                 </tr>
                 <tr>
-                    <td class="title"><strong>{% trans 'Removed SWID tags' %}</strong></td>
+                    <td class="title noWrap"><strong>{% trans 'Removed SWID tags' %}</strong></td>
                     <td class="removedTags">0</td>
                 </tr>
                 <tr>
-                    <td class="title"><strong>{% trans 'Sessions in range' %}</strong></td>
+                    <td class="title noWrap"><strong>{% trans 'Sessions in range' %}</strong></td>
                     <td class="sessionCount">0</td>
                 </tr>
                 <tr>
-                    <td class="title"><strong>{% trans 'First session in range' %}</strong></td>
-                    <td class="firstSession">{% trans 'None' %}</td>
+                    <td class="title noWrap"><strong>{% trans 'First session in range' %}</strong></td>
+                    <td class="firstSession dateWidth">{% trans 'None' %}</td>
                 </tr>
                 <tr>
-                    <td class="title"><strong>{% trans 'Last session in range' %}</strong></td>
-                    <td class="lastSession">{% trans 'None' %}</td>
+                    <td class="title noWrap"><strong>{% trans 'Last session in range' %}</strong></td>
+                    <td class="lastSession dateWidth">{% trans 'None' %}</td>
                 </tr>
                 </tbody>
             </table>
@@ -88,7 +88,7 @@
                class="displ-none table table-hover table-striped">
             <thead>
             <tr role="row">
-                <th>
+                <th class="dateWidth">
                     {% trans 'Session' %}
                 </th>
                 <th>
