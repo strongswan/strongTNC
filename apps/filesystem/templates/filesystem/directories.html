@@ -44,7 +44,8 @@
                                     <input type="text" id="path" name="path" placeholder="{% trans 'Path' %}"
                                            rel="tooltip"
                                            title="{% trans 'Directory path' %}"
-                                           value="{{ directory.path }}" {% input_editability %}>
+                                           value="{{ directory.path }}"
+                                           {% input_editability %}>
                                 </div>
                             </div>
                         {% else %}
@@ -52,8 +53,6 @@
                                 <h3>{% trans 'Directory info:' %} {{ directory.path }}</h3>
                             </div>
                         {% endif %}
-
-
 
                         {% if 'auth.write_access' in perms %}
                             <div class="btn-toolbar" style="margin: 0;">

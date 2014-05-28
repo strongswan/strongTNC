@@ -60,6 +60,7 @@ def test_login_required(client, strongtnc_users, url):
     # Add views
     ('/groups/add/', 'get'),
     ('/devices/add/', 'get'),
+    ('/files/add/', 'get'),
     ('/directories/add/', 'get'),
     ('/packages/add/', 'get'),
     ('/products/add/', 'get'),

@@ -4,6 +4,7 @@ from . import file_views, directory_views
 urlpatterns = patterns('',
     url(r'^files/?$', file_views.files, name='file_list'),
     url(r'^files/(?P<fileID>\d+)/?$', file_views.file, name='file_detail'),
+    url(r'^files/add/?$', file_views.add, name='file_add'),
     url(r'^files/save/?$', file_views.save, name='file_save'),
     url(r'^files/(?P<fileID>\d+)/delete/?$', file_views.delete, name='file_delete'),
 
