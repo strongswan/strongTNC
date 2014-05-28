@@ -79,7 +79,7 @@
                 </tr>
                 </tbody>
             </table>
-        </div><!--/span5-->
+        </div>
     </div>
 
     <div class="row-fluid">
@@ -101,14 +101,17 @@
             </thead>
 
             <tbody id="tags-table-body">
-                {% comment  %}
+            {% comment %}
                     currently filled via javascript
-                {% endcomment  %}
+            {% endcomment %}
             </tbody>
         </table>
         <p id="noEntryText" class="displ-none">{% trans 'No entries' %}</p>
     </div>
 
-    <script src="{{ STATIC_URL }}js/swid-log.js"></script>
+{% endblock %}
 
+{% block footer_js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/swid-log.js"></script>
 {% endblock %}

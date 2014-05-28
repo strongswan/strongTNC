@@ -125,8 +125,11 @@
                 </table>
             </div>
         </div>
-        <script src="{{ STATIC_URL }}js/swid-inventory.js"></script>
+
     {% endif %}
+{% endblock %}
 
-
+{% block footer_js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/swid-inventory.js"></script>
 {% endblock %}
