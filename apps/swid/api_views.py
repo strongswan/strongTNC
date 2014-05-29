@@ -10,6 +10,7 @@ from . import utils, serializers
 
 from .models import Entity, Tag
 from apps.core.models import Session
+from apps.api.utils import make_message
 
 
 class EntityViewSet(viewsets.ReadOnlyModelViewSet):
@@ -23,26 +24,56 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = ('package_name', 'version', 'unique_id')
 
 
+def validate_data_param(request, list_name):
+    """
+    Validate data for API views that expect a data=[] like parameter.
+
+    If validation fails, a ValueError is raised, with the response as exception
+    message. Otherwise, the list is returned.
+
+    """
+    if hasattr(request.DATA, 'getlist'):
+        items = request.DATA.getlist('data')
+    elif hasattr(request.DATA, 'get'):
+        items = request.DATA.get('data')
+    else:
+        response = make_message('Missing "data" parameter', status.HTTP_400_BAD_REQUEST)
+        raise ValueError(response)
+    if items is None:
+        response = make_message('Missing "data" parameter', status.HTTP_400_BAD_REQUEST)
+        raise ValueError(response)
+    if not items:
+        response = make_message('No %s submitted' % list_name, status.HTTP_400_BAD_REQUEST)
+        raise ValueError(response)
+    if not isinstance(items, list):
+        msg = 'The submitted "data" parameter does not contain a list'
+        response = make_message(msg, status.HTTP_400_BAD_REQUEST)
+        raise ValueError(response)
+    return items
+
+
 class TagAddView(views.APIView):
     """
     Read the submitted SWID XML tags, parse them and store them into the
     database.
 
-    The SWID tags should be submitted in a JSON formatted list, with the
-    ``Content-Type`` header set to ``application/json; charset=utf-8``.
+    You can either send data to this endpoint in
+    `application/x-www-form-urlencoded` encoding
+
+        data='tag-xml-1'&data='tag-xml-2'&data='tag-xml-3'
+
+    ...or you can use `application/json` encoding:
+
+        {"data": ["tag-xml-1", "tag-xml-2", "tag-xml-3"]}
 
     """
     parser_classes = (JSONParser,)  # Only JSON data is supported
 
     def post(self, request, format=None):
-        # Validate request data
-        tags = request.DATA
-        if not isinstance(tags, list):
-            data = {
-                'status': 'error',
-                'message': 'Request body must be JSON formatted list of XML tags.',
-            }
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            tags = validate_data_param(request, 'SWID tags')
+        except ValueError as e:
+            return e.message
 
         # Process tags
         stats = {'added': 0, 'replaced': 0}
@@ -50,11 +81,9 @@ class TagAddView(views.APIView):
             try:
                 tag, replaced = utils.process_swid_tag(tag)
             except XMLSyntaxError:
-                data = {'status': 'error', 'message': 'Invalid XML'}
-                return Response(data, status=status.HTTP_400_BAD_REQUEST)
+                return make_message('Invalid XML', status.HTTP_400_BAD_REQUEST)
             except ValueError as e:
-                data = {'status': 'error', 'message': unicode(e)}
-                return Response(data, status=status.HTTP_400_BAD_REQUEST)
+                return make_message(unicode(e), status.HTTP_400_BAD_REQUEST)
             else:
                 # Update stats
                 if replaced:
@@ -62,11 +91,8 @@ class TagAddView(views.APIView):
                 else:
                     stats['added'] += 1
 
-        data = {
-            'status': 'success',
-            'message': 'Added {0[added]} SWID tags, replaced {0[replaced]} SWID tags.'.format(stats),
-        }
-        return Response(data, status=status.HTTP_200_OK)
+        msg = 'Added {0[added]} SWID tags, replaced {0[replaced]} SWID tags.'.format(stats)
+        return make_message(msg, status.HTTP_200_OK)
 
 
 class SwidMeasurementView(views.APIView):
@@ -76,12 +102,24 @@ class SwidMeasurementView(views.APIView):
     If no corresponding tag is available for one or more software-ids, return
     these software-ids with HTTP status code 412 Precondition failed.
 
-    This view is defined on a session detail page. The ``pk`` argument is the
+    This view is defined on a session detail page. The `pk` argument is the
     session ID.
+
+    You can either send data to this endpoint in `application/x-www-form-urlencoded` encoding
+
+        data='software-id-1'&data='software-id-2'&data='software-id-n'
+
+    ...or you can use `application/json` encoding:
+
+        {"data": ["software-id-1", "software-id-2", "software-id-n"]}
 
     """
     def post(self, request, pk, format=None):
-        software_ids = request.DATA
+        try:
+            software_ids = validate_data_param(request, 'software IDs')
+        except ValueError as e:
+            return e.message
+
         missing_tags = []
         found_tags = Tag.objects.filter(software_id__in=software_ids)
 
@@ -99,7 +137,7 @@ class SwidMeasurementView(views.APIView):
             try:
                 session = Session.objects.get(pk=pk)
             except Session.DoesNotExist:
-                data = {'status': 'error', 'message': 'Session with id "%s" not found.' % pk}
-                return Response(data=data, status=status.HTTP_404_NOT_FOUND)
+                msg = 'Session with id "%s" not found' % pk
+                return make_message(msg, status.HTTP_404_NOT_FOUND)
             utils.chunked_bulk_create(session.tag_set, found_tags, 980)
             return Response(data=[], status=status.HTTP_200_OK)

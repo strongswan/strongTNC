@@ -8,7 +8,7 @@ import json
 from django.core.urlresolvers import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 
-from .fixtures import *  # Star import is OK here because it's just a test
+from .fixtures import *  # NOQA: Star import is OK here because it's just a test
 
 
 @pytest.mark.parametrize('username, password, success', [

@@ -11,7 +11,7 @@ from model_mommy import mommy
 
 from apps.filesystem.models import File, Directory
 
-from .fixtures import *  # Star import is OK here because it's just a test
+from .fixtures import *  # NOQA: Star import is OK here because it's just a test
 
 
 @pytest.fixture
