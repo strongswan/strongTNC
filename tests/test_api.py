@@ -144,7 +144,7 @@ def test_add_single_tag(api_client):
     'strongswan.full.swidtag',
 ])
 def test_add_existing_tag(api_client, swidtag, filename):
-    assert len(swidtag.files.all()) == 7
+    assert swidtag.files.count() == 7
 
     with open('tests/test_tags/strongswan.full.swidtag.singleentity') as f:
         xml = f.read()
@@ -154,9 +154,8 @@ def test_add_existing_tag(api_client, swidtag, filename):
         tag = Tag.objects.get(
             software_id="regid.2004-03.org.strongswan_debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3")
 
-        assert tag.files.count() == 5
-        assert len(tag.entityrole_set.all()) == 1
-        assert len(tag.files.all()) == 5
+        assert tag.files.count() == 7
+        assert tag.entityrole_set.count() == 2
 
 
 @pytest.mark.parametrize('filename', [

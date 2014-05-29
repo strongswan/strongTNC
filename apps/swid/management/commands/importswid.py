@@ -36,7 +36,7 @@ class Command(BaseCommand):
         with open(filename, 'r') as f:
             for line in f:
                 tag_xml = line.strip().decode('utf8')
-                tag, replaced = utils.process_swid_tag(tag_xml)
+                tag, replaced = utils.process_swid_tag(tag_xml, allow_tag_update=True)
                 if replaced:
                     self.stdout.write('Replaced {0}'.format(tag).encode(encoding, 'replace'))
                 else:

@@ -34,7 +34,7 @@ def swidtag(request, transactional_db):
     filename = request.getfuncargvalue('filename')
     with open('tests/test_tags/%s' % filename, 'r') as f:
         tag_xml = f.read()
-        return utils.process_swid_tag(tag_xml)[0]
+        return utils.process_swid_tag(tag_xml, allow_tag_update=True)[0]
 
 
 @pytest.fixture
@@ -92,7 +92,7 @@ def test_tag_version(swidtag, filename, version):
     ('strongswan.short.swidtag', [EntityRole.TAGCREATOR]),
     ('strongswan.full.swidtag', [EntityRole.TAGCREATOR, EntityRole.PUBLISHER]),
     ('strongswan.full.swidtag.combinedrole',
-        [EntityRole.TAGCREATOR, EntityRole.PUBLISHER, EntityRole.LICENSOR]),
+     [EntityRole.TAGCREATOR, EntityRole.PUBLISHER, EntityRole.LICENSOR]),
     ('cowsay.short.swidtag', [EntityRole.TAGCREATOR]),
     ('cowsay.full.swidtag', [EntityRole.TAGCREATOR, EntityRole.LICENSOR]),
     ('strongswan-tnc-imcvs.short.swidtag', [EntityRole.TAGCREATOR]),
@@ -146,18 +146,6 @@ def test_tag_files(swidtag, filename, directories, files, filecount):
     assert swidtag.files.count() == filecount
 
 
-@pytest.mark.parametrize('filename', [
-    'strongswan.full.swidtag',
-])
-def test_tag_replacement(swidtag, filename):
-    with open('tests/test_tags/strongswan.full.swidtag.singleentity') as f:
-        xml = f.read()
-        tag, replaced = utils.process_swid_tag(xml)
-        assert tag.software_id == swidtag.software_id
-        assert replaced == True
-        assert len(tag.entity_set.all()) == 1
-
-
 @pytest.mark.django_db
 @pytest.mark.parametrize('filename', [
     'strongswan.full.swidtag.notagcreator',
@@ -175,26 +163,122 @@ def test_invalid_tags(filename):
         assert len(Entity.objects.all()) == 0
 
 
-@pytest.mark.parametrize('filename',[
+@pytest.mark.parametrize('value', ['publisher', 'licensor', 'tagcreator'])
+def test_valid_role(value):
+    try:
+        EntityRole.xml_attr_to_choice(value)
+    except ValueError:
+        pytest.fail('Role %s should be valid.' % value)
+
+
+def test_invalid_role():
+    with pytest.raises(ValueError):
+        EntityRole.xml_attr_to_choice('licensee')
+
+
+### TAG REPLACEMENT / UPDATE TESTS ###
+
+@pytest.mark.parametrize('filename', [
     'strongswan.full.swidtag',
 ])
-def test_entity_name_update(swidtag, filename):
-    assert(Entity.objects.count() == 1)
-    new_xml = swidtag.swid_xml.replace('name="strongSwan"', 'name="strongswan123"')
-    tag, replaced = utils.process_swid_tag(new_xml)
-    assert(Entity.objects.count() == 1)
-    assert(Tag.objects.count() == 1)
-    assert(replaced)
+def test_tag_add_entities(swidtag, filename):
+    assert swidtag.entityrole_set.count() == 2
+    old_software_id = swidtag.software_id
+    with open('tests/test_tags/strongswan.full.swidtag.replacement') as f:
+        xml = f.read()
+        tag, replaced = utils.process_swid_tag(xml, allow_tag_update=True)
 
+    assert tag.software_id == old_software_id
+    assert replaced is True
+    assert tag.entity_set.count() == 4
+
+
+@pytest.mark.parametrize('filename', [
+    'strongswan.full.swidtag',
+])
+def test_tag_replace_files(swidtag, filename):
+    assert swidtag.files.count() == 7
+
+    with open('tests/test_tags/strongswan.full.swidtag.replacement') as f:
+        xml = f.read()
+        tag, replaced = utils.process_swid_tag(xml, allow_tag_update=True)
+
+    assert replaced is True
+    assert tag.files.count() == 3
+
+
+@pytest.mark.parametrize('filename', [
+    'invalid_tags/strongswan.full.swidtag.duplicateregid',
+])
+def test_change_duplicate_regid_entity_name(swidtag, filename):
+    """
+    Changing the name of an entity (with a role other than tagcreator) will create a new entity, since an
+    entity is uniquely identified by its name and regid.
+
+    """
+
+    assert Entity.objects.count() == 1
+    assert swidtag.entity_set.count() == 2
+    new_xml = swidtag.swid_xml.replace('name="strongSwan"', 'name="strongswan123"')
+    tag, replaced = utils.process_swid_tag(new_xml, allow_tag_update=True)
+    assert tag.entity_set.count() == 2
+    assert Entity.objects.count() == 1
+    assert Tag.objects.count() == 1
+    assert replaced is True
+
+    # new entities should be wired up correctly
+    test_entities = ['HSR', 'HSR']
+    real_entities = tag.entity_set.values_list('name', flat=True)
+    assert sorted(test_entities) == sorted(real_entities)
+
+
+@pytest.mark.parametrize('filename', [
+    'strongswan.full.swidtag',
+])
+def test_change_entity_name(swidtag, filename):
+    entity_to_update = Entity.objects.get(regid='regid.2004-03.org.strongswan')
+    old_entity_name = 'strongSwan'
+    new_entity_name = 'strongSwan Project'
+
+    assert Entity.objects.count() == 2
+    assert swidtag.entity_set.count() == 2
+    assert entity_to_update.name == old_entity_name
+
+    new_xml = swidtag.swid_xml.replace('name="%s"' % old_entity_name, 'name="%s"' % new_entity_name)
+    tag, replaced = utils.process_swid_tag(new_xml, allow_tag_update=False)
+    entity_to_update = Entity.objects.get(regid='regid.2004-03.org.strongswan')
+
+    assert Entity.objects.count() == 2
+    assert tag.entity_set.count() == 2
+    assert entity_to_update.name == new_entity_name
+
+
+@pytest.mark.parametrize('filename', [
+    'strongswan.full.swidtag',
+])
+def test_change_tagcreator_entity_regid(swidtag, filename):
+    """
+    Changing a tagcreator entity creates a new tag, since a tag is uniquely identified
+    by the regid (of the tagcreator entity) and the unique_id of the tag itself.
+    """
     new_xml = swidtag.swid_xml.replace('name="strongSwan" regid="regid.2004-03.org.strongswan"',
                                        'name="strongSwan" regid="regid.2005-03.org.strongswan"')
-    tag, replaced = utils.process_swid_tag(new_xml)
+    tag, replaced = utils.process_swid_tag(new_xml, allow_tag_update=True)
+    assert Tag.objects.count() == 2
+    assert 'regid.2005-03.org.strongswan' in tag.software_id
+    assert replaced is False
 
-    # a new entity with a different regid should be created
-    # also a new tag is create because the software id has changed
-    assert(Entity.objects.count() == 2)
-    assert(Tag.objects.count() == 2)
-    assert(not replaced)
+
+@pytest.mark.parametrize('filename', [
+    'strongswan.full.swidtag',
+])
+def test_remove_publisher_entity(swidtag, filename):
+    assert swidtag.entity_set.count() == 2
+    with open('tests/test_tags/strongswan.full.swidtag.singleentity') as f:
+        xml = f.read()
+        tag, replaced = utils.process_swid_tag(xml, allow_tag_update=True)
+        assert replaced is True
+        assert tag.entity_set.count() == 1
 
 
 @pytest.mark.parametrize('value', ['publisher', 'licensor', 'tagcreator'])
@@ -246,7 +330,6 @@ def tags_and_sessions(transactional_db):
 
 
 def test_swid_inventory_list_producer(transactional_db, tags_and_sessions):
-
     s1 = tags_and_sessions['sessions'][0]
 
     params = {'session_id': 1}
@@ -349,3 +432,14 @@ def test_get_installed_tags_with_time(transactional_db, tags_and_sessions):
     assert installed_tags[tag3] == s1
     # tag5 was installed in session s2
     assert installed_tags[tag5] == s2
+
+
+@pytest.mark.parametrize('filename', [
+    'strongswan.full.swidtag',
+])
+def test_changed_software_entity_name(swidtag, filename):
+    new_xml = swidtag.swid_xml.replace('SoftwareIdentity name="strongswan"',
+                                       'SoftwareIdentity name="strongswan123"')
+    tag, replaced = utils.process_swid_tag(new_xml, allow_tag_update=True)
+    assert replaced is True
+    assert Tag.objects.count() == 1
