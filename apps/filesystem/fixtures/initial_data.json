@@ -1,0 +1,6 @@
+[
+    {"pk": 8192, "model": "filesystem.algorithm", "fields": {"name": "SHA384"}},
+    {"pk": 16384, "model": "filesystem.algorithm", "fields": {"name": "SHA256"}},
+    {"pk": 32768, "model": "filesystem.algorithm", "fields": {"name": "SHA1"}},
+    {"pk": 65536, "model": "filesystem.algorithm", "fields": {"name": "SHA1-IMA"}}
+]
