@@ -12,9 +12,9 @@ directory_producer_factory = ProducerFactory(Directory, 'path__icontains')
 
 
 def file_list_producer(from_idx, to_idx, filter_query, dynamic_params=None, static_params=None):
-    file_list = File.objects.all()
+    file_list = File.objects.all().order_by('directory', 'name')
     if filter_query:
-        file_list = File.filter(filter_query)
+        file_list = File.filter(filter_query, order_by=('directory', 'name'))
     return file_list[from_idx:to_idx]
 
 
