@@ -22,6 +22,14 @@ var initDateTimePicker = function() {
     });
     fromPicker.datepicker("setDate", '-1w');
     toPicker.datepicker("setDate", new Date());
+
+    $("#from-btn").click(function () {
+        fromPicker.datepicker("show");
+    });
+
+    $("#to-btn").click(function () {
+        toPicker.datepicker("show");
+    });
 };
 
 var initPresetSelect = function() {
