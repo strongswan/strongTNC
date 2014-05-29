@@ -48,6 +48,8 @@ var Pager = function() {
         this.getInitalURLParam();
         this.getPage();
 
+        // place handle to the pager object
+        this.$ctx.data('pager', this);
     };
 
     this.grabPageParam = function(key, value) {
@@ -213,6 +215,17 @@ var Pager = function() {
             return !!(this.currentPageIdx >= 0 && this.currentPageIdx < this.pageCount);
         }
         return true;
+    };
+
+    this.setProducerArgs = function(argObj) {
+        this.args = argObj;
+    };
+
+    this.reset = function() {
+        this.currentPageIdx = 0;
+        if(this.filter) {
+            this.$filterInput.val('');
+        }
     };
 };
 

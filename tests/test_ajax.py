@@ -8,16 +8,12 @@ from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.utils.dateformat import format
-from django.utils.timezone import localtime
 
 import pytest
 from model_mommy import mommy
 
 from apps.core.models import Session
 from apps.filesystem.models import File, Directory
-from apps.swid.models import Tag
-from apps.devices.models import Device
 
 
 ### Helper functions ###
@@ -177,96 +173,3 @@ def test_sessions(get_sessions, from_diff_to_now, to_diff_to_now, expected):
     results = get_sessions(1, date_from, date_to)
     assert len(results) == expected, '%i instead of %i sessions found in the given time range' % \
             (len(results), expected)
-
-
-def test_tags_for_session(db, client):
-    """
-    Test whether the ``tags_for_session`` ajax endpoint works properly.
-    """
-    # Prepare 4 sessions and related tags
-    now = localtime(timezone.now())
-    for i in range(1, 5):
-        time = now + timedelta(days=i)
-        session = mommy.make(Session, pk=i, time=time, device__id=1)
-        tag = mommy.make(Tag, package_name='name%d' % i)
-        tag.sessions.add(session)
-
-    # The second session has two tags
-    tag = mommy.make(Tag, package_name='name5')
-    tag.sessions.add(2)
-
-    # Test first session
-    payload = {'session_id': 1}
-    data = ajax_request(client, 'apps.swid.tags_for_session', payload)
-    assert data['swid-tag-count'] == 1
-    assert len(data['swid-tags']) == 1
-    assert data['swid-tags'][0]['name'] == 'name1'
-    assert data['swid-tags'][0]['installed'] == (now + timedelta(days=1)).strftime('%b %d %H:%M:%S %Y')
-
-    # Test second session
-    payload = {'session_id': 2}
-    data = ajax_request(client, 'apps.swid.tags_for_session', payload)
-    assert data['swid-tag-count'] == 3
-    assert len(data['swid-tags']) == 3
-    names = sorted([t['name'] for t in data['swid-tags']])
-    assert names == sorted(['name1', 'name2', 'name5'])
-    dates = sorted([t['installed'] for t in data['swid-tags']])
-    date1 = (now + timedelta(days=1)).strftime('%b %d %H:%M:%S %Y')
-    date2 = (now + timedelta(days=2)).strftime('%b %d %H:%M:%S %Y')
-    assert dates == [date1, date2, date2]
-
-    # Test all sessions
-    payload = {'session_id': 4}
-    data = ajax_request(client, 'apps.swid.tags_for_session', payload)
-    assert data['swid-tag-count'] == 5
-    assert len(data['swid-tags']) == 5
-
-
-def test_swid_log(transactional_db, client):
-    now = timezone.now()
-    s1 = mommy.make(Session, id=1, identity__data="tester", time=now - timedelta(days=3), device__id=1)
-    s2 = mommy.make(Session, id=2, identity__data="tester", time=now - timedelta(days=1), device__id=1)
-    s3 = mommy.make(Session, id=3, identity__data="tester", time=now + timedelta(days=1), device__id=1)
-    mommy.make(Session, id=7, identity__data="tester", time=now + timedelta(days=2), device__id=1)
-    s4 = mommy.make(Session, id=4, identity__data="tester", time=now + timedelta(days=3), device__id=1)
-    mommy.make(Session, id=5, identity__data="tester", time=now - timedelta(days=4), device__id=1)
-    mommy.make(Session, id=6, identity__data="tester", time=now + timedelta(days=4), device__id=1)
-
-    tag1 = mommy.make(Tag, id=1)
-    tag2 = mommy.make(Tag, id=2)
-    tag3 = mommy.make(Tag, id=3)
-    tag4 = mommy.make(Tag, id=4)
-    tag5 = mommy.make(Tag, id=5)
-    tag6 = mommy.make(Tag, id=6)
-    tag7 = mommy.make(Tag, id=7)
-
-    # intital set: tag 1-4
-    s1.tag_set.add(tag1, tag2, tag3, tag4)
-    # s2, added: tag5;
-    s2.tag_set.add(tag1, tag2, tag3, tag4, tag5)
-    # s3, removed: tag1;
-    s3.tag_set.add(tag2, tag3, tag4, tag5)
-    # s4 added: tag6, tag7; removed: tag2;
-    s4.tag_set.add(tag3, tag4, tag5, tag6, tag7)
-
-    from_timestamp = format(now - timedelta(days=3), u'U')
-    to_timestamp = format(now + timedelta(days=4), u'U')
-
-    payload = {
-        'device_id': 1,
-        'from_timestamp': int(from_timestamp),
-        'to_timestamp': int(to_timestamp),
-    }
-    data = ajax_request(client, 'apps.swid.get_tag_log', payload)
-
-    # there shoulb be three results, bc. 4 session in the range have tags
-    assert len(data) == 3
-    # the results shoulb be in chronological order
-    assert data[0]['session_id'] == 4
-    assert data[1]['session_id'] == 3
-    assert data[2]['session_id'] == 2
-    # checking if removed and added are as expected
-    assert data[2]['added_tags'][0]['tag_id'] == 5
-    assert data[1]['removed_tags'][0]['tag_id'] == 1
-    assert data[0]['removed_tags'][0]['tag_id'] == 2
-

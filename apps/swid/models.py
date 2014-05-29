@@ -51,18 +51,19 @@ class Tag(models.Model):
                 The session object
 
         Returns:
-            A list of tuples ``(tag, time)``. The ``tag`` is a :class:`Tag`
-            instance, the ``time`` is the datetime object when the tag was
-            first measured to be installed.
+            A dictionary ``{tag1: session, tag2: session, ...}``.
+            The ``tag`` is a :class:`Tag` instance, the ``session`` is the session
+            when the tag was first measured to be installed.
 
         """
-        device_sessions = session.device.sessions.filter(time__lte=session.time).order_by('time')
-        tags = {}
+        device_sessions = session.device.sessions.filter(time__lte=session.time).order_by('-time')
+        installed_tags = {t: session for t in session.tag_set.all()}
         for session in device_sessions.all().prefetch_related('tag_set'):
             for tag in session.tag_set.all():
-                if tag not in tags:
-                    tags[tag] = session
-        return list(tags.items())
+                if tag in installed_tags:
+                    installed_tags[tag] = session
+
+        return installed_tags
 
     def get_devices_with_reported_session(self):
         devices_dict = {}

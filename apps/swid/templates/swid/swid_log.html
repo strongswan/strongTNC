@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load permissions %}
+{% load paged_block %}
 
 {% block title %} SWID {% trans "log for " %} {{ object.description }}{% endblock %}
 
@@ -82,31 +83,9 @@
         </div>
     </div>
 
-    <div class="row-fluid">
+    <div id="logTabelContainer" class="row-fluid">
         <h3>{% trans 'Change log' %}</h3>
-        <table role="grid" id="swid-tags"
-               class="displ-none table table-hover table-striped">
-            <thead>
-            <tr role="row">
-                <th class="dateWidth">
-                    {% trans 'Session' %}
-                </th>
-                <th>
-                    {% trans 'Action' %}
-                </th>
-                <th>
-                    {% trans 'Tag' %}
-                </th>
-            </tr>
-            </thead>
-
-            <tbody id="tags-table-body">
-            {% comment %}
-                    currently filled via javascript
-            {% endcomment %}
-            </tbody>
-        </table>
-        <p id="noEntryText" class="displ-none">{% trans 'No entries' %}</p>
+        {% paged_block config_name='swid_log_list_config' %}
     </div>
 
 {% endblock %}

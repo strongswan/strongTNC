@@ -2,51 +2,19 @@ var session_data = [];
 
 function AjaxTagsLoader() {
     this.loadTags = function (sessionID) {
-        ajaxSpinner.enable();
-        Dajaxice.apps.swid.tags_for_session(this.fillTable, {
+        var pager = $('.ajax-paged').data('pager');
+        pager.reset();
+        pager.setProducerArgs({'session_id': sessionID});
+        pager.getPage();
+
+        Dajaxice.apps.swid.get_tag_stats(this.updateStats, {
             'session_id': sessionID
         });
     };
 
-    this.fillTable = function (data) {
-        var selectedSession = HashQuery.getHashQueryObject()['session-id'];
-        var table = $("#swid-tags");
-        var tableBody = table.find("tbody");
-        var rows = '';
-        var newCount = 0;
-
-
-        tableBody.empty();
-        $.each(data['swid-tags'], function (i, record) {
-
-            // Mark tags that were added in the selected session
-            if (record['session-id'] == selectedSession) {
-                rows += "<tr class=\"success\">";
-                rows += "<td title=\"First reported in the selected session\"><i class=\"icon-plus-sign\"></i></td>";
-                ++newCount;
-            }
-            else {
-                rows += "<tr><td></td>";
-            }
-            rows +=
-                "<td>" +
-                    record['name'] +
-                    "</td><td>" +
-                    record['version'] +
-                    "</td><td><a href=\"" +
-                    record['tag-url']+"\">"+
-                    record['unique-id'] +
-                    "</a></td><td><a href='/sessions/" +
-                    record['session-id'] + "'>" +
-                    record['installed'] +
-                    "</a></td></tr>";
-        });
-
+    this.updateStats = function (data) {
         $("#swid-tag-count").text(data['swid-tag-count']);
-        $("#swid-newtag-count").text(newCount);
-        tableBody.append(rows);
-        table.show();
-        ajaxSpinner.disable();
+        $("#swid-newtag-count").text(data['new-swid-tag-count']);
     };
 }
 

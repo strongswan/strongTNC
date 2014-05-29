@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
+from datetime import timedelta
+
 from django.utils import timezone
+from django.utils.timezone import localtime
+from django.utils.dateformat import format
+from django.conf import settings
 
 import pytest
 from model_mommy import mommy
@@ -11,8 +16,8 @@ from apps.core.types import WorkItemType
 from apps.swid.models import Tag, EntityRole, Entity
 from apps.filesystem.models import File, Directory
 from apps.swid import utils
-from apps.swid import views
-
+from apps.swid.paging import swid_inventory_list_producer, swid_log_list_producer, \
+    swid_inventory_stat_producer
 
 ### FIXTURES ###
 
@@ -203,3 +208,144 @@ def test_valid_role(value):
 def test_invalid_role():
     with pytest.raises(ValueError):
         EntityRole.xml_attr_to_choice('licensee')
+
+
+@pytest.fixture
+def tags_and_sessions(transactional_db):
+    now = timezone.now()
+    s1 = mommy.make(Session, id=1, identity__data="tester", time=now - timedelta(days=3), device__id=1)
+    s2 = mommy.make(Session, id=2, identity__data="tester", time=now - timedelta(days=1), device__id=1)
+    s3 = mommy.make(Session, id=3, identity__data="tester", time=now + timedelta(days=1), device__id=1)
+    mommy.make(Session, id=7, identity__data="tester", time=now + timedelta(days=2), device__id=1)
+    s4 = mommy.make(Session, id=4, identity__data="tester", time=now + timedelta(days=3), device__id=1)
+    mommy.make(Session, id=5, identity__data="tester", time=now - timedelta(days=4), device__id=1)
+    mommy.make(Session, id=6, identity__data="tester", time=now + timedelta(days=4), device__id=1)
+
+    tag1 = mommy.make(Tag, id=1, unique_id='tag1')
+    tag2 = mommy.make(Tag, id=2)
+    tag3 = mommy.make(Tag, id=3)
+    tag4 = mommy.make(Tag, id=4)
+    tag5 = mommy.make(Tag, id=5, unique_id='tag5')
+    tag6 = mommy.make(Tag, id=6)
+    tag7 = mommy.make(Tag, id=7)
+
+    # intital set: tag 1-4
+    s1.tag_set.add(tag1, tag2, tag3, tag4)
+    # s2, added: tag5;
+    s2.tag_set.add(tag1, tag2, tag3, tag4, tag5)
+    # s3, removed: tag1;
+    s3.tag_set.add(tag2, tag3, tag4, tag5)
+    # s4 added: tag6, tag7; removed: tag2;
+    s4.tag_set.add(tag3, tag4, tag5, tag6, tag7)
+
+    return {
+        'now': now,
+        'sessions': [s1, s2, s3, s4],
+        'tags': [tag1, tag2, tag3, tag4, tag5, tag6, tag6]
+    }
+
+
+def test_swid_inventory_list_producer(transactional_db, tags_and_sessions):
+
+    s1 = tags_and_sessions['sessions'][0]
+
+    params = {'session_id': 1}
+    tags = swid_inventory_list_producer(0, 10, None, params)
+    assert len(tags) == 4
+    assert tags[0]['session'] == s1
+    assert tags[0]['added_now'] is True
+
+    params = {'session_id': 2}
+    tags = swid_inventory_list_producer(0, 10, None, params)
+    assert len(tags) == 5
+    assert tags[0]['added_now'] is False
+
+    params = {'session_id': 4}
+    tags = swid_inventory_list_producer(0, 10, None, params)
+    assert len(tags) == 5
+    assert tags[0]['session'] == s1
+
+    params = {'session_id': 4}
+    tags = swid_inventory_list_producer(0, 1, None, params)
+    assert len(tags) == 1  # test paging
+
+    params = {'session_id': 4}
+    tags = swid_inventory_list_producer(0, 10, 'tag5', params)
+    assert len(tags) == 1  # test filter
+    assert tags[0]['tag'].unique_id == 'tag5'
+
+    params = None
+    tags = swid_inventory_list_producer(0, 10, 'tag5', params)
+    assert len(tags) == 0
+    assert tags == []
+
+
+def test_swid_inventory_stat_producer(transactional_db, tags_and_sessions):
+    params = {'session_id': 1}
+    page_count = swid_inventory_stat_producer(1, None, params)
+    assert page_count == 4
+
+    page_count = swid_inventory_stat_producer(1, 'tag1', params)
+    assert page_count == 1
+
+    page_count = swid_inventory_stat_producer(2, None, params)
+    assert page_count == 2
+
+    page_count = swid_inventory_stat_producer(3, None, params)
+    assert page_count == 2
+
+    page_count = swid_inventory_stat_producer(4, None, params)
+    assert page_count == 1
+
+    page_count = swid_inventory_stat_producer(5, None, params)
+    assert page_count == 1
+
+
+def test_swid_log(transactional_db, tags_and_sessions):
+    now = tags_and_sessions['now']
+
+    from_timestamp = format(now - timedelta(days=3), u'U')
+    to_timestamp = format(now + timedelta(days=4), u'U')
+
+    params = {
+        'device_id': 1,
+        'from_timestamp': int(from_timestamp),
+        'to_timestamp': int(to_timestamp),
+    }
+    data = swid_log_list_producer(0, 100, None, params)
+
+    s2 = tags_and_sessions['sessions'][1]
+    s3 = tags_and_sessions['sessions'][2]
+    s4 = tags_and_sessions['sessions'][3]
+
+    # there should be three results, bc. 4 session in the range have tags
+    assert len(data) == 3
+
+    assert len(data[s4]) == 3
+    assert len(data[s3]) == 1
+    assert len(data[s2]) == 1
+    # checking if removed and added are as expected
+    assert data[s3][0].added is False
+    assert data[s2][0].added is True
+
+    # test omitted params
+    data = swid_log_list_producer(0, 100, None, None)
+    assert data == []
+
+
+def test_get_installed_tags_with_time(transactional_db, tags_and_sessions):
+    s1 = tags_and_sessions['sessions'][0]  # -3 days old
+    s2 = tags_and_sessions['sessions'][1]  # -1 day old
+    s3 = tags_and_sessions['sessions'][2]  # + 1 day
+    s4 = tags_and_sessions['sessions'][3]  # + 3 days
+
+    tag3 = tags_and_sessions['tags'][2]
+    tag5 = tags_and_sessions['tags'][4]
+
+    installed_tags = Tag.get_installed_tags_with_time(s4)
+    # five tags installed in session s4
+    assert len(installed_tags) == 5
+    # tag3 was installed in session s1
+    assert installed_tags[tag3] == s1
+    # tag5 was installed in session s2
+    assert installed_tags[tag5] == s2
