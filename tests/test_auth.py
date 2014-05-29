@@ -94,7 +94,8 @@ def test_login_required(client, strongtnc_users, url):
     ('/enforcements/check/', 'post'),
     ('/directories/check/', 'post'),
     # Other views
-    ('/versions/1/toggle/', 'get'),
+    ('/packages/1/add-version/', 'post'),
+    ('/packages/1/versions/1/remove', 'get')
 ])
 def test_write_permission_enforced(client, strongtnc_users, url, method):
     do_request = getattr(client, method)

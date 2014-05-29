@@ -32,7 +32,7 @@ def test_save_enforcement_validation(strongtnc_users, client, policy_testdata):
     invalid_ids = ['', 'new', '-1']
     def do_request(reason):
         response = client.post(url, data=data)
-        assert response.status_code == 400, msg
+        assert response.status_code == 400, reason
 
     # Missing data
     do_request('Missing data')

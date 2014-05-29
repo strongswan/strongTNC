@@ -35,8 +35,8 @@ class Version(models.Model):
     product = models.ForeignKey('devices.Product', db_column='product', on_delete=models.CASCADE,
                                 related_name='versions')
     release = models.CharField(max_length=255, db_index=True)
-    security = models.BooleanField(default=0)
-    blacklist = models.IntegerField(null=True, blank=True)
+    security = models.BooleanField(default=False)
+    blacklist = models.BooleanField(default=False)
     time = EpochField()
 
     class Meta:

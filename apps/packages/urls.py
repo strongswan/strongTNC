@@ -8,6 +8,6 @@ urlpatterns = patterns('',
     url(r'^packages/save/?$', views.save, name='package_save'),
     url(r'^packages/(?P<packageID>\d+)/delete/?$', views.delete, name='package_delete'),
     url(r'^packages/check/?$', views.check, name='package_check'),
-
-    url(r'^versions/(?P<versionID>\d+)/toggle/?$', views.toggle_version, name='package_toggle_version'),
+    url(r'^packages/(?P<packageID>\d+)/add-version/?$', views.add_version, name='add_package_version'),
+    url(r'^packages/(?P<packageID>\d+)/versions/(?P<versionID>\d+)/remove/?$', views.delete_version, name='version_delete'),
 )
