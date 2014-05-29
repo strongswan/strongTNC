@@ -106,6 +106,22 @@ Run the tests::
 
     ./runtests.py
 
+Run a specific test file::
+
+    ./runtests.py tests/<filename>
+
+Run only tests matching a specific pattern::
+
+    ./runtests.py -k <pattern>
+
+Run only tests that failed the last time::
+
+    ./runtests.py --lf
+
+Run tests without coverage::
+
+    ./runtests.py --no-cov
+
 Setup a database with test data::
 
     $ ./manage.py shell
