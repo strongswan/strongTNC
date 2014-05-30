@@ -1,9 +1,11 @@
+{% load text_filters %}
+
 {% if object_list %}
     <table class="table table-hover">
         <tbody>
         {% for obj in object_list %}
             <tr>
-                <td><a href="{% url url_name obj.pk %}{{ url_hash }}">{{ obj.list_repr }}</a></td>
+                <td><a href="{% url url_name obj.pk %}{{ url_hash }}">{{ obj.list_repr|highlight:filter_query }}</a></td>
             </tr>
         {% endfor %}
         </tbody>

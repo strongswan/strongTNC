@@ -156,3 +156,7 @@ th.dateWidthFixed {
 .actionWidth {
     width: 90px;
 }
+
+span.highlight {
+    font-weight: bold;
+}
