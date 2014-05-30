@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
+from apps.policies.models import Enforcement
 
 from .models import Product, Group, Device
 from apps.packages.models import Version
@@ -48,11 +49,15 @@ def product(request, productID):
         context['groups'] = groups
         context['title'] = _('Product ') + product.name
         devices = Device.objects.filter(product=product)
+        context['devices'] = devices
         versions = Version.objects.filter(product=product)
         if devices.count() or versions.count():
             context['has_dependencies'] = True
-            context['devices'] = devices
             context['versions'] = versions
+
+        parent_groups = set([p for g in defaults for p in g.get_parents()] + list(defaults))
+        enforcements = Enforcement.objects.filter(group__in=parent_groups).order_by('policy', 'group')
+        context['enforcements'] = enforcements
 
     return render(request, 'devices/products.html', context)
 

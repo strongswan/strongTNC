@@ -124,6 +124,45 @@
 
                 {% endif %}
 
+                {% if file.pk %}
+                    <hr />
+                    <div class="row-fluid">
+                        <h5>{% trans 'File appears in the following SWID tags' %}</h5>
+                        {% if swid_tags %}
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                <tr>
+                                    <th>{% trans 'Unique ID' %}</th>
+                                    <th>{% trans 'Package name' %}</th>
+                                    <th>{% trans 'Version' %}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for tag in swid_tags %}
+                                    <tr>
+                                        <td><a href="{% url 'swid:tag_detail' tag.pk %}">{{ tag.list_repr }}</a></td>
+                                        <td>
+                                            {% if tag.get_matching_packages %}
+                                                <a href="{% url 'packages:package_detail' tag.get_matching_packages.0.pk %}">
+                                                    {{ tag.package_name }}
+                                                </a>
+                                            {% else %}
+                                                {{ tag.package_name }}
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ tag.version }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p>
+                                {% trans "This file hasn't any connected SWID tags" %}
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
                 {% if 'auth.write_access' in perms %}
 
                     {% if file.pk %}

@@ -52,6 +52,9 @@ def file(request, fileID):
             context['policies'] = policies
             context['enforcements'] = Enforcement.objects.filter(policy__in=policies)
 
+        swid_tags = file.tag_set.all()
+        context['swid_tags'] = swid_tags
+
     return render(request, 'filesystem/files.html', context)
 
 

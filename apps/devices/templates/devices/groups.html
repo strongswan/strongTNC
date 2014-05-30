@@ -120,6 +120,38 @@
                         </div>
                     {% endif %}
                 {% endif %}
+
+                {% if group.pk %}
+                <hr />
+                <div class="row-fluid">
+                    <h5>{% trans 'Applied enforcements' %}</h5>
+                    {% if applied_enforcements %}
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>{% trans 'Enforcement' %}</th>
+                                <th>{% trans 'Inherited' %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for enf in applied_enforcements %}
+                                <tr>
+                                    <td><a href="{% url 'policies:enforcement_detail' enf.pk %}">{{ enf.list_repr }}</a></td>
+                                    {% if enf.group.pk != group.pk %}
+                                    <td><a href="{% url 'devices:group_detail' enf.group.pk %}">{{ enf.group.list_repr }}</a></td>
+                                    {% else %}
+                                    <td>{% trans 'Not inherited' %}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>{% trans 'This group has no applied ' %}<a href="{% url 'policies:enforcement_list' %}">{% trans 'enforcements' %}</a></p>
+                    {% endif %}
+                </div>
+                {% endif %}
+
                 {% if group.pk %}
                     <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog"
                          aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -160,19 +192,19 @@
                                             </div>
                                         </div>
                                     {% endif %}
-                                    {% if enforcements %}
+                                    {% if dependent_enforcements %}
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
                                                 <a class="accordion-toggle" data-toggle="collapse"
                                                    data-parent="#accordion2" href="#collapse2">
                                                     Enforcements <span
-                                                    class="badge pull-right">{{ enforcements|length }}</span>
+                                                    class="badge pull-right">{{ dependent_enforcements|length }}</span>
                                                 </a>
                                             </div>
                                             <div id="collapse2" class="accordion-body collapse">
                                                 <div class="accordion-inner">
                                                     <ul class="unstyled">
-                                                        {% for enforcement in enforcements %}
+                                                        {% for enforcement in dependent_enforcements %}
                                                             <li><a
                                                                 href="{% url 'policies:enforcement_detail' enforcement.pk %}">{{ enforcement.list_repr }}</a>
                                                             </li>

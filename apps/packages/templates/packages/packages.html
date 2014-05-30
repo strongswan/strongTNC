@@ -145,8 +145,8 @@
 
         <!-- Add version form -->
         {% if package.pk %}
-            <hr>
             <div class="hide" id="newVersionFormContainer">
+                <hr>
                 <form method="POST" action="{% url 'packages:add_package_version' package.pk %}"
                       class="form-horizontal" id="newVersionForm">
 
@@ -200,9 +200,39 @@
             </div>
 
         {% endif %}
-
-
     {% endif %}
+
+    {% if package.pk %}
+        <hr />
+        <div class="row-fluid">
+        <h5>{% trans 'SWID tags with matching package name' %}</h5>
+        {% if swid_tags %}
+            <table class="table table-hover table-striped">
+                <thead>
+                <tr>
+                    <th>{% trans 'Unique ID' %}</th>
+                    <th>{% trans 'Package name' %}</th>
+                    <th>{% trans 'Version' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tag in swid_tags %}
+                    <tr>
+                        <td><a href="{% url 'swid:tag_detail' tag.pk %}">{{ tag.list_repr }}</a></td>
+                        <td>{{ tag.package_name }}</td>
+                        <td>{{ tag.version }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>
+                {% trans 'No SWID tags with matching package names' %}
+            </p>
+        {% endif %}
+        </div>
+    {% endif %}
+
     {% if package.pk %}
         <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog"
              aria-labelledby="deleteModalLabel" aria-hidden="true">

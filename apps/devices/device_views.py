@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from apps.core.models import Session, Result
 from apps.core.types import WorkItemType
-from apps.policies.models import Policy
+from apps.policies.models import Policy, Enforcement
 from .models import Device, Group, Product
 
 

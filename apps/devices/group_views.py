@@ -56,11 +56,15 @@ def group(request, groupID):
         context['title'] = _('Group ') + context['group'].name
 
         child_groups = group.get_children()
-        enfocements = Enforcement.objects.filter(Q(group=group) | Q(group__in=child_groups))
+        parent_groups = group.get_parents()
+        dependent_enforcements = Enforcement.objects.filter(Q(group=group) | Q(group__in=child_groups))
+        applied_enforcements = Enforcement.objects.filter(Q(group=group) | Q(group__in=parent_groups))\
+            .order_by('policy', 'group')
+        context['applied_enforcements'] = applied_enforcements
 
-        if len(child_groups) or enfocements.count():
+        if len(child_groups) or dependent_enforcements.count():
             context['has_dependencies'] = True
-            context['enforcements'] = enfocements
+            context['dependent_enforcements'] = dependent_enforcements
             context['child_groups'] = child_groups
 
     return render(request, 'devices/groups.html', context)

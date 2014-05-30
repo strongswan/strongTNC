@@ -209,6 +209,31 @@
                         {% endif %}
                     </form>
                 {% endif %}
+
+                {% if policy.pk %}
+                    <hr />
+                    <div class="row-fluid">
+                        <h5>{% trans 'Applying enforcements' %}</h5>
+                        {% if enforcements %}
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                <tr>
+                                    <th>{% trans 'Enforcement name' %}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for enf in enforcements %}
+                                    <tr>
+                                        <td><a href="{% url 'policies:enforcement_detail' enf.pk %}">{{ enf.list_repr }}</a></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p>{% trans 'This policy is not applied by any ' %}<a href="{% url 'policies:enforcement_list' %}">{% trans 'enforcement' %}</a></p>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -14,6 +14,7 @@ from django.utils import timezone
 from django.http import HttpResponseBadRequest
 
 from .models import Package, Version
+from apps.swid.models import Tag
 from apps.devices.models import Product
 from apps.front.utils import checkbox_boolean, check_not_empty
 
@@ -53,6 +54,9 @@ def package(request, packageID):
         context['title'] = _('Package ') + package.name
         if versions.count():
             context['has_dependencies'] = True
+
+        swid_tags = Tag.objects.filter(package_name=package.name)
+        context['swid_tags'] = swid_tags
 
     context['products'] = Product.objects.all()
     return render(request, 'packages/packages.html', context)
