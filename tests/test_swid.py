@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Tests for `swid` app.
+"""
 from __future__ import print_function, division, absolute_import, unicode_literals
 
 from datetime import timedelta
@@ -387,8 +390,8 @@ def test_swid_inventory_stat_producer(transactional_db, tags_and_sessions):
 def test_swid_log(transactional_db, tags_and_sessions):
     now = tags_and_sessions['now']
 
-    from_timestamp = format(now - timedelta(days=3), u'U')
-    to_timestamp = format(now + timedelta(days=4), u'U')
+    from_timestamp = format(now - timedelta(days=3), 'U')
+    to_timestamp = format(now + timedelta(days=4), 'U')
 
     params = {
         'device_id': 1,

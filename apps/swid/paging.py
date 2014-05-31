@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from .models import Entity, Tag
 from apps.core.models import Session
 from apps.devices.models import Device
+from apps.front.utils import timestamp_local_to_utc
 from apps.front.paging import ProducerFactory
 
 # PAGING PRODUCER
@@ -96,8 +97,8 @@ def swid_log_list_producer(from_idx, to_idx, filter_query, dynamic_params, stati
     if not dynamic_params:
         return []
     device_id = dynamic_params['device_id']
-    from_timestamp = dynamic_params['from_timestamp']
-    to_timestamp = dynamic_params['to_timestamp']
+    from_timestamp = timestamp_local_to_utc(dynamic_params['from_timestamp'])
+    to_timestamp = timestamp_local_to_utc(dynamic_params['to_timestamp'])
 
     diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp)[from_idx:to_idx]
 
@@ -116,8 +117,8 @@ def swid_log_stat_producer(page_size, filter_query, dynamic_params=None, static_
     if not dynamic_params:
         return 0
     device_id = dynamic_params['device_id']
-    from_timestamp = dynamic_params['from_timestamp']
-    to_timestamp = dynamic_params['to_timestamp']
+    from_timestamp = timestamp_local_to_utc(dynamic_params['from_timestamp'])
+    to_timestamp = timestamp_local_to_utc(dynamic_params['to_timestamp'])
     diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp)
     return math.ceil(len(diffs) / page_size)
 
@@ -126,6 +127,13 @@ def get_tag_diffs(device_id, from_timestamp, to_timestamp):
     """
     Get differences of installed SWID tags between all sessions of the
     given device in the given timerange (see `session_tag_difference`).
+
+    Args:
+        from_timestamp (int):
+            A unix timestamp (UTC).
+        to_timestamp (int):
+            A unix timestamp (UTC).
+
     """
     device = Device.objects.get(pk=device_id)
     sessions = device.get_sessions_in_range(from_timestamp, to_timestamp)
@@ -214,8 +222,8 @@ def swid_inventory_session_stat_producer(page_size, filter_query, dynamic_params
 
 def get_device_sessions(dynamic_params):
     device_id = dynamic_params.get('device_id')
-    from_timestamp = dynamic_params.get('from_timestamp')
-    to_timestamp = dynamic_params.get('to_timestamp')
+    from_timestamp = timestamp_local_to_utc(dynamic_params.get('from_timestamp'))
+    to_timestamp = timestamp_local_to_utc(dynamic_params.get('to_timestamp'))
 
     device = Device.objects.get(pk=device_id)
     return device.get_sessions_in_range(from_timestamp, to_timestamp)

@@ -2,15 +2,13 @@
 from __future__ import print_function, division, absolute_import, unicode_literals
 
 import json
-from collections import Counter
 
 from dajaxice.decorators import dajaxice_register
 
 from apps.core.decorators import ajax_login_required
 from apps.core.models import Session
 from apps.devices.models import Device
-from apps.front.utils import local_dtstring
-from .models import Tag
+from apps.front.utils import local_dtstring, timestamp_local_to_utc
 from .paging import get_tag_diffs
 
 
@@ -24,10 +22,8 @@ def get_tag_inventory_stats(request, device_id, from_timestamp, to_timestamp):
     Args:
         device_id (int/str):
             A device id, might be provided as int or string (javascript)
-
         from_timestamp (int):
             Start time of the range, in Unix time
-
         to_timestamp (int):
             Last time of the range, in Unix time
 
@@ -51,6 +47,8 @@ def get_tag_inventory_stats(request, device_id, from_timestamp, to_timestamp):
     except Session.DoesNotExist:
         return json.dumps(data)
 
+    from_timestamp = timestamp_local_to_utc(from_timestamp)
+    to_timestamp = timestamp_local_to_utc(to_timestamp)
     sessions = device.get_sessions_in_range(from_timestamp, to_timestamp).order_by('time')
     if sessions:
         data = {
@@ -71,10 +69,9 @@ def get_tag_log_stats(request, device_id, from_timestamp, to_timestamp):
 
     Args:
         device_id (int):
-
+            A device id, might be provided as int or string (javascript)
         from_timestamp (int):
             Start time of the range, in Unix time
-
         to_timestamp (int):
             Last time of the range, in Unix time
 
@@ -89,6 +86,8 @@ def get_tag_log_stats(request, device_id, from_timestamp, to_timestamp):
         }
 
     """
+    from_timestamp = timestamp_local_to_utc(from_timestamp)
+    to_timestamp = timestamp_local_to_utc(to_timestamp)
     diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp)
     if diffs:
         added_count = 0
