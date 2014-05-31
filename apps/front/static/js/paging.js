@@ -1,6 +1,7 @@
 $(document).ready(function() {
     // initialize paging
     // static initializer see bottom of file
+    Pager.count = 0;
     Pager.init();
 });
 
@@ -19,8 +20,11 @@ var Pager = function() {
         // get setup values
         this.config = this.$ctx.data('config');
         this.filter = this.$ctx.data('filter');
+        this.doInitialRequest = (this.$ctx.data('initial').toLowerCase() === "true");
+        this.useURLParams = (this.$ctx.data('urlparams').toLowerCase() === "true");
         this.args = this.$ctx.data('args');
         this.currentPageIdx = 0;
+        this.afterPagingCallbacks = [];
 
         // get containers and buttons
         this.$buttonContainer = $('.paging-buttons', this.$ctx);
@@ -39,14 +43,18 @@ var Pager = function() {
             this.addFilter();
         }
 
-        // register hashChanged events
-        HashQuery.addChangedListener(this.pageParam, this.grabPageParam.bind(this));
-        HashQuery.addChangedListener(this.filterParam, this.grabFilterParam.bind(this));
+        if(this.useURLParams) {
+            // register hashChanged events
+            HashQuery.addChangedListener(this.pageParam, this.grabPageParam.bind(this));
+            HashQuery.addChangedListener(this.filterParam, this.grabFilterParam.bind(this));
+        }
 
-        // get initial page
-        this.initial = true;
-        this.getInitalURLParam();
-        this.getPage();
+        if(this.doInitialRequest) {
+            // get initial page
+            this.initial = true;
+            this.getInitalURLParam();
+            this.getPage();
+        }
 
         // place handle to the pager object
         this.$ctx.data('pager', this);
@@ -117,6 +125,7 @@ var Pager = function() {
         this.setURLParam(this.pageParam, this.currentPageIdx, this.initial);
         this.initial = false;
         this.loading = false;
+        this.afterPaging();
     };
 
     this.updateStatus = function() {
@@ -190,6 +199,7 @@ var Pager = function() {
     };
 
     this.setURLParam = function(hashKey, hashValue, avoidHistory) {
+        if(!this.useURLParams) return;
         var hashKeyObj = {};
         hashKeyObj[hashKey] = hashValue;
         HashQuery.setHashKey(hashKeyObj, false, avoidHistory);
@@ -229,17 +239,29 @@ var Pager = function() {
             this.$filterInput.val('');
         }
     };
+
+    this.onAfterPaging = function(callback) {
+        this.afterPagingCallbacks.push(callback);
+    };
+
+    this.afterPaging = function() {
+        $.each(this.afterPagingCallbacks, function(i, callback) {
+            callback(this);
+        }.bind(this));
+    };
 };
 
 // static initalizer
 // creates an instance for every paged table found
 // on the current page
 Pager.init = function() {
-    Pager.count = 0;
     $('.ajax-paged').each(function() {
-        var p = new Pager();
-        p.uid = Pager.count++;
-        p.$ctx = $(this);
-        p.init();
+        var $ctx = $(this);
+        if(!$ctx.data('pager')) {
+            var p = new Pager();
+            p.uid = Pager.count++;
+            p.$ctx = $ctx;
+            p.init();
+        }
     });
 };

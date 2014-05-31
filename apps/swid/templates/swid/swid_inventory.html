@@ -30,80 +30,67 @@
         </div>
     {% else %}
         <div class="row-fluid">
-            <h4>View Sessions</h4>
-
-            <h5>1. Filter Session Range</h5>
+            <h3>{% trans 'Define range' %}</h3>
         </div>
         <form class="form-inline">
             <input type="hidden" id="device-id" value="{{ object.pk }}">
-            <label for="from">From: </label>
 
-            <div class="input-append">
-                <input type="text" class="input-small" id="from">
-                <span class="add-on" id="from-btn"><i class="icon-calendar"></i></span>
+            <div class="control-group">
+                <label for="from">{% trans 'From' %}</label>
+
+                <div class="input-append">
+                    <input type="text" class="input-small" id="from">
+                    <span class="add-on" id="from-btn"><i class="icon-calendar"></i></span>
+                </div>
+
+                <label for="to">{% trans 'To' %}</label>
+
+                <div class="input-append">
+                    <input type="text" class="input-small" id="to">
+                    <span class="add-on" id="to-btn"><i class="icon-calendar"></i></span>
+                </div>
+                <button type="button" class="btn" id="session-filter-reset">Reset</button>
             </div>
-            <label for="to">To: </label>
 
-            <div class="input-append">
-                <input type="text" class="input-small" id="to">
-                <span class="add-on" id="to-btn"><i class="icon-calendar"></i></span>
-            </div>
-            <label for="calendar-shortcuts offset-1"> or use predefined range: </label>
-
-            <div class="input-append">
-                <select id="calendar-shortcuts">
-                    <option value="null">Today</option>
-                    <option value="-1w" selected>Last Week</option>
-                    <option value="-2w">Last 2 Weeks</option>
-                    <option value="-1m">Last Month</option>
-                    <option value="-1y">Last Year</option>
-                    <option value="01/01/1970">All</option>
+            <div class="control-group">
+                <label for="calendar-shortcuts" class="offset-1">{% trans 'Predefined range:' %}</label>
+                <select name="calendar-shortcuts" id="calendar-shortcuts">
+                    <option value="0" selected>{% trans 'Choose preset' %}</option>
+                    <option value="0">{% trans 'Today' %}</option>
+                    <option value="-1w">{% trans 'Last Week' %}</option>
+                    <option value="-2w">{% trans 'Last two Weeks' %}</option>
+                    <option value="-1m">{% trans 'Last Month' %}</option>
+                    <option value="-1y">{% trans 'Last Year' %}</option>
+                    <option value="Jan 01. 1970">{% trans 'All' %}</option>
                 </select>
             </div>
-            <button class="btn" id="session-filter-reset">Reset</button>
-            </div>
         </form>
+
+        <h4>{% trans 'Range summary' %}</h4>
         <div class="row-fluid">
-            <h5>2. Choose from available Sessions</h5>
-
-            <div class="sessions-dropdown">
-                <input type="hidden" id="sessions">
-                <span id="num-of-sessions">0</span> sessions
+            <div class="span7">
+                <table class="table statsTable">
+                    <tbody>
+                    <tr>
+                        <td class="title noWrap"><strong>{% trans 'Sessions in range' %}</strong></td>
+                        <td class="sessionCount">0</td>
+                    </tr>
+                    <tr>
+                        <td class="title noWrap"><strong>{% trans 'Oldest session in range' %}</strong></td>
+                        <td class="firstSession dateWidth">{% trans 'None' %}</td>
+                    </tr>
+                    <tr>
+                        <td class="title noWrap"><strong>{% trans 'Latest session in range' %}</strong></td>
+                        <td class="lastSession dateWidth">{% trans 'None' %}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <hr>
-        <div>
-            <div class="row-fluid">
-                <h4>{% trans 'Measured Software Tags' %}</h4>
-            </div>
-            <div class="row-fluid">
-                <div class="span7">
-                    <table border="0" class="table">
-                        <tbody>
-                        <tr>
-                            <td><strong>{% trans 'Session Date' %}</strong></td>
-                            <td class="dateWidth"><span id="for-session">
-                                 {% trans 'Please select session first' %}
-                            </span>
-                            </td>
-                        </tr>
 
-                        <tr>
-                            <td><strong>{% trans 'Total tags for this session' %}</strong></td>
-                            <td><span id="swid-tag-count">-</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>{% trans 'Tags first reported in this session' %}</strong></td>
-                            <td><span id="swid-newtag-count">-</span></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row-fluid">
-                {% paged_block config_name='swid_inventory_list_config' with_filter=True %}
-            </div>
-        </div>
+        <h3>{% trans 'Sessions' %}</h3>
+
+        {% paged_block config_name="swid_inventory_session_list_config" initial_load=False %}
 
     {% endif %}
 {% endblock %}

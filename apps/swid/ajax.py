@@ -8,6 +8,7 @@ from dajaxice.decorators import dajaxice_register
 
 from apps.core.decorators import ajax_login_required
 from apps.core.models import Session
+from apps.devices.models import Device
 from apps.front.utils import local_dtstring
 from .models import Tag
 from .paging import get_tag_diffs
@@ -15,32 +16,49 @@ from .paging import get_tag_diffs
 
 @dajaxice_register
 @ajax_login_required
-def get_tag_stats(request, session_id):
+def get_tag_inventory_stats(request, device_id, from_timestamp, to_timestamp):
     """
-    Return some figures regarding installed SWID tags based on a
-    given session.
+    Return some figures regarding the number of sessions in a given
+    given timerange.
 
     Args:
-        session_id (int/str):
-            A session id, might be provided as int or string (javascript)
+        device_id (int/str):
+            A device id, might be provided as int or string (javascript)
+
+        from_timestamp (int):
+            Start time of the range, in Unix time
+
+        to_timestamp (int):
+            Last time of the range, in Unix time
 
     Returns:
         A JSON object in the following format (example data):
             {
-                "swid-tag-count": 98,
-                "new-swid-tag-count": 23
+                "session_count": 8,
+                "latest_session": Nov 20 10:22:12 2013,
+                "oldes_session": Jan 30 11:14:34 2012,
             }
 
     """
-    try:
-        session = Session.objects.get(pk=session_id)
-    except Session.DoesNotExist:
-        return json.dumps({})
+    data = {
+        'session_count': 0,
+        'last_session': 'None',
+        'fist_session': 'None',
+    }
 
-    installed_tags = Tag.get_installed_tags_with_time(session)
-    tag_counter = Counter(session.pk for session in installed_tags.values())
-    new_tags_count = tag_counter[int(session_id)]
-    data = {'swid-tag-count': len(installed_tags), 'new-swid-tag-count': new_tags_count}
+    try:
+        device = Device.objects.get(pk=device_id)
+    except Session.DoesNotExist:
+        return json.dumps(data)
+
+    sessions = device.get_sessions_in_range(from_timestamp, to_timestamp).order_by('time')
+    if sessions:
+        data = {
+            'session_count': sessions.count(),
+            'last_session': local_dtstring(sessions.last().time),
+            'fist_session': local_dtstring(sessions.first().time),
+        }
+
     return json.dumps(data)
 
 
@@ -97,7 +115,13 @@ def get_tag_log_stats(request, device_id, from_timestamp, to_timestamp):
 
         return json.dumps(result)
     else:
-        return json.dumps({})
+        return json.dumps({
+            'session_count': 0,
+            'first_session': 'None',
+            'last_session': 'None',
+            'added_count': 0,
+            'removed_count': 0,
+        })
 
 
 @dajaxice_register

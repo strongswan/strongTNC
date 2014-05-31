@@ -160,3 +160,13 @@ th.dateWidthFixed {
 span.highlight {
     font-weight: bold;
 }
+
+a.disabled {
+    color: #ddd;
+}
+
+.tagCount {
+    min-width: 23px;
+    display: inline-block;
+    text-align: center;
+}

@@ -7,14 +7,14 @@ $(document).ready(function() {
 
 var initDateTimePicker = function() {
     var fromPicker = $('#from').datepicker({
-        dateFormat: "dd/mm/yy",
+        dateFormat: "M dd. yy",
         onClose: function (selectedDate) {
             getTagList();
         }
     });
 
     var toPicker = $('#to').datepicker({
-        dateFormat: "dd/mm/yy",
+        dateFormat: "M dd. yy",
         onClose: function (selectedDate) {
             getTagList();
         }

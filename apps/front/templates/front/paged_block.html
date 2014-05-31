@@ -1,6 +1,8 @@
 <div class="ajax-paged"
      data-config="{{ config_name }}"
      data-args="{{ producer_args }}"
+     data-initial="{{ initial_load }}"
+     data-urlparams="{{ use_url_params }}"
     {% if with_filter %}
      data-filter="true"
     {% endif %}

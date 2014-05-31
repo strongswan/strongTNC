@@ -84,15 +84,6 @@ def sessions_test_data(transactional_db):
 
 
 @pytest.fixture
-def get_sessions(client, sessions_test_data):
-    def _query(device_id, date_from, date_to):
-        payload = {'device_id': device_id, 'date_from': date_from, 'date_to': date_to}
-        response_data = ajax_request(client, 'apps.devices.sessions_for_device', payload)
-        return response_data['sessions']
-    return _query
-
-
-@pytest.fixture
 def get_completions(client, files_and_directories_test_data):
     """
     Fixture that provides a parametrized function that queries the
@@ -158,18 +149,3 @@ def test_files_autocomplete(get_completions, search_term, expected):
 def test_directory_autocomplete(get_completions, search_term, expected):
     results = get_completions(search_term, 'apps.filesystem.directories_autocomplete', 'directory')
     assert sorted(results) == sorted(expected)
-
-
-### Session Tests ###
-
-@pytest.mark.parametrize('from_diff_to_now, to_diff_to_now, expected', [
-    (-2, +2, 2),
-    (-3, +3, 4)
-])
-def test_sessions(get_sessions, from_diff_to_now, to_diff_to_now, expected):
-    now = timezone.now()
-    date_from = calendar.timegm((now + timedelta(days=from_diff_to_now)).utctimetuple())
-    date_to = calendar.timegm((now + timedelta(days=to_diff_to_now)).utctimetuple())
-    results = get_sessions(1, date_from, date_to)
-    assert len(results) == expected, '%i instead of %i sessions found in the given time range' % \
-            (len(results), expected)

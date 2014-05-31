@@ -156,9 +156,8 @@ def test_write_permission_enforced(client, strongtnc_users, url, method):
 @pytest.mark.parametrize('endpoint, payload', [
     ('apps.filesystem.files_autocomplete', {'search_term': 'bash'}),
     ('apps.filesystem.directories_autocomplete', {'search_term': 'bash'}),
-    ('apps.swid.get_tag_stats', {'session_id': 1}),
+    ('apps.swid.get_tag_inventory_stats', {'device_id': 1, 'date_from': '', 'date_to': ''}),
     ('apps.swid.get_tag_log_stats', {'device_id': 1, 'date_from': '', 'date_to': ''}),
-    ('apps.devices.sessions_for_device', {'device_id': 1, 'date_from': '', 'date_to': ''}),
     ('apps.front.paging', {'template': '', 'list_producer': '', 'stat_producer': '', 'var_name': '',
         'url_name': '', 'current_page': '', 'page_size': '', 'filter_query': '', 'pager_id': ''}),
 ])

@@ -23,34 +23,35 @@
 
         <input type="hidden" id="device-id" value="{{ object.pk }}">
 
-        <label for="from">{% trans 'From' %}:</label>
+        <div class="control-group">
+            <label for="from">{% trans 'From' %}</label>
 
-        <div class="input-append">
-            <input type="text" class="input-small" id="from"/>
-            <span class="add-on" id="from-btn"><i class="icon-calendar"></i></span>
+            <div class="input-append">
+                <input type="text" class="input-small" id="from">
+                <span class="add-on" id="from-btn"><i class="icon-calendar"></i></span>
+            </div>
+
+            <label for="to">{% trans 'To' %}</label>
+
+            <div class="input-append">
+                <input type="text" class="input-small" id="to">
+                <span class="add-on" id="to-btn"><i class="icon-calendar"></i></span>
+            </div>
+            <button class="btn" id="session-filter-reset">Reset</button>
         </div>
 
-        <label for="to">{% trans 'To' %}:</label>
-
-        <div class="input-append">
-            <input type="text" class="input-small" id="to"/>
-            <span class="add-on" id="to-btn"><i class="icon-calendar"></i></span>
-        </div>
-
-        <label for="calendar-shortcuts" class="offset-1">{% trans 'or use predefined range' %}:</label>
-
-        <div class="input-append">
-            <select id="calendar-shortcuts">
-                <option value="null">{% trans 'Today' %}</option>
-                <option value="-1w" selected>{% trans 'Last Week' %}</option>
+        <div class="control-group">
+            <label for="calendar-shortcuts" class="offset-1">{% trans 'Predefined range:' %}</label>
+            <select name="calendar-shortcuts" id="calendar-shortcuts">
+                <option value="0" selected>{% trans 'Choose preset' %}</option>
+                <option value="0">{% trans 'Today' %}</option>
+                <option value="-1w">{% trans 'Last Week' %}</option>
                 <option value="-2w">{% trans 'Last two Weeks' %}</option>
                 <option value="-1m">{% trans 'Last Month' %}</option>
                 <option value="-1y">{% trans 'Last Year' %}</option>
-                <option value="01/01/1970">{% trans 'All' %}</option>
+                <option value="Jan 01. 1970">{% trans 'All' %}</option>
             </select>
         </div>
-
-        <button class="btn" id="filter-reset">{% trans 'Reset' %}</button>
     </form>
 
     <h3>{% trans 'Changes summary' %}</h3>

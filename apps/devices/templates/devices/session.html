@@ -41,6 +41,9 @@
                 </div>
             </div>
 
+            {% comment %}
+            Button is temporary disabled, the swid-inventory must be modified in order
+            to support this functionality.
             <div>
                 {% if swid_measurement %}
                     <a href="{% url 'swid:inventory' session.device.pk %}#session-id={{ session.pk }}"
@@ -50,6 +53,7 @@
                     <p class="label label-info">{% trans 'No SWID tags associated' %}</p>
                 {% endif %}
             </div>
+            {% endcomment %}
 
             <hr>
             <h4>{% trans 'Results' %}</h4>

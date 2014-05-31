@@ -2,7 +2,7 @@
 from __future__ import print_function, division, absolute_import, unicode_literals
 
 import math
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict, namedtuple, Counter
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -190,6 +190,37 @@ def session_tag_difference(curr_session, prev_session):
     return differences
 
 
+def swid_inventory_session_list_producer(from_idx, to_idx, filter_query, dynamic_params, static_params=None):
+    if not dynamic_params:
+        return []
+
+    sessions = get_device_sessions(dynamic_params)[from_idx:to_idx]
+
+    for session in sessions:
+        installed_tags = Tag.get_installed_tags_with_time(session)
+        tag_counter = Counter(session.pk for session in installed_tags.values())
+        session.tag_count = len(installed_tags)
+        session.new_tag_count = tag_counter[int(session.pk)]
+        session.has_tags = session.tag_count > 0
+
+    return sessions
+
+
+def swid_inventory_session_stat_producer(page_size, filter_query, dynamic_params=None, static_params=None):
+    if not dynamic_params:
+        return 0
+    sessions = get_device_sessions(dynamic_params)
+    return math.ceil(len(sessions) / page_size)
+
+
+def get_device_sessions(dynamic_params):
+    device_id = dynamic_params.get('device_id')
+    from_timestamp = dynamic_params.get('from_timestamp')
+    to_timestamp = dynamic_params.get('to_timestamp')
+
+    device = Device.objects.get(pk=device_id)
+    return device.get_sessions_in_range(from_timestamp, to_timestamp)
+
 # PAGING CONFIGS
 
 regid_list_paging = {
@@ -216,12 +247,20 @@ swid_list_paging = {
     'page_size': 50,
 }
 
+swid_inventory_session_paging = {
+    'template_name': 'swid/paging/swid_inventory_session_list',
+    'list_producer': swid_inventory_session_list_producer,
+    'stat_producer': swid_inventory_session_stat_producer,
+    'url_name': 'swid:tag_detail',
+    'page_size': 10,
+}
+
 swid_inventory_list_paging = {
     'template_name': 'swid/paging/swid_inventory_list',
     'list_producer': swid_inventory_list_producer,
     'stat_producer': swid_inventory_stat_producer,
     'url_name': 'swid:tag_detail',
-    'page_size': 50,
+    'page_size': 10,
 }
 
 swid_log_list_paging = {

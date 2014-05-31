@@ -10,6 +10,7 @@ from apps.core.decorators import ajax_login_required
 from . import paging as paging_functions
 from apps.swid.paging import regid_detail_paging, regid_list_paging, swid_list_paging
 from apps.swid.paging import swid_inventory_list_paging, swid_log_list_paging
+from apps.swid.paging import swid_inventory_session_paging
 from apps.filesystem.paging import dir_list_paging, file_list_paging
 from apps.policies.paging import policy_list_paging, enforcement_list_paging
 from apps.packages.paging import package_list_paging
@@ -69,6 +70,7 @@ def paging(request, config_name, current_page, filter_query, pager_id, producer_
         'device_session_list_config': device_session_list_paging,
         'swid_inventory_list_config': swid_inventory_list_paging,
         'swid_log_list_config': swid_log_list_paging,
+        'swid_inventory_session_list_config': swid_inventory_session_paging,
     }
 
     conf = paging_conf_dict[config_name]

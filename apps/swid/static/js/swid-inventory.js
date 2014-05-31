@@ -1,51 +1,63 @@
-var session_data = [];
 
 function AjaxTagsLoader() {
-    this.loadTags = function (sessionID) {
-        var pager = $('.ajax-paged').data('pager');
+    this.loadTags = function (sessionID, $pagerContext) {
+        var pager = $('.ajax-paged', $pagerContext).data('pager');
         pager.reset();
         pager.setProducerArgs({'session_id': sessionID});
         pager.getPage();
-
-        Dajaxice.apps.swid.get_tag_stats(this.updateStats, {
-            'session_id': sessionID
-        });
-    };
-
-    this.updateStats = function (data) {
-        $("#swid-tag-count").text(data['swid-tag-count']);
-        $("#swid-newtag-count").text(data['new-swid-tag-count']);
     };
 }
 
 function AjaxSessionsLoader() {
     this.deviceId = $("#device-id").val();
-    this.updateSelect = function (data) {
-        ajaxSpinner.disable();
-        session_data = data.sessions;
-        $("#num-of-sessions").text(data.sessions.length);
-    };
 
     this.loadSessions = function () {
         var fromTimestamp = parseInt(HashQuery.getHashQueryObject()['from']);
         var toTimestamp = parseInt(HashQuery.getHashQueryObject()['to']);
         if (!fromTimestamp || !toTimestamp) return;
-        ajaxSpinner.enable();
-        Dajaxice.apps.devices.sessions_for_device(this.updateSelect, {
+
+        var pager = $('.ajax-paged').data('pager');
+        pager.reset();
+        pager.setProducerArgs({
             'device_id': this.deviceId,
-            'date_from': fromTimestamp,
-            'date_to': toTimestamp
+            'from_timestamp': fromTimestamp,
+            'to_timestamp': toTimestamp
         });
+        pager.onAfterPaging(
+            function() {
+                Pager.init();
+            }
+        );
+        pager.getPage();
+        Dajaxice.apps.swid.get_tag_inventory_stats(this.updateStats, {
+            'device_id': this.deviceId,
+            'from_timestamp': fromTimestamp,
+            'to_timestamp': toTimestamp
+        },
+        {'error_callback': function() {
+            alert('Error: Could not fetch tag inventory stats.');
+        }});
+    };
+
+    this.updateStats = function(data) {
+        $('.sessionCount').text(data.session_count);
+        $('.firstSession').text(data.fist_session);
+        $('.lastSession').text(data.last_session);
     };
 }
 
-function setupResetButton() {
+function setupResetButton(fromDatepicker, toDatepicker, sessionsLoader) {
     $("#session-filter-reset").click(function () {
-        $("#calendar-shortcuts").prop("selectedIndex", 1);
-    })
+        $("#calendar-shortcuts").prop("selectedIndex", 0);
+        fromDatepicker.datepicker("setDate", new Date());
+        toDatepicker.datepicker("setDate", new Date());
+        setFromDateHash(fromDatepicker);
+        setToDateHash(toDatepicker);
+        sessionsLoader.loadSessions();
+    });
 }
 
-function setupRangeShortcutsDropdown(fromDatepicker, toDatepicker) {
+function setupRangeShortcutsDropdown(fromDatepicker, toDatepicker, sessionsLoader) {
     $("#calendar-shortcuts").change(function () {
             fromDatepicker.datepicker("setDate", $(this).val());
             toDatepicker.datepicker("setDate", new Date());
@@ -53,65 +65,41 @@ function setupRangeShortcutsDropdown(fromDatepicker, toDatepicker) {
                 'from': fromDatepicker.datepicker("getDate").getTime() / 1000,
                 'to': toDatepicker.datepicker("getDate").getTime() / 1000
             }, true);
-
-            HashQuery.sendChanged('from', fromDatepicker.datepicker("getDate"));
+            sessionsLoader.loadSessions();
         }
     );
-}
-
-function setUpSelect() {
-    var convertResultToString = function (sessionObject) {
-        return sessionObject.time;
-    };
-
-    $("#num-of-sessions").text(session_data.length);
-    $('#sessions').select2({
-            data: function () {
-                return {
-                    results: session_data,
-                    text: 'time'
-                }
-            },
-            formatSelection: convertResultToString,
-            formatResult: convertResultToString,
-            placeholder: "Select a Session",
-            width: "element",
-            minimumResultsForSearch: -1,
-            formatNoMatches: "No Session found in the given time range"
-        }
-    );
-    $("#sessions").on("select2-selecting", function (event) {
-        HashQuery.setHashKey({'session-id': event.val})
-    });
 }
 
 function setupDatepicker(fromDatepicker, toDatepicker) {
     fromDatepicker.datepicker({
-        defaultDate: "-1w",
-        dateFormat: "dd/mm/yy",
+        defaultDate: new Date(),
+        dateFormat: "M dd. yy",
         changeMonth: true,
         numberOfMonths: 1,
         onSelect: function (selectedDate) {
-            toDatepicker.datepicker("option", "minDate", selectedDate);
-            var fromTimestamp = $(this).datepicker("getDate").getTime() / 1000;
-            HashQuery.setHashKey({'from': fromTimestamp});
+            $("#calendar-shortcuts").prop("selectedIndex", 0);
+            toDatepicker.datepicker("option", {"minDate": selectedDate});
+            setFromDateHash(fromDatepicker);
         }
     });
 
     toDatepicker.datepicker({
-        changeMonth: true,
-        dateFormat: "dd/mm/yy",
         defaultDate: new Date(),
+        changeMonth: true,
+        dateFormat: "M dd. yy",
         numberOfMonths: 1,
         onSelect: function (selectedDate) {
-            var toTimestamp = $(this).datepicker("getDate").getTime() / 1000;
-            HashQuery.setHashKey({'to': toTimestamp});
-            fromDatepicker.datepicker("option", "maxDate", selectedDate);
+            $("#calendar-shortcuts").prop("selectedIndex", 0);
+            fromDatepicker.datepicker("option", {"maxDate": selectedDate});
+            setToDateHash(toDatepicker);
         }
     });
 
-    fromDatepicker.datepicker("setDate", '-1w');
-    toDatepicker.datepicker("setDate", new Date());
+    var today = new Date();
+    fromDatepicker.datepicker("setDate", today);
+    fromDatepicker.datepicker("option", "maxDate", today);
+    toDatepicker.datepicker("setDate", today);
+    toDatepicker.datepicker("option", "minDate", today);
 
     $("#from-btn").click(function () {
         fromDatepicker.datepicker("show");
@@ -120,77 +108,52 @@ function setupDatepicker(fromDatepicker, toDatepicker) {
     $("#to-btn").click(function () {
         toDatepicker.datepicker("show");
     });
-
 }
 
-function loadSingleSession(fromDatepicker, toDatepicker, sessionId) {
-    Dajaxice.apps.swid.session_info(function (data) {
+function setFromDateHash(fromDatepicker) {
+    var fromTimestamp = fromDatepicker.datepicker("getDate").getTime() / 1000;
+    HashQuery.setHashKey({'from': fromTimestamp});
+}
 
-        $("#for-session").text(data.time);
-        session_data = [
-            {"id": data.id, "time": data.time}
-        ];
-        $("#sessions").select2("val", data.id);
-        $("#num-of-sessions").text("1");
-        fromDatepicker.datepicker("setDate", null);
-        toDatepicker.datepicker("setDate", null);
-        HashQuery.sendChanged('session-id', data.id);
-
-    }, {
-        'session_id': sessionId
-    });
+function setToDateHash(toDatepicker) {
+    var toTimestamp = toDatepicker.datepicker("getDate").getTime() / 1000;
+    HashQuery.setHashKey({'to': toTimestamp});
 }
 
 $(document).ready(function () {
     var fromDatepicker = $("#from");
     var toDatepicker = $("#to");
-    var sessionDropdown = $("#sessions");
 
-    $("#swid-tags").hide();
     var sessionsLoader = new AjaxSessionsLoader();
     var tagsLoader = new AjaxTagsLoader();
 
     // setup components
     setupDatepicker(fromDatepicker, toDatepicker);
-    setUpSelect();
-    setupRangeShortcutsDropdown(fromDatepicker, toDatepicker);
-    setupResetButton();
+    setupRangeShortcutsDropdown(fromDatepicker, toDatepicker, sessionsLoader);
+    setupResetButton(fromDatepicker, toDatepicker, sessionsLoader);
 
-    // register event listeners
-    HashQuery.addChangedListener('session-id', function (key, value) {
-        var logLink = $("#swid-log-link");
-        var old_link = logLink.prop("href").split("#")[0];
-        logLink.prop("href", old_link + "#session-id=" + value);
-
-        tagsLoader.loadTags(value);
-        var result = $.grep(session_data, function (e) {
-            return e.id == value
-        });
-
-        // session-id is not available in the sessions dropdown
-        if (!result.length) {
-            var sessionId = HashQuery.getHashQueryObject()['session-id']
-            loadSingleSession(fromDatepicker, toDatepicker, sessionId);
-        }
-        else {
-            sessionDropdown.select2("val", value);
-            var timeString = sessionDropdown.select2("data")["time"];
-            $("#for-session").text(timeString);
+    $('body').on('show', '#sessionAccordion', function (event) {
+        var $triggeredSection = $(event.target);
+        if(!$triggeredSection.data('loaded')) {
+            $triggeredSection.data('loaded', true);
+            var sessionId = $triggeredSection.data('sessionid');
+            tagsLoader.loadTags(sessionId, $triggeredSection);
         }
     });
 
-    HashQuery.addChangedListener('from', function (key, value) {
+    HashQuery.addChangedListener('from', function () {
         sessionsLoader.loadSessions();
     });
 
-    HashQuery.addChangedListener('to', function (key, value) {
+    HashQuery.addChangedListener('to', function () {
         sessionsLoader.loadSessions();
     });
 
-    // view was called from session view
-    if (HashQuery.getHashQueryObject()['session-id']) {
-        var sessionId = HashQuery.getHashQueryObject()['session-id']
-        loadSingleSession(fromDatepicker, toDatepicker, sessionId);
+    var hashQueryObject = HashQuery.getHashQueryObject();
+    if(hashQueryObject['to'] && hashQueryObject['from']) {
+        fromDatepicker.datepicker("setDate", new Date(hashQueryObject['from'] * 1000));
+        toDatepicker.datepicker("setDate", new Date(hashQueryObject['to'] * 1000));
     }
 
+    sessionsLoader.loadSessions();
 });
