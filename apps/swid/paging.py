@@ -39,7 +39,7 @@ def entity_swid_stat_producer(page_size, filter_query, dynamic_params=None, stat
 def swid_inventory_list_producer(from_idx, to_idx, filter_query, dynamic_params, static_params=None):
     if not dynamic_params:
         return []
-    session_id = dynamic_params.get('session_id')
+    session_id = dynamic_params['session_id']
     installed_tags = list(get_installed_tags_dict(session_id, filter_query).items())[from_idx:to_idx]
 
     tags = [
@@ -57,7 +57,7 @@ def swid_inventory_list_producer(from_idx, to_idx, filter_query, dynamic_params,
 def swid_inventory_stat_producer(page_size, filter_query, dynamic_params=None, static_params=None):
     if not dynamic_params:
         return 0
-    session_id = dynamic_params.get('session_id')
+    session_id = dynamic_params['session_id']
     installed_tags = get_installed_tags_dict(session_id, filter_query)
     return math.ceil(len(installed_tags) / page_size)
 
@@ -96,9 +96,9 @@ def get_installed_tags_dict(session_id, filter_query):
 def swid_log_list_producer(from_idx, to_idx, filter_query, dynamic_params, static_params=None):
     if not dynamic_params:
         return []
-    device_id = dynamic_params.get('device_id')
-    from_timestamp = dynamic_params.get('from_timestamp')
-    to_timestamp = dynamic_params.get('to_timestamp')
+    device_id = dynamic_params['device_id']
+    from_timestamp = dynamic_params['from_timestamp']
+    to_timestamp = dynamic_params['to_timestamp']
 
     diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp)[from_idx:to_idx]
 
@@ -116,9 +116,9 @@ def swid_log_list_producer(from_idx, to_idx, filter_query, dynamic_params, stati
 def swid_log_stat_producer(page_size, filter_query, dynamic_params=None, static_params=None):
     if not dynamic_params:
         return 0
-    device_id = dynamic_params.get('device_id')
-    from_timestamp = dynamic_params.get('from_timestamp')
-    to_timestamp = dynamic_params.get('to_timestamp')
+    device_id = dynamic_params['device_id']
+    from_timestamp = dynamic_params['from_timestamp']
+    to_timestamp = dynamic_params['to_timestamp']
     diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp)
     return math.ceil(len(diffs) / page_size)
 
