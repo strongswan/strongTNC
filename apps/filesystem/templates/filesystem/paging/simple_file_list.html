@@ -1,0 +1,25 @@
+{% load i18n %}
+{% load text_filters %}
+
+{% if object_list %}
+    <table role="grid" class="table table-hover table-striped">
+        <thead>
+        <tr role="row">
+            <th>
+                {% trans 'Name' %}
+            </th>
+        </tr>
+        </thead>
+        <tbody id="tags-table-body">
+        {% for file in object_list %}
+            <tr>
+                <td><a href="{% url url_name file.pk %}">{{ file.name|highlight:filter_query }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>
+        <small>{% trans 'There are no entries' %}.</small>
+    </p>
+{% endif %}

@@ -4,7 +4,6 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 import math
 from collections import OrderedDict, namedtuple, Counter
 
-from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from .models import Entity, Tag
@@ -221,6 +220,37 @@ def get_device_sessions(dynamic_params):
     device = Device.objects.get(pk=device_id)
     return device.get_sessions_in_range(from_timestamp, to_timestamp)
 
+def swid_files_list_producer(from_idx, to_idx, filter_query, dynamic_params, static_params=None):
+    if not dynamic_params:
+        return []
+    tag_id = dynamic_params['tag_id']
+    return Tag.objects.get(pk=tag_id).files.all()[from_idx:to_idx]
+
+
+def swid_files_stat_producer(page_size, filter_query, dynamic_params=None, static_params=None):
+    if not dynamic_params:
+        return []
+    tag_id = dynamic_params['tag_id']
+    return math.ceil(Tag.objects.get(pk=tag_id).files.count() / page_size)
+
+
+def swid_devices_list_producer(from_idx, to_idx, filter_query, dynamic_params, static_params=None):
+    if not dynamic_params:
+        return []
+    tag_id = dynamic_params['tag_id']
+    reported_devices = sorted(Tag.objects.get(pk=tag_id).get_devices_with_reported_session().items(),
+           key=lambda (device, session): device.description)
+    return reported_devices[from_idx:to_idx]
+
+
+def swid_devices_stat_producer(page_size, filter_query, dynamic_params=None, static_params=None):
+    if not dynamic_params:
+        return []
+    tag_id = dynamic_params['tag_id']
+    count = len(Tag.objects.get(pk=tag_id).get_devices_with_reported_session())
+    return math.ceil(count / page_size)
+
+
 # PAGING CONFIGS
 
 regid_list_paging = {
@@ -252,6 +282,22 @@ swid_inventory_session_paging = {
     'list_producer': swid_inventory_session_list_producer,
     'stat_producer': swid_inventory_session_stat_producer,
     'url_name': 'swid:tag_detail',
+    'page_size': 10,
+}
+
+swid_files_list_paging = {
+    'template_name': 'filesystem/paging/file_list',
+    'list_producer': swid_files_list_producer,
+    'stat_producer': swid_files_stat_producer,
+    'url_name': 'filesystem:file_detail',
+    'page_size': 20,
+}
+
+swid_devices_list_paging = {
+    'template_name': 'swid/paging/swid_devices_list',
+    'list_producer': swid_devices_list_producer,
+    'stat_producer': swid_devices_stat_producer,
+    'url_name': 'devices:device_detail',
     'page_size': 10,
 }
 

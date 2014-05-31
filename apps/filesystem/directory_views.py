@@ -46,6 +46,7 @@ def directory(request, directoryID):
         context['title'] = _('Directory ') + directory.path
         files = File.objects.filter(directory=directory).order_by('name')
         context['files'] = files
+        context['paging_params'] = {'directory_id': directory.pk}
         policies = Policy.objects.filter(Q(dir=directory) | Q(file__in=files))
         if policies.count() or files.count():
             context['has_dependencies'] = True

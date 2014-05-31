@@ -48,6 +48,7 @@ def product(request, productID):
         groups = Group.objects.exclude(id__in=defaults.values_list('id', flat=True))
         context['groups'] = groups
         context['title'] = _('Product ') + product.name
+        context['paging_args'] = {'product_id': product.pk}
         devices = Device.objects.filter(product=product)
         context['devices'] = devices
         versions = Version.objects.filter(product=product)
