@@ -33,12 +33,11 @@ HashQuery.notifyAll = function () {
 
     var obj = HashQuery.getHashQueryObject();
     for (var key in obj) {
-        var key_enc = encodeURIComponent(key);
-        var val_enc = encodeURIComponent(obj[key]);
+        var val = obj[key];
 
-        if (HashQuery.callbacks[key_enc] && HashQuery.hash[key_enc] != val_enc) {
-            $.each(HashQuery.callbacks[key_enc], function (idx, callback) {
-                callback(key_enc, val_enc);
+        if (HashQuery.callbacks[key] && HashQuery.hash[key] != val) {
+            $.each(HashQuery.callbacks[key], function (idx, callback) {
+                callback(key, val);
             });
         }
     }
