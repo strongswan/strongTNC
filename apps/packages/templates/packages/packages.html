@@ -127,13 +127,13 @@
         {% if not add and package.pk and 'auth.write_access' in perms %}
             <div class="btn-toolbar" style="margin: 0;">
                 <div class="btn-group">
+                    <a class="btn btn-success" id="savePackageChanges">
+                        <i class="icon-ok icon-white"></i> {% trans "Save" %}</a>
+                </div>
+                <div class="btn-group">
                     <a class="btn btn-danger" href="#delModal" data-toggle="modal">
                         <i class="icon-remove icon-white"></i> {% trans "Delete" %}
                     </a>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-success" id="savePackageChanges">
-                        <i class="icon-ok icon-white"></i> {% trans "Save" %}</a>
                 </div>
                 <div class="btn-group"><a class="btn btn-primary" id="addVersion"
                                           title="{% trans 'Add version' %}">
