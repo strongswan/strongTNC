@@ -12,8 +12,11 @@ function setupDirectoryDropdown() {
             return o.directory
         },
         query: function (query) {
-            autocompleteDelay.callback = query.callback;
             autocompleteDelay.ajaxFunction = Dajaxice.apps.filesystem.directories_autocomplete;
+            autocompleteDelay.callback = query.callback;
+            autocompleteDelay.errorCallback = function() {
+                alert('Error: Could not fetch directory list.');
+            };
             autocompleteDelay.queryUpdate(query.term);
         }
     });

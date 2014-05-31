@@ -99,7 +99,9 @@ var Pager = function() {
         var filterQuery = this.getFilterQuery();
         var paramObject = this.getParamObject(filterQuery);
         this.loading = true;
-        Dajaxice.apps.front.paging(this.pagingCallback.bind(this), paramObject);
+        Dajaxice.apps.front.paging(this.pagingCallback.bind(this), paramObject, {'error_callback': function() {
+            alert('Error: Failed to fetch "' + paramObject.config_name + '" paging.');
+        }});
     };
 
     this.statsUpdate = function(data) {

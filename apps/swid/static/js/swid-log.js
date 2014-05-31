@@ -65,7 +65,9 @@ var getTagList = function() {
         'device_id': deviceId,
         'from_timestamp': fromTimestamp,
         'to_timestamp': toTimestamp
-    });
+    }, {'error_callback': function() {
+        alert('Error: Could not fetch tag log stats.');
+    }});
 };
 
 var updateStats = function(data) {
