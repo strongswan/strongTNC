@@ -107,7 +107,10 @@ var Pager = function() {
         var filterQuery = this.getFilterQuery();
         var paramObject = this.getParamObject(filterQuery);
         this.loading = true;
-        Dajaxice.apps.front.paging(this.pagingCallback.bind(this), paramObject, {'error_callback': function() {
+
+        var callback = this.pagingCallback.bind(this);
+        var ajaxWrapper = new DajaxWrapper(this.$contentContainer);
+        ajaxWrapper.call(Dajaxice.apps.front.paging, callback, paramObject, {'error_callback': function() {
             alert('Error: Failed to fetch "' + paramObject.config_name + '" paging.');
         }});
     };
@@ -151,7 +154,7 @@ var Pager = function() {
 
     this.getFilterQuery = function() {
         if(this.$filterInput) {
-            if (this.$filterInput.val() != '') {
+            if(this.$filterInput.val() != '') {
                 return this.$filterInput.val();
             }
         }
@@ -208,7 +211,7 @@ var Pager = function() {
     this.getInitalURLParam = function() {
         var params = HashQuery.getHashQueryObject();
         for (var key in params) {
-            if (hasOwnProperty.call(params, key)) {
+            if(hasOwnProperty.call(params, key)) {
                 if(key == this.pageParam) {
                     var currIdx = parseInt(params[key]);
                     if(!isNaN(currIdx)) {

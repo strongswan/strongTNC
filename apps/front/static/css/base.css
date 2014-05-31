@@ -170,3 +170,18 @@ a.disabled {
     display: inline-block;
     text-align: center;
 }
+
+.ajax_loader {
+    background: url("../img/ajax-loader.gif") no-repeat center center transparent;
+    width: 100%;
+    height: 100%;
+}
+
+.paged-content {
+    position: relative;
+    overflow: hidden;
+}
+
+#global-loader {
+    display: none;
+}

@@ -10,7 +10,7 @@
     <meta name="author" content="HSR University of Applied Sciences Rapperswil">
 
     <!-- styles -->
-    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet" media="screen"/>
     <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet" type="text/css"/>
     <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}css/select2.css" rel="stylesheet"/>
@@ -51,6 +51,10 @@
             <div class="nav-collapse collapse">
                 <div class="pull-right">
                     <ul class="nav pull-right">
+                        <li class="brand" id="global-loader">Loading...
+                            <img src="{{ STATIC_URL }}img/ajax-loader-black-bg.gif" width="20px">
+                        </li>
+
                         <form class="navbar-search" action="{% url 'front:search' %}" method="get">
                             <input type="text" class="search-query" name="q" placeholder="Search">
                         </form>
@@ -129,8 +133,7 @@
         </p>
     </footer>
 
-    <div id="logoutModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
-         aria-hidden="true">
+    <div id="logoutModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3 id="logoutModalLabel">Are you sure to logout?</h3>
@@ -152,7 +155,7 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script type="text/javascript">
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('.slct2-dropdown').select2({
             'width': 'element',
             'minimumResultsForSearch': 15
@@ -160,7 +163,7 @@
 
         // copy title and rel attribute from original form-element
         // to the select2 substitute to support bootstrap tooltips
-        $('.select2-container').each(function () {
+        $('.select2-container').each(function() {
             var $this = $(this);
             var originId = $this.attr('id').split('_')[1];
             var $originElement = $('#' + originId);
@@ -181,11 +184,11 @@
 
         $.tablesorter.addParser({
             id: 'strongTNCDate',
-            is: function (s, table, cell) {
+            is: function(s, table, cell) {
                 // return false so this parser is not auto detected
                 return false;
             },
-            format: function (s, table, cell, cellIndex) {
+            format: function(s, table, cell, cellIndex) {
                 return Date.parse(s);
             },
             type: 'numeric'
@@ -201,24 +204,24 @@
         // http://jqueryvalidation.org
         // validation rules can be found in `[app]/static/js`
         $.validator.addMethod("regex",
-            function (value, element, regexp) {
-                var re = new RegExp(regexp);
-                return this.optional(element) || re.test(value);
-            }, "Please check your input."
+                function(value, element, regexp) {
+                    var re = new RegExp(regexp);
+                    return this.optional(element) || re.test(value);
+                }, "Please check your input."
         );
 
         $.validator.addMethod("directory",
-            function (value, element) {
-                var re = new RegExp(/^\/.*/);
-                return this.optional(element) || re.test(value);
-            }, "Not a valid absolute path."
+                function(value, element) {
+                    var re = new RegExp(/^\/.*/);
+                    return this.optional(element) || re.test(value);
+                }, "Not a valid absolute path."
         );
 
         // checkbox in the save-delete modal
         $('#sure').click(function() {
             var $this = $(this);
             var $deleteButton = $('#deleteButton');
-            if ($this.is(':checked')) {
+            if($this.is(':checked')) {
                 $deleteButton.attr('disabled', false);
                 $deleteButton.on('click', function() {
                     deleteform.submit();
@@ -233,9 +236,10 @@
 
 </script>
 {% block footer_js %}
-<script src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
-<script src="{{ STATIC_URL }}js/ajax-utils.js"></script>
-<script src="{{ STATIC_URL }}js/common.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
+    <script src="{{ STATIC_URL }}js/ajax-utils.js"></script>
+    <script src="{{ STATIC_URL }}js/ajax-loader.js"></script>
+    <script src="{{ STATIC_URL }}js/common.js"></script>
 {% endblock %}
 </body>
 </html>
