@@ -19,6 +19,8 @@ from django.db import models
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 
+from rest_framework import permissions, exceptions
+
 
 class GlobalPermissionManager(models.Manager):
     """
@@ -48,3 +50,23 @@ class GlobalPermission(Permission):
         # Assign the 'global_permission' content type to this permission
         self.content_type = ct
         super(GlobalPermission, self).save(*args, **kwargs)
+
+
+class IsStaffOrHasWritePerm(permissions.BasePermission):
+    """
+    Django Rest Framework permission class.
+
+    It allows access to the API if it has the `is_staff` flag set, or
+    if it has the global `auth.write_access` permission assigned. (See
+    `apps/auth/management/commands/setpassword.py` to see an example on
+    how to assign that permission programmatically.)
+
+    """
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated():
+            return False
+        if request.user.is_staff:
+            return True
+        if request.user.has_perm('auth.write_access'):
+            return True
+        return False

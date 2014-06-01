@@ -23,6 +23,9 @@ urlpatterns = router.urls
 
 # Register additional endpoints
 urlpatterns += patterns('',
+    # Auth views
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
     # Add tags
     url(r'^swid/add-tags/', TagAddView.as_view(), name='swid-add-tags'),
     url(r'^swid/add-tags/\.(?P<format>[a-z0-9]+)', TagAddView.as_view(), name='swid-add-tags'),

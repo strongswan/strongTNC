@@ -13,6 +13,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from .test_swid import swidtag  # NOQA
+from apps.auth.permissions import GlobalPermission
 from apps.swid import utils
 from apps.swid.models import Tag
 from apps.core.models import Session
@@ -23,7 +24,7 @@ def api_client(transactional_db):
     """
     Return an authenticated API client.
     """
-    user = User.objects.create_superuser(username='api-test', password='api-test',
+    user = User.objects.create_user(username='api-test', password='api-test',
                                          email="api-test@example.com")
     user.is_staff = True
     user.save()
@@ -41,6 +42,47 @@ def session(transactional_db):
     session = mommy.make(Session, id=1, time=time)
     session.tag_set.clear()
     return session
+
+
+@pytest.mark.django_db
+class TestApiAuth(object):
+
+    def _do_request(self, user):
+        client = APIClient()
+        if user:
+            client.force_authenticate(user=user)
+        return client.get('/api/')
+
+    def test_anon(self):
+        response = self._do_request(user=None)
+        # TODO: Change the following return code to HTTP 401 if
+        # https://github.com/tomchristie/django-rest-framework/pull/1611 gets merged.
+        #assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_root(self):
+        user = User.objects.create_superuser(username='root', password='root', email='a@b.com')
+        response = self._do_request(user)
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_normal_user(self):
+        user = User.objects.create_user(username='user', password='1234', email='a@b.com')
+        response = self._do_request(user)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_staff_user(self):
+        user = User.objects.create_user(username='staff', password='1234', email='a@b.com')
+        user.is_staff = True
+        user.save()
+        response = self._do_request(user)
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_write_access_user(self):
+        user = User.objects.create_user(username='admin', password='1234', email='a@b.com')
+        perm, _ = GlobalPermission.objects.get_or_create(codename='write_access')
+        user.user_permissions.add(perm)
+        response = self._do_request(user)
+        assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.parametrize(['url', 'list_name'], [
