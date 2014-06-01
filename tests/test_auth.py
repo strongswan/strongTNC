@@ -35,12 +35,39 @@ def test_login(client, strongtnc_users, test_user, username, password, success):
 
 @pytest.mark.parametrize('url', [
     # SWID views
-    '/regids/',
-    '/regids/1/',
-    '/swid-tags/',
-    '/swid-tags/1/',
+    '',
+    # '/api/', TODO uncomment as soon as login is required for all api access
+    reverse('devices:device_list'),
+    reverse('devices:device_detail', args=[1]),
+    reverse('devices:device_report', args=[1]),
+    reverse('devices:session_detail', args=[1]),
+    reverse('devices:group_list'),
+    reverse('devices:group_detail', args=[1]),
+    reverse('devices:product_list'),
+    reverse('devices:product_detail', args=[1]),
+    reverse('filesystem:file_list'),
+    reverse('filesystem:file_detail', args=[1]),
+    reverse('filesystem:directory_list'),
+    reverse('filesystem:directory_detail', args=[1]),
+    reverse('front:search'),
+    reverse('front:statistics'),
+    reverse('packages:package_list'),
+    reverse('packages:package_detail', args=[1]),
+    reverse('policies:policy_list'),
+    reverse('policies:policy_detail', args=[1]),
+    reverse('policies:enforcement_list'),
+    reverse('policies:enforcement_detail', args=[1]),
+    reverse('swid:regid_list'),
+    reverse('swid:regid_detail', args=[1]),
+    reverse('swid:tag_list'),
+    reverse('swid:tag_detail', args=[1]),
+    reverse('swid:inventory', args=[1]),
+    reverse('swid:log', args=[1]),
 ])
 def test_login_required(client, strongtnc_users, url):
+    """
+    Test whether login is required for all read-only views.
+    """
     # Test as anonymous
     response = client.get(url)
     assert response.status_code == 302, 'Unauthenticated user should not have access to %s' % url
@@ -98,6 +125,9 @@ def test_login_required(client, strongtnc_users, url):
     ('/packages/1/versions/1/remove', 'get')
 ])
 def test_write_permission_enforced(client, strongtnc_users, url, method):
+    """
+    Test whether login is required for views where data is written.
+    """
     do_request = getattr(client, method)
 
     # Test as admin

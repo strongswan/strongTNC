@@ -43,7 +43,7 @@ class SwidTagDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class SwidInventoryView(DetailView):
+class SwidInventoryView(LoginRequiredMixin, DetailView):
     template_name = 'swid/swid_inventory.html'
     model = Device
 
@@ -56,7 +56,7 @@ class SwidInventoryView(DetailView):
         return context
 
 
-class SwidLogView(DetailView):
+class SwidLogView(LoginRequiredMixin, DetailView):
     template_name = 'swid/swid_log.html'
     model = Device
 

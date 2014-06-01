@@ -24,6 +24,7 @@ def overview(request):
 
 
 @require_GET
+@login_required
 def statistics(request):
     """
     Statistics view
