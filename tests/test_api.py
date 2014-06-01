@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-import pytest
-from model_mommy import mommy
+import json
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 
+import pytest
+from model_mommy import mommy
 from rest_framework.test import APIClient
 from rest_framework import status
 
@@ -172,3 +173,40 @@ def test_invalid_tag(api_client, filename):
 def test_invalid_xml(api_client):
     response = api_client.post(reverse('swid-add-tags'), ["<?xml "], format='json')
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_limit_fields(api_client):
+    # TODO convert to class
+
+    tags = mommy.make(Tag, _quantity=5)
+
+    # Unfiltered list
+    r = api_client.get(reverse('tag-list'))
+    data = json.loads(r.content)
+    assert len(data) == 5
+    assert len(data[0].keys()) == 7
+
+    # Filter some fields
+    r = api_client.get(reverse('tag-list'), data={'fields': 'packageName,id,uri'})
+    data = json.loads(r.content)
+    assert len(data) == 5
+    assert len(data[0].keys()) == 3
+    assert sorted(data[0].keys()) == ['id', 'packageName', 'uri']
+
+    # Some invalid fields
+    r = api_client.get(reverse('tag-list'), data={'fields': 'id,spam'})
+    data = json.loads(r.content)
+    assert len(data) == 5
+    assert len(data[0].keys()) == 1
+    assert data[0].keys() == ['id']
+
+    # Filtered detail page
+    r = api_client.get(reverse('tag-detail', args=[tags[0].pk]), data={'fields': 'packageName'})
+    data = json.loads(r.content)
+    assert len(data.keys()) == 1
+    assert data.keys() == ['packageName']
+
+    # Only invalid fields
+    r = api_client.get(reverse('tag-detail', args=[tags[0].pk]), data={'fields': 'spam'})
+    data = json.loads(r.content)
+    assert len(data.keys()) == 0
