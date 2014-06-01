@@ -47,6 +47,12 @@ try:
 except (NoSectionError, NoOptionError):
     ALLOWED_HOSTS = []
 
+# Security
+try:
+    CSRF_COOKIE_SECURE = config.getboolean('security', 'CSRF_COOKIE_SECURE')
+except (NoSectionError, NoOptionError):
+    CSRF_COOKIE_SECURE = False
+
 # Database configuration
 DATABASES = {}
 try:
