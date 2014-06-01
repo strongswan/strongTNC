@@ -13,7 +13,7 @@
 
 {% block content %}
     <div class="row-fluid">
-        <a href="{% url 'swid:swid_log' object.pk %}#session-id={{ current_session.pk }}" id="swid-log-link"
+        <a href="{% url 'swid:log' object.pk %}#session-id={{ current_session.pk }}" id="swid-log-link"
            class="btn btn-primary btn-mini">
             <i class="icon-file icon-white"></i>{% trans 'View SWID log' %}
         </a>

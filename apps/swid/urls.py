@@ -7,5 +7,5 @@ urlpatterns = patterns('',
     url(r'^swid-tags/$', views.SwidTagListView.as_view(), name='tag_list'),
     url(r'^swid-tags/(?P<pk>\d+)/$', views.SwidTagDetailView.as_view(), name='tag_detail'),
     url(r'^swid-inventory/(?P<pk>\d+)/$', views.SwidInventoryView.as_view(), name='inventory'),
-    url(r'^swid-log/(?P<pk>\d+)/$', views.SwidLogView.as_view(), name='swid_log'),
+    url(r'^swid-log/(?P<pk>\d+)/$', views.SwidLogView.as_view(), name='log'),
 )
