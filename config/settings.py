@@ -81,7 +81,7 @@ USE_TZ = True
 try:
     TIME_ZONE = config.get('localization', 'TIME_ZONE')
 except (NoSectionError, NoOptionError):
-    TIME_ZONE = None
+    TIME_ZONE = 'UTC'
 
 DEFAULT_DATETIME_FORMAT_STRING = '%b %d %H:%M:%S %Y'
 
