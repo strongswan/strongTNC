@@ -1,5 +1,6 @@
 $(document).ready(function() {
     setupDirectoryDropdown();
+    initValidation();
 });
 
 function setupDirectoryDropdown() {
@@ -19,5 +20,26 @@ function setupDirectoryDropdown() {
             };
             autocompleteDelay.queryUpdate(query.term);
         }
+    });
+}
+
+function initValidation() {
+    $('#fileform').validate({
+        rules: {
+            'name': {
+                required: true,
+                maxlength: 255
+            },
+            'dir': {
+                required: true
+            }
+        },
+        highlight: function (element) {
+            $(element).closest('.control-group').removeClass('success').addClass('error');
+        },
+        success: function (element) {
+            element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");
+        },
+        ignore: ''
     });
 }
