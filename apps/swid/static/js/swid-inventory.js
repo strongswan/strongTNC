@@ -61,6 +61,9 @@ function setupRangeShortcutsDropdown(fromDatepicker, toDatepicker, sessionsLoade
     $("#calendar-shortcuts").change(function () {
             fromDatepicker.datepicker("setDate", $(this).val());
             toDatepicker.datepicker("setDate", new Date());
+            fromDatepicker.datepicker("option", {"maxDate": new Date()});
+            toDatepicker.datepicker("option", {"minDate": $(this).val()});
+
             HashQuery.setHashKey({
                 'from': fromDatepicker.datepicker("getDate").getTime() / 1000,
                 'to': toDatepicker.datepicker("getDate").getTime() / 1000
@@ -70,7 +73,7 @@ function setupRangeShortcutsDropdown(fromDatepicker, toDatepicker, sessionsLoade
     );
 }
 
-function setupDatepicker(fromDatepicker, toDatepicker) {
+function setupDatepicker(fromDatepicker, toDatepicker, sessionsLoader) {
     fromDatepicker.datepicker({
         defaultDate: new Date(),
         dateFormat: "M dd. yy",
@@ -80,6 +83,7 @@ function setupDatepicker(fromDatepicker, toDatepicker) {
             $("#calendar-shortcuts").prop("selectedIndex", 0);
             toDatepicker.datepicker("option", {"minDate": selectedDate});
             setFromDateHash(fromDatepicker);
+            sessionsLoader.loadSessions();
         }
     });
 
@@ -92,6 +96,7 @@ function setupDatepicker(fromDatepicker, toDatepicker) {
             $("#calendar-shortcuts").prop("selectedIndex", 0);
             fromDatepicker.datepicker("option", {"maxDate": selectedDate});
             setToDateHash(toDatepicker);
+            sessionsLoader.loadSessions();
         }
     });
 
@@ -112,12 +117,12 @@ function setupDatepicker(fromDatepicker, toDatepicker) {
 
 function setFromDateHash(fromDatepicker) {
     var fromTimestamp = fromDatepicker.datepicker("getDate").getTime() / 1000;
-    HashQuery.setHashKey({'from': fromTimestamp});
+    HashQuery.setHashKey({'from': fromTimestamp}, true);
 }
 
 function setToDateHash(toDatepicker) {
     var toTimestamp = toDatepicker.datepicker("getDate").getTime() / 1000;
-    HashQuery.setHashKey({'to': toTimestamp});
+    HashQuery.setHashKey({'to': toTimestamp}, true);
 }
 
 $(document).ready(function () {
@@ -128,7 +133,7 @@ $(document).ready(function () {
     var tagsLoader = new AjaxTagsLoader();
 
     // setup components
-    setupDatepicker(fromDatepicker, toDatepicker);
+    setupDatepicker(fromDatepicker, toDatepicker, sessionsLoader);
     setupRangeShortcutsDropdown(fromDatepicker, toDatepicker, sessionsLoader);
     setupResetButton(fromDatepicker, toDatepicker, sessionsLoader);
 
@@ -151,8 +156,12 @@ $(document).ready(function () {
 
     var hashQueryObject = HashQuery.getHashQueryObject();
     if(hashQueryObject['to'] && hashQueryObject['from']) {
-        fromDatepicker.datepicker("setDate", new Date(hashQueryObject['from'] * 1000));
-        toDatepicker.datepicker("setDate", new Date(hashQueryObject['to'] * 1000));
+        var fromTimestamp = new Date(hashQueryObject['from'] * 1000);
+        fromDatepicker.datepicker("setDate", fromTimestamp);
+        toDatepicker.datepicker("option", {"minDate": fromTimestamp});
+        var toTimestamp = new Date(hashQueryObject['to'] * 1000);
+        toDatepicker.datepicker("setDate", toTimestamp);
+        fromDatepicker.datepicker("option", {"maxDate": toTimestamp});
     }
 
     sessionsLoader.loadSessions();

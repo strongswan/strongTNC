@@ -206,7 +206,7 @@ var Pager = function() {
         if(!this.useURLParams) return;
         var hashKeyObj = {};
         hashKeyObj[hashKey] = hashValue;
-        HashQuery.setHashKey(hashKeyObj, false, avoidHistory);
+        HashQuery.setHashKey(hashKeyObj, true, avoidHistory);
     };
 
     this.getInitalURLParam = function() {
