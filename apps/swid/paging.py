@@ -220,6 +220,7 @@ def get_device_sessions(dynamic_params):
     device = Device.objects.get(pk=device_id)
     return device.get_sessions_in_range(from_timestamp, to_timestamp)
 
+
 def swid_files_list_producer(from_idx, to_idx, filter_query, dynamic_params, static_params=None):
     if not dynamic_params:
         return []

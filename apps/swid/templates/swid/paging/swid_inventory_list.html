@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load text_filters %}
 {% if object_list %}
 <table role="grid" id="swid-tags"
        class="table table-hover table-striped">
@@ -6,13 +7,13 @@
     <tr role="row">
         <th class="siwd-new-icon"></th>
         <th>
+            {% trans 'Unique ID' %}
+        </th>
+        <th>
             {% trans 'Package name' %}
         </th>
         <th>
             {% trans 'Version' %}
-        </th>
-        <th>
-            {% trans 'Unique ID' %}
         </th>
         <th class="dateWidth">
             {% trans 'First reported' %}
@@ -28,10 +29,18 @@
             {% else %}
             <td></td>
             {% endif %}
-            <td>{{ obj.tag.package_name }}</td>
-            <td>{{ obj.tag.version }}</td>
-            <td><a href="{{ obj.tag_url }}">{{ obj.tag.unique_id }}</a></td>
-            <td><a href="{% url url_name obj.session.pk %}">{{ obj.session.time|date:"M d H:i:s Y" }}</a></td>
+            <td><a href="{{ obj.tag_url }}">{{ obj.tag.unique_id|highlight:filter_query }}</a></td>
+            <td>
+                {% if obj.tag.get_matching_packages %}
+                    <a href="{% url 'packages:package_detail' obj.tag.get_matching_packages.0.pk %}">
+                        {{ obj.tag.package_name|highlight:filter_query }}
+                    </a>
+                {% else %}
+                    <span title="{% trans 'No matching package found' %}">{{ obj.tag.package_name|highlight:filter_query }}</span>
+                {% endif %}
+            </td>
+            <td>{{ obj.tag.version|highlight:filter_query }}</td>
+            <td><a href="{% url 'devices:session_detail' obj.session.pk %}">{{ obj.session.time|date:"M d H:i:s Y" }}</a></td>
         </tr>
     {% endfor %}
     </tbody>
