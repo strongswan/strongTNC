@@ -69,11 +69,22 @@ DajaxWrapper = function($container) {
 
     this.call = function(dajaxCall, callback, params, errorHandlers) {
         this.preLoad();
+        errorHandlers = errorHandlers || {'error_callback': function(){}};
+        var originalHandler = errorHandlers['error_callback'];
+
+        var errorHandlerProxy = function handlerProxy() {
+            originalHandler();
+            this.postLoad();
+        }.bind(this);
+
+        errorHandlers['error_callback'] = errorHandlerProxy;
+
         var callbackProxy = function(data) {
             callback(data);
             this.postLoad();
-        };
-        dajaxCall(callbackProxy.bind(this), params, errorHandlers);
+        }.bind(this);
+
+        dajaxCall(callbackProxy, params, errorHandlers);
     };
 };
 

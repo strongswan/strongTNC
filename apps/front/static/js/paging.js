@@ -112,7 +112,8 @@ var Pager = function() {
         var ajaxWrapper = new DajaxWrapper(this.$contentContainer);
         ajaxWrapper.call(Dajaxice.apps.front.paging, callback, paramObject, {'error_callback': function() {
             alert('Error: Failed to fetch "' + paramObject.config_name + '" paging.');
-        }});
+            this.loading = false;
+        }.bind(this)});
     };
 
     this.statsUpdate = function(data) {
