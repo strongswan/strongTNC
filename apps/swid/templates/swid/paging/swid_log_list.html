@@ -13,6 +13,12 @@
             <th>
                 {% trans 'Unique ID' %}
             </th>
+            <th>
+                {% trans 'Package name' %}
+            </th>
+            <th>
+                {% trans 'Version' %}
+            </th>
         </tr>
         </thead>
 
@@ -27,6 +33,16 @@
                     {% endif %}
                     <td>{{ tag.added|yesno:"ADDED,REMOVED" }}</td>
                     <td><a href="{% url url_name tag.pk %}">{{ tag.unique_id }}</a></td>
+                    <td>
+                        {% if tag.get_matching_packages %}
+                            <a href="{% url 'packages:package_detail' tag.get_matching_packages.0.pk %}">
+                                {{ tag.package_name }}
+                            </a>
+                        {% else %}
+                            <span title="{% trans 'No matching package found' %}">{{ tag.package_name }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ tag.version }}</td>
                 </tr>
             {% endfor %}
         {% endfor %}
