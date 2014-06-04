@@ -15,7 +15,16 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span3" id="line">
-                <h4>{% trans "File" %}</h4>
+                <h4>{% trans "File" %}
+                {% if 'auth.write_access' in perms %}
+                    <div class="pull-right">
+                        <a class="btn btn-primary btn-mini" href="{% url 'filesystem:file_add' %}"
+                           rel="tooltip" title="add new">
+                            <i class="icon-plus-sign icon-white"></i>
+                        </a>
+                    </div>
+                {% endif %}
+                </h4>
                 <hr>
                 <div class="row-fluid">
                     {% paged_block config_name='file_list_config' with_filter=True %}
@@ -27,60 +36,131 @@
                 {% if file %}
                     <form class="form-horizontal" method="POST" action="{% url 'filesystem:file_save' %}" id="fileform">
                         {% csrf_token %}
+                        <input type="hidden" id="fileId" name="fileId" value="{{ file.id }}"/>
                         <div class="row-fluid">
-                            <h3>{% trans 'File info:' %} {{ file.directory }}/{{ file.name }}</h3>
+                            {% if add %}
+                                <h3>{% trans 'Add new file' %}</h3>
+                                <div class="control-group">
+
+                                    <label class="control-label" for="dir">{% trans "Directory" %}</label>
+
+                                    <div class="controls">
+                                        <input type="hidden" id="dir" name="dir" class="slct2-autocomplete"
+                                               rel="tooltip"
+                                               placeholder="{% trans 'Choose directory' %}"
+                                               {% input_editability %} />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="name">{% trans "File name" %}</label>
+
+                                    <div class="controls">
+                                        <input type="text" id="name" name="name" placeholder="{% trans 'File name' %}"
+                                               rel="tooltip"
+                                               title="{% trans 'File name' %}"
+                                               value="{{ file.name }}" {% input_editability %}>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <h3>{% trans 'File info:' %} {{ file.directory }}/{{ file.name }}</h3>
+                            {% endif %}
                         </div>
                         {% if 'auth.write_access' in perms %}
                             <div class="btn-toolbar" style="margin: 0;">
-                                {% if file.id %}
+                                {% if add %}
+                                    <div class="btn-group">
+                                        <button class="btn btn-success" type="submit">
+                                            <i class="icon-ok icon-white"></i> {% trans "Save" %}</button>
+                                    </div>
+                                {% else %}
                                     <div class="btn-group">
                                         <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i
                                             class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
                                     </div>
-
                                 {% endif %}
                             </div>
                         {% endif %}
 
-                        <hr>
+                        {% if not add %}
+                            <hr>
 
-                        <h4>File Hashes</h4>
-                        {% if file_hashes %}
-                            <div class="row-fluid">
-                                <table id="versions" class="table table-hover table-striped sortable">
-                                    <thead>
-                                    <tr>
-                                        <th>{% trans 'OS' %}</th>
-                                        <th>{% trans 'Algo' %}</th>
-                                        <th>{% trans 'Hash' %}</th>
-                                        {% if 'auth.write_access' in perms %}
-                                            <th class="sorter-false">&nbsp;</th>
-                                        {% endif %}
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for h in file_hashes %}
+                            <h4>File Hashes</h4>
+                            {% if file_hashes %}
+                                <div class="row-fluid">
+                                    <table id="versions" class="table table-hover table-striped sortable">
+                                        <thead>
                                         <tr>
-                                            <td>{{ h.product }}</td>
-                                            <td>{{ h.algorithm }}</td>
-                                            <td title="{{ h.hash }}">{{ h.hash|truncatechars:40 }}</td>
+                                            <th>{% trans 'OS' %}</th>
+                                            <th>{% trans 'Algo' %}</th>
+                                            <th>{% trans 'Hash' %}</th>
                                             {% if 'auth.write_access' in perms %}
-                                                <td>
-                                                    <a class="btn btn-danger btn-mini"
-                                                       href="{% url 'filesystem:filehash_delete' h.pk %}"
-                                                       data-toggle="modal"><i class="icon-remove icon-white"></i></a>
-                                                </td>
+                                                <th class="sorter-false">&nbsp;</th>
                                             {% endif %}
                                         </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% else %}
-                            <p>{% trans 'This file has no associated file hashes.' %}</p>
+                                        </thead>
+                                        <tbody>
+                                        {% for h in file_hashes %}
+                                            <tr>
+                                                <td>{{ h.product }}</td>
+                                                <td>{{ h.algorithm }}</td>
+                                                <td title="{{ h.hash }}">{{ h.hash|truncatechars:40 }}</td>
+                                                {% if 'auth.write_access' in perms %}
+                                                    <td>
+                                                        <a class="btn btn-danger btn-mini"
+                                                           href="{% url 'filesystem:filehash_delete' h.pk %}"
+                                                       data-toggle="modal"><i class="icon-remove icon-white"></i></a>
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <p>{% trans 'This file has no associated file hashes.' %}</p>
+                            {% endif %}
                         {% endif %}
                     </form>
 
+                {% endif %}
+
+                {% if file.pk %}
+                    <hr />
+                    <div class="row-fluid">
+                        <h5>{% trans 'File appears in the following SWID tags' %}</h5>
+                        {% if swid_tags %}
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                <tr>
+                                    <th>{% trans 'Unique ID' %}</th>
+                                    <th>{% trans 'Package name' %}</th>
+                                    <th>{% trans 'Version' %}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for tag in swid_tags %}
+                                    <tr>
+                                        <td><a href="{% url 'swid:tag_detail' tag.pk %}">{{ tag.list_repr }}</a></td>
+                                        <td>
+                                            {% if tag.get_matching_packages %}
+                                                <a href="{% url 'packages:package_detail' tag.get_matching_packages.0.pk %}">
+                                                    {{ tag.package_name }}
+                                                </a>
+                                            {% else %}
+                                                {{ tag.package_name }}
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ tag.version }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p>
+                                {% trans "This file hasn't any connected SWID tags" %}
+                            </p>
+                        {% endif %}
+                    </div>
                 {% endif %}
 
                 {% if 'auth.write_access' in perms %}
@@ -202,4 +282,9 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block footer_js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/files.js"></script>
 {% endblock %}

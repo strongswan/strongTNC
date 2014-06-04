@@ -47,6 +47,12 @@ try:
 except (NoSectionError, NoOptionError):
     ALLOWED_HOSTS = []
 
+# Security
+try:
+    CSRF_COOKIE_SECURE = config.getboolean('security', 'CSRF_COOKIE_SECURE')
+except (NoSectionError, NoOptionError):
+    CSRF_COOKIE_SECURE = False
+
 # Database configuration
 DATABASES = {}
 try:
@@ -75,7 +81,7 @@ USE_TZ = True
 try:
     TIME_ZONE = config.get('localization', 'TIME_ZONE')
 except (NoSectionError, NoOptionError):
-    TIME_ZONE = None
+    TIME_ZONE = 'UTC'
 
 DEFAULT_DATETIME_FORMAT_STRING = '%b %d %H:%M:%S %Y'
 
@@ -173,6 +179,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
@@ -234,7 +241,11 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
     },
     'loggers': {
         'django.request': {
@@ -244,6 +255,15 @@ LOGGING = {
         },
     }
 }
+try:
+    if config.getboolean('debug', 'SQL_DEBUG'):
+        # This will cause all SQL queries to be printed
+        LOGGING['loggers']['django.db.backends'] = {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+except (NoSectionError, NoOptionError):
+    pass
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'debug',
@@ -273,10 +293,10 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication'
+        'rest_framework.authentication.BasicAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'apps.auth.permissions.IsStaffOrHasWritePerm',
     ),
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework.filters.DjangoFilterBackend',

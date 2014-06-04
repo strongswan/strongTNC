@@ -6,7 +6,7 @@ from django.conf.urls import url, patterns, include
 from rest_framework import routers
 
 from apps.core.api_views import IdentityViewSet, SessionViewSet
-from apps.swid.api_views import EntityViewSet, TagViewSet, TagAddView
+from apps.swid.api_views import EntityViewSet, TagViewSet, TagAddView, SwidMeasurementView
 
 
 # Create router
@@ -18,11 +18,21 @@ router.register(r'sessions', SessionViewSet)
 router.register(r'swid-entities', EntityViewSet)
 router.register(r'swid-tags', TagViewSet)
 
-# Generate URL configuration
+# Generate basic URL configuration
 urlpatterns = router.urls
 
-
-# API URLs
+# Register additional endpoints
 urlpatterns += patterns('',
+    # Auth views
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    # Add tags
     url(r'^swid/add-tags/', TagAddView.as_view(), name='swid-add-tags'),
+    url(r'^swid/add-tags/\.(?P<format>[a-z0-9]+)', TagAddView.as_view(), name='swid-add-tags'),
+
+    # Register measurement
+    url(r'^sessions/(?P<pk>[^/]+)/swid-measurement/',
+        SwidMeasurementView.as_view(), name='session-swid-measurement'),
+    url(r'^sessions/(?P<pk>[^/]+)/swid-measurement/\.(?P<format>[a-z0-9]+)',
+        SwidMeasurementView.as_view(), name='session-swid-measurement'),
 )

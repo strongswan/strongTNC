@@ -27,6 +27,21 @@ def device_session_stat_producer(page_size, filter_query, dynamic_params=None, s
     return math.ceil(count / page_size)
 
 
+def product_device_list_producer(from_idx, to_idx, filter_query, dynamic_params=None, static_params=None):
+    if not dynamic_params:
+        return []
+    product_id = dynamic_params['product_id']
+    return Device.objects.filter(product__id=product_id)[from_idx:to_idx]
+
+
+def product_device_stat_producer(page_size, filter_query, dynamic_params=None, static_params=None):
+    if not dynamic_params:
+        return []
+    product_id = dynamic_params['product_id']
+    count = Device.objects.filter(product__id=product_id).count()
+    return math.ceil(count / page_size)
+
+
 # PAGING CONFIGS
 
 device_list_paging = {
@@ -47,6 +62,14 @@ product_list_paging = {
     'var_name': 'object_list',
     'url_name': 'devices:product_detail',
     'page_size': 50,
+}
+
+product_devices_list_paging = {
+    'template_name': 'devices/paging/device_list',
+    'list_producer': product_device_list_producer,
+    'stat_producer': product_device_stat_producer,
+    'url_name': 'devices:device_detail',
+    'page_size': 10,
 }
 
 device_session_list_paging = {

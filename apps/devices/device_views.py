@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from apps.core.models import Session, Result
 from apps.core.types import WorkItemType
-from apps.policies.models import Policy
+from apps.policies.models import Policy, Enforcement
 from .models import Device, Group, Product
 
 
@@ -197,8 +197,8 @@ def report(request, deviceID):
     context['inherit_set'] = list(current_device.get_inherit_set())
 
     if context['session_count'] > 0:
-        latest_session = Session.objects.latest('time')
-        context['last_session'] = latest_session.time
+        latest_session = Session.objects.filter(device=deviceID).latest()
+        context['last_session'] = latest_session
         context['last_user'] = latest_session.identity.data
         context['last_result'] = latest_session.get_recommendation_display()
     else:
@@ -232,13 +232,9 @@ def session(request, sessionID):
     context = {}
     context['session'] = session
     context['title'] = _('Session details')
-    context['recommendation'] = Policy.action[session.recommendation]
+    context['recommendation'] = session.get_recommendation_display()
 
-    context['results'] = []
-    for result in session.results.all():
-        context['results'].append((result, Policy.action[result.recommendation]))
-        if result.policy.type == WorkItemType.SWIDT:
-            context['swid_measurement'] = result.session_id
+    context['results'] = session.results.all()
 
     return render(request, 'devices/session.html', context)
 

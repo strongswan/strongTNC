@@ -1,6 +1,7 @@
 $(document).ready(function() {
     // initialize paging
     // static initializer see bottom of file
+    Pager.count = 0;
     Pager.init();
 });
 
@@ -19,8 +20,11 @@ var Pager = function() {
         // get setup values
         this.config = this.$ctx.data('config');
         this.filter = this.$ctx.data('filter');
+        this.doInitialRequest = (this.$ctx.data('initial').toLowerCase() === "true");
+        this.useURLParams = (this.$ctx.data('urlparams').toLowerCase() === "true");
         this.args = this.$ctx.data('args');
         this.currentPageIdx = 0;
+        this.afterPagingCallbacks = [];
 
         // get containers and buttons
         this.$buttonContainer = $('.paging-buttons', this.$ctx);
@@ -39,34 +43,43 @@ var Pager = function() {
             this.addFilter();
         }
 
-        // if url parameter were set, get them
-        this.grabURLParams();
+        if(this.useURLParams) {
+            // register hashChanged events
+            HashQuery.addChangedListener(this.pageParam, this.grabPageParam.bind(this));
+            HashQuery.addChangedListener(this.filterParam, this.grabFilterParam.bind(this));
+        }
 
-        // get initial page
-        this.getPage();
+        if(this.doInitialRequest) {
+            // get initial page
+            this.initial = true;
+            this.getInitalURLParam();
+            this.getPage();
+        }
 
-        $(window).on('hashchange', function() {
-            if(!this.loading && this.hasURLParam()) {
-                if(this.grabURLParams()) {
-                    this.getPage();
-                }
-            }
-        }.bind(this));
+        // place handle to the pager object
+        this.$ctx.data('pager', this);
     };
 
-    this.grabURLParams = function() {
-        var changed = false;
-        var currPageIdx = parseInt(this.getURLParam(this.pageParam));
+    this.grabPageParam = function(key, value) {
+        var currPageIdx = parseInt(value);
         if(!isNaN(currPageIdx)) {
             var idxChanged = this.currentPageIdx != currPageIdx;
             this.currentPageIdx = currPageIdx;
         }
-        var filter = this.getURLParam(this.filterParam);
+        if(idxChanged) {
+            this.getPage();
+        }
+    };
+
+    this.grabFilterParam = function(key, value) {
+        var filter = value;
         if(filter) {
             var filterChanged = this.getFilterQuery() != filter;
             this.$filterInput.val(filter);
         }
-        return changed || idxChanged || filterChanged;
+        if(filterChanged) {
+            this.getPage();
+        }
     };
 
     // grab next page
@@ -94,7 +107,13 @@ var Pager = function() {
         var filterQuery = this.getFilterQuery();
         var paramObject = this.getParamObject(filterQuery);
         this.loading = true;
-        Dajaxice.apps.front.paging(this.pagingCallback.bind(this), paramObject);
+
+        var callback = this.pagingCallback.bind(this);
+        var ajaxWrapper = new DajaxWrapper(this.$contentContainer);
+        ajaxWrapper.call(Dajaxice.apps.front.paging, callback, paramObject, {'error_callback': function() {
+            alert('Error: Failed to fetch "' + paramObject.config_name + '" paging.');
+            this.loading = false;
+        }.bind(this)});
     };
 
     this.statsUpdate = function(data) {
@@ -107,8 +126,10 @@ var Pager = function() {
     this.pagingCallback = function(data) {
         this.statsUpdate(data);
         this.$contentContainer.html(data.html);
-        this.setURLParam(this.pageParam, this.currentPageIdx);
+        this.setURLParam(this.pageParam, this.currentPageIdx, this.initial);
+        this.initial = false;
         this.loading = false;
+        this.afterPaging();
     };
 
     this.updateStatus = function() {
@@ -130,12 +151,11 @@ var Pager = function() {
             this.$nextButton.prop('disabled', true);
             this.$prevButton.prop('disabled', true);
         }
-
     };
 
     this.getFilterQuery = function() {
         if(this.$filterInput) {
-            if (this.$filterInput.val() != '') {
+            if(this.$filterInput.val() != '') {
                 return this.$filterInput.val();
             }
         }
@@ -145,7 +165,7 @@ var Pager = function() {
     this.filterQuery = function() {
         this.currentPageIdx = 0;
         this.getPage();
-        this.setURLParam(this.filterParam, this.getFilterQuery());
+        this.setURLParam(this.filterParam, this.getFilterQuery(), false);
     };
 
     this.addFilter = function() {
@@ -182,25 +202,27 @@ var Pager = function() {
         };
     };
 
-    this.setURLParam = function(key, value) {
-        var params = HashQuery.getHashQueryObject();
-        params[key] = value;
-        HashQuery.setHashQueryObject(params);
+    this.setURLParam = function(hashKey, hashValue, avoidHistory) {
+        if(!this.useURLParams) return;
+        var hashKeyObj = {};
+        hashKeyObj[hashKey] = hashValue;
+        HashQuery.setHashKey(hashKeyObj, true, avoidHistory);
     };
 
-    this.getURLParam = function(key) {
+    this.getInitalURLParam = function() {
         var params = HashQuery.getHashQueryObject();
-        var param = params[key];
-        if(param) {
-            return param;
-        }
-        return '';
-    };
-
-    this.hasURLParam = function() {
-        var params = HashQuery.getHashQueryObject()
         for (var key in params) {
-            if (hasOwnProperty.call(params, key)) return true;
+            if(hasOwnProperty.call(params, key)) {
+                if(key == this.pageParam) {
+                    var currIdx = parseInt(params[key]);
+                    if(!isNaN(currIdx)) {
+                        this.currentPageIdx = currIdx;
+                    }
+                }
+                if(key == this.filterParam) {
+                    this.$filterInput.val(params[key]);
+                }
+            }
         }
     };
 
@@ -210,17 +232,40 @@ var Pager = function() {
         }
         return true;
     };
+
+    this.setProducerArgs = function(argObj) {
+        this.args = argObj;
+    };
+
+    this.reset = function() {
+        this.currentPageIdx = 0;
+        if(this.filter) {
+            this.$filterInput.val('');
+        }
+    };
+
+    this.onAfterPaging = function(callback) {
+        this.afterPagingCallbacks.push(callback);
+    };
+
+    this.afterPaging = function() {
+        $.each(this.afterPagingCallbacks, function(i, callback) {
+            callback(this);
+        }.bind(this));
+    };
 };
 
 // static initalizer
 // creates an instance for every paged table found
 // on the current page
 Pager.init = function() {
-    Pager.count = 0;
     $('.ajax-paged').each(function() {
-        var p = new Pager();
-        p.uid = Pager.count++;
-        p.$ctx = $(this);
-        p.init();
+        var $ctx = $(this);
+        if(!$ctx.data('pager')) {
+            var p = new Pager();
+            p.uid = Pager.count++;
+            p.$ctx = $ctx;
+            p.init();
+        }
     });
 };

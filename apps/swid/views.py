@@ -37,12 +37,14 @@ class SwidTagDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SwidTagDetailView, self).get_context_data(**kwargs)
+        context['paging_args'] = {'tag_id': self.object.pk}
         context['entityroles'] = self.object.entityrole_set.all()
-        context['devices'] = self.object.get_devices_with_reported_session()
+        context['reported_devices'] = sorted(self.object.get_devices_with_reported_session().items(),
+                                             key=lambda (device, session): device.description)
         return context
 
 
-class SwidInventoryView(DetailView):
+class SwidInventoryView(LoginRequiredMixin, DetailView):
     template_name = 'swid/swid_inventory.html'
     model = Device
 
@@ -55,7 +57,7 @@ class SwidInventoryView(DetailView):
         return context
 
 
-class SwidLogView(DetailView):
+class SwidLogView(LoginRequiredMixin, DetailView):
     template_name = 'swid/swid_log.html'
     model = Device
 

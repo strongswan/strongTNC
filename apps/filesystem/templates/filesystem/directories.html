@@ -44,7 +44,8 @@
                                     <input type="text" id="path" name="path" placeholder="{% trans 'Path' %}"
                                            rel="tooltip"
                                            title="{% trans 'Directory path' %}"
-                                           value="{{ directory.path }}" {% input_editability %}>
+                                           value="{{ directory.path }}"
+                                           {% input_editability %}>
                                 </div>
                             </div>
                         {% else %}
@@ -52,8 +53,6 @@
                                 <h3>{% trans 'Directory info:' %} {{ directory.path }}</h3>
                             </div>
                         {% endif %}
-
-
 
                         {% if 'auth.write_access' in perms %}
                             <div class="btn-toolbar" style="margin: 0;">
@@ -70,30 +69,13 @@
                                     </div>
                                 {% endif %}
                             </div>
-                        {% endif %}
 
-                        <hr>
-
-                        <h4>Files</h4>
-                        {% if files %}
-                            <div class="row-fluid">
-                                <table id="versions" class="table table-hover table-striped">
-                                    <thead>
-                                    <tr>
-                                        <td>{% trans 'Name' %}</td>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for f in files %}
-                                        <tr>
-                                            <td><a href="{% url 'filesystem:file_detail' f.pk %}">{{ f.name }}</a></td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
                         {% endif %}
                     </form>
+                    <hr>
+
+                    <h4>Files</h4>
+                    {% paged_block config_name='dir_file_list_config' producer_args=paging_params with_filter=True %}
                 {% endif %}
                 {% if directory.pk %}
                     <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog"

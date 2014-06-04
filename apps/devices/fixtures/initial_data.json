@@ -1,0 +1,12 @@
+[
+    {
+        "pk": 1,
+        "model": "devices.group",
+        "fields": {
+            "product_defaults": [],
+            "devices": [],
+            "name": "Default",
+            "parent": null
+        }
+    }
+]

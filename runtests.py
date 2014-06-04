@@ -8,9 +8,15 @@ if __name__ == '__main__':
     # Environment variables
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
+    measure_coverage = True
+    if '--no-cov' in sys.argv:
+        measure_coverage = False
+        sys.argv.remove('--no-cov')
+
     # Start coverage tracking
-    cov = coverage.coverage()
-    cov.start()
+    if measure_coverage:
+        cov = coverage.coverage()
+        cov.start()
 
     # Run pytest
     if len(sys.argv) > 1:
@@ -19,8 +25,9 @@ if __name__ == '__main__':
         code = pytest.main(['tests', 'apps'])
 
     # Show coverage report
-    cov.stop()
-    cov.save()
-    cov.report()
+    if measure_coverage:
+        cov.stop()
+        cov.save()
+        cov.report()
 
     sys.exit(code)

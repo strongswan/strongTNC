@@ -2,8 +2,12 @@ strongTNC
 =========
 
 .. image:: https://travis-ci.org/strongswan/strongTNC.png?branch=master
-	:target: https://travis-ci.org/strongswan/strongTNC
-	:alt: Build status
+   :target: https://travis-ci.org/strongswan/strongTNC
+   :alt: Build status
+
+.. image:: https://coveralls.io/repos/strongswan/strongTNC/badge.png?branch=master
+   :target: https://coveralls.io/r/strongswan/strongTNC
+   :alt: Test coverage
 
 .. image:: https://landscape.io/github/strongswan/strongTNC/master/landscape.png
    :target: https://landscape.io/github/strongswan/strongTNC/master
@@ -78,12 +82,17 @@ Now you can start the development server. ::
 
 The web interface should be available on ``http://localhost:8000/``.
 
+**Debugging**
+
 If you want to use the django debug toolbar, install it via pip::
 
     pip install django-debug-toolbar
 
-Then start the server with the setting ``DEBUG_TOOLBAR = 1`` (in
+Then start the server with the setting ``[debug] DEBUG_TOOLBAR = 1`` (in
 ``settings.ini``).
+
+To print all executed SQL queries to stdout, start the server with the setting
+``[debug] SQL_DEBUG = 1`` (in ``settings.ini``).
 
 
 Testing
@@ -96,6 +105,22 @@ Install pytest & dependencies::
 Run the tests::
 
     ./runtests.py
+
+Run a specific test file::
+
+    ./runtests.py tests/<filename>
+
+Run only tests matching a specific pattern::
+
+    ./runtests.py -k <pattern>
+
+Run only tests that failed the last time::
+
+    ./runtests.py --lf
+
+Run tests without coverage::
+
+    ./runtests.py --no-cov
 
 Setup a database with test data::
 

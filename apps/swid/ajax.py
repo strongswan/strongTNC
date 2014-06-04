@@ -3,98 +3,137 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 import json
 
-from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.utils.timezone import localtime
-
 from dajaxice.decorators import dajaxice_register
 
 from apps.core.decorators import ajax_login_required
 from apps.core.models import Session
-from .models import Tag
 from apps.devices.models import Device
+from apps.front.utils import local_dtstring, timestamp_local_to_utc
+from .paging import get_tag_diffs
 
 
 @dajaxice_register
 @ajax_login_required
-def tags_for_session(request, session_id):
-    try:
-        session = Session.objects.get(pk=session_id)
-    except Session.DoesNotExist:
-        return json.dumps({})
+def get_tag_inventory_stats(request, device_id, from_timestamp, to_timestamp):
+    """
+    Return some figures regarding the number of sessions in a given
+    given timerange.
 
-    installed_tags = Tag.get_installed_tags_with_time(session)
-    tags = [
-        {
-            'name': tag.package_name,
-            'version': tag.version,
-            'unique-id': tag.unique_id,
-            'installed': localtime(session.time).strftime(settings.DEFAULT_DATETIME_FORMAT_STRING),
-            'session-id': session.pk,
-            'tag-url': reverse('swid:tag_detail', args=[tag.pk]),
+    Args:
+        device_id (int/str):
+            A device id, might be provided as int or string (javascript)
+        from_timestamp (int):
+            Start time of the range, in Unix time
+        to_timestamp (int):
+            Last time of the range, in Unix time
+
+    Returns:
+        A JSON object in the following format (example data):
+            {
+                "session_count": 8,
+                "latest_session": Nov 20 10:22:12 2013,
+                "oldes_session": Jan 30 11:14:34 2012,
+            }
+
+    """
+    data = {
+        'session_count': 0,
+        'last_session': 'None',
+        'fist_session': 'None',
+    }
+
+    try:
+        device = Device.objects.get(pk=device_id)
+    except Session.DoesNotExist:
+        return json.dumps(data)
+
+    from_timestamp = timestamp_local_to_utc(from_timestamp)
+    to_timestamp = timestamp_local_to_utc(to_timestamp)
+    sessions = device.get_sessions_in_range(from_timestamp, to_timestamp).order_by('time')
+    if sessions:
+        data = {
+            'session_count': sessions.count(),
+            'last_session': local_dtstring(sessions.last().time),
+            'fist_session': local_dtstring(sessions.first().time),
         }
-        for tag, session in installed_tags
-    ]
-    data = {'swid-tag-count': len(tags), 'swid-tags': tags}
+
     return json.dumps(data)
 
 
-@dajaxice_register()
-def get_tag_log(request, device_id, from_timestamp, to_timestamp):
-    device = Device.objects.get(pk=device_id)
-    sessions = device.get_sessions_in_range(from_timestamp, to_timestamp)
+@dajaxice_register
+@ajax_login_required
+def get_tag_log_stats(request, device_id, from_timestamp, to_timestamp):
+    """
+    Return some figures regarding SWID tags history of given device
+    in a given timerange.
 
-    sessions_with_tags = sessions.filter(tag__isnull=False).distinct().order_by('-time')
+    Args:
+        device_id (int):
+            A device id, might be provided as int or string (javascript)
+        from_timestamp (int):
+            Start time of the range, in Unix time
+        to_timestamp (int):
+            Last time of the range, in Unix time
 
-    diffs = []
-    if len(sessions_with_tags) > 1:
-        for i, session in enumerate(sessions_with_tags, start=1):
-            if i < len(sessions_with_tags):
-                prev_session = sessions_with_tags[i]
-                diff = session_tag_difference(session, prev_session)
-                diffs.append(diff)
+    Returns:
+        A JSON object in the following format (example data):
+        {
+            "session_count": 4,
+            "first_session": "Nov 17 10:22:12 2014",
+            "last_session": "Nov 20 10:22:12 2014",
+            "added_count": 99,
+            "removed_count": 33
+        }
 
-        result = [
-            {
-                'session_id': d['session'].pk,
-                'session_date': localtime(d['session'].time).strftime(
-                    settings.DEFAULT_DATETIME_FORMAT_STRING),
-                'added_tags': [{'unique_id': t.unique_id, 'tag_id': t.pk} for t in d['added_tags']],
-                'removed_tags': [{'unique_id': t.unique_id, 'tag_id': t.pk} for t in d['removed_tags']],
-                'tag_count': len(d['added_tags']) + len(d['removed_tags']),
-            }
-            for d in diffs
-        ]
+    """
+    from_timestamp = timestamp_local_to_utc(from_timestamp)
+    to_timestamp = timestamp_local_to_utc(to_timestamp)
+    diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp)
+    if diffs:
+        added_count = 0
+        removed_count = 0
+        sessions = set()
+        for diff in diffs:
+            sessions.add(diff.session)
+            if diff.action == '+':
+                added_count += 1
+            else:
+                removed_count += 1
+
+        s = sorted(sessions, key=lambda sess: sess.time)
+        first_session = s[0]
+        last_session = s[-1]
+
+        result = {
+            'session_count': len(sessions),
+            'first_session': local_dtstring(first_session.time),
+            'last_session': local_dtstring(last_session.time),
+            'added_count': added_count,
+            'removed_count': removed_count,
+        }
+
         return json.dumps(result)
     else:
-        return json.dumps([])
+        return json.dumps({
+            'session_count': 0,
+            'first_session': 'None',
+            'last_session': 'None',
+            'added_count': 0,
+            'removed_count': 0,
+        })
 
 
-def session_tag_difference(curr_session, prev_session):
-    curr_tag_ids = curr_session.tag_set.values_list('id', flat=True).order_by('id')
-    prev_tag_ids = prev_session.tag_set.values_list('id', flat=True).order_by('id')
-
-    added_ids = list(set(curr_tag_ids) - set(prev_tag_ids))
-    removed_ids = list(set(prev_tag_ids) - set(curr_tag_ids))
-
-    added_tags = Tag.objects.filter(id__in=added_ids)
-    removed_tags = Tag.objects.filter(id__in=removed_ids)
-
-    return {
-        'session': curr_session,
-        'added_tags': added_tags,
-        'removed_tags': removed_tags
-    }
-
-
-@dajaxice_register()
+@dajaxice_register
+@ajax_login_required
 def session_info(request, session_id):
     try:
         session = Session.objects.get(pk=session_id)
     except Session.DoesNotExist:
         return json.dumps({})
 
-    detail = {'id': session.pk,
-              'time': localtime(session.time).strftime('%b %d %H:%M:%S %Y')}
+    detail = {
+        'id': session.pk,
+        'time': local_dtstring(session.time)
+    }
 
     return json.dumps(detail)

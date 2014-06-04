@@ -9,10 +9,14 @@ from dajaxice.decorators import dajaxice_register
 from apps.core.decorators import ajax_login_required
 from . import paging as paging_functions
 from apps.swid.paging import regid_detail_paging, regid_list_paging, swid_list_paging
-from apps.filesystem.paging import dir_list_paging, file_list_paging
+from apps.swid.paging import swid_inventory_list_paging, swid_log_list_paging
+from apps.swid.paging import swid_inventory_session_paging
+from apps.swid.paging import swid_files_list_paging, swid_devices_list_paging
+from apps.filesystem.paging import dir_list_paging, file_list_paging, dir_file_list_paging
 from apps.policies.paging import policy_list_paging, enforcement_list_paging
 from apps.packages.paging import package_list_paging
 from apps.devices.paging import device_list_paging, product_list_paging, device_session_list_paging
+from apps.devices.paging import product_devices_list_paging
 
 
 @dajaxice_register
@@ -66,6 +70,14 @@ def paging(request, config_name, current_page, filter_query, pager_id, producer_
         'device_list_config': device_list_paging,
         'product_list_config': product_list_paging,
         'device_session_list_config': device_session_list_paging,
+        'swid_inventory_list_config': swid_inventory_list_paging,
+        'swid_log_list_config': swid_log_list_paging,
+        'swid_inventory_session_list_config': swid_inventory_session_paging,
+        'dir_file_list_config': dir_file_list_paging,
+        'swid_files_list_config': swid_files_list_paging,
+        'product_devices_list_config': product_devices_list_paging,
+        'swid_devices_list_config': swid_devices_list_paging,
+
     }
 
     conf = paging_conf_dict[config_name]

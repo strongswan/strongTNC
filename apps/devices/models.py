@@ -126,8 +126,9 @@ class Device(models.Model):
                 enforcement.policy.create_work_item(enforcement, session)
 
     def get_sessions_in_range(self, from_timestamp, to_timestamp):
-        dateobj_from, dateobj_to = map(datetime.utcfromtimestamp, [from_timestamp, to_timestamp])
-        return self.sessions.filter(time__lte=dateobj_to, time__gte=dateobj_from).order_by('-time')
+        dt_from = datetime.utcfromtimestamp(from_timestamp).replace(hour=0, minute=0, second=0)
+        dt_to = datetime.utcfromtimestamp(to_timestamp).replace(hour=23, minute=59, second=59)
+        return self.sessions.filter(time__gte=dt_from, time__lte=dt_to).order_by('-time')
 
 
 class Group(models.Model):

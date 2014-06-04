@@ -45,18 +45,19 @@ class SwidParser(object):
             # Store entities
             regid = attrib['regid']
             name = attrib['name']
-            role = attrib['role']
-            entity_role = EntityRole()
-            entity, _ = Entity.objects.get_or_create(regid=regid)
-            entity.name = name
-            role = EntityRole.xml_attr_to_choice(role)
+            roles = attrib['role']
+            for role in roles.split():
+                entity, _ = Entity.objects.get_or_create(regid=regid)
+                entity.name = name
 
-            entity_role.role = role
-            self.entities.append((entity, entity_role))
+                role_id = EntityRole.xml_attr_to_choice(role)
+                entity_role = EntityRole()
+                entity_role.role = role_id
+                self.entities.append((entity, entity_role))
 
-            # Use regid of first entity with tagcreator role to construct software-id
-            if role == EntityRole.TAGCREATOR:
-                self.tag.software_id = '%s_%s' % (regid, self.tag.unique_id)
+                # Use regid of last entity with tagcreator role to construct software-id
+                if role_id == EntityRole.TAGCREATOR:
+                    self.tag.software_id = '%s_%s' % (regid, self.tag.unique_id)
 
     def close(self):
         """
@@ -69,7 +70,7 @@ class SwidParser(object):
 
 
 @transaction.atomic
-def process_swid_tag(tag_xml):
+def process_swid_tag(tag_xml, allow_tag_update=False):
     """
     Parse a SWID XML tag and store the contained elements in the database.
 
@@ -81,6 +82,8 @@ def process_swid_tag(tag_xml):
     Args:
        tag_xml (unicode):
            The SWID tag as an XML string.
+       allow_tag_update (bool):
+            If the tag already exists its data gets overwritten.
 
     Returns:
        A tuple containing the newly created Tag model instance and a flag
@@ -102,9 +105,22 @@ def process_swid_tag(tag_xml):
     # Check whether tag already exists
     try:
         old_tag = Tag.objects.get(software_id=tag.software_id)
+    # Tag doesn't exist, create a new one later on
     except Tag.DoesNotExist:
         replaced = False
+    # Tag exists already
     else:
+        # Tag already exists but updates are not allowed
+        if not allow_tag_update:
+            replaced = False
+            # The tag will not be changed, but we want to make sure
+            # that the entities have the right name.
+            for entity, _ in entities:
+                Entity.objects.filter(pk=entity.pk).update(name=entity.name)
+
+            # Tag needs to be reloaded after entity updates
+            return Tag.objects.get(pk=old_tag.pk), replaced
+        # Update tag with new information
         old_tag.package_name = tag.package_name
         old_tag.version = tag.version
         old_tag.unique_id = tag.unique_id

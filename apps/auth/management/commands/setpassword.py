@@ -6,25 +6,35 @@ Custom manage.py command to create users and set their passwords.
 Usage: ./manage.py setpassword [password]
 """
 
+import sys
 from getpass import getpass
+
 from django.contrib.auth import get_user_model
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 
 from apps.auth.permissions import GlobalPermission
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     """
     Required class to be recognized by manage.py.
     """
-    help = 'Get or create admin-user and set password interactively'
+    help = 'Get or create admin-user and set password'
+    args = '[<readonly_password> <readwrite_password>]'
 
-    def handle_noargs(self, **kwargs):
-        self.process_user('admin-user', write_access=True)
-        self.process_user('readonly-user')
+    def handle(self, *args, **kwargs):
+        if len(args) == 0:
+            readonly_pw = admin_pw = None
+        elif len(args) == 2:
+            (readonly_pw, admin_pw) = args
+        else:
+            self.stderr.write('You must either specify both paswords, or none at all.')
+            sys.exit(1)
+        self.process_user('admin-user', write_access=True, pwd=admin_pw)
+        self.process_user('readonly-user', pwd=readonly_pw)
         self.stdout.write('Passwords updated succesfully!')
 
-    def process_user(self, username, write_access=False):
+    def process_user(self, username, write_access=False, pwd=None):
         """
         Get or create user, set password and set permissions.
 
@@ -46,7 +56,8 @@ class Command(NoArgsCommand):
             self.stdout.write('--> User "%s" not found. Creating new user.' % username)
 
         # Set password
-        pwd = getpass('--> Please enter a new password for %s: ' % username)
+        if pwd is None:
+            pwd = getpass('--> Please enter a new password for %s: ' % username)
         user.set_password(pwd)
         user.save()
 

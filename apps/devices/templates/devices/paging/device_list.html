@@ -1,0 +1,21 @@
+{% load i18n %}
+{% if object_list %}
+    <table class="table table-hover table-striped">
+        <thead>
+        <tr>
+            <th>{% trans 'Device' %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for device in object_list %}
+            <tr>
+                <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.list_repr }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>
+        {% trans 'No' %} <a href="{% url 'devices:device_list' %}">{% trans 'device' %}</a> {% trans 'with this product found.' %}
+    </p>
+{% endif %}

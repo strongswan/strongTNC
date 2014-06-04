@@ -3,22 +3,23 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 from rest_framework import serializers
 
+from apps.api.mixins import DynamicFieldsMixin
 from . import models
 
 
-class EntitySerializer(serializers.HyperlinkedModelSerializer):
+class EntitySerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Entity
         fields = ('id', 'uri', 'name', 'regid')
 
 
-class EntityRoleSerializer(serializers.HyperlinkedModelSerializer):
+class EntityRoleSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.EntityRole
         fields = ('entity', 'role')
 
 
-class TagSerializer(serializers.HyperlinkedModelSerializer):
+class TagSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
     entities = EntityRoleSerializer(source='entityrole_set', many=True)
 
     class Meta:

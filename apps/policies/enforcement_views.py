@@ -3,7 +3,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 import re
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
@@ -76,41 +76,33 @@ def add(request):
 @permission_required('auth.write_access', raise_exception=True)
 def save(request):
     """
-    Insert/udpate an enforcement
+    Insert/update an enforcement
     """
-    enforcementID = request.POST['enforcementId']
-    if not (enforcementID == 'None' or re.match(r'^\d+$', enforcementID)):
-        raise ValueError
-        return HttpResponse(status=400)
+    enforcement_id = request.POST.get('enforcementId', '')
+    if not (enforcement_id == 'None' or re.match(r'^\d+$', enforcement_id)):
+        return HttpResponseBadRequest()
 
-    max_age = request.POST['max_age']
+    max_age = request.POST.get('max_age', '')
     if not re.match(r'^\d+$', max_age):
-        raise ValueError
-        return HttpResponse(status=400)
+        return HttpResponseBadRequest()
 
-    policyID = request.POST['policy']
-    if not re.match(r'^\d+$', policyID):
-        raise ValueError
-        return HttpResponse(status=400)
+    policy_id = request.POST.get('policy', '')
+    if not re.match(r'^\d+$', policy_id):
+        return HttpResponseBadRequest()
 
-    groupID = request.POST['group']
-    if not re.match(r'^\d+$', groupID):
-        raise ValueError
-        return HttpResponse(status=400)
+    group_id = request.POST.get('group', '')
+    if not re.match(r'^\d+$', group_id):
+        return HttpResponseBadRequest()
 
     try:
-        policy = Policy.objects.get(pk=policyID)
-        group = Group.objects.get(pk=groupID)
+        policy = Policy.objects.get(pk=policy_id)
+        group = Group.objects.get(pk=group_id)
     except (Policy.DoesNotExist, Group.DoesNotExist):
-        raise ValueError
-        return HttpResponse(status=400)
+        return HttpResponseBadRequest()
 
     fail = request.POST.get('fail')
     if not (re.match(r'^-?\d+$', fail) and int(fail) in range(-1, len(Policy.action))):
-        # TODO replace lines like these with
-        # raise HttpResponseBadRequest()
-        raise ValueError
-        return HttpResponse(status=400)
+        return HttpResponseBadRequest()
 
     fail = int(fail)
     if fail == -1:
@@ -118,18 +110,17 @@ def save(request):
 
     noresult = request.POST.get('noresult', -1)
     if not (re.match(r'^-?\d+$', noresult) and int(noresult) in range(-1, len(Policy.action))):
-        raise ValueError
-        return HttpResponse(status=400)
+        return HttpResponseBadRequest()
 
     noresult = int(noresult)
     if noresult == -1:
         noresult = None
 
-    if enforcementID == 'None':
+    if enforcement_id == 'None':
         enforcement = Enforcement.objects.create(group=group, policy=policy,
                 max_age=max_age, fail=fail, noresult=noresult)
     else:
-        enforcement = get_object_or_404(Enforcement, pk=enforcementID)
+        enforcement = get_object_or_404(Enforcement, pk=enforcement_id)
         enforcement.group = group
         enforcement.policy = policy
         enforcement.max_age = max_age

@@ -15,9 +15,9 @@
             <h4>{% trans 'Device Infos' %}</h4>
 
             <div class="row-fluid">
-                <div class="span6">
+                <div class="span7">
                     <table class="table" border="0">
-                        <tbody>
+                        <tbody class="noWrap">
                         <tr>
                             <td><strong>{% trans 'ID' %}</strong></td>
                             <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.value }}</a></td>
@@ -27,20 +27,21 @@
                             <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.description }}</a></td>
                         </tr>
                         <tr>
-                            <td><strong>{% trans 'Last user' %}</strong></td>
+                            <td><strong>{% trans 'Most recent user' %}</strong></td>
                             <td>{{ last_user }}</td>
                         </tr>
                         <tr>
-                            <td><strong>{% trans 'Last session' %}</strong></td>
-                            <td>{% if last_session %}
-                                    {{ last_session|date:'M d H:i:s Y' }}
+                            <td><strong>{% trans 'Most recent session' %}</strong></td>
+                            <td class="dateWidth">
+                                {% if last_session %}
+                                    <a href="{% url 'devices:session_detail' last_session.pk %}">{{ last_session.time|date:'M d H:i:s Y' }}</a>
                                 {% else %}
                                     {% trans 'None' %}
                                 {% endif %}
                                 </td>
                         </tr>
                         <tr>
-                            <td><strong>{% trans 'Last assessment' %}</strong></td>
+                            <td><strong>{% trans 'Most recent assessment' %}</strong></td>
                             <td>{{ last_result }}</td>
                         </tr>
                         <tr>
@@ -49,6 +50,12 @@
                         </tr>
                         </tbody>
                     </table>
+                    <div>
+                        <a href="{% url 'swid:inventory' device.id %}" class="btn btn-primary"><i
+                                class="icon-file icon-white"></i> {% trans "SWID Inventory" %}</a>
+                        <a href="{% url 'swid:log' device.id %}" class="btn btn-primary"><i
+                                class="icon-file icon-white"></i> {% trans "SWID Log" %}</a>
+                    </div>
                 </div>
             </div>
 

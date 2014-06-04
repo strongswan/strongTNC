@@ -5,47 +5,10 @@ import urllib
 import pytest
 import json
 
-from django.contrib.auth import get_user_model, login as django_login
 from django.core.urlresolvers import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 
-from apps.auth.permissions import GlobalPermission
-
-
-@pytest.fixture
-def write_access_perm(transactional_db):
-    """
-    Provide the ``write_access`` permission.
-    """
-    perm = GlobalPermission.objects.create(codename='write_access',
-            name='Has write access to data.')
-    return perm
-
-
-@pytest.fixture
-def strongtnc_users(transactional_db, write_access_perm):
-    """
-    Provide two users called ``admin-user`` and ``readonly-user`` with correct
-    permissions.
-    """
-    User = get_user_model()
-    admin_user = User.objects.create(username='admin-user')
-    admin_user.set_password('admin')
-    admin_user.user_permissions.add(write_access_perm)
-    admin_user.save()
-    readonly_user = User.objects.create(username='readonly-user')
-    readonly_user.set_password('readonly')
-    readonly_user.save()
-
-
-@pytest.fixture
-def test_user(transactional_db):
-    """
-    Provide a user ``test`` with password ``test``.
-    """
-    user = get_user_model().objects.create(username='test')
-    user.set_password('test')
-    user.save()
+from .fixtures import *  # NOQA: Star import is OK here because it's just a test
 
 
 @pytest.mark.parametrize('username, password, success', [
@@ -72,12 +35,39 @@ def test_login(client, strongtnc_users, test_user, username, password, success):
 
 @pytest.mark.parametrize('url', [
     # SWID views
-    '/regids/',
-    '/regids/1/',
-    '/swid-tags/',
-    '/swid-tags/1/',
+    '',
+    # '/api/', TODO uncomment as soon as login is required for all api access
+    reverse('devices:device_list'),
+    reverse('devices:device_detail', args=[1]),
+    reverse('devices:device_report', args=[1]),
+    reverse('devices:session_detail', args=[1]),
+    reverse('devices:group_list'),
+    reverse('devices:group_detail', args=[1]),
+    reverse('devices:product_list'),
+    reverse('devices:product_detail', args=[1]),
+    reverse('filesystem:file_list'),
+    reverse('filesystem:file_detail', args=[1]),
+    reverse('filesystem:directory_list'),
+    reverse('filesystem:directory_detail', args=[1]),
+    reverse('front:search'),
+    reverse('front:statistics'),
+    reverse('packages:package_list'),
+    reverse('packages:package_detail', args=[1]),
+    reverse('policies:policy_list'),
+    reverse('policies:policy_detail', args=[1]),
+    reverse('policies:enforcement_list'),
+    reverse('policies:enforcement_detail', args=[1]),
+    reverse('swid:regid_list'),
+    reverse('swid:regid_detail', args=[1]),
+    reverse('swid:tag_list'),
+    reverse('swid:tag_detail', args=[1]),
+    reverse('swid:inventory', args=[1]),
+    reverse('swid:log', args=[1]),
 ])
 def test_login_required(client, strongtnc_users, url):
+    """
+    Test whether login is required for all read-only views.
+    """
     # Test as anonymous
     response = client.get(url)
     assert response.status_code == 302, 'Unauthenticated user should not have access to %s' % url
@@ -97,6 +87,7 @@ def test_login_required(client, strongtnc_users, url):
     # Add views
     ('/groups/add/', 'get'),
     ('/devices/add/', 'get'),
+    ('/files/add/', 'get'),
     ('/directories/add/', 'get'),
     ('/packages/add/', 'get'),
     ('/products/add/', 'get'),
@@ -130,9 +121,13 @@ def test_login_required(client, strongtnc_users, url):
     ('/enforcements/check/', 'post'),
     ('/directories/check/', 'post'),
     # Other views
-    ('/versions/1/toggle/', 'get'),
+    ('/packages/1/add-version/', 'post'),
+    ('/packages/1/versions/1/remove', 'get')
 ])
 def test_write_permission_enforced(client, strongtnc_users, url, method):
+    """
+    Test whether login is required for views where data is written.
+    """
     do_request = getattr(client, method)
 
     # Test as admin
@@ -161,8 +156,8 @@ def test_write_permission_enforced(client, strongtnc_users, url, method):
 @pytest.mark.parametrize('endpoint, payload', [
     ('apps.filesystem.files_autocomplete', {'search_term': 'bash'}),
     ('apps.filesystem.directories_autocomplete', {'search_term': 'bash'}),
-    ('apps.swid.tags_for_session', {'session_id': 1}),
-    ('apps.devices.sessions_for_device', {'device_id': 1, 'date_from': '', 'date_to': ''}),
+    ('apps.swid.get_tag_inventory_stats', {'device_id': 1, 'date_from': '', 'date_to': ''}),
+    ('apps.swid.get_tag_log_stats', {'device_id': 1, 'date_from': '', 'date_to': ''}),
     ('apps.front.paging', {'template': '', 'list_producer': '', 'stat_producer': '', 'var_name': '',
         'url_name': '', 'current_page': '', 'page_size': '', 'filter_query': '', 'pager_id': ''}),
 ])

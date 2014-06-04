@@ -41,6 +41,9 @@
                 </div>
             </div>
 
+            {% comment %}
+            Button is temporary disabled, the swid-inventory must be modified in order
+            to support this functionality.
             <div>
                 {% if swid_measurement %}
                     <a href="{% url 'swid:inventory' session.device.pk %}#session-id={{ session.pk }}"
@@ -50,28 +53,33 @@
                     <p class="label label-info">{% trans 'No SWID tags associated' %}</p>
                 {% endif %}
             </div>
+            {% endcomment %}
 
+            <hr>
+            <h4>{% trans 'Results' %}</h4>
             {% if results %}
-                <hr>
-                <h4>{% trans 'Results' %}</h4>
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <td>{% trans "Policy" %}</td>
-                        <td>{% trans "Result" %}</td>
-                        <td>{% trans "IMV Comment" %}</td>
+                        <th>{% trans "Policy" %}</th>
+                        <th>{% trans "Result" %}</th>
+                        <th>{% trans "IMV Comment" %}</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for r in results %}
                         <tr>
-                            <td><a href="{% url 'policies:policy_detail' r.0.policy.id %}">{{ r.0.policy }}</a></td>
-                            <td>{{ r.1 }}</td>
-                            <td>{{ r.0.result }}</td>
+                            <td><a href="{% url 'policies:policy_detail' r.policy.id %}">{{ r.policy }}</a></td>
+                            <td>{{ r.get_recommendation_display }}</td>
+                            <td>{{ r.result }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
+            {% else %}
+                <p>
+                    {% trans 'No measurements in this session.' %}
+                </p>
             {% endif %}
         </div>
     </div>

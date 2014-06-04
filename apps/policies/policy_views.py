@@ -56,9 +56,9 @@ def policy(request, policyID):
             pass
 
         enforcements = policy.enforcements.all()
+        context['enforcements'] = enforcements
         if enforcements.count():
             context['has_dependencies'] = True
-            context['enforcements'] = enforcements
 
         context['title'] = _('Policy ') + policy.name
 

@@ -16,7 +16,6 @@ class Identity(models.Model):
 
     class Meta:
         db_table = 'identities'
-        unique_together = [('type', 'data')]
         verbose_name_plural = 'identities'
         ordering = ('data',)
 

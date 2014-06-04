@@ -60,7 +60,6 @@ class Policy(models.Model):
         'NONE',
     ]
 
-    # TODO create CHOICES from this, use get_types_display()
     types = [
         'Deny',
         'Installed Packages',

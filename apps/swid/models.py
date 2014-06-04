@@ -22,7 +22,7 @@ class Tag(models.Model):
     swid_xml = models.TextField(help_text='The full SWID tag XML')
     files = models.ManyToManyField('filesystem.File', blank=True, verbose_name='list of files')
     sessions = models.ManyToManyField('core.Session', verbose_name='list of sessions')
-    software_id = models.TextField(max_length=255, db_index=True,
+    software_id = models.CharField(max_length=767, db_index=True,
                                    help_text='The Software ID, format: {regid}_{uniqueID} '
                                              'e.g regid.2004-03.org.strongswan_'
                                              'fedora_19-x86_64-strongswan-5.1.2-4.fc19')
@@ -51,18 +51,19 @@ class Tag(models.Model):
                 The session object
 
         Returns:
-            A list of tuples ``(tag, time)``. The ``tag`` is a :class:`Tag`
-            instance, the ``time`` is the datetime object when the tag was
-            first measured to be installed.
+            A dictionary ``{tag1: session, tag2: session, ...}``.
+            The ``tag`` is a :class:`Tag` instance, the ``session`` is the session
+            when the tag was first measured to be installed.
 
         """
-        device_sessions = session.device.sessions.filter(time__lte=session.time).order_by('time')
-        tags = {}
+        device_sessions = session.device.sessions.filter(time__lte=session.time).order_by('-time')
+        installed_tags = {t: session for t in session.tag_set.all()}
         for session in device_sessions.all().prefetch_related('tag_set'):
             for tag in session.tag_set.all():
-                if tag not in tags:
-                    tags[tag] = session
-        return list(tags.items())
+                if tag in installed_tags:
+                    installed_tags[tag] = session
+
+        return installed_tags
 
     def get_devices_with_reported_session(self):
         devices_dict = {}
@@ -106,6 +107,8 @@ class EntityRole(models.Model):
             return cls.LICENSOR
         elif value == 'publisher':
             return cls.PUBLISHER
+        else:
+            raise ValueError('Unknown role: %s' % value)
 
 
 class Entity(models.Model):

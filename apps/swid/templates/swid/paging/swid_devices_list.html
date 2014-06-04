@@ -1,0 +1,26 @@
+{% load i18n %}
+
+{% if object_list %}
+    <table class="table table-hover table-striped">
+        <thead>
+        <tr>
+            <th>{% trans 'Description' %}</th>
+            <th class="dateWidth">{% trans 'First reported' %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for device, session in object_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'devices:device_detail' device.pk %}">{{ device.list_repr }}</a>
+                </td>
+                <td>
+                    <a href="{% url 'devices:session_detail' session.pk %}">{{ session.time|date:"M d H:i:s Y" }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>{% trans 'No files found' %}</p>
+{% endif %}
