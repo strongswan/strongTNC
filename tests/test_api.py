@@ -2,19 +2,23 @@
 from __future__ import print_function, division, absolute_import, unicode_literals
 
 import json
+import random
+import string
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db.utils import OperationalError
 from django.utils import timezone
 
 import pytest
 from model_mommy import mommy
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
 from rest_framework import status
 
 from .test_swid import swidtag  # NOQA
 from apps.auth.permissions import GlobalPermission
 from apps.swid import utils
+from apps.swid.api_views import SwidMeasurementView
 from apps.swid.models import Tag
 from apps.core.models import Session
 
@@ -31,6 +35,15 @@ def api_client(transactional_db):
     client = APIClient()
     client.force_authenticate(user=user)
     return client
+
+
+@pytest.fixture
+def api_factory():
+    """
+    Return an APIRequestFactory instance.
+    """
+    factory = APIRequestFactory()
+    return factory
 
 
 @pytest.fixture
@@ -252,3 +265,26 @@ def test_limit_fields(api_client):
     r = api_client.get(reverse('tag-detail', args=[tags[0].pk]), data={'fields': 'spam'})
     data = json.loads(r.content)
     assert len(data.keys()) == 0
+
+
+@pytest.mark.django_db
+def test_large_measurement(api_factory):
+    """
+    Test API calls with more than 999 Software-IDs.
+    """
+    def make_random_string():
+        lst = [random.choice(string.ascii_letters + string.digits) for n in xrange(15)]
+        return ''.join(lst)
+    software_ids = [make_random_string() for _ in xrange(1000)]
+
+    data = {'data': software_ids}
+    request = api_factory.post(reverse('session-swid-measurement', args=[1]), data, format='json')
+
+    user = mommy.make(User, is_staff=True)
+    force_authenticate(request, user=user)
+
+    response = SwidMeasurementView.as_view()(request, 1)
+    try:
+        SwidMeasurementView.as_view()(request, 1)
+    except OperationalError:
+        pytest.fail('SWID measurement view should be able to deal with >999 Software-IDs.')

@@ -120,13 +120,13 @@ class SwidMeasurementView(views.APIView):
         except ValueError as e:
             return e.message
 
-        missing_tags = []
-        found_tags = Tag.objects.filter(software_id__in=software_ids)
+        found_tag_qs = Tag.objects.values_list('software_id', 'pk')
+        found_tags = dict(utils.chunked_filter_in(found_tag_qs, 'software_id', software_ids, 980))
 
         # Look for matching tags
-        found_software_ids = [t.software_id for t in found_tags]
+        missing_tags = []
         for software_id in software_ids:
-            if software_id not in found_software_ids:
+            if software_id not in found_tags:
                 missing_tags.append(software_id)
 
         if missing_tags:
@@ -139,5 +139,5 @@ class SwidMeasurementView(views.APIView):
             except Session.DoesNotExist:
                 msg = 'Session with id "%s" not found' % pk
                 return make_message(msg, status.HTTP_404_NOT_FOUND)
-            utils.chunked_bulk_create(session.tag_set, found_tags, 980)
+            utils.chunked_bulk_add(session.tag_set, found_tags.values(), 980)
             return Response(data=[], status=status.HTTP_200_OK)
