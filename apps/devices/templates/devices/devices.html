@@ -147,7 +147,7 @@
                         <div class="modal-body">
                             <h4>{% trans 'Warning' %}</h4>
 
-                            <p>{% trans 'Are you sure that you want to delete this device.' %}</p>
+                            <p>{% trans 'Are you sure that you want to delete this device?' %}</p>
                         </div>
                         <form method="POST" action="{% url 'devices:device_delete' device.pk %}" id="deleteform">
                             {% csrf_token %}
