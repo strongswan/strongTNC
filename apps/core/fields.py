@@ -45,7 +45,7 @@ class EpochField(models.IntegerField):
     __metaclass__ = models.SubfieldBase
 
     def to_python(self, value):
-        if isinstance(value, int):
+        if isinstance(value, (int, long)):
             dt = datetime.utcfromtimestamp(value)
             return dt.replace(tzinfo=pytz.utc)  # Make datetime timezone-aware
         elif isinstance(value, datetime):
