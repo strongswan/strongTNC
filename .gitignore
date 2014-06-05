@@ -26,3 +26,6 @@ settings.ini
 .cache
 .coverage
 *.bak
+
+# Vagrant stuff
+deployment/vagrant/.vagrant

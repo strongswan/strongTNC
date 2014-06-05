@@ -1,0 +1,13 @@
+---
+- name: Install apache and mod_wsgi. 
+  sudo: yes
+  apt: pkg={{ item }} update-cache=yes cache_valid_time=3600
+  with_items:
+    - apache2
+    - libapache2-mod-wsgi
+  notify:
+    - restart apache
+
+- name: Automatically start apache on boot.
+  sudo: yes
+  service: name=apache2 enabled=yes

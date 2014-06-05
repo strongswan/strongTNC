@@ -1,0 +1,46 @@
+[debug]
+; Whether to use the Django debug mode. Enable this during development, but
+; never in production.
+DEBUG = 0
+; Whether to use the Django debugging templates when something goes wrong.
+; Enable this during development, but never in production.
+TEMPLATE_DEBUG = 0
+; Whether to use the Django debug toolbar. If you want to use this, install
+; `django-debug-toolbar` via pip. This is sometimes useful for debugging
+; problems, but it also slows down page load times.
+DEBUG_TOOLBAR = 0
+
+[db]
+; Database connection strings according to dj-database-url:
+; https://github.com/kennethreitz/dj-database-url#url-schema
+;
+; For SQLite, the same URL format as for regular databases is used, omitting
+; the hostname, and using the "file" portion as the filename of the database.
+; This has the effect of four slashes being present for an absolute file path:
+; sqlite:////full/path/to/your/database/file.sqlite.
+DJANGO_DB_URL = mysql://{{ database_user }}:{{ database_pass }}@127.0.0.1/strongtnc_django
+STRONGTNC_DB_URL = mysql://{{ database_user }}:{{ database_pass }}@127.0.0.1/strongtnc_data
+
+[paths]
+; Absolute path to the directory static files should be collected to.
+; Run `./manage.py collectstatic` to copy all static files to the specified
+; directory. You can use absolute or relative paths.
+STATIC_ROOT = static
+
+[security]
+; Make this key unique, and don't share it with anybody.
+; A good way to generate a good SECRET_KEY can be found here:
+; https://gist.github.com/dbrgn/f49116a0eed5a25fbf79
+SECRET_KEY = 'a-secret-string'
+; List the allowed hostnames that strongTNC can serve here.
+; https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = {{ strongtnc_hostname }}
+
+[localization]
+LANGUAGE_CODE = en-us
+TIME_ZONE = Europe/Zurich
+
+[admins]
+; Format: `Name: email@example.com`
+; These contacts will receive error e-mails when `DEBUG = 0`.
+Vagrant: {{ ansible_ssh_user }}@localhost
