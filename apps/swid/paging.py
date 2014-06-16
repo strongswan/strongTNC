@@ -2,7 +2,7 @@
 from __future__ import print_function, division, absolute_import, unicode_literals
 
 import math
-from collections import OrderedDict, namedtuple, Counter
+from collections import OrderedDict, namedtuple
 
 from django.core.urlresolvers import reverse
 
@@ -11,6 +11,7 @@ from apps.core.models import Session
 from apps.devices.models import Device
 from apps.front.utils import timestamp_local_to_utc
 from apps.front.paging import ProducerFactory
+from apps.swid.models import TagStats
 
 # PAGING PRODUCER
 
@@ -40,16 +41,17 @@ def swid_inventory_list_producer(from_idx, to_idx, filter_query, dynamic_params,
     if not dynamic_params:
         return []
     session_id = dynamic_params['session_id']
-    installed_tags = list(get_installed_tags_dict(session_id, filter_query).items())[from_idx:to_idx]
+    installed_tags = list(get_installed_tags(session_id, filter_query)[from_idx:to_idx])
 
     tags = [
         {
-            'added_now': int(session_id) == session.pk,
-            'tag': tag,
-            'session': session,
-            'tag_url': reverse('swid:tag_detail', args=[tag.pk]),
+            'added_now': int(session_id) == tagstat.first_seen.pk,
+            'tag': tagstat.tag,
+            'first_seen': tagstat.first_seen,
+            'last_seen': tagstat.last_seen,
+            'tag_url': reverse('swid:tag_detail', args=[tagstat.tag.pk]),
         }
-        for tag, session in installed_tags
+        for tagstat in installed_tags
     ]
     return tags
 
@@ -58,11 +60,11 @@ def swid_inventory_stat_producer(page_size, filter_query, dynamic_params=None, s
     if not dynamic_params:
         return 0
     session_id = dynamic_params['session_id']
-    installed_tags = get_installed_tags_dict(session_id, filter_query)
-    return math.ceil(len(installed_tags) / page_size)
+    installed_tags = get_installed_tags(session_id, filter_query)
+    return math.ceil(installed_tags.count() / page_size)
 
 
-def get_installed_tags_dict(session_id, filter_query):
+def get_installed_tags(session_id, filter_query):
     """
     Return a dict of tags which are installed at the
     point of the given session, furthermore the session in
@@ -76,20 +78,14 @@ def get_installed_tags_dict(session_id, filter_query):
             Filter the tags (unique_id) by this string
 
     Returns:
-        A dictionary with the reported tag as key and the session in
-        which it was reported as value:
-        {
-            tag: session,
-            tag: session,
-            ...,
-        }
+        A list with the reported tags. The tags contain a reference to a TagStat object
+        with the fields first_seen and last_seen which in turn are references to sessions.
 
     """
     session = Session.objects.get(pk=session_id)
     installed_tags = Tag.get_installed_tags_with_time(session)
     if filter_query:
-        installed_tags = {t: s for t, s in installed_tags.iteritems()
-                          if filter_query.lower() in t.unique_id.lower()}
+        installed_tags = installed_tags.filter(tag__unique_id__icontains=filter_query)
     return installed_tags
 
 
@@ -139,12 +135,15 @@ def get_tag_diffs(device_id, from_timestamp, to_timestamp):
     sessions = device.get_sessions_in_range(from_timestamp, to_timestamp)
 
     sessions_with_tags = sessions.filter(tag__isnull=False).distinct().order_by('-time')
+    num_of_sessions = sessions_with_tags.count()
+    sessions_with_tags = list(sessions_with_tags)  # Force evaluate
 
     diffs = []
+
     # diff only possible if more than 1 session is selected
-    if len(sessions_with_tags) > 1:
+    if num_of_sessions > 1:
         for i, session in enumerate(sessions_with_tags, start=1):
-            if i < len(sessions_with_tags):
+            if i < num_of_sessions:
                 prev_session = sessions_with_tags[i]
                 diff = session_tag_difference(session, prev_session)
                 diffs.extend(diff)
@@ -205,9 +204,8 @@ def swid_inventory_session_list_producer(from_idx, to_idx, filter_query, dynamic
 
     for session in sessions:
         installed_tags = Tag.get_installed_tags_with_time(session)
-        tag_counter = Counter(session.pk for session in installed_tags.values())
-        session.tag_count = len(installed_tags)
-        session.new_tag_count = tag_counter[int(session.pk)]
+        session.tag_count = installed_tags.count()
+        session.new_tag_count = installed_tags.filter(first_seen=session).count()
         session.has_tags = session.tag_count > 0
 
     return sessions
@@ -217,7 +215,7 @@ def swid_inventory_session_stat_producer(page_size, filter_query, dynamic_params
     if not dynamic_params:
         return 0
     sessions = get_device_sessions(dynamic_params)
-    return math.ceil(len(sessions) / page_size)
+    return math.ceil(sessions.count() / page_size)
 
 
 def get_device_sessions(dynamic_params):
@@ -247,9 +245,9 @@ def swid_devices_list_producer(from_idx, to_idx, filter_query, dynamic_params, s
     if not dynamic_params:
         return []
     tag_id = dynamic_params['tag_id']
-    reported_devices = sorted(Tag.objects.get(pk=tag_id).get_devices_with_reported_session().items(),
-           key=lambda (device, session): device.description)
-    return reported_devices[from_idx:to_idx]
+    tagstats = TagStats.objects.filter(tag__pk=tag_id).select_related('last_seen', 'first_seen', 'device') \
+                       .defer('tag__swid_xml').order_by('device__description')
+    return tagstats[from_idx:to_idx]
 
 
 def swid_devices_stat_producer(page_size, filter_query, dynamic_params=None, static_params=None):

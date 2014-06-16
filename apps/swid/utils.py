@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-import math
-
 from django.db import transaction
 from django.core.exceptions import ValidationError
 
 from lxml import etree
 
 from apps.filesystem.models import Directory, File
-from apps.swid.models import Entity, EntityRole
+from apps.swid.models import Entity, EntityRole, TagStats
 from .models import Tag
 
 
@@ -236,3 +234,23 @@ def chunked_filter_in(queryset, filter_field, filter_list, block_size):
         items = list(queryset.filter(**kwargs))
         out.extend(items)
     return out
+
+
+def update_tag_stats(session, tag_ids):
+    new_tags = []
+    block_size = 980
+    for i in xrange(0, len(tag_ids), block_size):
+        tag_ids_slice = tag_ids[i:i + block_size]
+        # TODO: Instead of filtering the device tags, a list of all tags for a
+        # device could be created outside of the loop.
+        existing_tags = TagStats.objects.filter(device__pk=session.device_id,
+                                                tag__pk__in=tag_ids_slice)
+        new_tags.extend(set(tag_ids_slice) - set(existing_tags.values_list('tag__pk', flat=True)))
+        existing_tags.update(last_seen=session)
+
+    # Chunked create is done by default for sqlite,
+    # see https://docs.djangoproject.com/en/dev/ref/models/querysets/#bulk-create
+    TagStats.objects.bulk_create([
+        TagStats(tag_id=t, device=session.device, first_seen=session, last_seen=session)
+        for t in new_tags]
+    )

@@ -5,17 +5,21 @@
         <thead>
         <tr>
             <th>{% trans 'Description' %}</th>
-            <th class="dateWidth">{% trans 'First reported' %}</th>
+            <th class="dateWidth">{% trans 'First seen' %}</th>
+            <th class="dateWidth">{% trans 'Last seen' %}</th>
         </tr>
         </thead>
         <tbody>
-        {% for device, session in object_list %}
+        {% for tagstat in object_list %}
             <tr>
                 <td>
-                    <a href="{% url 'devices:device_detail' device.pk %}">{{ device.list_repr }}</a>
+                    <a href="{% url 'devices:device_detail' tagstat.device.pk %}">{{ tagstat.device.list_repr }}</a>
                 </td>
                 <td>
-                    <a href="{% url 'devices:session_detail' session.pk %}">{{ session.time|date:"M d H:i:s Y" }}</a>
+                    <a href="{% url 'devices:session_detail' tagstat.first_seen.pk %}">{{ tagstat.first_seen.time|date:"M d H:i:s Y" }}</a>
+                </td>
+                <td>
+                    <a href="{% url 'devices:session_detail' tagstat.last_seen.pk %}">{{ tagstat.last_seen.time|date:"M d H:i:s Y" }}</a>
                 </td>
             </tr>
         {% endfor %}

@@ -8,7 +8,7 @@ from lxml.etree import XMLSyntaxError
 
 from . import utils, serializers
 
-from .models import Entity, Tag
+from .models import Entity, Tag, TagStats
 from apps.core.models import Session
 from apps.api.utils import make_message
 
@@ -140,4 +140,9 @@ class SwidMeasurementView(views.APIView):
                 msg = 'Session with id "%s" not found' % pk
                 return make_message(msg, status.HTTP_404_NOT_FOUND)
             utils.chunked_bulk_add(session.tag_set, found_tags.values(), 980)
+
+            # Update tag stats
+            # Also possible with signaling https://docs.djangoproject.com/en/dev/ref/signals/#m2m-changed
+            utils.update_tag_stats(session, found_tags.values())
+
             return Response(data=[], status=status.HTTP_200_OK)
