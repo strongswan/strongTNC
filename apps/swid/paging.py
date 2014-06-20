@@ -96,7 +96,7 @@ def swid_log_list_producer(from_idx, to_idx, filter_query, dynamic_params, stati
     from_timestamp = timestamp_local_to_utc(dynamic_params['from_timestamp'])
     to_timestamp = timestamp_local_to_utc(dynamic_params['to_timestamp'])
 
-    diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp)[from_idx:to_idx]
+    diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp, filter_query)[from_idx:to_idx]
 
     result = OrderedDict()
     for diff in diffs:
@@ -115,11 +115,11 @@ def swid_log_stat_producer(page_size, filter_query, dynamic_params=None, static_
     device_id = dynamic_params['device_id']
     from_timestamp = timestamp_local_to_utc(dynamic_params['from_timestamp'])
     to_timestamp = timestamp_local_to_utc(dynamic_params['to_timestamp'])
-    diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp)
+    diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp, filter_query)
     return math.ceil(len(diffs) / page_size)
 
 
-def get_tag_diffs(device_id, from_timestamp, to_timestamp):
+def get_tag_diffs(device_id, from_timestamp, to_timestamp, filter_query=None):
     """
     Get differences of installed SWID tags between all sessions of the
     given device in the given timerange (see `session_tag_difference`).
@@ -145,13 +145,13 @@ def get_tag_diffs(device_id, from_timestamp, to_timestamp):
         for i, session in enumerate(sessions_with_tags, start=1):
             if i < num_of_sessions:
                 prev_session = sessions_with_tags[i]
-                diff = session_tag_difference(session, prev_session)
+                diff = session_tag_difference(session, prev_session, filter_query)
                 diffs.extend(diff)
 
     return diffs
 
 
-def session_tag_difference(curr_session, prev_session):
+def session_tag_difference(curr_session, prev_session, filter_query):
     """
     Calculate the difference of the installed SWID tags between
     the two given sessions.
@@ -177,21 +177,36 @@ def session_tag_difference(curr_session, prev_session):
     curr_tag_ids = curr_session.tag_set.values_list('id', flat=True).order_by('id')
     prev_tag_ids = prev_session.tag_set.values_list('id', flat=True).order_by('id')
 
-    added_ids = set(curr_tag_ids) - set(prev_tag_ids)
-    removed_ids = set(prev_tag_ids) - set(curr_tag_ids)
-
-    added_tags = Tag.objects.filter(id__in=added_ids)
-    removed_tags = Tag.objects.filter(id__in=removed_ids)
+    added_ids = list(set(curr_tag_ids) - set(prev_tag_ids))
+    removed_ids = list(set(prev_tag_ids) - set(curr_tag_ids))
 
     differences = []
     DiffEntry = namedtuple('DiffEntry', ['session', 'action', 'tag'])
-    for tag in added_tags:
-        entry = DiffEntry(curr_session, '+', tag)
-        differences.append(entry)
 
-    for tag in removed_tags:
-        entry = DiffEntry(curr_session, '-', tag)
-        differences.append(entry)
+    block_size = 980
+    for i in xrange(0, len(added_ids), block_size):
+        added_ids_slice = added_ids[i:i + block_size]
+        if filter_query:
+            added_tags = Tag.objects \
+                .filter(id__in=added_ids_slice, unique_id__icontains=filter_query) \
+                .defer('swid_xml')
+        else:
+            added_tags = Tag.objects.filter(id__in=added_ids_slice)
+        for tag in added_tags:
+            entry = DiffEntry(curr_session, '+', tag)
+            differences.append(entry)
+
+    for i in xrange(0, len(removed_ids), block_size):
+        removed_ids_slice = removed_ids[i:i + block_size]
+        if filter_query:
+            removed_tags = Tag.objects \
+                .filter(id__in=removed_ids_slice, unique_id__icontains=filter_query) \
+                .defer('swid_xml')
+        else:
+            removed_tags = Tag.objects.filter(id__in=removed_ids_slice)
+        for tag in removed_tags:
+            entry = DiffEntry(curr_session, '-', tag)
+            differences.append(entry)
 
     return differences
 
