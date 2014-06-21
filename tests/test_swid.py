@@ -307,12 +307,12 @@ def tags_and_sessions(transactional_db):
     mommy.make(Session, id=6, identity__data="tester", time=now + timedelta(days=4), device__id=1)
 
     tag1 = mommy.make(Tag, id=1, unique_id='tag1')
-    tag2 = mommy.make(Tag, id=2)
-    tag3 = mommy.make(Tag, id=3)
-    tag4 = mommy.make(Tag, id=4)
+    tag2 = mommy.make(Tag, id=2, unique_id='tag2')
+    tag3 = mommy.make(Tag, id=3, unique_id='tag3')
+    tag4 = mommy.make(Tag, id=4, unique_id='tag4')
     tag5 = mommy.make(Tag, id=5, unique_id='tag5')
-    tag6 = mommy.make(Tag, id=6)
-    tag7 = mommy.make(Tag, id=7)
+    tag6 = mommy.make(Tag, id=6, unique_id='tag6')
+    tag7 = mommy.make(Tag, id=7, unique_id='tag7')
 
     # intital set: tag 1-4
     s1.tag_set.add(tag1, tag2, tag3, tag4)
@@ -405,16 +405,18 @@ def test_swid_log(transactional_db, tags_and_sessions):
     }
     data = swid_log_list_producer(0, 100, None, params)
 
+    s1 = tags_and_sessions['sessions'][0]
     s2 = tags_and_sessions['sessions'][1]
     s3 = tags_and_sessions['sessions'][2]
     s4 = tags_and_sessions['sessions'][3]
 
-    # there should be three results, bc. 4 session in the range have tags
-    assert len(data) == 3
+    # there should be four results, bc. 4 session in the range have tags
+    assert len(data) == 4
 
     assert len(data[s4]) == 3
     assert len(data[s3]) == 1
     assert len(data[s2]) == 1
+    assert len(data[s1]) == 4
     # checking if removed and added are as expected
     assert data[s3][0].added is False
     assert data[s2][0].added is True
@@ -422,6 +424,39 @@ def test_swid_log(transactional_db, tags_and_sessions):
     # test omitted params
     data = swid_log_list_producer(0, 100, None, None)
     assert data == []
+
+    # test filter query
+    data = swid_log_list_producer(0, 100, 'tag1', params)
+    assert len(data) == 2
+    assert len(data[s1]) == 1
+    assert len(data[s3]) == 1
+
+    ## test single session selects:
+    # test only last most recent session
+    from_timestamp = format(now + timedelta(days=3), 'U')
+    to_timestamp = format(now + timedelta(days=4), 'U')
+    params = {
+        'device_id': 1,
+        'from_timestamp': int(from_timestamp),
+        'to_timestamp': int(to_timestamp),
+    }
+    data = swid_log_list_producer(0, 100, None, params)
+    assert len(data) == 1
+    # only the added tags
+    assert len(data[s4]) == 2
+
+    # test only first session
+    from_timestamp = format(now - timedelta(days=4), 'U')
+    to_timestamp = format(now - timedelta(days=3), 'U')
+    params = {
+        'device_id': 1,
+        'from_timestamp': int(from_timestamp),
+        'to_timestamp': int(to_timestamp),
+        }
+    data = swid_log_list_producer(0, 100, None, params)
+    assert len(data) == 1
+    # only the added tags
+    assert len(data[s1]) == 4
 
 
 def test_get_installed_tags_with_time(transactional_db, tags_and_sessions):

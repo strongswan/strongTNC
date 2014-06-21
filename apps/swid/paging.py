@@ -147,6 +147,10 @@ def get_tag_diffs(device_id, from_timestamp, to_timestamp, filter_query=None):
                 prev_session = sessions_with_tags[i]
                 diff = session_tag_difference(session, prev_session, filter_query)
                 diffs.extend(diff)
+            elif i == num_of_sessions:
+                diffs = last_session_diff(session, diffs, filter_query)
+    elif num_of_sessions == 1:
+        diffs = last_session_diff(sessions_with_tags[0], diffs, filter_query)
 
     return diffs
 
@@ -191,7 +195,7 @@ def session_tag_difference(curr_session, prev_session, filter_query):
                 .filter(id__in=added_ids_slice, unique_id__icontains=filter_query) \
                 .defer('swid_xml')
         else:
-            added_tags = Tag.objects.filter(id__in=added_ids_slice)
+            added_tags = Tag.objects.filter(id__in=added_ids_slice).defer('swid_xml')
         for tag in added_tags:
             entry = DiffEntry(curr_session, '+', tag)
             differences.append(entry)
@@ -203,12 +207,78 @@ def session_tag_difference(curr_session, prev_session, filter_query):
                 .filter(id__in=removed_ids_slice, unique_id__icontains=filter_query) \
                 .defer('swid_xml')
         else:
-            removed_tags = Tag.objects.filter(id__in=removed_ids_slice)
+            removed_tags = Tag.objects.filter(id__in=removed_ids_slice).defer('swid_xml')
         for tag in removed_tags:
             entry = DiffEntry(curr_session, '-', tag)
             differences.append(entry)
 
     return differences
+
+
+def last_session_diff(last_session, diff, filter_query):
+    """
+    Adds the tag difference for the last session in the list (or a single session).
+    There are two cases for a last/single session:
+    1. The session is the first session with SWID measurements.
+       -> All measured tags in this session will be listed as added.
+    2. The session has previous (not selected) sessions wiht SWID measurements
+       -> The tags which are added in this session will be listed as added.
+
+    Args:
+        last_session (apps.core.models.Session):
+            The last or sinlgle selected session of a tag diff.
+
+        diff (list of namedtuple (session, action, tag)):
+            The tagdiffs from newer sessions.
+
+        filter_quers (str):
+            Filter query.
+
+    Returns:
+        A list of named tuples, consisting of a session object,
+        a tag object and an action (str) which is either '+' for
+        added or '-' for removed:
+            [
+                (session: session, action: '+', tag: tag),
+                (session: session, action: '-', tag: tag),
+                ...,
+            ]
+
+    """
+    prev_sessions = Session.objects.filter(device=last_session.device,
+                                           tag__isnull=False, time__lt=last_session.time)
+    curr_diff = []
+    DiffEntry = namedtuple('DiffEntry', ['session', 'action', 'tag'])
+
+    if prev_sessions.count() > 0:
+        prev_session = prev_sessions.first()
+        curr_tag_ids = last_session.tag_set.values_list('id', flat=True).order_by('id')
+        prev_tag_ids = prev_session.tag_set.values_list('id', flat=True).order_by('id')
+
+        added_ids = list(set(curr_tag_ids) - set(prev_tag_ids))
+        block_size = 980
+        added_block_count = int(math.ceil(len(added_ids) / block_size))
+        for i in xrange(added_block_count):
+            added_ids_slice = added_ids[i * block_size: (i + 1) * block_size]
+            if filter_query:
+                added_tags = Tag.objects.filter(id__in=added_ids_slice, unique_id__icontains=filter_query)\
+                    .defer('swid_xml')
+            else:
+                added_tags = Tag.objects.filter(id__in=added_ids_slice).defer('swid_xml')
+            for tag in added_tags:
+                entry = DiffEntry(last_session, '+', tag)
+                curr_diff.append(entry)
+    else:
+        if filter_query:
+            tags = last_session.tag_set.filter(unique_id__icontains=filter_query).defer('swid_xml')
+        else:
+            tags = last_session.tag_set.all().defer('swid_xml')
+        for tag in tags:
+            entry = DiffEntry(last_session, '+', tag)
+            curr_diff.append(entry)
+
+    diff.extend(curr_diff)
+    return diff
 
 
 def swid_inventory_session_list_producer(from_idx, to_idx, filter_query, dynamic_params, static_params=None):
