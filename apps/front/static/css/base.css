@@ -179,7 +179,8 @@ a.disabled {
 
 .paged-content {
     position: relative;
-    overflow: hidden;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 #global-loader {
