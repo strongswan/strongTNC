@@ -90,7 +90,7 @@ h3 {
 div#line {
     border-right-width: 1px;
     border-right-style: solid;
-    border-color: black;
+    border-color: #ddd;
     padding-right: 1em;
     text-align: justify;
     word-break: break-all;
@@ -179,7 +179,7 @@ a.disabled {
 
 .paged-content {
     position: relative;
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-y: hidden;
 }
 
