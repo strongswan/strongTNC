@@ -7,11 +7,12 @@ from django.views.decorators.http import require_GET
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 
-from apps.core.models import Session, Result
+from apps.core.models import Session, Result, Identity
 from apps.policies.models import Policy, Enforcement
 from apps.devices.models import Device, Group, Product
-from apps.packages.models import Package
-from apps.filesystem.models import File
+from apps.packages.models import Package, Version
+from apps.filesystem.models import Directory, File, FileHash
+from apps.swid.models import Tag, Entity
 
 
 @require_GET
@@ -33,10 +34,19 @@ def statistics(request):
     context['title'] = _('Statistics')
     context['sessions'] = Session.objects.count()
     context['results'] = Result.objects.count()
+    context['policies'] = Policy.objects.count()
     context['enforcements'] = Enforcement.objects.count()
+    context['identities'] = Identity.objects.count()
     context['devices'] = Device.objects.count()
-    context['packages'] = Package.objects.count()
     context['products'] = Product.objects.count()
+    context['groups'] = Group.objects.count()
+    context['entities'] = Entity.objects.count()
+    context['tags'] = Tag.objects.count()
+    context['directories'] = Directory.objects.count()
+    context['files'] = File.objects.count()
+    context['hashes'] = FileHash.objects.count()
+    context['packages'] = Package.objects.count()
+    context['versions'] = Version.objects.count()
     context['OSranking'] = Product.objects.annotate(num=Count('devices__id')).filter(num__gt=0).order_by('-num', 'name')
 
     context['rec_count_session'] = Session.objects.values('recommendation').annotate(
