@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-import math
-
 from django.db import transaction
 from django.core.exceptions import ValidationError
 
 from lxml import etree
 
 from apps.filesystem.models import Directory, File
-from apps.swid.models import Entity, EntityRole
+from apps.swid.models import Entity, EntityRole, TagStats
 from .models import Tag
 
 
@@ -125,7 +123,7 @@ def process_swid_tag(tag_xml, allow_tag_update=False):
         old_tag.version = tag.version
         old_tag.unique_id = tag.unique_id
         old_tag.files.clear()
-        chunked_bulk_create(old_tag.files, files, 980)
+        chunked_bulk_add(old_tag.files, files, 980)
         old_tag.swid_xml = tag.swid_xml
         tag = old_tag
         tag.entity_set.clear()
@@ -153,7 +151,7 @@ def process_swid_tag(tag_xml, allow_tag_update=False):
 
     # SQLite does not support >999 SQL parameters per query, so we need
     # to do manual chunking.
-    chunked_bulk_create(tag.files, files, 980)
+    chunked_bulk_add(tag.files, files, 980)
 
     return tag, replaced
 
@@ -180,7 +178,7 @@ def prettify_xml(xml, xml_declaration=True):
                           encoding='UTF-8')
 
 
-def chunked_bulk_create(manager, objects, block_size):
+def chunked_bulk_add(manager, objects, block_size):
     """
     Add items to a reverse FK relation in chunks.
 
@@ -193,7 +191,66 @@ def chunked_bulk_create(manager, objects, block_size):
             Number of objects per block.
 
     """
-    block_count = int(math.ceil(len(objects) / block_size))
-    for i in xrange(block_count):
-        pk_slice = objects[i * block_size:(i + 1) * block_size]
+    for i in xrange(0, len(objects), block_size):
+        pk_slice = objects[i:i + block_size]
         manager.add(*pk_slice)
+
+
+def chunked_filter_in(queryset, filter_field, filter_list, block_size):
+    """
+    Select items from an ``field__in=filter_list`` filtered queryset in
+    multiple queries.
+
+    Example: If you have the following query ::
+
+        SELECT * FROM items WHERE id IN (1, 2, 3, 4, 5, 6);
+
+    ...and you want to do a chunked filtering with block size 2, the result is
+    that the following queries are executed::
+
+        SELECT * FROM items WHERE id IN (1, 2);
+        SELECT * FROM items WHERE id IN (3, 4);
+        SELECT * FROM items WHERE id IN (5, 6);
+
+    Args:
+        queryset:
+            The base queryset.
+        filter_field:
+            The field to filter on.
+        filter_list:
+            The list of values for the ``IN`` filtering. This is the list that
+            will be chunked.
+        block_size:
+            The number of items to filter by per query.
+
+    Returns:
+        Return a list containing all the items from all the querysets.
+
+    """
+    out = []
+    for i in xrange(0, len(filter_list), block_size):
+        filter_slice = filter_list[i:i + block_size]
+        kwargs = {filter_field + '__in': filter_slice}
+        items = list(queryset.filter(**kwargs))
+        out.extend(items)
+    return out
+
+
+def update_tag_stats(session, tag_ids):
+    new_tags = []
+    block_size = 980
+    for i in xrange(0, len(tag_ids), block_size):
+        tag_ids_slice = tag_ids[i:i + block_size]
+        # TODO: Instead of filtering the device tags, a list of all tags for a
+        # device could be created outside of the loop.
+        existing_tags = TagStats.objects.filter(device__pk=session.device_id,
+                                                tag__pk__in=tag_ids_slice)
+        new_tags.extend(set(tag_ids_slice) - set(existing_tags.values_list('tag__pk', flat=True)))
+        existing_tags.update(last_seen=session)
+
+    # Chunked create is done by default for sqlite,
+    # see https://docs.djangoproject.com/en/dev/ref/models/querysets/#bulk-create
+    TagStats.objects.bulk_create([
+        TagStats(tag_id=t, device=session.device, first_seen=session, last_seen=session)
+        for t in new_tags]
+    )

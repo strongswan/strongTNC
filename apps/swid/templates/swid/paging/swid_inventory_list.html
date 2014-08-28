@@ -16,7 +16,10 @@
             {% trans 'Version' %}
         </th>
         <th class="dateWidth">
-            {% trans 'First reported' %}
+            {% trans 'First seen' %}
+        </th>
+        <th class="dateWidth">
+            {% trans 'Last seen' %}
         </th>
     </tr>
     </thead>
@@ -40,7 +43,9 @@
                 {% endif %}
             </td>
             <td>{{ obj.tag.version|highlight:filter_query }}</td>
-            <td><a href="{% url 'devices:session_detail' obj.session.pk %}">{{ obj.session.time|date:"M d H:i:s Y" }}</a></td>
+            <td><a href="{% url 'devices:session_detail' obj.first_seen.pk %}">{{ obj.first_seen.time|date:"M d H:i:s Y" }}</a></td>
+            <td><a href="{% url 'devices:session_detail' obj.last_seen.pk %}">{{ obj.last_seen.time|date:"M d H:i:s Y" }}</a></td>
+
         </tr>
     {% endfor %}
     </tbody>

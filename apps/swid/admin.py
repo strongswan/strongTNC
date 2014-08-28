@@ -7,5 +7,6 @@ from . import models
 
 
 admin.site.register(models.Tag)
+admin.site.register(models.TagStats)
 admin.site.register(models.Entity)
 admin.site.register(models.EntityRole)

@@ -1,0 +1,33 @@
+WSGIPythonPath {{ strongtnc_dir }}:{{ strongtnc_dir }}/VIRTUAL/lib/python2.7/site-packages
+
+<VirtualHost *:80>
+	# The ServerName directive sets the request scheme, hostname and port that
+	# the server uses to identify itself. This is used when creating
+	# redirection URLs. In the context of virtual hosts, the ServerName
+	# specifies what hostname must appear in the request's Host: header to
+	# match this virtual host. For the default virtual host (this file) this
+	# value is not decisive as it is used as a last resort host regardless.
+	# However, you must set it for any further virtual host explicitly.
+	#ServerName {{ strongtnc_hostname }}
+
+	ServerAdmin webmaster@localhost
+	DocumentRoot {{ strongtnc_dir }}
+
+	<Directory {{ strongtnc_dir }}>
+		<Files wsgi.py>
+			Order deny,allow
+			Allow from all
+		</Files>
+		Options -Indexes
+	</Directory>
+	
+	WSGIScriptAlias / {{ strongtnc_dir }}/config/wsgi.py
+	Alias /static/ {{ strongtnc_dir }}/static/	
+
+	WSGIPassAuthorization On
+	
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet

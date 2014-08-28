@@ -1,0 +1,12 @@
+- name: Install sqlite3.
+  sudo: yes
+  apt: pkg={{ item }} update-cache=yes cache_valid_time=3600
+  with_items:
+    - sqlite3
+
+- name: Chmod database files.
+  sudo: yes
+  file: path={{ strongtnc_dir }}/{{ item }} state=file group=www-data mode=0660
+  with_items:
+    - django.db
+    - ipsec.config.db

@@ -86,7 +86,7 @@
 
     <div id="logTabelContainer" class="row-fluid">
         <h3>{% trans 'Change log' %}</h3>
-        {% paged_block config_name='swid_log_list_config' %}
+        {% paged_block config_name='swid_log_list_config' with_filter=True %}
     </div>
 
 {% endblock %}

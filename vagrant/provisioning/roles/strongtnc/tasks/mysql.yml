@@ -1,0 +1,30 @@
+- name: Install mysql.
+  sudo: yes
+  apt: pkg={{ item }} update-cache=yes cache_valid_time=3600
+  with_items:
+    - mysql-server
+    - mysql-client
+    - libmysqlclient-dev
+
+- name: Install mysql package for Python.
+  pip: chdir={{ strongtnc_dir }} name=MySQL-python
+    state=latest virtualenv=VIRTUAL
+
+- name: Create mysql dbs.
+  sudo: yes
+  mysql_db: name={{ item }} collation=utf8_unicode_ci
+  with_items:
+    - strongtnc_django
+    - strongtnc_data
+
+- name: Create mysql user.
+  sudo: yes
+  mysql_user: name={{ database_user }} password={{ database_pass }} state=present
+    priv=strongtnc_django.*:ALL/strongtnc_data.*:ALL
+
+- name: Sync database.
+  django_manage: command=syncdb database={{ item }}
+    app_path={{ strongtnc_dir }} virtualenv={{ strongtnc_dir }}/VIRTUAL
+  with_items:
+    - meta
+    - default

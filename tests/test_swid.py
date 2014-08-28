@@ -7,16 +7,14 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 from datetime import timedelta
 
 from django.utils import timezone
-from django.utils.timezone import localtime
 from django.utils.dateformat import format
-from django.conf import settings
 
 import pytest
 from model_mommy import mommy
 
 from apps.core.models import Session, WorkItem
 from apps.core.types import WorkItemType
-from apps.swid.models import Tag, EntityRole, Entity
+from apps.swid.models import Tag, EntityRole, Entity, TagStats
 from apps.filesystem.models import File, Directory
 from apps.swid import utils
 from apps.swid.paging import swid_inventory_list_producer, swid_log_list_producer, \
@@ -309,21 +307,28 @@ def tags_and_sessions(transactional_db):
     mommy.make(Session, id=6, identity__data="tester", time=now + timedelta(days=4), device__id=1)
 
     tag1 = mommy.make(Tag, id=1, unique_id='tag1')
-    tag2 = mommy.make(Tag, id=2)
-    tag3 = mommy.make(Tag, id=3)
-    tag4 = mommy.make(Tag, id=4)
+    tag2 = mommy.make(Tag, id=2, unique_id='tag2')
+    tag3 = mommy.make(Tag, id=3, unique_id='tag3')
+    tag4 = mommy.make(Tag, id=4, unique_id='tag4')
     tag5 = mommy.make(Tag, id=5, unique_id='tag5')
-    tag6 = mommy.make(Tag, id=6)
-    tag7 = mommy.make(Tag, id=7)
+    tag6 = mommy.make(Tag, id=6, unique_id='tag6')
+    tag7 = mommy.make(Tag, id=7, unique_id='tag7')
 
     # intital set: tag 1-4
     s1.tag_set.add(tag1, tag2, tag3, tag4)
+    utils.update_tag_stats(s1, [1, 2, 3, 4])
+
     # s2, added: tag5;
     s2.tag_set.add(tag1, tag2, tag3, tag4, tag5)
+    utils.update_tag_stats(s2, [1, 2, 3, 4, 5])
+
     # s3, removed: tag1;
     s3.tag_set.add(tag2, tag3, tag4, tag5)
+    utils.update_tag_stats(s3, [2, 3, 4, 5])
+
     # s4 added: tag6, tag7; removed: tag2;
     s4.tag_set.add(tag3, tag4, tag5, tag6, tag7)
+    utils.update_tag_stats(s4, [3, 4, 5, 6, 7])
 
     return {
         'now': now,
@@ -338,7 +343,7 @@ def test_swid_inventory_list_producer(transactional_db, tags_and_sessions):
     params = {'session_id': 1}
     tags = swid_inventory_list_producer(0, 10, None, params)
     assert len(tags) == 4
-    assert tags[0]['session'] == s1
+    assert tags[0]['first_seen'] == s1
     assert tags[0]['added_now'] is True
 
     params = {'session_id': 2}
@@ -349,7 +354,7 @@ def test_swid_inventory_list_producer(transactional_db, tags_and_sessions):
     params = {'session_id': 4}
     tags = swid_inventory_list_producer(0, 10, None, params)
     assert len(tags) == 5
-    assert tags[0]['session'] == s1
+    assert tags[0]['first_seen'] == s1
 
     params = {'session_id': 4}
     tags = swid_inventory_list_producer(0, 1, None, params)
@@ -400,16 +405,18 @@ def test_swid_log(transactional_db, tags_and_sessions):
     }
     data = swid_log_list_producer(0, 100, None, params)
 
+    s1 = tags_and_sessions['sessions'][0]
     s2 = tags_and_sessions['sessions'][1]
     s3 = tags_and_sessions['sessions'][2]
     s4 = tags_and_sessions['sessions'][3]
 
-    # there should be three results, bc. 4 session in the range have tags
-    assert len(data) == 3
+    # there should be four results, bc. 4 session in the range have tags
+    assert len(data) == 4
 
     assert len(data[s4]) == 3
     assert len(data[s3]) == 1
     assert len(data[s2]) == 1
+    assert len(data[s1]) == 4
     # checking if removed and added are as expected
     assert data[s3][0].added is False
     assert data[s2][0].added is True
@@ -417,6 +424,39 @@ def test_swid_log(transactional_db, tags_and_sessions):
     # test omitted params
     data = swid_log_list_producer(0, 100, None, None)
     assert data == []
+
+    # test filter query
+    data = swid_log_list_producer(0, 100, 'tag1', params)
+    assert len(data) == 2
+    assert len(data[s1]) == 1
+    assert len(data[s3]) == 1
+
+    ## test single session selects:
+    # test only last most recent session
+    from_timestamp = format(now + timedelta(days=3), 'U')
+    to_timestamp = format(now + timedelta(days=4), 'U')
+    params = {
+        'device_id': 1,
+        'from_timestamp': int(from_timestamp),
+        'to_timestamp': int(to_timestamp),
+    }
+    data = swid_log_list_producer(0, 100, None, params)
+    assert len(data) == 1
+    # only the added tags
+    assert len(data[s4]) == 2
+
+    # test only first session
+    from_timestamp = format(now - timedelta(days=4), 'U')
+    to_timestamp = format(now - timedelta(days=3), 'U')
+    params = {
+        'device_id': 1,
+        'from_timestamp': int(from_timestamp),
+        'to_timestamp': int(to_timestamp),
+        }
+    data = swid_log_list_producer(0, 100, None, params)
+    assert len(data) == 1
+    # only the added tags
+    assert len(data[s1]) == 4
 
 
 def test_get_installed_tags_with_time(transactional_db, tags_and_sessions):
@@ -432,9 +472,9 @@ def test_get_installed_tags_with_time(transactional_db, tags_and_sessions):
     # five tags installed in session s4
     assert len(installed_tags) == 5
     # tag3 was installed in session s1
-    assert installed_tags[tag3] == s1
+    assert installed_tags.get(tag=tag3).first_seen == s1
     # tag5 was installed in session s2
-    assert installed_tags[tag5] == s2
+    assert installed_tags.get(tag=tag5).first_seen == s2
 
 
 @pytest.mark.parametrize('filename', [
@@ -446,3 +486,43 @@ def test_changed_software_entity_name(swidtag, filename):
     tag, replaced = utils.process_swid_tag(new_xml, allow_tag_update=True)
     assert replaced is True
     assert Tag.objects.count() == 1
+
+
+def test_update_tag_stats(transactional_db):
+    # Setup some sessions and tags
+    now = timezone.now()
+    s1 = mommy.make(Session, id=1, identity__data="tester", time=now - timedelta(days=3), device__id=1)
+    s2 = mommy.make(Session, id=2, identity__data="tester", time=now - timedelta(days=2), device__id=1)
+    s3 = mommy.make(Session, id=3, identity__data="tester", time=now - timedelta(days=1), device__id=1)
+    tags = [mommy.make(Tag, id=n, unique_id='tag%i' % n) for n in range(10)]
+
+    utils.update_tag_stats(s1, Tag.objects.values_list('pk', flat=True)[:4])
+
+    # Last seen and first seen should be s1
+    for tag_stat in TagStats.objects.all():
+        assert tag_stat.last_seen == s1
+        assert tag_stat.first_seen == s1
+
+    with pytest.raises(TagStats.DoesNotExist):
+        TagStats.objects.get(tag=tags[6], device=s1.device)
+
+    utils.update_tag_stats(s2, Tag.objects.values_list('pk', flat=True)[2:4])
+
+    # Only last_seen session for tags 2,3 should be changed
+    assert TagStats.objects.get(tag=tags[0], device=s2.device).last_seen == s1
+    assert TagStats.objects.get(tag=tags[0], device=s2.device).first_seen == s1
+    assert TagStats.objects.get(tag=tags[1], device=s2.device).last_seen == s1
+    assert TagStats.objects.get(tag=tags[1], device=s2.device).first_seen == s1
+
+    assert TagStats.objects.get(tag=tags[2], device=s2.device).last_seen == s2
+    assert TagStats.objects.get(tag=tags[2], device=s2.device).first_seen == s1
+    assert TagStats.objects.get(tag=tags[3], device=s2.device).last_seen == s2
+    assert TagStats.objects.get(tag=tags[3], device=s2.device).first_seen == s1
+
+
+def test_large_tagstats_update(transactional_db):
+    now = timezone.now()
+    s1 = mommy.make(Session, id=1,time=now)
+    tags = range(2000)
+    utils.update_tag_stats(s1, tags)
+    assert TagStats.objects.count() == 2000

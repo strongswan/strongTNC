@@ -1,0 +1,15 @@
+---
+strongtnc_dir: /var/www/strongTNC
+strongtnc_etc: /etc/strongTNC
+strongtnc_repo: https://github.com/strongswan/strongTNC.git
+strongtnc_branch: master
+strongtnc_hostname: localhost
+database: "{% if lookup('env', 'DATABASE') == 'mysql' %}mysql{% else %}sqlite{% endif %}"
+
+# MySQL database credentials
+database_user: strongtnc
+database_pass: strongPassword
+
+# Default strongTNC users
+admin_user_pass: admin
+readonly_user_pass: readonly

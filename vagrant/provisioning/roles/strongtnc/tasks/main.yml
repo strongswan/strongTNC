@@ -1,0 +1,68 @@
+---
+- name: Install required packages.
+  sudo: yes
+  apt: pkg={{ item }} update-cache=yes cache_valid_time=3600
+  with_items:
+    - git
+    - build-essential
+    - python2.7
+    - python2.7-dev
+    - python-pip
+    - python-virtualenv
+    - python-mysqldb
+    - libxml2-dev
+    - libxslt1-dev
+
+- name: Create directories.
+  sudo: yes
+  file: path={{ item }} state=directory mode=0775
+    owner={{ ansible_ssh_user }} group=www-data
+  with_items:
+    - "{{ strongtnc_dir }}"
+    - "{{ strongtnc_etc }}"
+
+- name: Clone repository.
+  git: repo={{ strongtnc_repo }}
+    dest={{ strongtnc_dir }} version={{ strongtnc_branch }}
+
+- name: Install python dependencies.
+  pip: chdir={{ strongtnc_dir }} requirements=requirements.txt
+    state=latest virtualenv=VIRTUAL
+
+- name: Copy settings.ini.
+  sudo: yes
+  template: src=settings.ini.{{ database }}.j2 dest={{ strongtnc_etc }}/settings.ini
+    owner={{ ansible_ssh_user }} group=www-data mode=0640
+  notify: restart apache
+
+- name: Setup SQLite.
+  include: sqlite.yml
+  when: database != "mysql"
+
+- name: Setup MySQL.
+  include: mysql.yml
+  when: database == "mysql"
+
+- name: Create default users.
+  django_manage: command="setpassword {{ readonly_user_pass }} {{ admin_user_pass }}"
+    app_path={{ strongtnc_dir }} virtualenv={{ strongtnc_dir }}/VIRTUAL
+
+- name: Run collectstatic.
+  django_manage: command=collectstatic
+    app_path={{ strongtnc_dir }} virtualenv={{ strongtnc_dir }}/VIRTUAL
+
+- name: Copy apache config.
+  sudo: yes
+  template: src=apache.conf.j2 dest=/etc/apache2/sites-available/strongTNC
+  notify: restart apache
+
+- name: Create strongTNC apache symlink.
+  sudo: yes
+  file: path=/etc/apache2/sites-enabled/strongTNC
+    state=link src=/etc/apache2/sites-available/strongTNC
+  notify: restart apache
+
+- name: Remove default apache symlink.
+  sudo: yes
+  file: path=/etc/apache2/sites-enabled/000-default state=absent
+  notify: restart apache

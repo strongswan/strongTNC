@@ -41,7 +41,7 @@ class Tag(models.Model):
     def get_installed_tags_with_time(cls, session):
         """
         Return all measured tags up to the given session with their first
-        reported time.
+        reported  and last reported time.
 
         Only sessions using the same device are included. All tags installed by
         previous sessions are also returned.
@@ -51,19 +51,14 @@ class Tag(models.Model):
                 The session object
 
         Returns:
-            A dictionary ``{tag1: session, tag2: session, ...}``.
-            The ``tag`` is a :class:`Tag` instance, the ``session`` is the session
-            when the tag was first measured to be installed.
+            A list of TagStat objects, containing first_seen and last_seen sessions as well as a reference
+            to the tag instance.
 
         """
-        device_sessions = session.device.sessions.filter(time__lte=session.time).order_by('-time')
-        installed_tags = {t: session for t in session.tag_set.all()}
-        for session in device_sessions.all().prefetch_related('tag_set'):
-            for tag in session.tag_set.all():
-                if tag in installed_tags:
-                    installed_tags[tag] = session
-
-        return installed_tags
+        tag_pks = session.tag_set.values_list('pk', flat=True)
+        tag_stats = TagStats.objects.filter(tag__in=tag_pks, device=session.device_id) \
+            .select_related('last_seen', 'first_seen', 'tag').defer('tag__swid_xml')
+        return tag_stats
 
     def get_devices_with_reported_session(self):
         devices_dict = {}
@@ -73,6 +68,16 @@ class Tag(models.Model):
 
     def get_matching_packages(self):
         return Package.objects.filter(name=self.package_name)
+
+
+class TagStats(models.Model):
+    tag = models.ForeignKey('Tag')
+    device = models.ForeignKey('devices.Device')
+    first_seen = models.ForeignKey('core.Session', related_name='tags_first_seen_set')
+    last_seen = models.ForeignKey('core.Session', related_name='tags_last_seen_set')
+
+    class Meta:
+        unique_together = ('tag', 'device')
 
 
 class EntityRole(models.Model):
