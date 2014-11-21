@@ -47,7 +47,8 @@ def statistics(request):
     context['hashes'] = FileHash.objects.count()
     context['packages'] = Package.objects.count()
     context['versions'] = Version.objects.count()
-    context['OSranking'] = Product.objects.annotate(num=Count('devices__id')).filter(num__gt=0).order_by('-num', 'name')
+    context['OSranking'] = Product.objects.annotate(
+            num=Count('devices__id')).filter(num__gt=0).order_by('-num', 'name')
 
     context['rec_count_session'] = Session.objects.values('recommendation').annotate(
             num=Count('recommendation')).order_by('-num')
