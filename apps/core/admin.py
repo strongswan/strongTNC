@@ -17,8 +17,8 @@ class ResultAdmin(admin.ModelAdmin):
 
 
 class SessionAdmin(admin.ModelAdmin):
-    list_display = ('connection_id', 'device', 'time', 'recommendation')
-    list_filter = ('recommendation',)
+    list_display = ('time', 'recommendation', 'device', 'connection_id')
+    list_filter = ('recommendation', 'device', 'identity')
 
 
 class WorkItemAdmin(admin.ModelAdmin):
