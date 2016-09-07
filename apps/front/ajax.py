@@ -17,6 +17,7 @@ from apps.policies.paging import policy_list_paging, enforcement_list_paging
 from apps.packages.paging import package_list_paging
 from apps.devices.paging import device_list_paging, product_list_paging, device_session_list_paging
 from apps.devices.paging import product_devices_list_paging
+from apps.tpm.paging import tpm_devices_list_paging
 
 
 @dajaxice_register
@@ -77,7 +78,7 @@ def paging(request, config_name, current_page, filter_query, pager_id, producer_
         'swid_files_list_config': swid_files_list_paging,
         'product_devices_list_config': product_devices_list_paging,
         'swid_devices_list_config': swid_devices_list_paging,
-
+        'tpm_devices_list_config': tpm_devices_list_paging,
     }
 
     conf = paging_conf_dict[config_name]

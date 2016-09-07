@@ -1,0 +1,102 @@
+{% extends "front/base.html" %}
+
+{% load i18n %}
+{% load paged_block %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block hero %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="line">
+                <h4>{% trans "Device" %}
+                    {% if 'auth.write_access' in perms %}
+                        <div class="pull-right">
+                            <a class="btn btn-primary btn-mini" href="{% url 'devices:device_add' %}"
+                               rel="tooltip" title="add new">
+                                <i class="icon-plus-sign icon-white"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </h4>
+                <hr>
+                <div class="row-fluid">
+                    {% paged_block config_name="tpm_devices_list_config" with_filter=True %}
+                </div>
+            </div>
+
+            <div class="span9" id="content">
+                <h4>{% trans 'Device Infos' %}</h4>
+
+                <div class="row-fluid">
+                    <div class="span7">
+                        <table class="table" border="0">
+                            <tbody class="noWrap">
+                            <tr>
+                                <td><strong>{% trans 'ID' %}</strong></td>
+                                <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.value }}</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Description' %}</strong></td>
+                                <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.description }}</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Total Comp. Hashes' %}</strong></td>
+                                <td>{{ comp_hashes_count }}</td>
+                             </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <a href="{% url 'devices:device_report' device.id %}" class="btn btn-primary"><i
+                        class="icon-file icon-white"></i> {% trans "Device report" %}</a>
+                </div>
+                <hr>
+                <h4>Component Hashes</h4>
+                {% if comp_hashes %}
+                    <div class="row-fluid">
+                        <table id="versions" class="table table-hover table-striped sortable">
+                            <thead>
+                            <tr>
+                                <th>{% trans 'Type' %}</th>
+                                <th>{% trans 'Seq No' %}</th>
+                                <th>{% trans 'PCR' %}</th>
+                                <th>{% trans 'Algo' %}</th>
+                                <th>{% trans 'Hash' %}</th>
+                                {% if 'auth.write_access' in perms %}
+                                    <th class="sorter-false">&nbsp;</th>
+                                {% endif %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                               {% for h in comp_hashes %}
+                               <tr>
+                                   <td>{{ h.component }}</td>
+                                   <td>{{ h.seq_no }}</td>
+                                   <td>{{ h.pcr }}</td>
+                                   <td>{{ h.algorithm }}</td>
+                                   <td title="{{ h.hash }}">{{ h.hash|truncatechars:40 }}</td>
+                                   {% if 'auth.write_access' in perms %}
+                                       <td>
+                                           <a class="btn btn-danger btn-mini"
+                                              href="{% url 'tpm:comphash_delete' h.pk %}"
+                                              data-toggle="modal"><i class="icon-remove icon-white"></i></a>
+                                       </td>
+                                   {% endif %}
+                               </tr>
+                               {% endfor %}
+                            </tbody>
+                        </table>
+                     </div>
+                 {% else %}
+                     <p>{% trans 'This device has no associated component hashes.' %}</p>
+                 {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

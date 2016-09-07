@@ -132,7 +132,11 @@
                                     <a href="{% url 'devices:device_report' device.id %}" class="btn btn-primary"><i
                                         class="icon-file icon-white"></i> {% trans "Device report" %}</a>
                                 </div>
-                            {% endif %}
+                                <div class="btn-group">
+                                    <a href="{% url 'tpm:tpm_evidence' device.id %}" class="btn btn-primary"><i
+                                        class="icon-file icon-white"></i> {% trans "TPM Evidence" %}</a>
+                                </div>
+                             {% endif %}
                         </div>
                     </form>
                 {% endif %}

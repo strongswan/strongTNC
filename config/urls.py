@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'', include('apps.packages.urls', namespace='packages')),
     url(r'', include('apps.filesystem.urls', namespace='filesystem')),
     url(r'', include('apps.swid.urls', namespace='swid')),
+    url(r'', include('apps.tpm.urls', namespace='tpm')),
 )
 
 # AJAX URLs
