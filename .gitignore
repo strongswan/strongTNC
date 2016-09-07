@@ -21,6 +21,7 @@ settings.ini
 *.iml
 
 # Other files
+*.patch
 *.log
 *.orig
 .cache
