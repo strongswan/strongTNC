@@ -10,22 +10,7 @@ from django.db import models
 import pytz
 
 
-class BinaryField(models.Field):
-    """
-    Custom field type for Binary data
-    """
-    description = "Raw binary data for SQLite"
-
-    def __init__(self, *args, **kwargs):
-        kwargs['editable'] = False
-        super(BinaryField, self).__init__(*args, **kwargs)
-
-    def db_type(self, connection):
-        """Internal database field type."""
-        return 'blob'
-
-
-class HashField(BinaryField):
+class HashField(models.BinaryField):
     """
     Custom field type to display file hashes
     """

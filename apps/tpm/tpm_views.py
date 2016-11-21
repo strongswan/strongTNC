@@ -34,16 +34,16 @@ def evidence(request, deviceID):
     return render(request, 'tpm/tpm_evidence.html', context)
 
 
-@require_GET
+@require_POST
 @login_required
 @permission_required('auth.write_access', raise_exception=True)
-def delete_hash(request, comp_hashID):
+def comphashes_delete(request, deviceID):
     """
-    Delete a component hash
+    Delete all component hashes
     """
-    hash = get_object_or_404(ComponentHash, pk=comp_hashID)
-    device = hash.device
-    hash.delete()
+    device = get_object_or_404(Device, pk=deviceID)
+    comp_hashes = ComponentHash.objects.filter(device=device).order_by('seq_no')
+    comp_hashes.delete()
 
-    messages.success(request, _('Hash deleted!'))
+    messages.success(request, _('All composite hashes deleted!'))
     return redirect('tpm:tpm_evidence', device.pk)

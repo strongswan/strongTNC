@@ -57,7 +57,12 @@
                         class="icon-file icon-white"></i> {% trans "Device report" %}</a>
                 </div>
                 <hr>
-                <h4>Component Hashes</h4>
+                <h4>Component Hashes &nbsp;
+                    {% if 'auth.write_access' in perms and comp_hashes %}
+                        <a class="btn btn-danger btn-mini" href="#delModal" data-toggle="modal"
+                            rel="tooltip" title="delete all"><i class="icon-remove icon-white"></i></a>
+                    {% endif %}
+                </h4>
                 {% if comp_hashes %}
                     <div class="row-fluid">
                         <table id="versions" class="table table-hover table-striped sortable">
@@ -68,9 +73,6 @@
                                 <th>{% trans 'PCR' %}</th>
                                 <th>{% trans 'Algo' %}</th>
                                 <th>{% trans 'Hash' %}</th>
-                                {% if 'auth.write_access' in perms %}
-                                    <th class="sorter-false">&nbsp;</th>
-                                {% endif %}
                             </tr>
                             </thead>
                             <tbody>
@@ -80,19 +82,36 @@
                                    <td>{{ h.seq_no }}</td>
                                    <td>{{ h.pcr }}</td>
                                    <td>{{ h.algorithm }}</td>
-                                   <td title="{{ h.hash }}">{{ h.hash|truncatechars:40 }}</td>
-                                   {% if 'auth.write_access' in perms %}
-                                       <td>
-                                           <a class="btn btn-danger btn-mini"
-                                              href="{% url 'tpm:comphash_delete' h.pk %}"
-                                              data-toggle="modal"><i class="icon-remove icon-white"></i></a>
-                                       </td>
-                                   {% endif %}
+                                   <td title="{{ h.hash }}">
+                                       <a href="{% url 'tpm:comphash_detail' h.pk %}">
+                                           {{ h.hash|truncatechars:64 }}
+                                       </a>
+                                   </td>
                                </tr>
                                {% endfor %}
                             </tbody>
                         </table>
-                     </div>
+                    </div>
+
+                    <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog"
+                         aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3 id="deleteModalLabel">{% trans 'Delete all component hashes?' %}</h3>
+                        </div>
+                        <div class="modal-body">
+                            <h4>{% trans 'Warning' %}</h4>
+
+                            <p>{% trans 'Are you sure that you want to delete all component hashes?' %}</p>
+                        </div>
+                        <form method="POST" action="{% url 'tpm:comphashes_delete' device.pk %}" id="deleteform">
+                            {% csrf_token %}
+                        </form>
+                        <div class="modal-footer">
+                            <a class="btn" data-dismiss="modal">{% trans 'Cancel' %}</a>
+                            <a class="btn btn-danger" onclick="deleteform.submit()" href="#">{% trans 'Delete all component hashes' %}</a>
+                        </div>
+                    </div>
                  {% else %}
                      <p>{% trans 'This device has no associated component hashes.' %}</p>
                  {% endif %}
