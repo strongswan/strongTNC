@@ -5,8 +5,8 @@ strongTNC
    :target: https://travis-ci.org/strongswan/strongTNC
    :alt: Build status
 
-.. image:: https://coveralls.io/repos/strongswan/strongTNC/badge.png?branch=master
-   :target: https://coveralls.io/r/strongswan/strongTNC
+.. image:: https://coveralls.io/repos/github/strongswan/strongTNC/badge.svg?branch=master
+   :target: https://coveralls.io/github/strongswan/strongTNC?branch=master
    :alt: Test coverage
 
 .. image:: https://landscape.io/github/strongswan/strongTNC/master/landscape.png
