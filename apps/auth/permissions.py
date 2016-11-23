@@ -45,7 +45,7 @@ class GlobalPermission(Permission):
     def save(self, *args, **kwargs):
         # Ensure that a content type called 'global_permission' exists
         ct, created = ContentType.objects.get_or_create(
-            name='global_permission', app_label=self._meta.app_label
+            name='global_permission', app_label='auth'
         )
         # Assign the 'global_permission' content type to this permission
         self.content_type = ct
