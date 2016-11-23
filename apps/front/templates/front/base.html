@@ -10,9 +10,9 @@
     <meta name="author" content="HSR University of Applied Sciences Rapperswil">
 
     <!-- styles -->
-    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet" media="screen"/>
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="{{ STATIC_URL }}css/bootstrap-theme.min.css" rel="stylesheet" media="screen"/>
     <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet" type="text/css"/>
-    <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}css/select2.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet"/>
 
@@ -22,8 +22,6 @@
     <script src="{{ STATIC_URL }}js/select2.min.js"></script>
     <script src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
     <script src="{{ STATIC_URL }}js/jquery-ui-1.10.4.custom.min.js"></script>
-    <script src="{{ STATIC_URL }}js/spin.min.js"></script>
-    <script src="{{ STATIC_URL }}js/jquery.spin.js"></script>
 
     <script src="{{ STATIC_URL }}js/hashquery.js"></script>
     <script src="{{ STATIC_URL }}js/paging.js"></script>
@@ -38,91 +36,87 @@
 
 <body>
 
-<div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container-fluid">
-            <a class="brand" href="#"><i class="logo-swanicon"></i> strongTNC</a>
-            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/"><i class="logo-swanicon"></i> strongTNC</a>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="glyphicon glyphicon-bar"></span>
+            <span class="glyphicon glyphicon-bar"></span>
+            <span class="glyphicon glyphicon-bar"></span>
+        </button>
 
-            <div class="nav-collapse collapse">
-                <div class="pull-right">
-                    <ul class="nav pull-right">
-                        <li class="brand" id="global-loader">Loading...
-                            <img src="{{ STATIC_URL }}img/ajax-loader-black-bg.gif" width="20px">
-                        </li>
+        <div class="navbar-collapse collapse">
+            <div class="pull-right">
+                <ul class="nav navbar-nav pull-right">
+                    <li class="navbar-text" id="global-loader">Loading...
+                        <img src="{{ STATIC_URL }}img/ajax-loader-black-bg.gif" width="20px">
+                    </li>
 
-                        <form class="navbar-search" action="{% url 'front:search' %}" method="get">
-                            <input type="text" class="search-query" name="q" placeholder="Search">
-                        </form>
-                        <li><a href="#logoutModal" data-toggle="modal" id="logout" rel="tooltip"
-                               title="{% trans 'Logout' %}"><i class="icon-off icon-white"></i></a></li>
-                    </ul>
-                </div>
+                    <form class="navbar-form navbar-left" role="search" action="{% url 'front:search' %}" method="get">
+                        <input type="text" class="search-query" name="q" placeholder="Search">
+                    </form>
+                    <li><a href="#logoutModal" data-toggle="modal" id="logout"
+                           title="{% trans 'Logout' %}"><i class="glyphicon glyphicon-off"></i></a></li>
+                </ul>
             </div>
         </div>
     </div>
-</div>
+</nav>
 
 <div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span2">
+    <div class="row">
+        <div class="col-md-2">
 
-            <div class="well sidebar-nav">
+            <nav class="well sidebar-nav">
                 <ul class="nav nav-list">
 
-                    <li><a href="/"><i class="icon-eye-open"></i> {% trans 'Overview' %}</a></li>
+                    <li><a href="/"><i class="glyphicon glyphicon-eye-open"></i> {% trans 'Overview' %}</a></li>
 
                     <li class="nav-header">{% trans 'Configuration' %}</li>
 
-                    <li><a href="{% url 'devices:group_list' %}"><i class="icon-user"></i> {% trans 'Groups' %} </a></li>
-                    <li><a href="{% url 'policies:policy_list' %}"><i class="icon-warning-sign"></i> {% trans 'Policies' %}</a></li>
-                    <li><a href="{% url 'policies:enforcement_list' %}"><i class="icon-list-alt"></i> {% trans 'Enforcements' %}</a></li>
-                    <li><a href="{% url 'devices:device_list' %}"><i class="icon-phone"></i> {% trans 'Devices' %}</a></li>
+                    <li><a href="{% url 'devices:group_list' %}"><i class="glyphicon glyphicon-user"></i> {% trans 'Groups' %} </a></li>
+                    <li><a href="{% url 'policies:policy_list' %}"><i class="glyphicon glyphicon-warning-sign"></i> {% trans 'Policies' %}</a></li>
+                    <li><a href="{% url 'policies:enforcement_list' %}"><i class="glyphicon glyphicon-list-alt"></i> {% trans 'Enforcements' %}</a></li>
+                    <li><a href="{% url 'devices:device_list' %}"><i class="glyphicon glyphicon-phone"></i> {% trans 'Devices' %}</a></li>
 
                     <li class="nav-header">{% trans 'Data Views' %}</li>
 
-                    <li><a href="{% url 'packages:package_list' %}"><i class="icon-gift"></i> {% trans 'Packages' %}</a></li>
-                    <li><a href="{% url 'devices:product_list' %}"><i class="icon-briefcase"></i> {% trans 'Products' %}</a></li>
-                    <li><a href="{% url 'filesystem:directory_list' %}"><i class="icon-folder-open"></i> {% trans 'Directories' %}</a></li>
-                    <li><a href="{% url 'filesystem:file_list' %}"><i class="icon-file"></i> {% trans 'Files' %}</a></li>
-                    <li><a href="{% url 'swid:regid_list' %}"><i class="icon-barcode"></i> {% trans 'Regids' %}</a></li>
-                    <li><a href="{% url 'swid:tag_list' %}"><i class="icon-tag"></i> {% trans 'SWID tags' %}</a></li>
-                    <li><a href="{% url 'front:statistics' %}"><i class="icon-tasks"></i> {% trans 'Statistics' %}</a></li>
+                    <li><a href="{% url 'packages:package_list' %}"><i class="glyphicon glyphicon-gift"></i> {% trans 'Packages' %}</a></li>
+                    <li><a href="{% url 'devices:product_list' %}"><i class="glyphicon glyphicon-briefcase"></i> {% trans 'Products' %}</a></li>
+                    <li><a href="{% url 'filesystem:directory_list' %}"><i class="glyphicon glyphicon-folder-open"></i> {% trans 'Directories' %}</a></li>
+                    <li><a href="{% url 'filesystem:file_list' %}"><i class="glyphicon glyphicon-file"></i> {% trans 'Files' %}</a></li>
+                    <li><a href="{% url 'swid:regid_list' %}"><i class="glyphicon glyphicon-barcode"></i> {% trans 'Regids' %}</a></li>
+                    <li><a href="{% url 'swid:tag_list' %}"><i class="glyphicon glyphicon-tag"></i> {% trans 'SWID tags' %}</a></li>
+                    <li><a href="{% url 'front:statistics' %}"><i class="glyphicon glyphicon-tasks"></i> {% trans 'Statistics' %}</a></li>
                 </ul>
-            </div>
+            </nav>
             <!--/.well -->
 
         </div>
         <!--/span-->
-        <div class="span10">
+        <div class="col-md-10">
 
-            <div class="hero-unit" id="hero">
+            <div class="jumbotron" id="hero">
                 {% block hero %}{% endblock %}
             </div>
 
             <noscript>
-                <div id="noscript" class="alert alert-error fade in">
+                <div id="noscript" class="alert alert-danger fade in">
                     {% blocktrans %}This site relies heavily on JavaScript. It seems you have JavaScript
                         disabled in your browser, you may experience difficulties while using this site.
                     {% endblocktrans %}
                 </div>
             </noscript>
 
-            <div class="row-fluid">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} fade in">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <strong>{{ message }}</strong>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                {% block content %}{% endblock %}
-            </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} fade in">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>{{ message }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
 
         </div>
     </div>
@@ -133,19 +127,23 @@
         </p>
     </footer>
 
-    <div id="logoutModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 id="logoutModalLabel">Are you sure to logout?</h3>
-        </div>
-        <div class="modal-body">
-            <h4>You're about to sign out from the system.</h4>
+    <div id="logoutModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 id="logoutModalLabel">Are you sure to logout?</h3>
+                </div>
+                <div class="modal-body">
+                    <h4>You're about to sign out from the system.</h4>
 
-            <p>Are you sure to logout from strongTNC?</p>
-        </div>
-        <div class="modal-footer">
-            <a class="btn" data-dismiss="modal">Cancel</a>
-            <a class="btn btn-danger" href="{% url 'auth:logout' %}"><i class="icon-off icon-white"></i> Logout</a>
+                    <p>Are you sure to logout from strongTNC?</p>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+                    <a class="btn btn-danger" href="{% url 'auth:logout' %}"><i class="glyphicon glyphicon-off"></i> Logout</a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -174,11 +172,11 @@
         });
 
         $("[rel='tooltip']").tooltip({
-            'placement': 'right'
+            'placement': 'right',
+            'container': 'body'
         });
 
         $("#logout").tooltip({
-            'selector': '',
             'placement': 'bottom'
         });
 

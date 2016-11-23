@@ -9,8 +9,8 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
+        <div class="row">
+            <div class="col-md-12">
                 <div class="page-header">
                     <h3>{% trans "Overview" %}</h3>
                 </div>
@@ -61,57 +61,61 @@
             </div>
         </div>
 
-        <div class="row-fluid">
-            <div class="page-header">
-                <h3>{% trans "Devices by product" %}</h3>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h3>{% trans "Devices by product" %}</h3>
+                </div>
+                <div id="barchart"></div>
             </div>
-            <div id="barchart"></div>
         </div>
 
-        <div class="row-fluid">
-            <div class="page-header">
-                <h3>{% trans "Recommendation" %}</h3>
-            </div>
-            <h4>{% trans "Recommendation by session" %}</h4>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h3>{% trans "Recommendation" %}</h3>
+                </div>
+                <h4>{% trans "Recommendation by session" %}</h4>
 
-            <div class="container-fluid">
-                <div class="span4">
-                    <table class="table table-condensed">
-                        <tr>
-                            <td><strong>OS</strong></td>
-                            <td width="30%"><strong>Devices</strong></td>
-                        </tr>
-                        {% for r in rec_count_session %}
+                <div class="container-fluid">
+                    <div class="col-md-4">
+                        <table class="table table-condensed">
                             <tr>
-                                <td>{{ r.recommendation }}</td>
-                                <td width="30%">{{ r.num }}</td>
+                                <td><strong>OS</strong></td>
+                                <td width="30%"><strong>Devices</strong></td>
                             </tr>
-                        {% endfor %}
-                    </table>
+                            {% for r in rec_count_session %}
+                                <tr>
+                                    <td>{{ r.recommendation }}</td>
+                                    <td width="30%">{{ r.num }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="col-md-8">
+                        <div id="piechart_session"></div>
+                    </div>
                 </div>
-                <div class="span8">
-                    <div id="piechart_session"></div>
-                </div>
-            </div>
-            <h4>{% trans "Recommendation by result" %}</h4>
+                <h4>{% trans "Recommendation by result" %}</h4>
 
-            <div class="container-fluid">
-                <div class="span4">
-                    <table class="table table-condensed">
-                        <tr>
-                            <td><strong>OS</strong></td>
-                            <td width="30%"><strong>Devices</strong></td>
-                        </tr>
-                        {% for r in rec_count_result %}
+                <div class="container-fluid">
+                    <div class="col-md-4">
+                        <table class="table table-condensed">
                             <tr>
-                                <td>{{ r.recommendation }}</td>
-                                <td width="30%">{{ r.num }}</td>
+                                <td><strong>OS</strong></td>
+                                <td width="30%"><strong>Devices</strong></td>
                             </tr>
-                        {% endfor %}
-                    </table>
-                </div>
-                <div class="span8">
-                    <div id="piechart_result"></div>
+                            {% for r in rec_count_result %}
+                                <tr>
+                                    <td>{{ r.recommendation }}</td>
+                                    <td width="30%">{{ r.num }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="col-md-8">
+                        <div id="piechart_result"></div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -12,48 +12,44 @@
 
 
 {% block content %}
-    <div class="row-fluid">
-        <a href="{% url 'swid:log' object.pk %}#session-id={{ current_session.pk }}" id="swid-log-link"
-           class="btn btn-primary btn-mini">
-            <i class="icon-file icon-white"></i>{% trans 'View SWID log' %}
-        </a>
+    <div>
+        <a href="{% url 'devices:device_report' device.id %}" class="btn btn-primary btn-xs">
+            <i class="glyphicon glyphicon-file"></i> {% trans "Device Report" %}</a>
+        <a href="{% url 'swid:log' object.pk %}#session-id={{ current_session.pk }}" class="btn btn-primary btn-xs">
+            <i class="glyphicon glyphicon-file"></i> {% trans 'SWID Log' %}</a>
     </div>
     {% if current_session == None %}
         {# This means that the device has no related sessions. #}
-        <div class="row-fluid">
-            <h4>{% trans 'No sessions found!' %}</h4>
+        <h4>{% trans 'No sessions found!' %}</h4>
 
-            <p>{% trans 'This device has no recorded sessions.' %}
-                {% trans 'Please initiate a session with this device and try again.' %}</p>
+        <p>{% trans 'This device has no recorded sessions.' %}
+            {% trans 'Please initiate a session with this device and try again.' %}</p>
 
-            <p><a href="#" class="history_back">{% trans 'Go back' %}</a></p>
-        </div>
+        <p><a href="#" class="history_back">{% trans 'Go back' %}</a></p>
     {% else %}
-        <div class="row-fluid">
-            <h3>{% trans 'Define range' %}</h3>
-        </div>
+        <h3>{% trans 'Define range' %}</h3>
         <form class="form-inline">
             <input type="hidden" id="device-id" value="{{ object.pk }}">
 
-            <div class="control-group">
+            <div class="form-group">
                 <label for="from">{% trans 'From' %}</label>
 
-                <div class="input-append">
-                    <input type="text" class="input-small" id="from">
-                    <span class="add-on" id="from-btn"><i class="icon-calendar"></i></span>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="from">
+                    <span class="input-group-addon" id="from-btn"><i class="glyphicon glyphicon-calendar"></i></span>
                 </div>
 
                 <label for="to">{% trans 'To' %}</label>
 
-                <div class="input-append">
-                    <input type="text" class="input-small" id="to">
-                    <span class="add-on" id="to-btn"><i class="icon-calendar"></i></span>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="to">
+                    <span class="input-group-addon" id="to-btn"><i class="glyphicon glyphicon-calendar"></i></span>
                 </div>
-                <button type="button" class="btn" id="session-filter-reset">Reset</button>
+                <button type="button" class="btn btn-default" id="session-filter-reset">Reset</button>
             </div>
 
-            <div class="control-group">
-                <label for="calendar-shortcuts" class="offset-1">{% trans 'Predefined range:' %}</label>
+            <div class="form-group">
+                <label for="calendar-shortcuts">{% trans 'Predefined range' %}</label>
                 <select name="calendar-shortcuts" id="calendar-shortcuts">
                     <option value="0" selected>{% trans 'Choose preset' %}</option>
                     <option value="0">{% trans 'Today' %}</option>
@@ -67,8 +63,8 @@
         </form>
 
         <h4>{% trans 'Range summary' %}</h4>
-        <div class="row-fluid">
-            <div class="span7">
+        <div class="row">
+            <div class="col-md-7">
                 <table class="table statsTable">
                     <tbody>
                     <tr>

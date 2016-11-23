@@ -24,7 +24,7 @@ function setupDirectoryDropdown() {
 }
 
 function initValidation() {
-    $('#fileform').validate({
+    $('#fileform').validate($.extend(validationDefaults, {
         rules: {
             'name': {
                 required: true,
@@ -34,12 +34,6 @@ function initValidation() {
                 required: true
             }
         },
-        highlight: function (element) {
-            $(element).closest('.control-group').removeClass('success').addClass('error');
-        },
-        success: function (element) {
-            element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");
-        },
         ignore: ''
-    });
+    }));
 }

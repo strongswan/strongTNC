@@ -2,9 +2,6 @@ $(document).ready(function () {
     initValidation();
 
     $('#savePackageButton').on('click', savePackage);
-    $('#addVersion').on('click', function () {
-        $("#newVersionFormContainer").toggle();
-    });
     $('#savePackageChanges').on('click', savePackageChanges);
     $('#addVersionSave').on('click', saveNewVersion);
 });
@@ -39,7 +36,7 @@ function savePackage() {
 }
 
 function initValidation() {
-    $('#packageform').validate({
+    $('#packageform').validate($.extend(validationDefaults, {
         rules: {
             'name': {
                 required: true,
@@ -64,16 +61,10 @@ function initValidation() {
                 remote: "Package already exists!"
             }
         },
-        highlight: function (element) {
-            $(element).closest('.control-group').removeClass('success').addClass('error');
-        },
-        success: function (element) {
-            element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");
-        },
         ignore: ":hidden:not(.select2-offscreen)"
-    });
+    }));
 
-    $('#newVersionForm').validate({
+    $('#newVersionForm').validate($.extend(validationDefaults, {
         rules: {
             'version': {
                 required: true,
@@ -84,12 +75,6 @@ function initValidation() {
                 regex: /^[0-9]+$/
             }
         },
-        highlight: function (element) {
-            $(element).closest('.control-group').removeClass('success').addClass('error');
-        },
-        success: function (element) {
-            element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");
-        },
         ignore: ":hidden:not(.select2-offscreen)"
-    });
+    }));
 }

@@ -13,6 +13,17 @@ $('body').on('click', 'a.history_back', function(event) {
     history.back();
 });
 
+// Default options for form validation
+var validationDefaults = {
+    errorClass: 'help-block',
+    highlight: function (element) {
+        $(element).closest('.form-group').addClass('has-error');
+    },
+    unhighlight:  function(element) {
+        $(element).closest('.form-group').removeClass('has-error');
+    }
+};
+
 // delay the request, to reduce the amount of requests
 // --> the request is only sent if the query does not
 //     change during a defined delay.

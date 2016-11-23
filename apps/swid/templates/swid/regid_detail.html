@@ -9,34 +9,32 @@
 
 {% block detail %}
     {% if object %}
-        <h4>Regid Info</h4>
-        <div class="row-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>Regid Info</h4>
+                <div class="row">
+                    <div class="col-md-7">
+                        <table class="table" border="0">
+                            <tbody>
+                            <tr>
+                                <td class="noWrap"><strong>{% trans 'Entity Name' %}</strong></td>
+                                <td>{{ object.name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="noWrap"><strong>{% trans 'Regid' %}</strong></td>
+                                <td>{{ object.regid }}</td>
+                            </tr>
+                            <tr>
+                                <td class="noWrap"><strong>{% trans 'Tag count' %}</strong></td>
+                                <td>{{ object.tags.count }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <hr>
+                <h4>SWID Tags</h4>
 
-
-            <div class="span7">
-                <table class="table" border="0">
-                    <tbody>
-                    <tr>
-                        <td class="noWrap"><strong>{% trans 'Entity Name' %}</strong></td>
-                        <td>{{ object.name }}</td>
-                    </tr>
-                    <tr>
-                        <td class="noWrap"><strong>{% trans 'Regid' %}</strong></td>
-                        <td>{{ object.regid }}</td>
-                    </tr>
-                    <tr>
-                        <td class="noWrap"><strong>{% trans 'Tag count' %}</strong></td>
-                        <td>{{ object.tags.count }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <hr>
-        <div class="row-fluid">
-            <h4>SWID Tags</h4>
-
-            <div class="row-fluid">
                 {% paged_block config_name='regid_detail_config' producer_args=paging_args with_filter=True %}
             </div>
         </div>

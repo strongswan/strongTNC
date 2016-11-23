@@ -38,7 +38,7 @@ function removeMember() {
 }
 
 function initValidation() {
-    $('#groupform').validate({
+    $('#groupform').validate($.extend(validationDefaults, {
         onkeyup: false,
         rules: {
             'name': {
@@ -63,12 +63,6 @@ function initValidation() {
             'name': {
                 remote: "A group with this name already exists!"
             }
-        },
-        highlight: function (element) {
-            $(element).closest('.control-group').removeClass('success').addClass('error');
-        },
-        success: function (element) {
-            element.addClass('valid').closest('.control-group').removeClass('error').addClass('success');
         }
-    });
+    }));
 }

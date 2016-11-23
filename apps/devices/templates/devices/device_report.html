@@ -11,64 +11,64 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="row-fluid">
-            <h4>{% trans 'Device Infos' %}</h4>
+        <div class="row">
+            <div class="col-md-12">
+                <h4>{% trans 'Device Infos' %}</h4>
 
-            <div class="row-fluid">
-                <div class="span7">
-                    <table class="table" border="0">
-                        <tbody class="noWrap">
-                        <tr>
-                            <td><strong>{% trans 'ID' %}</strong></td>
-                            <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.value }}</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>{% trans 'Description' %}</strong></td>
-                            <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.description }}</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>{% trans 'Most recent user' %}</strong></td>
-                            <td>{{ last_user }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>{% trans 'Most recent session' %}</strong></td>
-                            <td class="dateWidth">
-                                {% if last_session %}
-                                    <a href="{% url 'devices:session_detail' last_session.pk %}">{{ last_session.time|date:'M d H:i:s Y' }}</a>
-                                {% else %}
-                                    {% trans 'None' %}
-                                {% endif %}
-                                </td>
-                        </tr>
-                        <tr>
-                            <td><strong>{% trans 'Most recent assessment' %}</strong></td>
-                            <td>{{ last_result }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>{% trans 'Total Sessions' %}</strong></td>
-                            <td>{{ session_count }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div>
-                        <a href="{% url 'swid:inventory' device.id %}" class="btn btn-primary"><i
-                                class="icon-file icon-white"></i> {% trans "SWID Inventory" %}</a>
-                        <a href="{% url 'swid:log' device.id %}" class="btn btn-primary"><i
-                                class="icon-file icon-white"></i> {% trans "SWID Log" %}</a>
-                        <a href="{% url 'tpm:tpm_evidence' device.id %}" class="btn btn-primary"><i
-                                class="icon-file icon-white"></i> {% trans "TPM Evidence" %}</a>
+                <div class="row">
+                    <div class="col-md-7">
+                        <table class="table" border="0">
+                            <tbody class="noWrap">
+                            <tr>
+                                <td><strong>{% trans 'ID' %}</strong></td>
+                                <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.value }}</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Description' %}</strong></td>
+                                <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.description }}</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Most recent user' %}</strong></td>
+                                <td>{{ last_user }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Most recent session' %}</strong></td>
+                                <td class="dateWidth">
+                                    {% if last_session %}
+                                        <a href="{% url 'devices:session_detail' last_session.pk %}">{{ last_session.time|date:'M d H:i:s Y' }}</a>
+                                    {% else %}
+                                        {% trans 'None' %}
+                                    {% endif %}
+                                    </td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Most recent assessment' %}</strong></td>
+                                <td>{{ last_result }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans 'Total Sessions' %}</strong></td>
+                                <td>{{ session_count }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <a href="{% url 'swid:inventory' device.id %}" class="btn btn-primary"><i
+                                    class="glyphicon glyphicon-file"></i> {% trans "SWID Inventory" %}</a>
+                            <a href="{% url 'swid:log' device.id %}" class="btn btn-primary"><i
+                                    class="glyphicon glyphicon-file"></i> {% trans "SWID Log" %}</a>
+                            <a href="{% url 'tpm:tpm_evidence' device.id %}" class="btn btn-primary"><i
+                                    class="glyphicon glyphicon-file"></i> {% trans "TPM Evidence" %}</a>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <hr>
+                <hr>
 
-            <h4>{% trans 'Group memberships' %}</h4>
-            <div class="container-fluid">
-                <div class="row-fluid">
-                    <div class="span4">
+                <h4>{% trans 'Group memberships' %}</h4>
+                <div class="row">
+                    <div class="col-md-4">
                         <h5>{% trans 'by definition' %}</h5>
-                        <ul class="unstyled">
+                        <ul class="list-unstyled">
                             {% if not device.groups.all %}
                                 <li>{% trans 'None' %}</li>
                             {% endif %}
@@ -77,9 +77,9 @@
                             {% endfor %}
                         </ul>
                     </div>
-                    <div class="span4">
+                    <div class="col-md-4">
                         <h5>{% trans 'by inheritance' %}</h5>
-                        <ul class="unstyled">
+                        <ul class="list-unstyled">
                             {% if not inherit_set %}
                                 <li>{% trans 'None' %}</li>
                             {% endif %}
@@ -89,36 +89,35 @@
                         </ul>
                     </div>
                 </div>
-            </div>
 
-            {% if enforcements %}
-                <hr>
-                <h4>{% trans 'Enforcements' %}</h4>
-                <table class="table table-striped sortable">
-                    <thead>
-                    <tr>
-                        <th>{% trans "Enforcement" %}</th>
-                        <th>{% trans "Last result" %}</th>
-                        <th>{% trans "Will be tested" %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for e in enforcements %}
+                {% if enforcements %}
+                    <hr>
+                    <h4>{% trans 'Enforcements' %}</h4>
+                    <table class="table table-striped sortable">
+                        <thead>
                         <tr>
-                            <td><a href="{% url 'policies:enforcement_detail' e.0.pk %}">{{ e.0 }}</a></td>
-                            <td>{{ e.1 }}</td>
-                            <td>{{ e.2|yesno:_("Yes,No") }}</td>
+                            <th>{% trans "Enforcement" %}</th>
+                            <th>{% trans "Last result" %}</th>
+                            <th>{% trans "Will be tested" %}</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
+                        </thead>
+                        <tbody>
+                        {% for e in enforcements %}
+                            <tr>
+                                <td><a href="{% url 'policies:enforcement_detail' e.0.pk %}">{{ e.0 }}</a></td>
+                                <td>{{ e.1 }}</td>
+                                <td>{{ e.2|yesno:_("Yes,No") }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
 
 
-            <hr>
-            <h4>{% trans 'Sessions' %}</h4>
-            {% paged_block config_name="device_session_list_config" producer_args=paging_args %}
-
+                <hr>
+                <h4>{% trans 'Sessions' %}</h4>
+                {% paged_block config_name="device_session_list_config" producer_args=paging_args %}
+            </div>
         </div>
     </div>
 {% endblock %}

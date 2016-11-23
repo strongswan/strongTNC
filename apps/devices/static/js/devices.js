@@ -20,7 +20,7 @@ function saveDevice() {
 }
 
 function initValidation() {
-    $('#deviceform').validate({
+    $('#deviceform').validate($.extend(validationDefaults, {
         rules: {
             'value': {
                 required: true,
@@ -69,12 +69,6 @@ function initValidation() {
                 required: true
             }
         },
-        highlight: function (element) {
-            $(element).closest('.control-group').removeClass('success').addClass('error');
-        },
-        success: function (element) {
-            element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");
-        },
         messages: {
             value: {
                 regex: "Only HEX values allowed",
@@ -84,15 +78,6 @@ function initValidation() {
                 remote: "Device already exists."
             }
         },
-        errorPlacement: function (error, element) {
-            if (element.attr("id") == "product") {
-                error.insertAfter("#s2id_product");
-            } else if (element.attr("id") == "group_select2") {
-                error.insertAfter("#s2id_group_select2");
-            } else {
-                error.insertAfter(element)
-            }
-        },
         ignore: ":hidden:not(.select2-offscreen)"
-    });
+    }));
 }

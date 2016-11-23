@@ -5,7 +5,7 @@ $(document).ready(function() {
 });
 
 function initValidation() {
-    $('#enforcementform').validate({
+    $('#enforcementform').validate($.extend(validationDefaults, {
         rules: {
             'policy': {
                 required: true,
@@ -57,12 +57,6 @@ function initValidation() {
             policy: {
                 remote: "Enforcement already exists!"
             }
-        },
-        highlight: function (element) {
-            $(element).closest('.control-group').removeClass('success').addClass('error');
-        },
-        success: function (element) {
-            element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");
         }
-    });
+    }));
 }

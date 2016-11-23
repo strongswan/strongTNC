@@ -69,7 +69,6 @@ function typeChange() {
     var $closedPortLabel = $('#closed-port-label').hide();
     var $swidRequest = $('#swid-request').hide();
     var $tpmAttest = $('#tpm-attestation').hide();
-
     var type = $('select#type').find('option:selected').attr("value");
 
     if (type == PolicyType.FREFM || type == PolicyType.FMEAS || type == PolicyType.FMETA) {
@@ -95,7 +94,7 @@ function typeChange() {
 }
 
 function initValidation() {
-    $('#policyform').validate({
+    $('#policyform').validate($.extend(validationDefaults, {
         ignore: '',
         rules: {
             'name': {
@@ -177,27 +176,6 @@ function initValidation() {
             'file': {
                 required: "This field is required."
             }
-        },
-        highlight: function (element) {
-            $(element).closest('.control-group').removeClass('success').addClass('error');
-        },
-        success: function (element) {
-            element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");
-        },
-        errorPlacement: function (error, element) {
-            if (element.attr("id") == "type") {
-                error.insertAfter("#s2id_type");
-            } else if (element.attr("id") == "fail") {
-                error.insertAfter("#s2id_fail");
-            } else if (element.attr("id") == "noresult") {
-                error.insertAfter("#s2id_noresult");
-            } else if (element.attr("id") == "file") {
-                error.insertAfter("#s2id_file");
-            } else if (element.attr("id") == "dir") {
-                error.insertAfter("#s2id_dir");
-            } else {
-                error.insertAfter(element)
-            }
         }
-    });
+    }));
 }

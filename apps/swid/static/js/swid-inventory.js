@@ -137,7 +137,7 @@ $(document).ready(function () {
     setupRangeShortcutsDropdown(fromDatepicker, toDatepicker, sessionsLoader);
     setupResetButton(fromDatepicker, toDatepicker, sessionsLoader);
 
-    $('body').on('show', '#sessionAccordion', function (event) {
+    $('body').on('show.bs.collapse', '#sessionAccordion', function (event) {
         var $triggeredSection = $(event.target);
         if(!$triggeredSection.data('loaded')) {
             $triggeredSection.data('loaded', true);

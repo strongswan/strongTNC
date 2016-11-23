@@ -28,7 +28,7 @@
     {% for obj in object_list %}
         <tr class="{{ obj.added_now|yesno:"success," }}">
             {% if obj.added_now %}
-            <td title="First reported in the selected session"><i class="icon-plus-sign"></i></td>
+            <td title="First reported in the selected session"><i class="glyphicon glyphicon-plus-sign"></i></td>
             {% else %}
             <td></td>
             {% endif %}

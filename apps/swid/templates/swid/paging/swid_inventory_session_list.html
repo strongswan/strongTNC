@@ -2,27 +2,21 @@
 {% load paged_block %}
 
 {% if object_list %}
-    <div class="accordion" id="sessionAccordion">
+    <div class="panel-group" id="sessionAccordion">
         {% for session in object_list %}
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a href="#session{{ forloop.counter }}" class="accordion-toggle {{ session.has_tags|yesno:',disabled' }}"
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="#session{{ forloop.counter }}" class="{{ session.has_tags|yesno:',text-muted' }}"
                    data-toggle="collapse" data-parent="#sessionAccordion">
                     <strong>{% trans 'Session' %} {{ session.time|date:"M d H:i:s Y" }}</strong>
                     <span class="pull-right">
-                        <span class="label {{ session.has_tags|yesno:'label-success,' }}">
-                            {% trans 'Total tags:' %}
-                            <span class="tagCount">{{ session.tag_count }}</span>
-                        </span>
-                        <span class="label {{ session.has_tags|yesno:'label-success,' }}">
-                            {% trans 'First reported:' %}
-                            <span class="tagCount">{{ session.new_tag_count }}</span>
-                        </span>
+                        <span class="label {{ session.has_tags|yesno:'label-success,label-default' }}">{% trans 'Total tags:' %}<span class="tagCount">{{ session.tag_count }}</span></span>
+                        <span class="label {{ session.has_tags|yesno:'label-success,label-default' }}">{% trans 'First reported:' %}<span class="tagCount">{{ session.new_tag_count }}</span></span>
                     </span>
                 </a>
             </div>
-            <div id="session{{ forloop.counter }}" class="accordion-body collapse" data-sessionid="{{ session.pk }}">
-                <div class="accordion-inner">
+            <div id="session{{ forloop.counter }}" class="panel-collapse collapse" data-sessionid="{{ session.pk }}">
+                <div class="panel-body">
                     {% paged_block config_name='swid_inventory_list_config' with_filter=True initial_load=False use_url_params=False %}
                 </div>
             </div>

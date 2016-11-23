@@ -13,26 +13,24 @@
 
 {% block content %}
     <div class="container-fluid">
-    <div class="row-fluid">
-    <div class="span3" id="line">
+    <div class="row">
+    <div class="col-md-3" id="line">
         <h4>{% trans "Package" %}
             {% if 'auth.write_access' in perms %}
                 <div class="pull-right">
-                    <a class="btn btn-primary btn-mini" href="{% url 'packages:package_add' %}"
+                    <a class="btn btn-primary btn-xs" href="{% url 'packages:package_add' %}"
                        rel="tooltip" title="add new">
-                        <i class="icon-plus-sign icon-white"></i>
+                        <i class="glyphicon glyphicon-plus-sign"></i>
                     </a>
                 </div>
             {% endif %}
         </h4>
         <hr>
-        <div class="row-fluid">
-            {% paged_block config_name="package_list_config" with_filter=True %}
-        </div>
+        {% paged_block config_name="package_list_config" with_filter=True %}
     </div>
 
 
-    <div class="span9" id="content">
+    <div class="col-md-9" id="content">
     {% if package %}
         <form class="form-horizontal" method="POST" action="{% url 'packages:package_save' %}"
               id="packageform">
@@ -40,104 +38,99 @@
             {% csrf_token %}
             {% if add %}
                 <h4>{% trans 'Add new package' %}</h4>
-                <div class="control-group" id="name-group">
-                    <label class="control-label" for="id">{% trans "Name" %}</label>
+                <div class="form-group" id="name-group">
+                    <label class="control-label col-sm-2" for="id">{% trans "Name" %}</label>
 
-                    <div class="controls">
+                    <div class="col-sm-4">
 
                         <input type="text" id="name" name="name" placeholder="{% trans 'Name' %}"
-                               rel="tooltip"
+                               rel="tooltip" class="form-control"
                                title="{% trans 'Package Name' %}"
                                value="{{ package.name }}" {% input_editability %}>
                     </div>
                 </div>
                 {% if 'auth.write_access' in perms %}
                     <hr>
-                    <div class="btn-toolbar" style="margin: 0;">
+                    <div class="btn-toolbar">
                         {% if add %}
                             <div class="btn-group">
                                 <a class="btn btn-success" type="submit" id="savePackageButton">
-                                    <i class="icon-ok icon-white"></i> {% trans "Save" %}</a>
+                                    <i class="glyphicon glyphicon-ok"></i> {% trans "Save" %}</a>
                             </div>
                         {% endif %}
                         {{ package }}
                     </div>
                 {% endif %}
-                <hr>
             {% else %}
-                <div class="row-fluid">
-                    <h3>{% trans 'Package info:' %} {{ package.name }}</h3>
-                </div>
+                <h3>{% trans 'Package info:' %} {{ package.name }}</h3>
                 <input id="versionData" type="hidden" name="version-data"/>
 
             {% endif %}
 
             {% if not versions and package.pk %}
-                {% trans 'No Versions available' %}
+                <p>{% trans 'No Versions available' %}</p>
             {% endif %}
         </form>
         {% if versions %}
-            <h4>{% trans "Versions:" %}</h4>
-            <div class="row-fluid">
-                <table id="versions" class="table table-hover table-striped sortable">
-                    <thead>
-                    <tr>
-                        <th>{% trans 'Version' %}</th>
-                        <th>{% trans 'OS' %}</th>
-                        <th class="dateWidth sorter-strongTNCDate">{% trans 'Registered on' %}</th>
-                        <th class="sorter-false">{% trans 'Security' %}</th>
-                        <th class="sorter-false">{% trans 'Blacklisted' %}</th>
-                        {% if  'auth.write_access' in perms %}
-                            <td class="sorter-false"></td>
-                        {% endif %}
+            <h4>{% trans "Versions" %}</h4>
+            <table id="versions" class="table table-hover table-striped sortable">
+                <thead>
+                <tr>
+                    <th>{% trans 'Version' %}</th>
+                    <th>{% trans 'OS' %}</th>
+                    <th class="dateWidth sorter-strongTNCDate">{% trans 'Registered on' %}</th>
+                    <th class="sorter-false">{% trans 'Security' %}</th>
+                    <th class="sorter-false">{% trans 'Blacklisted' %}</th>
+                    {% if  'auth.write_access' in perms %}
+                        <td class="sorter-false"></td>
+                    {% endif %}
 
+                </tr>
+                </thead>
+                <tbody>
+                {% for v in versions %}
+                    <tr id="{{ v.id }}">
+                        <td>{{ v.release }}</td>
+                        <td>{{ v.product.name }}</td>
+                        <td>{{ v.time|date:'M d H:i:s Y' }}</td>
+                        <td>
+                            <input class="securityToggle" type="checkbox"
+                                   name="version-security" {{ v.security|yesno:"checked," }}
+                                   data-version-id="{{ v.id }}" {% input_editability %}/>
+                        </td>
+                        <td>
+                            <input class="blacklistToggle" type="checkbox"
+                                   name="version-trusted" {{ v.blacklist|yesno:"checked," }}
+                                   data-version-id="{{ v.id }}" {% input_editability %}/>
+                        </td>
+                        {% if  'auth.write_access' in perms %}
+                            <td>
+                                <a class="btn btn-danger btn-xs"
+                                   href=" {% url 'packages:version_delete' package.pk v.pk %}">
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                </a>
+                            </td>
+                        {% endif %}
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for v in versions %}
-                        <tr id="{{ v.id }}">
-                            <td>{{ v.release }}</td>
-                            <td>{{ v.product.name }}</td>
-                            <td>{{ v.time|date:'M d H:i:s Y' }}</td>
-                            <td>
-                                <input class="securityToggle" type="checkbox"
-                                       name="version-security" {{ v.security|yesno:"checked," }}
-                                       data-version-id="{{ v.id }}" {% input_editability %}/>
-                            </td>
-                            <td>
-                                <input class="blacklistToggle" type="checkbox"
-                                       name="version-trusted" {{ v.blacklist|yesno:"checked," }}
-                                       data-version-id="{{ v.id }}" {% input_editability %}/>
-                            </td>
-                            {% if  'auth.write_access' in perms %}
-                                <td>
-                                    <a class="btn btn-danger btn-mini"
-                                       href=" {% url 'packages:version_delete' package.pk v.pk %}">
-                                        <i class="icon-remove icon-white"></i>
-                                    </a>
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                {% endfor %}
+                </tbody>
+            </table>
         {% endif %}
 
         {% if not add and package.pk and 'auth.write_access' in perms %}
-            <div class="btn-toolbar" style="margin: 0;">
+            <div class="btn-toolbar">
                 <div class="btn-group">
                     <a class="btn btn-success" id="savePackageChanges">
-                        <i class="icon-ok icon-white"></i> {% trans "Save" %}</a>
+                        <i class="glyphicon glyphicon-ok"></i> {% trans "Save" %}</a>
                 </div>
                 <div class="btn-group">
                     <a class="btn btn-danger" href="#delModal" data-toggle="modal">
-                        <i class="icon-remove icon-white"></i> {% trans "Delete" %}
+                        <i class="glyphicon glyphicon-remove"></i> {% trans "Delete" %}
                     </a>
                 </div>
-                <div class="btn-group"><a class="btn btn-primary" id="addVersion"
-                                          title="{% trans 'Add version' %}">
-                    <i class="icon-plus-sign icon-white"></i> {% trans 'Add version' %}
+                <div class="btn-group"><a class="btn btn-primary" id="addVersion" href="#newVersionFormContainer"
+                                          title="{% trans 'Add version' %}" data-toggle="collapse">
+                    <i class="glyphicon glyphicon-plus-sign"></i> {% trans 'Add version' %}
                 </a>
                 </div>
             </div>
@@ -145,7 +138,7 @@
 
         <!-- Add version form -->
         {% if package.pk %}
-            <div class="hide" id="newVersionFormContainer">
+            <div class="collapse" id="newVersionFormContainer">
                 <hr>
                 <form method="POST" action="{% url 'packages:add_package_version' package.pk %}"
                       class="form-horizontal" id="newVersionForm">
@@ -154,18 +147,19 @@
                     {% csrf_token %}
                     <h4>{% trans 'Add new version' %}</h4>
 
-                    <div class="control-group">
-                        <label class="control-label" for="input-version">{% trans 'Version' %}</label>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="input-version">{% trans 'Version' %}</label>
 
-                        <div class="controls">
-                            <input type="text" id="input-version" name="version"
-                                   placeholder="{% trans 'Version' %}">
+                        <div class="col-sm-4">
+                            <input type="text" id="input-version" name="version" class="form-control" rel="tooltip"
+                                   placeholder="{% trans 'Version' %}"
+                                   title="{% trans 'Specific version number or * to e.g. blacklist all versions of a package.' %}">
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="inputOs">OS</label>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="inputOs">OS</label>
 
-                        <div class="controls">
+                        <div class="col-sm-4">
                             <select data-placeholder="{% trans 'Click to choose OS...' %}" id="inputOs"
                                     name="product"
                                     class="slct2-dropdown" tabindex="8"
@@ -178,23 +172,25 @@
                             </select>
                         </div>
                     </div>
-                    <div class="control-group">
-                        <div class="controls">
-                            <label class="checkbox" for="inputBlacklist">
+                    <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <label class="checkbox-inline">
                                 <input type="checkbox" name="blacklist"
                                        id="inputBlacklist"> {% trans 'Blacklist' %}
                             </label>
-                            <label class="checkbox" for="inputSecurity">
+                            <label class="checkbox-inline">
                                 <input type="checkbox" name="security"
                                        id="inputSecurity"> {% trans 'Security' %}
                             </label>
                         </div>
                     </div>
-                    <div class="control-group">
-                        <a class="btn btn-success" id="addVersionSave">
-                            <i class="icon-ok icon-white"></i>
-                            {% trans 'Add' %}
-                        </a>
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            <a class="btn btn-success" id="addVersionSave">
+                                <i class="glyphicon glyphicon-ok"></i>
+                                {% trans 'Add' %}
+                            </a>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -204,7 +200,6 @@
 
     {% if package.pk %}
         <hr />
-        <div class="row-fluid">
         <h5>{% trans 'SWID tags with matching package name' %}</h5>
         {% if swid_tags %}
             <table class="table table-hover table-striped">
@@ -230,74 +225,78 @@
                 {% trans 'No SWID tags with matching package names' %}
             </p>
         {% endif %}
-        </div>
     {% endif %}
 
     {% if package.pk %}
-        <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog"
+        <div id="delModal" class="modal fade" tabindex="-1" role="dialog"
              aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="deleteModalLabel">{% trans 'Are you sure that you want to delete this package?' %}</h3>
-            </div>
-            <div class="modal-body">
-                {% if has_dependencies %}
-                    <h4>{% trans 'This package has dependent entites!' %}</h4>
-                    <p>
-                        {% blocktrans %}
-                            If you delete this package, all related versions will
-                            be irrecoverably deleted. Do you really want to proceed? <br/>
-                            You are going to delete:
-                        {% endblocktrans %}
-                    </p>
-                    <div class="accordion" id="accordion2">
-                        {% if versions %}
-                            <div class="accordion-group">
-                                <div class="accordion-heading">
-                                    <a class="accordion-toggle" data-toggle="collapse"
-                                       data-parent="#accordion2" href="#collapse3">
-                                        Versions <span
-                                            class="badge pull-right">{{ versions|length }}</span></a>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 id="deleteModalLabel">{% trans 'Are you sure that you want to delete this package?' %}</h3>
+                    </div>
+                    <div class="modal-body">
+                        {% if has_dependencies %}
+                            <h4>{% trans 'This package has dependent entites!' %}</h4>
+                            <p>
+                                {% blocktrans %}
+                                    If you delete this package, all related versions will
+                                    be irrecoverably deleted. Do you really want to proceed? <br/>
+                                    You are going to delete:
+                                {% endblocktrans %}
+                            </p>
+                            <div class="panel-group" id="accordion2">
+                                {% if versions %}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <a data-toggle="collapse"
+                                               data-parent="#accordion2" href="#collapse3">
+                                                Versions <span
+                                                    class="badge pull-right">{{ versions|length }}</span></a>
 
-                                </div>
-                                <div id="collapse3" class="accordion-body collapse">
-                                    <div class="accordion-inner">
-                                        <ul class="unstyled">
-                                            {% for version in versions %}
-                                                <li>
-                                                    {{ version.list_repr }}
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
+                                        </div>
+                                        <div id="collapse3" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <ul class="list-unstyled">
+                                                    {% for version in versions %}
+                                                        <li>
+                                                            {{ version.list_repr }}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                {% endif %}
                             </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="sure" id="sure" onclick=""/>
+                                    {% trans 'I still want to delete' %}
+                                </label>
+                            </div>
+                        {% else %}
+                            <h4>{% trans 'Warning' %}</h4>
+                            <p>{% trans 'Are you sure that you want to delete this package?' %}</p>
                         {% endif %}
                     </div>
-                    <div class="row-fluid">
-                        <label for="sure"
-                               class="radio inline control-label">{% trans 'I still want to delete' %} </label>
-                        <input type="checkbox" name="sure" id="sure" onclick=""/>
+                    <form method="POST" action="{% url 'packages:package_delete' package.pk %}"
+                          id="deleteform">
+                        {% csrf_token %}
+                    </form>
+                    <div class="modal-footer">
+                        {% if has_dependencies %}
+                            <a class="btn btn-danger" disabled id="deleteButton" href="#"><i
+                                    class="glyphicon glyphicon-fire"></i> {% trans "Delete anyway!" %}</a>
+                            <a class="btn btn-success" data-dismiss="modal">{% trans 'Cancel' %}</a>
+                        {% else %}
+                            <a class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</a>
+                            <a class="btn btn-danger" onclick="deleteform.submit()"
+                               href="#">{% trans 'Delete package' %}</a>
+                        {% endif %}
                     </div>
-                {% else %}
-                    <h4>{% trans 'Warning' %}</h4>
-                    <p>{% trans 'Are you sure that you want to delete this package?' %}</p>
-                {% endif %}
-            </div>
-            <form method="POST" action="{% url 'packages:package_delete' package.pk %}"
-                  id="deleteform">
-                {% csrf_token %}
-            </form>
-            <div class="modal-footer">
-                {% if has_dependencies %}
-                    <a class="btn btn-danger" disabled id="deleteButton" href="#"><i
-                            class="icon-fire icon-white"></i> {% trans "Delete anyway!" %}</a>
-                    <a class="btn btn-success" data-dismiss="modal">{% trans 'Cancel' %}</a>
-                {% else %}
-                    <a class="btn" data-dismiss="modal">{% trans 'Cancel' %}</a>
-                    <a class="btn btn-danger" onclick="deleteform.submit()"
-                       href="#">{% trans 'Delete package' %}</a>
-                {% endif %}
+                </div>
             </div>
         </div>
     {% endif %}

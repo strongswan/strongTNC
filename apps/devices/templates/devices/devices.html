@@ -12,56 +12,54 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span3" id="line">
+        <div class="row">
+            <div class="col-md-3" id="line">
                 <h4>{% trans "Device" %}
                     {% if 'auth.write_access' in perms %}
                         <div class="pull-right">
-                            <a class="btn btn-primary btn-mini" href="{% url 'devices:device_add' %}"
+                            <a class="btn btn-primary btn-xs" href="{% url 'devices:device_add' %}"
                                rel="tooltip" title="add new">
-                                <i class="icon-plus-sign icon-white"></i>
+                                <i class="glyphicon glyphicon-plus-sign"></i>
                             </a>
                         </div>
                     {% endif %}
                 </h4>
                 <hr>
-                <div class="row-fluid">
-                    {% paged_block config_name="device_list_config" with_filter=True %}
-                </div>
+                {% paged_block config_name="device_list_config" with_filter=True %}
             </div>
-            <div class="span9" id="content">
+            <div class="col-md-9" id="content">
                 {% if device %}
                     <h4>Device Info</h4>
                     <form class="form-horizontal" method="POST" action="{% url 'devices:device_save' %}" id="deviceform">
                         {% csrf_token %}
 
-                        <div class="control-group">
-                            <label class="control-label" for="value">{% trans "ID" %}</label>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="value">{% trans "ID" %}</label>
 
-                            <div class="controls">
+                            <div class="col-sm-4">
                                 <input type="hidden" id="deviceId" name="deviceId" value="{{ device.id }}"/>
                                 <input type="text" id="value" name="value" placeholder="{% trans 'ID' %}" rel="tooltip"
-                                       title="{% trans 'Device ID' %}"
+                                       title="{% trans 'Device ID' %}" class="form-control"
                                        value="{{ device.value }}" {% input_editability %}>
                             </div>
                         </div>
 
-                        <div class="control-group">
-                            <label class="control-label" for="description">{% trans "Description" %}</label>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="description">{% trans "Description" %}</label>
 
-                            <div class="controls">
+                            <div class="col-sm-4">
                                 <input type="text" id="description" name="description"
                                        placeholder="{% trans 'Description' %}" rel="tooltip"
-                                       title="{% trans 'Device description' %}"
+                                       title="{% trans 'Device description' %}" class="form-control"
                                        value="{{ device.description }}" {% input_editability %}>
                             </div>
                         </div>
 
-                        <div class="control-group">
+                        <div class="form-group">
 
-                            <label class="control-label" for="product">{% trans "Product" %}</label>
+                            <label class="control-label col-sm-2" for="product">{% trans "Product" %}</label>
 
-                            <div class="controls">
+                            <div class="col-sm-4">
                                 <select id="product" class="slct2-dropdown" name="product"
                                         rel="tooltip" title="{% trans 'Device product (operating system)' %}"
                                     {% input_editability %}>
@@ -76,10 +74,10 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="control-group" id="trusted">
-                            <label class="control-label" for="device-trusted">{% trans "Trusted" %}</label>
+                        <div class="form-group" id="trusted">
+                            <label class="control-label col-sm-2" for="device-trusted">{% trans "Trusted" %}</label>
 
-                            <div class="controls" id="trusted">
+                            <div class="col-sm-4" id="trusted">
                                 <input type="checkbox" id="device-trusted"
                                        name="device-trusted" {{ device.trusted|yesno:"checked," }} />
                             </div>
@@ -88,15 +86,15 @@
                         <hr>
 
                         <h4>{% trans "Assign Groups" %}
-                            <a class="btn-small" href="#" rel="tooltip"
+                            <a class="btn-sm" href="#" rel="tooltip"
                                title="{% trans 'When the device is member of a group, all policies enforced on the group are applied to the device upon login' %}"><i
-                                class="icon-info-sign"></i></a>
+                                class="glyphicon glyphicon-info-sign"></i></a>
                         </h4>
 
-                        <div class="control-group">
-                            <label class="control-label" for="group_select2">{% trans "Groups" %}</label>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="group_select2">{% trans "Groups" %}</label>
 
-                            <div class="controls">
+                            <div class="col-sm-4">
                                 <select data-placeholder="Click to add a group..." id="group_select2" name="group_select2"
                                         multiple
                                         class="slct2-dropdown" tabindex="8"
@@ -114,27 +112,27 @@
 
                         <hr>
 
-                        <div class="btn-toolbar" style="margin: 0;">
+                        <div class="btn-toolbar">
                             {% if 'auth.write_access' in perms %}
                                 <div class="btn-group">
                                     <button class="btn btn-success" type="submit" id="saveDeviceButton"><i
-                                        class="icon-ok icon-white"></i> {% trans "Save" %}</button>
+                                        class="glyphicon glyphicon-ok"></i> {% trans "Save" %}</button>
                                 </div>
                             {% endif %}
                             {% if device.id %}
                                 {% if 'auth.write_access' in perms %}
                                     <div class="btn-group">
                                         <a class="btn btn-danger" href="#delModal" data-toggle="modal"><i
-                                            class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+                                            class="glyphicon glyphicon-remove"></i> {% trans "Delete" %}</a>
                                     </div>
                                 {% endif %}
                                 <div class="btn-group">
                                     <a href="{% url 'devices:device_report' device.id %}" class="btn btn-primary"><i
-                                        class="icon-file icon-white"></i> {% trans "Device report" %}</a>
+                                        class="glyphicon glyphicon-file"></i> {% trans "Device report" %}</a>
                                 </div>
                                 <div class="btn-group">
                                     <a href="{% url 'tpm:tpm_evidence' device.id %}" class="btn btn-primary"><i
-                                        class="icon-file icon-white"></i> {% trans "TPM Evidence" %}</a>
+                                        class="glyphicon glyphicon-file"></i> {% trans "TPM Evidence" %}</a>
                                 </div>
                              {% endif %}
                         </div>
@@ -142,23 +140,27 @@
                 {% endif %}
 
                 {% if device.pk %}
-                    <div id="delModal" class="modal hide fade" tabindex="-1" role="dialog"
+                    <div id="delModal" class="modal fade" tabindex="-1" role="dialog"
                          aria-labelledby="deleteModalLabel" aria-hidden="true">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h3 id="deleteModalLabel">{% trans 'Are you sure that you want to delete this device?' %}</h3>
-                        </div>
-                        <div class="modal-body">
-                            <h4>{% trans 'Warning' %}</h4>
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h3 id="deleteModalLabel">{% trans 'Are you sure that you want to delete this device?' %}</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <h4>{% trans 'Warning' %}</h4>
 
-                            <p>{% trans 'Are you sure that you want to delete this device?' %}</p>
-                        </div>
-                        <form method="POST" action="{% url 'devices:device_delete' device.pk %}" id="deleteform">
-                            {% csrf_token %}
-                        </form>
-                        <div class="modal-footer">
-                            <a class="btn" data-dismiss="modal">{% trans 'Cancel' %}</a>
-                            <a class="btn btn-danger" onclick="deleteform.submit()" href="#">{% trans 'Delete device' %}</a>
+                                    <p>{% trans 'Are you sure that you want to delete this device?' %}</p>
+                                </div>
+                                <form method="POST" action="{% url 'devices:device_delete' device.pk %}" id="deleteform">
+                                    {% csrf_token %}
+                                </form>
+                                <div class="modal-footer">
+                                    <a class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</a>
+                                    <a class="btn btn-danger" onclick="deleteform.submit()" href="#">{% trans 'Delete device' %}</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {% endif %}

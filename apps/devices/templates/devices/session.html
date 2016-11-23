@@ -9,11 +9,11 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="row-fluid">
+        <div class="row">
             <h4>{% trans 'Session Info' %}</h4>
 
-            <div class="row-fluid">
-                <div class="span6">
+            <div class="row">
+                <div class="col-md-6">
                     <table class="table" border="0">
                         <tbody>
                         <tr>
@@ -48,7 +48,7 @@
                 {% if swid_measurement %}
                     <a href="{% url 'swid:inventory' session.device.pk %}#session-id={{ session.pk }}"
                        class="btn btn-primary"
-                       type="button"><i class="icon-file icon-white"></i> {% trans 'View SWID tags' %}</a>
+                       type="button"><i class="glyphicon glyphicon-file"></i> {% trans 'View SWID tags' %}</a>
                 {% else %}
                     <p class="label label-info">{% trans 'No SWID tags associated' %}</p>
                 {% endif %}

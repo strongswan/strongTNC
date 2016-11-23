@@ -12,30 +12,34 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <form class="form-search" action="{% url 'front:search' %}" method="get">
-                    <input type="text" class="input search-query" name="q" value="{{ query }}" autofocus>
-                    <input type="submit" class="btn btn-small" value="Search">
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form-inline" action="{% url 'front:search' %}" method="get" style="margin-bottom: 20px">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="q" value="{{ query }}" autofocus>
+                        <div class="input-group-btn">
+                            <input type="submit" class="btn btn-default" value="Search">
+                        </div>
+                    </div>
                 </form>
 
-                <div class="accordion" id="accordion2">
+                <div class="panel-group" id="accordion2">
                     {% if groups %}
-                        <div class="accordion-group">
-                            <div class="accordion-heading">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <a data-toggle="collapse" data-parent="#accordion2"
                                    href="#collapseOne">
                                     {{ group_title }}
                                     <span class="badge pull-right">{{ groups|length }}</span>
                                 </a>
                             </div>
-                            <div id="collapseOne" class="accordion-body collapse">
-                                <div class="accordion-inner">
+                            <div id="collapseOne" class="panel-collapse collapse">
+                                <div class="panel-body">
                                     <p>
                                         <small>Found <strong>{{ groups|length }}</strong> group{{ groups|pluralize }}.
                                         </small>
                                     </p>
-                                    <ul class="unstyled">
+                                    <ul class="list-unstyled">
                                         {% for group in groups %}
                                             <li><a href="{% url 'devices:group_detail' group.pk %}">{{ group }}</a></li>
                                         {% endfor %}
@@ -46,22 +50,22 @@
                     {% endif %}
 
                     {% if policies %}
-                        <div class="accordion-group">
-                            <div class="accordion-heading">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <a data-toggle="collapse" data-parent="#accordion2"
                                    href="#collapseTwo">
                                     {{ policy_title }}
                                     <span class="badge pull-right">{{ policies|length }}</span>
                                 </a>
                             </div>
-                            <div id="collapseTwo" class="accordion-body collapse">
-                                <div class="accordion-inner">
+                            <div id="collapseTwo" class="panel-collapse collapse">
+                                <div class="panel-body">
                                     <p>
                                         <small>Found <strong>{{ policies|length }}</strong>
                                             policy{{ policies|pluralize }}.
                                         </small>
                                     </p>
-                                    <ul class="unstyled">
+                                    <ul class="list-unstyled">
                                         {% for policy in policies %}
                                             <li><a href="{% url 'policies:policy_detail' policy.pk %}">{{ policy }}</a>
                                             </li>
@@ -73,22 +77,22 @@
                     {% endif %}
 
                     {% if enforcements %}
-                        <div class="accordion-group">
-                            <div class="accordion-heading">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <a data-toggle="collapse" data-parent="#accordion2"
                                    href="#collapseThree">
                                     {{ enforcement_title }}
                                     <span class="badge pull-right">{{ enforcements|length }}</span>
                                 </a>
                             </div>
-                            <div id="collapseThree" class="accordion-body collapse">
-                                <div class="accordion-inner">
+                            <div id="collapseThree" class="panel-collapse collapse">
+                                <div class="panel-body">
                                     <p>
                                         <small>Found <strong>{{ enforcements|length }}</strong>
                                             enforcement{{ enforcements|pluralize }}.
                                         </small>
                                     </p>
-                                    <ul class="unstyled">
+                                    <ul class="list-unstyled">
                                         {% for enforcement in enforcements %}
                                             <li><a
                                                 href="{% url 'policies:enforcement_detail' enforcement.pk %}">{{ enforcement }}</a>
@@ -101,21 +105,21 @@
                     {% endif %}
 
                     {% if devices %}
-                        <div class="accordion-group">
-                            <div class="accordion-heading">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <a data-toggle="collapse" data-parent="#accordion2"
                                    href="#collapseFour">
                                     {{ device_title }}
                                     <span class="badge pull-right">{{ devices|length }}</span>
                                 </a>
                             </div>
-                            <div id="collapseFour" class="accordion-body collapse">
-                                <div class="accordion-inner">
+                            <div id="collapseFour" class="panel-collapse collapse">
+                                <div class="panel-body">
                                     <p>
                                         <small>Found <strong>{{ devices|length }}</strong> device{{ devices|pluralize }}.
                                         </small>
                                     </p>
-                                    <ul class="unstyled">
+                                    <ul class="list-unstyled">
                                         {% for device in devices %}
                                             <li><a href="{% url 'devices:device_detail' device.pk %}">{{ device }}</a>
                                             </li>
@@ -127,22 +131,22 @@
                     {% endif %}
 
                     {% if packages %}
-                        <div class="accordion-group">
-                            <div class="accordion-heading">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <a data-toggle="collapse" data-parent="#accordion2"
                                    href="#collapseFive">
                                     {{ package_title }}
                                     <span class="badge pull-right">{{ packages|length }}</span>
                                 </a>
                             </div>
-                            <div id="collapseFive" class="accordion-body collapse">
-                                <div class="accordion-inner">
+                            <div id="collapseFive" class="panel-collapse collapse">
+                                <div class="panel-body">
                                     <p>
                                         <small>Found <strong>{{ packages|length }}</strong>
                                             package{{ packages|pluralize }}.
                                         </small>
                                     </p>
-                                    <ul class="unstyled">
+                                    <ul class="list-unstyled">
                                         {% for package in packages %}
                                             <li><a
                                                 href="{% url 'packages:package_detail' package.pk %}">{{ package }}</a>
@@ -155,22 +159,22 @@
                     {% endif %}
 
                     {% if products %}
-                        <div class="accordion-group">
-                            <div class="accordion-heading">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <a data-toggle="collapse" data-parent="#accordion2"
                                    href="#collapseSix">
                                     {{ product_title }}
                                     <span class="badge pull-right">{{ products|length }}</span>
                                 </a>
                             </div>
-                            <div id="collapseSix" class="accordion-body collapse">
-                                <div class="accordion-inner">
+                            <div id="collapseSix" class="panel-collapse collapse">
+                                <div class="panel-body">
                                     <p>
                                         <small>Found <strong>{{ products|length }}</strong>
                                             product{{ products|pluralize }}.
                                         </small>
                                     </p>
-                                    <ul class="unstyled">
+                                    <ul class="list-unstyled">
                                         {% for product in products %}
                                             <li><a
                                                 href="{% url 'devices:product_detail' product.pk %}">{{ product }}</a>
@@ -183,21 +187,21 @@
                     {% endif %}
 
                     {% if files %}
-                        <div class="accordion-group">
-                            <div class="accordion-heading">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <a data-toggle="collapse" data-parent="#accordion2"
                                    href="#collapseSeven">
                                     {{ file_title }}
                                     <span class="badge pull-right">{{ files|length }}</span>
                                 </a>
                             </div>
-                            <div id="collapseSeven" class="accordion-body collapse">
-                                <div class="accordion-inner">
+                            <div id="collapseSeven" class="panel-collapse collapse">
+                                <div class="panel-body">
                                     <p>
                                         <small>Found <strong>{{ files|length }}</strong> file{{ files|pluralize }}.
                                         </small>
                                     </p>
-                                    <ul class="unstyled">
+                                    <ul class="list-unstyled">
                                         {% for file in files %}
                                             <li><a href="{% url 'filesystem:file_detail' file.pk %}">{{ file }}</a></li>
                                         {% endfor %}
@@ -210,7 +214,7 @@
                 </div>
 
                 {% if not groups and not policies and not enforcements and not devices and not packages and not products and not files %}
-                    <p class="text-error">No results matched your search criteria.</p>
+                    <p class="text-danger">No results matched your search criteria.</p>
                 {% endif %}
             </div>
         </div>

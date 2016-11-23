@@ -3,7 +3,7 @@ $(document).ready(function() {
 });
 
 function initValidation() {
-    $('#directoryform').validate({
+    $('#directoryform').validate($.extend(validationDefaults, {
         rules: {
             'path': {
                 required: true,
@@ -28,12 +28,6 @@ function initValidation() {
             path: {
                 remote: "Directory already exists!"
             }
-        },
-        highlight: function (element) {
-            $(element).closest('.control-group').removeClass('success').addClass('error');
-        },
-        success: function (element) {
-            element.addClass('valid').closest('.control-group').removeClass('error').addClass("invisiblevalid");
         }
-    });
+    }));
 }
