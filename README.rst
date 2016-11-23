@@ -62,14 +62,19 @@ Create a local `settings.ini` file::
 If this is not a production setup, change the ``DEBUG`` setting in
 ``settings.ini`` from 0 to 1.
 
+Create the databases::
+
+    ./manage.py syncdb --database meta
+    ./manage.py syncdb
+
 Set the default passwords::
 
     ./manage.py setpassword
-    
+
 If you want to use the Django-Admin view (``/admin``), create a superuser account::
 
     ./manage.py createsuperuser --database meta
-    
+
 In case you want to change the password of a user::
 
     ./manage.py changepassword admin-user --database meta
