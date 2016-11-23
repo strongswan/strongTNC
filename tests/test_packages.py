@@ -19,7 +19,7 @@ from .fixtures import *  # NOQA: Star import is OK here because it's just a test
 @pytest.fixture
 def package_testdata(transactional_db):
     package = mommy.make(Package, pk=1)
-    product = mommy.make(Product)
+    product = mommy.make(Product, pk=1)
     time = timezone.now()
     mommy.make(Version, pk=1, product=product, package=package, release='1.0', security=True, blacklist=True,
                time=time)

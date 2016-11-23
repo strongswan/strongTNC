@@ -64,8 +64,8 @@ If this is not a production setup, change the ``DEBUG`` setting in
 
 Create the databases::
 
-    ./manage.py syncdb --database meta
-    ./manage.py syncdb
+    ./manage.py migrate --database meta
+    ./manage.py migrate
 
 Set the default passwords::
 

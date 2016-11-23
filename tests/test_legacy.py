@@ -14,7 +14,7 @@ from apps.filesystem.models import File, Directory
 
 class TncappTest(TestCase):
     def setUp(self):
-        user = Identity.objects.create(data='Test User', type=1)
+        user = Identity.objects.create(pk=1, data='Test User', type=1)
         user.save()
 
         p = Product.objects.create(name='Fancy OS 3.14')
