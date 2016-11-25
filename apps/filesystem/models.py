@@ -111,7 +111,7 @@ class FileHash(models.Model):
     """
     file = models.ForeignKey(File, on_delete=models.CASCADE, db_column='file')
     product = models.ForeignKey('devices.Product', db_column='product')
-    device = models.ForeignKey('devices.Device', null=True, blank=True)
+    device = models.ForeignKey('devices.Device', db_column='device', null=True, blank=True)
     algorithm = models.ForeignKey(Algorithm, db_column='algo', on_delete=models.PROTECT)
     hash = HashField(db_column='hash')
 
