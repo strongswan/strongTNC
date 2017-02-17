@@ -8,7 +8,6 @@ The file must contain valid swid tags, one swid tag per line, separated by a **s
 """
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-import sys
 import os.path
 
 from django.core.management.base import BaseCommand, CommandError

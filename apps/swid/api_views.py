@@ -8,7 +8,7 @@ from lxml.etree import XMLSyntaxError
 
 from . import utils, serializers
 
-from .models import Entity, Tag, TagStats
+from .models import Entity, Tag
 from apps.core.models import Session
 from apps.api.utils import make_message
 

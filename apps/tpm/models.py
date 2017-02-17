@@ -4,8 +4,6 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 from django.db import models
 
 from apps.core.fields import HashField
-from apps.devices.models import Device
-from apps.filesystem.models import Algorithm
 
 
 class Component(models.Model):

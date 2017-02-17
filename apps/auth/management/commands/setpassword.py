@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function, division, absolute_import, unicode_literals
 """
 Custom manage.py command to create users and set their passwords.
 
 Usage: ./manage.py setpassword [password]
 """
+from __future__ import print_function, division, absolute_import, unicode_literals
 
 import sys
 from getpass import getpass

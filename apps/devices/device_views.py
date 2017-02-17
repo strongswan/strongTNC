@@ -12,8 +12,6 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 
 from apps.core.models import Session, Result
-from apps.core.types import WorkItemType
-from apps.policies.models import Policy, Enforcement
 from .models import Device, Group, Product
 
 

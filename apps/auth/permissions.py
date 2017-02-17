@@ -19,7 +19,7 @@ from django.db import models
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import permissions, exceptions
+from rest_framework import permissions
 
 
 class GlobalPermissionManager(models.Manager):

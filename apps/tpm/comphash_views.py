@@ -10,7 +10,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
-from apps.devices.models import Device
 from .models import ComponentHash
 
 
@@ -41,7 +40,7 @@ def save(request):
     """
     comp_hashID = request.POST['hashId']
     if not (comp_hashID == 'None' or re.match(r'^\d+$', comp_hashID)):
-        return HttpResponse(status=400)
+        return HttpResponseBadRequest()
 
     comp_hash = get_object_or_404(ComponentHash, pk=comp_hashID)
     hash = request.POST['hash'].lower()

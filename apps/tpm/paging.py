@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-import math
-from collections import OrderedDict, namedtuple
-
-from django.core.urlresolvers import reverse
-
 from apps.devices.models import Device
-from apps.front.utils import timestamp_local_to_utc
 from apps.front.paging import ProducerFactory
 
 # PAGING PRODUCER
