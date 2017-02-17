@@ -154,7 +154,7 @@ try:
     SECRET_KEY = config.get('security', 'SECRET_KEY')
 except (NoSectionError, NoOptionError):
     if DEBUG:
-        SECRET_KEY = 'DEBUGGING-SECRETKEY'
+        SECRET_KEY = 'DEBUGGING-SECRETKEY' # noqa
     else:
         raise ImproperlyConfigured('Please set SECRET_KEY in your settings.ini.')
 
