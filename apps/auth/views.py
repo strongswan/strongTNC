@@ -29,12 +29,12 @@ def login(request):
 
         # Authenticate user
         if user is not None and user.is_active:
-                django_login(request, user)
-                next_url = request.POST.get('next_url', None)
-                if next_url is not None:
-                    return redirect(next_url)
-                else:
-                    return redirect('/')
+            django_login(request, user)
+            next_url = request.POST.get('next_url', None)
+            if next_url is not None:
+                return redirect(next_url)
+            else:
+                return redirect('/')
         else:
             messages.error(request, _('Bad password!'))
 
