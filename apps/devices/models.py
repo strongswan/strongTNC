@@ -17,7 +17,7 @@ class Product(models.Model):
     """
     name = models.CharField(max_length=255, db_index=True)
 
-    class Meta:
+    class Meta(object):
         db_table = 'products'
         ordering = ('name',)
 
@@ -41,7 +41,7 @@ class Device(models.Model):
     created = EpochField(null=True, blank=True)
     trusted = models.BooleanField(default=False)
 
-    class Meta:
+    class Meta(object):
         db_table = 'devices'
         ordering = ('description',)
 
@@ -141,7 +141,7 @@ class Group(models.Model):
     parent = models.ForeignKey('self', related_name='membergroups', null=True,
             blank=True, db_column='parent')
 
-    class Meta:
+    class Meta(object):
         db_table = 'groups'
         ordering = ('name',)
 

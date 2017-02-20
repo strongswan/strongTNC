@@ -14,7 +14,7 @@ class Identity(models.Model):
     type = models.IntegerField()
     data = models.TextField(db_column='value')
 
-    class Meta:
+    class Meta(object):
         db_table = 'identities'
         verbose_name_plural = 'identities'
         ordering = ('data',)
@@ -39,7 +39,7 @@ class Session(models.Model):
     device = models.ForeignKey('devices.Device', related_name='sessions', db_column='device')
     recommendation = models.IntegerField(db_column='rec', null=True, choices=types.ACTION_CHOICES)
 
-    class Meta:
+    class Meta(object):
         db_table = u'sessions'
         get_latest_by = 'time'
         ordering = ('-time',)
@@ -69,7 +69,7 @@ class WorkItem(models.Model):
     recommendation = models.IntegerField(null=True, blank=True, db_column='rec_final')
     result = models.TextField(null=True, blank=True, db_column='result')
 
-    class Meta:
+    class Meta(object):
         db_table = 'workitems'
 
     def __unicode__(self):
@@ -91,7 +91,7 @@ class Result(models.Model):
     result = models.TextField()
     recommendation = models.IntegerField(db_column='rec', choices=types.ACTION_CHOICES)
 
-    class Meta:
+    class Meta(object):
         db_table = 'results'
         get_latest_by = 'session__time'
 

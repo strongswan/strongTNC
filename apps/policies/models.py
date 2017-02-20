@@ -21,7 +21,7 @@ class Policy(models.Model):
     dir = models.ForeignKey('filesystem.Directory', null=True, blank=True,
             related_name='policies', on_delete=models.CASCADE, db_column='dir')
 
-    class Meta:
+    class Meta(object):
         db_table = 'policies'
         verbose_name_plural = 'Policies'
         ordering = ('name',)
@@ -126,7 +126,7 @@ class Enforcement(models.Model):
     noresult = models.IntegerField(db_column='rec_noresult', null=True, blank=True,
             choices=ACTION_CHOICES)
 
-    class Meta:
+    class Meta(object):
         db_table = 'enforcements'
         unique_together = [('policy', 'group')]
 

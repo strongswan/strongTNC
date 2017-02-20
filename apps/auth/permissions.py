@@ -39,7 +39,7 @@ class GlobalPermission(Permission):
 
     objects = GlobalPermissionManager()
 
-    class Meta:
+    class Meta(object):
         proxy = True
         verbose_name = 'global_permission'
 

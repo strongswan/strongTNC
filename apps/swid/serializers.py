@@ -8,13 +8,13 @@ from . import models
 
 
 class EntitySerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
-    class Meta:
+    class Meta(object):
         model = models.Entity
         fields = ('id', 'uri', 'name', 'regid')
 
 
 class EntityRoleSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
-    class Meta:
+    class Meta(object):
         model = models.EntityRole
         fields = ('entity', 'role')
 
@@ -22,6 +22,6 @@ class EntityRoleSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSeria
 class TagSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
     entities = EntityRoleSerializer(source='entityrole_set', many=True)
 
-    class Meta:
+    class Meta(object):
         model = models.Tag
         fields = ('id', 'uri', 'package_name', 'version', 'unique_id', 'entities', 'swid_xml')

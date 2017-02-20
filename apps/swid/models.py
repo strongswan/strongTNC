@@ -27,7 +27,7 @@ class Tag(models.Model):
                                              'e.g regid.2004-03.org.strongswan_'
                                              'fedora_19-x86_64-strongswan-5.1.2-4.fc19')
 
-    class Meta:
+    class Meta(object):
         db_table = TABLE_PREFIX + 'tags'
         ordering = ('unique_id',)
 
@@ -76,7 +76,7 @@ class TagStats(models.Model):
     first_seen = models.ForeignKey('core.Session', related_name='tags_first_seen_set')
     last_seen = models.ForeignKey('core.Session', related_name='tags_last_seen_set')
 
-    class Meta:
+    class Meta(object):
         unique_together = ('tag', 'device')
 
 
@@ -95,7 +95,7 @@ class EntityRole(models.Model):
     entity = models.ForeignKey('Entity')
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
 
-    class Meta:
+    class Meta(object):
         db_table = TABLE_PREFIX + 'entityroles'
 
     def __unicode__(self):
@@ -121,7 +121,7 @@ class Entity(models.Model):
     regid = models.CharField(max_length=255, db_index=True)
     tags = models.ManyToManyField(Tag, through=EntityRole, verbose_name='list of tags')
 
-    class Meta:
+    class Meta(object):
         db_table = TABLE_PREFIX + 'entities'
         verbose_name_plural = 'entities'
         ordering = ('regid',)

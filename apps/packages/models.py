@@ -12,7 +12,7 @@ class Package(models.Model):
     """
     name = models.CharField(max_length=255, db_index=True)
 
-    class Meta:
+    class Meta(object):
         db_table = 'packages'
         ordering = ('name',)
 
@@ -39,7 +39,7 @@ class Version(models.Model):
     blacklist = models.BooleanField(default=False)
     time = EpochField()
 
-    class Meta:
+    class Meta(object):
         db_table = 'versions'
         index_together = [('package', 'product')]
         ordering = ('release',)

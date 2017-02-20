@@ -15,7 +15,7 @@ class Component(models.Model):
     qualifier = models.IntegerField(default=0)
     label = models.CharField(max_length=255)
 
-    class Meta:
+    class Meta(object):
         db_table = 'components'
 
     def __unicode__(self):
@@ -39,7 +39,7 @@ class ComponentHash(models.Model):
     algorithm = models.ForeignKey('filesystem.Algorithm', db_column='algo')
     hash = HashField(db_column='hash')
 
-    class Meta:
+    class Meta(object):
         db_table = 'component_hashes'
         verbose_name_plural = 'component hashes'
         ordering = ('device', 'component', 'seq_no',)

@@ -18,7 +18,7 @@ class DynamicFieldsMixin(object):
     Usage::
 
         class MySerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
-            class Meta:
+            class Meta(object):
                 model = MyModel
 
     """

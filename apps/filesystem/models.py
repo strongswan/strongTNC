@@ -14,7 +14,7 @@ class Directory(models.Model):
     """
     path = models.CharField(max_length=255, unique=True)
 
-    class Meta:
+    class Meta(object):
         db_table = 'directories'
         verbose_name_plural = 'directories'
         ordering = ('path',)
@@ -36,7 +36,7 @@ class File(models.Model):
     name = models.CharField(max_length=255, db_index=True)
     directory = models.ForeignKey(Directory, db_column='dir')
 
-    class Meta:
+    class Meta(object):
         db_table = 'files'
         ordering = ('name',)
 
@@ -91,7 +91,7 @@ class Algorithm(models.Model):
     """
     name = models.CharField(max_length=20)
 
-    class Meta:
+    class Meta(object):
         db_table = 'algorithms'
         ordering = ('name',)
 
@@ -115,7 +115,7 @@ class FileHash(models.Model):
     algorithm = models.ForeignKey(Algorithm, db_column='algo', on_delete=models.PROTECT)
     hash = HashField(db_column='hash')
 
-    class Meta:
+    class Meta(object):
         db_table = 'file_hashes'
         verbose_name_plural = 'file hashes'
 
