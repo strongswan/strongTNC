@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<SoftwareIdentity name="strongswan-tnc-imcvs" uniqueId="fedora_19-x86_64-strongswan-tnc-imcvs-5.1.2-4.fc19" version="5.1.2-4.fc19" versionScheme="alphanumeric" xmlns="http://standards.iso.org/iso/19770/-2/2014/schema.xsd">
-  <Entity name="strongSwan" regid="regid.2004-03.org.strongswan" role="tagcreator"/>
+<SoftwareIdentity name="strongswan-tnc-imcvs" tagId="fedora_19-x86_64-strongswan-tnc-imcvs-5.1.2-4.fc19" version="5.1.2-4.fc19" versionScheme="alphanumeric" xmlns="http://standards.iso.org/iso/19770/-2/2015/schema.xsd">
+  <Entity name="strongSwan" regid="strongswan.org" role="tagCreator"/>
   <Payload>
     <File location="/usr/lib64/strongswan/imcvs" name="imc-attestation.so"/>
     <File location="/usr/lib64/strongswan/imcvs" name="imc-os.so"/>

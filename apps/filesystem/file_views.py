@@ -43,7 +43,7 @@ def file(request, fileID):
     if file:
         context['file'] = file
         context['title'] = _('File ') + file.name
-        file_hashes = file.filehash_set.all().order_by('product', 'algorithm')
+        file_hashes = file.filehash_set.all().order_by('version', 'algorithm')
         context['file_hashes'] = file_hashes
 
         policies = Policy.objects.filter(file=file)

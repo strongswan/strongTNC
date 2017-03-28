@@ -144,8 +144,8 @@ def test_data_param_validation(api_client, session, url, list_name):
 ])
 def test_swid_measurement_diff(api_client, session, swidtag, filename):
     software_ids = [
-        'regid.2004-03.org.strongswan_debian_7.4-x86_64-cowsay-3.03+dfsg1-4',
-        'regid.2004-03.org.strongswan_debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3'
+        'strongswan.org_debian_7.4-x86_64-cowsay-3.03+dfsg1-4',
+        'strongswan.org_debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3'
     ]
     data = {'data': software_ids}
 
@@ -173,7 +173,7 @@ def test_swid_measurement_diff(api_client, session, swidtag, filename):
     'strongswan.short.swidtag',
 ])
 def test_diff_on_invalid_session(api_client, swidtag, filename):
-    software_ids = ['regid.2004-03.org.strongswan_debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3']
+    software_ids = ['strongswan.org_debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3']
     data = {'data': software_ids}
 
     assert Session.objects.filter(pk=1).count() == 0
@@ -191,7 +191,7 @@ def test_add_single_tag(api_client):
         response = api_client.post(reverse('swid-add-tags'), data, format='json')
         assert response.status_code == status.HTTP_200_OK
 
-        sw_id = "regid.2004-03.org.strongswan_debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3"
+        sw_id = "strongswan.org_debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3"
         assert Tag.objects.filter(software_id=sw_id).exists()
 
 
@@ -208,7 +208,7 @@ def test_add_existing_tag(api_client, swidtag, filename):
         response = api_client.post(reverse('swid-add-tags'), data, format='json')
         assert response.status_code == status.HTTP_200_OK
         tag = Tag.objects.get(
-            software_id="regid.2004-03.org.strongswan_debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3")
+            software_id="strongswan.org_debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3")
 
         assert tag.files.count() == 7
         assert tag.entityrole_set.count() == 2

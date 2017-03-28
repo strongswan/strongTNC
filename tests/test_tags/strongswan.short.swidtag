@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<SoftwareIdentity name="strongswan" uniqueId="debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3" version="4.5.2-1.5+deb7u3" versionScheme="alphanumeric" xmlns="http://standards.iso.org/iso/19770/-2/2014/schema.xsd">
-  <Entity name="strongSwan" regid="regid.2004-03.org.strongswan" role="tagcreator"/>
+<SoftwareIdentity name="strongswan" tagId="debian_7.4-x86_64-strongswan-4.5.2-1.5+deb7u3" version="4.5.2-1.5+deb7u3" versionScheme="alphanumeric" xmlns="http://standards.iso.org/iso/19770/-2/2015/schema.xsd">
+  <Entity name="strongSwan" regid="strongswan.org" role="tagCreator"/>
 </SoftwareIdentity>

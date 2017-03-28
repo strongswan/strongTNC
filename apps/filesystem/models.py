@@ -5,6 +5,7 @@ import os
 
 from django.db import models
 
+from apps.packages.models import Version
 from apps.core.fields import HashField
 
 
@@ -38,7 +39,7 @@ class File(models.Model):
 
     class Meta(object):
         db_table = 'files'
-        ordering = ('name',)
+        ordering = ('directory__path', 'name',)
 
     def __unicode__(self):
         return '%s/%s' % (self.directory.path, self.name)
@@ -110,14 +111,17 @@ class FileHash(models.Model):
     A file hash.
     """
     file = models.ForeignKey(File, on_delete=models.CASCADE, db_column='file')
-    product = models.ForeignKey('devices.Product', db_column='product')
+    version = models.ForeignKey('packages.Version', db_column='version', null=True, blank=True)
     device = models.ForeignKey('devices.Device', db_column='device', null=True, blank=True)
+    size = models.IntegerField()
     algorithm = models.ForeignKey(Algorithm, db_column='algo', on_delete=models.PROTECT)
-    hash = HashField(db_column='hash')
+    hash = models.CharField(max_length=64, db_column='hash')
+    mutable = models.BooleanField(default=False)
 
     class Meta(object):
         db_table = 'file_hashes'
         verbose_name_plural = 'file hashes'
+        ordering = ('file__directory__path', 'file__name',)
 
     def __unicode__(self):
         return '%s (%s)' % (self.hash, self.algorithm)

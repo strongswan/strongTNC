@@ -80,12 +80,14 @@
                         {% if not add %}
                             <hr>
 
-                            <h4>File Hashes</h4>
+                            <h4>File Size and Hashes</h4>
                             {% if file_hashes %}
                                 <table id="versions" class="table table-hover table-striped sortable">
                                     <thead>
                                     <tr>
-                                        <th>{% trans 'OS' %}</th>
+                                        <th>{% trans 'Product' %}</th>
+                                        <th>{% trans 'Version' %}</th>
+                                        <th>{% trans 'Size' %}</th>
                                         <th>{% trans 'Algo' %}</th>
                                         <th>{% trans 'Hash' %}</th>
                                         {% if 'auth.write_access' in perms %}
@@ -96,9 +98,18 @@
                                     <tbody>
                                     {% for h in file_hashes %}
                                         <tr>
-                                            <td>{{ h.product }}</td>
+                                            <td>{{ h.version.product }}</td>
+                                            <td>{{ h.version.release|default_if_none:"&nbsp;" }}</td>
+                                            <td>{{ h.size|default_if_none:"&nbsp;" }}</td>
                                             <td>{{ h.algorithm }}</td>
-                                            <td title="{{ h.hash }}">{{ h.hash|truncatechars:40 }}</td>
+                                            <td title="{{ h.hash }}">
+                                                {% if h.mutable %}
+                                                    <font color="purple">
+                                                {% else %}
+                                                    <font color="black">
+                                                {% endif %}
+                                                {{ h.hash|truncatechars:40 }}</font>
+                                            </td>
                                             {% if 'auth.write_access' in perms %}
                                                 <td>
                                                     <a class="btn btn-danger btn-xs"
@@ -125,7 +136,7 @@
                         <table class="table table-hover table-striped">
                             <thead>
                             <tr>
-                                <th>{% trans 'Unique ID' %}</th>
+                                <th>{% trans 'Tag ID' %}</th>
                                 <th>{% trans 'Package name' %}</th>
                                 <th>{% trans 'Version' %}</th>
                             </tr>

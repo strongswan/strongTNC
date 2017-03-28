@@ -18,14 +18,13 @@ class Tag(models.Model):
     version = models.CharField(max_length=255,
                                help_text='The version of the software, e.g. "5.1.2-4.fc19"')
     unique_id = models.CharField(max_length=255, db_index=True,
-                                 help_text='The uniqueID, e.g. "fedora_19-x86_64-strongswan-5.1.2-4.fc19"')
+                                 help_text='The tagId, e.g. "fedora_19-x86_64-strongswan-5.1.2-4.fc19"')
     swid_xml = models.TextField(help_text='The full SWID tag XML')
     files = models.ManyToManyField('filesystem.File', blank=True, verbose_name='list of files')
     sessions = models.ManyToManyField('core.Session', verbose_name='list of sessions')
     software_id = models.CharField(max_length=767, db_index=True,
-                                   help_text='The Software ID, format: {regid}_{uniqueID} '
-                                             'e.g regid.2004-03.org.strongswan_'
-                                             'fedora_19-x86_64-strongswan-5.1.2-4.fc19')
+                                   help_text='The Software ID, format: {regid}_{tagId} '
+                                             'e.g strongswan.org_fedora_19-x86_64-strongswan-5.1.2-4.fc19')
 
     class Meta(object):
         db_table = TABLE_PREFIX + 'tags'
@@ -81,14 +80,18 @@ class TagStats(models.Model):
 
 
 class EntityRole(models.Model):
-    PUBLISHER = 0
-    LICENSOR = 1
-    TAGCREATOR = 2
+    AGGREGATOR = 0
+    DISTRIBUTOR = 1
+    LICENSOR = 2
+    SOFTWARE_CREATOR = 3
+    TAG_CREATOR = 4
 
     ROLE_CHOICES = (
-        (PUBLISHER, 'Publisher'),
-        (LICENSOR, 'Licensor'),
-        (TAGCREATOR, 'Tag Creator'),
+        (AGGREGATOR, 'aggregator'),
+        (DISTRIBUTOR, 'distributor'),
+        (LICENSOR, 'licensor'),
+        (SOFTWARE_CREATOR, 'softwareCreator'),
+        (TAG_CREATOR, 'tagCreator'),
     )
 
     tag = models.ForeignKey('Tag')
@@ -106,12 +109,19 @@ class EntityRole(models.Model):
 
     @classmethod
     def xml_attr_to_choice(cls, value):
-        if value == 'tagcreator':
-            return cls.TAGCREATOR
+        if value == 'tagCreator':
+            return cls.TAG_CREATOR
+        elif value == 'tagcreator':
+            # Support of SWID draft standard
+            return cls.TAG_CREATOR
+        elif value == 'softwareCreator':
+            return cls.SOFTWARE_CREATOR
         elif value == 'licensor':
             return cls.LICENSOR
-        elif value == 'publisher':
-            return cls.PUBLISHER
+        elif value == 'distributor':
+            return cls.DISTRIBUTOR
+        elif value == 'aggregator':
+            return cls.AGGREGATOR
         else:
             raise ValueError('Unknown role: %s' % value)
 
