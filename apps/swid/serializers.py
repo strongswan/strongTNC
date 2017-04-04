@@ -4,6 +4,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 from rest_framework import serializers
 
 from apps.api.mixins import DynamicFieldsMixin
+from apps.devices.serializers import DeviceSerializer
 from . import models
 
 
@@ -24,4 +25,11 @@ class TagSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
 
     class Meta(object):
         model = models.Tag
-        fields = ('id', 'uri', 'package_name', 'version', 'unique_id', 'entities', 'swid_xml')
+        fields = ('id', 'uri', 'package_name', 'version', 'unique_id', 'software_id', 'entities', 'swid_xml')
+
+
+class TagStatsSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
+
+    class Meta(object):
+        model = models.TagStats
+        fields = ('tag', 'device', 'first_seen', 'last_seen')

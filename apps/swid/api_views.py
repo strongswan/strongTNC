@@ -8,7 +8,7 @@ from lxml.etree import XMLSyntaxError
 
 from . import utils, serializers
 
-from .models import Entity, Tag
+from .models import Entity, Tag, TagStats
 from apps.core.models import Session
 from apps.api.utils import make_message
 
@@ -21,7 +21,13 @@ class EntityViewSet(viewsets.ReadOnlyModelViewSet):
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     model = Tag
     serializer_class = serializers.TagSerializer
-    filter_fields = ('package_name', 'version', 'unique_id')
+    filter_fields = ('package_name', 'version', 'unique_id', 'software_id')
+
+
+class TagStatsViewSet(viewsets.ReadOnlyModelViewSet):
+    model = TagStats
+    serializer_class = serializers.TagStatsSerializer
+    filter_fields = ('tag', 'device', 'first_seen', 'last_seen')
 
 
 def validate_data_param(request, list_name):
