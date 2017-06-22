@@ -139,7 +139,7 @@ class SwidParser(object):
 
                 # Use regid of last entity with tagCreator role to construct software-id
                 if role_id == EntityRole.TAG_CREATOR:
-                    self.tag.software_id = '%s_%s' % (regid, self.tag.unique_id)
+                    self.tag.software_id = '%s__%s' % (regid, self.tag.unique_id)
 
     def end(self, tag):
         clean_tag = tag.split('}')[-1]  # Strip XSD part from tag name

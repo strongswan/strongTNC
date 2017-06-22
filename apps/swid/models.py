@@ -23,8 +23,8 @@ class Tag(models.Model):
     files = models.ManyToManyField('filesystem.File', blank=True, verbose_name='list of files')
     sessions = models.ManyToManyField('core.Session', verbose_name='list of sessions')
     software_id = models.CharField(max_length=767, db_index=True,
-                                   help_text='The Software ID, format: {regid}_{tagId} '
-                                             'e.g strongswan.org_fedora_19-x86_64-strongswan-5.1.2-4.fc19')
+                                   help_text='The Software ID, format: {regid}__{tagId} '
+                                             'e.g strongswan.org__fedora_19-x86_64-strongswan-5.1.2-4.fc19')
 
     class Meta(object):
         db_table = TABLE_PREFIX + 'tags'
