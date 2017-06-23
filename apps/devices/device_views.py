@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 
 from apps.core.models import Session, Result
+from apps.swid.models import Event, TagEvent
 from .models import Device, Group, Product
 
 
@@ -235,6 +236,22 @@ def session(request, sessionID):
     context['results'] = session.results.all()
 
     return render(request, 'devices/session.html', context)
+
+
+@require_GET
+@login_required
+def event(request, eventID):
+    """
+    View details for a device-event
+    """
+    event = get_object_or_404(Event, pk=eventID)
+
+    context = {}
+    context['event'] = event
+    context['title'] = _('Event details')
+    context['tags'] = event.tags.all()
+    context['tag_events'] = TagEvent.objects.filter(event=eventID)
+    return render(request, 'devices/event.html', context)
 
 
 @require_GET

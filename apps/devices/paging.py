@@ -5,6 +5,7 @@ import math
 
 from .models import Device, Product
 from apps.core.models import Session
+from apps.swid.models import Event
 from apps.front.paging import ProducerFactory
 
 
@@ -24,6 +25,18 @@ def device_session_list_producer(from_idx, to_idx, filter_query, dynamic_params=
 def device_session_stat_producer(page_size, filter_query, dynamic_params=None, static_params=None):
     device_id = dynamic_params['device_id']
     count = Session.objects.filter(device=device_id).count()
+    return math.ceil(count / page_size)
+
+
+def device_event_list_producer(from_idx, to_idx, filter_query, dynamic_params=None, static_params=None):
+    device_id = dynamic_params['device_id']
+    event_list = Event.objects.filter(device=device_id)
+    return event_list[from_idx:to_idx]
+
+
+def device_event_stat_producer(page_size, filter_query, dynamic_params=None, static_params=None):
+    device_id = dynamic_params['device_id']
+    count = Event.objects.filter(device=device_id).count()
     return math.ceil(count / page_size)
 
 
@@ -79,5 +92,15 @@ device_session_list_paging = {
     'static_producer_args': None,
     'var_name': 'sessions',
     'url_name': 'devices:session_detail',
-    'page_size': 30,
+    'page_size': 20,
+}
+
+device_event_list_paging = {
+    'template_name': 'devices/paging/device_report_events',
+    'list_producer': device_event_list_producer,
+    'stat_producer': device_event_stat_producer,
+    'static_producer_args': None,
+    'var_name': 'events',
+    'url_name': 'devices:event_detail',
+    'page_size': 20,
 }

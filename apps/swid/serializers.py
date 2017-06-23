@@ -8,6 +8,12 @@ from apps.devices.serializers import DeviceSerializer
 from . import models
 
 
+class EventSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
+    class Meta(object):
+        model = models.Event
+        fields = ('id', 'uri', 'device', 'epoch', 'eid', 'timestamp', 'tags')
+
+
 class EntitySerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta(object):
         model = models.Entity
@@ -20,12 +26,20 @@ class EntityRoleSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSeria
         fields = ('entity', 'role')
 
 
+class TagEventSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
+    class Meta(object):
+        model = models.TagEvent
+        fields = ('event', 'action', 'record_id', 'source_id')
+
+
 class TagSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
     entities = EntityRoleSerializer(source='entityrole_set', many=True)
+    events = TagEventSerializer(source='tagevent_set', many=True)
 
     class Meta(object):
         model = models.Tag
-        fields = ('id', 'uri', 'package_name', 'version', 'unique_id', 'software_id', 'entities', 'swid_xml')
+        fields = ('id', 'uri', 'package_name', 'version', 'unique_id', 'software_id',
+                  'entities', 'events', 'swid_xml')
 
 
 class TagStatsSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):

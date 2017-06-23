@@ -339,7 +339,7 @@ def swid_devices_stat_producer(page_size, filter_query, dynamic_params=None, sta
     if not dynamic_params:
         return []
     tag_id = dynamic_params['tag_id']
-    count = len(Tag.objects.get(pk=tag_id).get_devices_with_reported_session())
+    count = TagStats.objects.filter(tag__pk=tag_id).count()
     return math.ceil(count / page_size)
 
 

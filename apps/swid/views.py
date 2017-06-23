@@ -39,8 +39,6 @@ class SwidTagDetailView(LoginRequiredMixin, DetailView):
         context = super(SwidTagDetailView, self).get_context_data(**kwargs)
         context['paging_args'] = {'tag_id': self.object.pk}
         context['entityroles'] = self.object.entityrole_set.all()
-        context['reported_devices'] = sorted(self.object.get_devices_with_reported_session().items(),
-                                             key=lambda (device, session): device.description)
         return context
 
 

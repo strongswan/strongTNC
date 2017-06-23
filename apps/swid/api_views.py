@@ -8,9 +8,15 @@ from lxml.etree import XMLSyntaxError
 
 from . import utils, serializers
 
-from .models import Entity, Tag, TagStats
+from .models import Event, Entity, Tag, TagStats
 from apps.core.models import Session
 from apps.api.utils import make_message
+
+
+class EventViewSet(viewsets.ReadOnlyModelViewSet):
+    model = Event
+    serializer_class = serializers.EventSerializer
+    filter_fields = ('device', 'epoch', 'eid')
 
 
 class EntityViewSet(viewsets.ReadOnlyModelViewSet):

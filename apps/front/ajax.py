@@ -16,7 +16,7 @@ from apps.filesystem.paging import dir_list_paging, file_list_paging, dir_file_l
 from apps.policies.paging import policy_list_paging, enforcement_list_paging
 from apps.packages.paging import package_list_paging
 from apps.devices.paging import device_list_paging, product_list_paging, device_session_list_paging
-from apps.devices.paging import product_devices_list_paging
+from apps.devices.paging import product_devices_list_paging, device_event_list_paging
 from apps.tpm.paging import tpm_devices_list_paging
 
 
@@ -71,6 +71,7 @@ def paging(request, config_name, current_page, filter_query, pager_id, producer_
         'device_list_config': device_list_paging,
         'product_list_config': product_list_paging,
         'device_session_list_config': device_session_list_paging,
+        'device_event_list_config': device_event_list_paging,
         'swid_inventory_list_config': swid_inventory_list_paging,
         'swid_log_list_config': swid_log_list_paging,
         'swid_inventory_session_list_config': swid_inventory_session_paging,

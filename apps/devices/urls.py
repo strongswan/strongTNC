@@ -12,6 +12,7 @@ urlpatterns = patterns('',
 
     url(r'^devices/(?P<deviceID>\d+)/report/?$', device_views.report, name='device_report'),
 
+    url(r'^events/(?P<eventID>\d+)/?$', device_views.event, name='event_detail'),
     url(r'^sessions/(?P<sessionID>\d+)/?$', device_views.session, name='session_detail'),
 
     url(r'^groups/?$', group_views.groups, name='group_list'),

@@ -12,6 +12,7 @@ TABLE_PREFIX = 'swid_'
 # TODO: After separating the frontend from the strongSwan database, remove the
 # custom db_table names.
 
+
 class Tag(models.Model):
     package_name = models.CharField(max_length=255, db_index=True,
                                     help_text='The name of the software, e.g. "strongswan"')
@@ -50,20 +51,14 @@ class Tag(models.Model):
                 The session object
 
         Returns:
-            A list of TagStat objects, containing first_seen and last_seen sessions as well as a reference
-            to the tag instance.
+            A list of TagStat objects, containing first_seen and last_seen sessions
+            as well as a reference to the tag instance.
 
         """
         tag_pks = session.tag_set.values_list('pk', flat=True)
         tag_stats = TagStats.objects.filter(tag__in=tag_pks, device=session.device_id) \
             .select_related('last_seen', 'first_seen', 'tag').defer('tag__swid_xml')
         return tag_stats
-
-    def get_devices_with_reported_session(self):
-        devices_dict = {}
-        for session in self.sessions.order_by('-time'):
-            devices_dict[session.device] = session
-        return devices_dict
 
     def get_matching_packages(self):
         return Package.objects.filter(name=self.package_name)
@@ -77,6 +72,7 @@ class TagStats(models.Model):
 
     class Meta(object):
         unique_together = ('tag', 'device')
+        verbose_name_plural = 'tag stats'
 
 
 class EntityRole(models.Model):
@@ -141,3 +137,50 @@ class Entity(models.Model):
 
     def list_repr(self):
         return self.regid
+
+
+class TagEvent(models.Model):
+    CREATION = 1
+    DELETION = 2
+    ALTERATION = 3
+
+    ACTION_CHOICES = (
+        (CREATION, 'Creation'),
+        (DELETION, 'Deletion'),
+        (ALTERATION, 'Alteration'),
+    )
+
+    tag = models.ForeignKey('Tag')
+    event = models.ForeignKey('Event')
+    action = models.PositiveSmallIntegerField(choices=ACTION_CHOICES)
+    record_id = models.PositiveIntegerField()
+    source_id = models.PositiveSmallIntegerField()
+
+    class Meta(object):
+        db_table = TABLE_PREFIX + 'tags_events'
+        verbose_name_plural = 'tag events'
+
+    def __unicode__(self):
+        return ' %s in %s' % (self.tag, self.event)
+
+    def list_repr(self):
+        return '%s in %s' % (self.tag, self.event)
+
+
+class Event(models.Model):
+    device = models.ForeignKey('devices.Device', related_name='events', db_column='device', db_index=True)
+    eid = models.PositiveIntegerField()
+    epoch = models.PositiveIntegerField()
+    timestamp = models.DateTimeField()
+    tags = models.ManyToManyField(Tag, through=TagEvent, verbose_name='list of events')
+
+    class Meta(object):
+        db_table = TABLE_PREFIX + 'events'
+        verbose_name_plural = 'events'
+        ordering = ('device', 'epoch', '-eid')
+
+    def __unicode__(self):
+        return 'EID %s of %s' % (self.eid, self.device)
+
+    def list_repr(self):
+        return 'EID %s of %s' % (self.eid, self.devices)

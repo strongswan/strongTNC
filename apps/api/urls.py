@@ -6,7 +6,7 @@ from django.conf.urls import url, patterns, include
 from rest_framework import routers
 
 from apps.core.api_views import IdentityViewSet, SessionViewSet
-from apps.swid.api_views import EntityViewSet, TagViewSet, TagStatsViewSet, TagAddView, SwidMeasurementView
+from apps.swid.api_views import EventViewSet, EntityViewSet, TagViewSet, TagStatsViewSet, TagAddView, SwidMeasurementView
 from apps.devices.api_views import ProductViewSet, DeviceViewSet
 from apps.packages.api_views import PackageViewSet, VersionViewSet
 from apps.filesystem.api_views import AlgorithmViewSet, DirectoryViewSet, FileViewSet, FileHashViewSet
@@ -25,6 +25,7 @@ router.register(r'directories', DirectoryViewSet)
 router.register(r'files', FileViewSet)
 router.register(r'file-hashes', FileHashViewSet)
 router.register(r'algorithms', AlgorithmViewSet)
+router.register(r'swid-events', EventViewSet)
 router.register(r'swid-entities', EntityViewSet)
 router.register(r'swid-tags', TagViewSet)
 router.register(r'swid-stats', TagStatsViewSet)
