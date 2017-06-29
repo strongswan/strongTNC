@@ -46,4 +46,4 @@ class TagStatsSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSeriali
 
     class Meta(object):
         model = models.TagStats
-        fields = ('tag', 'device', 'first_seen', 'last_seen')
+        fields = ('tag', 'device', 'first_seen', 'last_seen', 'first_installed', 'last_deleted')

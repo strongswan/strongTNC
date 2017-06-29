@@ -6,7 +6,8 @@ from django.conf.urls import url, patterns, include
 from rest_framework import routers
 
 from apps.core.api_views import IdentityViewSet, SessionViewSet
-from apps.swid.api_views import EventViewSet, EntityViewSet, TagViewSet, TagStatsViewSet, TagAddView, SwidMeasurementView
+from apps.swid.api_views import EventViewSet, EntityViewSet, TagViewSet, TagStatsViewSet, TagAddView
+from apps.swid.api_views import SwidMeasurementView, SwidEventsView
 from apps.devices.api_views import ProductViewSet, DeviceViewSet
 from apps.packages.api_views import PackageViewSet, VersionViewSet
 from apps.filesystem.api_views import AlgorithmViewSet, DirectoryViewSet, FileViewSet, FileHashViewSet
@@ -42,9 +43,15 @@ urlpatterns += patterns('',
     url(r'^swid/add-tags/', TagAddView.as_view(), name='swid-add-tags'),
     url(r'^swid/add-tags/\.(?P<format>[a-z0-9]+)', TagAddView.as_view(), name='swid-add-tags'),
 
-    # Register measurement
+    # Register SW ID inventory upload
     url(r'^sessions/(?P<pk>[^/]+)/swid-measurement/',
         SwidMeasurementView.as_view(), name='session-swid-measurement'),
     url(r'^sessions/(?P<pk>[^/]+)/swid-measurement/\.(?P<format>[a-z0-9]+)',
         SwidMeasurementView.as_view(), name='session-swid-measurement'),
+
+    # Register SW ID events upload
+    url(r'^sessions/(?P<pk>[^/]+)/swid-events/',
+        SwidEventsView.as_view(), name='session-swid-events'),
+    url(r'^sessions/(?P<pk>[^/]+)/swid-events/\.(?P<format>[a-z0-9]+)',
+        SwidEventsView.as_view(), name='session-swid-events'),
 )

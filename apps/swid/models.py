@@ -69,6 +69,8 @@ class TagStats(models.Model):
     device = models.ForeignKey('devices.Device')
     first_seen = models.ForeignKey('core.Session', related_name='tags_first_seen_set')
     last_seen = models.ForeignKey('core.Session', related_name='tags_last_seen_set')
+    first_installed = models.ForeignKey('Event', null=True, related_name='tags_first_installed_set')
+    last_deleted = models.ForeignKey('Event', null=True, related_name='tags_last_deleted_set')
 
     class Meta(object):
         unique_together = ('tag', 'device')
