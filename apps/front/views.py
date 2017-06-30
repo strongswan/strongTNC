@@ -12,7 +12,7 @@ from apps.policies.models import Policy, Enforcement
 from apps.devices.models import Device, Group, Product
 from apps.packages.models import Package, Version
 from apps.filesystem.models import Directory, File, FileHash
-from apps.swid.models import Tag, Entity
+from apps.swid.models import Tag, Entity, Event
 
 
 @require_GET
@@ -42,6 +42,7 @@ def statistics(request):
     context['groups'] = Group.objects.count()
     context['entities'] = Entity.objects.count()
     context['tags'] = Tag.objects.count()
+    context['events'] = Event.objects.count()
     context['directories'] = Directory.objects.count()
     context['files'] = File.objects.count()
     context['hashes'] = FileHash.objects.count()
