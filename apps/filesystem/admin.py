@@ -12,7 +12,7 @@ class AlgorithmAdmin(admin.ModelAdmin):
 
 class FileHashAdmin(admin.ModelAdmin):
     list_display = ('file', 'algorithm', 'hash')
-    list_filter = ('algorithm', 'product')
+    list_filter = ('algorithm', 'version__product')
 
 
 class FileAdmin(admin.ModelAdmin):

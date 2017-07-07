@@ -7,7 +7,7 @@ from . import models
 
 
 class VersionAdmin(admin.ModelAdmin):
-    list_display = ('release', 'package', 'product')
+    list_display = ('package', 'release', 'product', 'time')
     list_filter = ('security', 'product')
 
 

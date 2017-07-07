@@ -1,0 +1,81 @@
+{% extends "front/base.html" %}
+
+{% load i18n %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block hero %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <h4>{% trans 'Event Info' %}</h4>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table" border="0">
+                        <tbody>
+                        <tr>
+                            <td><strong>{% trans 'ID' %}</strong></td>
+                            <td>{{ event.id }}</td>
+                        </tr>
+                       <tr>
+                            <td><strong>{% trans 'Device' %}</strong></td>
+                            <td>{{ event.device }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>{% trans 'Timestamp' %}</strong></td>
+                            <td>{{ event.timestamp|date:'M d H:i:s Y' }}</td>
+                        </tr>
+                       <tr>
+                            <td><strong>{% trans 'Epoch' %}</strong></td>
+                            <td>{{ event.epoch }}</td>
+                        </tr>
+                       <tr>
+                            <td><strong>{% trans 'EID' %}</strong></td>
+                            <td>{{ event.eid }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <hr>
+            <h4>{% trans 'Software' %}</h4>
+            {% if tag_events %}
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{% trans "Action" %}</th>
+                        <th>{% trans "Tag ID" %}</th>
+                        <th>{% trans "Record ID" %}</th>
+                        <th>{% trans "Source ID" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for te in tag_events %}
+                        <tr>
+                            <td>
+                                {% if te.action == 1 %}
+                                    {% trans 'ADDED' %}
+                                {% else %}
+                                    {% trans 'REMOVED' %}
+                                {% endif %}
+                            </td>
+                            <td><a href="{% url 'swid:tag_detail' te.tag.pk %}">{{ te.tag.list_repr }}</a></td>
+                            <td>{{ te.record_id }}</td>
+                            <td>{{ te.source_id }}</td>
+                         </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>
+                    {% trans 'No tags in this event.' %}
+                </p>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

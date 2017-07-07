@@ -4,6 +4,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 from rest_framework import serializers
 
 from apps.api.mixins import DynamicFieldsMixin
+from apps.devices.serializers import DeviceSerializer
 from . import models
 
 
@@ -14,8 +15,8 @@ class IdentitySerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSeriali
 
 
 class SessionSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
-    # PrimaryKey fields are only needed until endpoints exists
-    device = serializers.PrimaryKeyRelatedField()
+    device = DeviceSerializer()
+    identity = IdentitySerializer()
 
     class Meta(object):
         model = models.Session

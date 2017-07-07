@@ -117,6 +117,10 @@
                 <hr>
                 <h4>{% trans 'Sessions' %}</h4>
                 {% paged_block config_name="device_session_list_config" producer_args=paging_args %}
+
+                <hr>
+                <h4>{% trans 'Software Events' %}</h4>
+                {% paged_block config_name="device_event_list_config" producer_args=paging_args %}
             </div>
         </div>
     </div>

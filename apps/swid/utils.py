@@ -3,12 +3,33 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 from django.db import transaction
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from lxml import etree
 
-from apps.filesystem.models import Directory, File
+from apps.filesystem.models import Directory, File, FileHash, Algorithm
+from apps.devices.models import Product
+from apps.packages.models import Package, Version
 from apps.swid.models import Entity, EntityRole, TagStats
 from .models import Tag
+
+"""
+Maximum of nested <Directory> levels
+"""
+MAX_LEVEL = 32
+
+"""
+Namespace of SHA1, SHA256, SHA384 and SHA512 hash algorithms
+"""
+SHA1 = '{http://www.w3.org/2000/09/xmldsig#sha1}hash'
+SHA256 = '{http://www.w3.org/2001/04/xmlenc#sha256}hash'
+SHA384 = '{http://www.w3.org/2001/04/xmldsig-more#sha384}hash'
+SHA512 = '{http://www.w3.org/2001/04/xmlenc#sha512}hash'
+
+"""
+NISTIR 8060 (n8060) namespace
+"""
+MUTABLE = '{http://csrc.nist.gov/schema/swid/2015-extensions/swid-2015-extensions-1.0.xsd}mutable'
 
 
 class SwidParser(object):
@@ -20,6 +41,10 @@ class SwidParser(object):
         self.tag = Tag()
         self.entities = []
         self.files = []
+        self.package = None
+        self.version = None
+        self.level = 0
+        self.dir = ["" for x in range(MAX_LEVEL)]
 
     def start(self, tag, attrib):
         """
@@ -30,15 +55,74 @@ class SwidParser(object):
         if clean_tag == 'SoftwareIdentity':
             # Store basic attributes
             self.tag.package_name = attrib['name']
-            self.tag.unique_id = attrib['uniqueId']
+            self.package, _ = Package.objects.get_or_create(name=self.tag.package_name)
             self.tag.version = attrib['version']
+            if 'tagId' in attrib:
+                self.tag.unique_id = attrib['tagId']
+            else:
+                # Fallback to SWID draft standard
+                self.tag.unique_id = attrib['uniqueId']
+        elif clean_tag == 'Meta':
+            if 'product' in attrib:
+                product = attrib['product']
+                p, _ = Product.objects.get_or_create(name=product)
+                self.version, _ = Version.objects.get_or_create(product=p,
+                                    package=self.package, release=self.tag.version)
+                # Update time
+                self.version.time = timezone.now()
+                self.version.save()
+        elif clean_tag == 'Directory':
+            # Increment <Directory> level
+            self.level += 1
+            if (self.level == MAX_LEVEL):
+                raise ValueError("Maximum of %d nested <Directory> levels reached" % MAX_LEVEL)
+            self.dir[self.level] = self.dir[self.level - 1]
+
+            if 'root' in attrib and attrib['root'] != '/':
+                self.dir[self.level] = attrib['root']
+            if 'name' in attrib:
+                self.dir[self.level] += '/' + attrib['name']
         elif clean_tag == 'File':
             # Store directories and files
-            dirname = attrib['location']
+            dirname = self.dir[self.level]
+            if dirname == "":
+                # Fallback to SWID draft standard
+                dirname = attrib['location']
             filename = attrib['name']
             d, _ = Directory.objects.get_or_create(path=dirname)
             f, _ = File.objects.get_or_create(name=filename, directory=d)
             self.files.append(f)
+
+            size = None
+            if 'size' in attrib:
+                size = int(attrib['size'])
+
+            mutable = False
+            if MUTABLE in attrib:
+                if attrib[MUTABLE] == 'true':
+                    mutable = True
+
+            if SHA1 in attrib:
+                a, _ = Algorithm.objects.get_or_create(name='SHA1')
+                h, _ = FileHash.objects.get_or_create(version=self.version,
+                           file=f, size=size, mutable=mutable, algorithm=a,
+                           hash=attrib[SHA1].lower())
+            if SHA256 in attrib:
+                a, _ = Algorithm.objects.get_or_create(name='SHA256')
+                h, _ = FileHash.objects.get_or_create(version=self.version,
+                           file=f, size=size, mutable=mutable, algorithm=a,
+                           hash=attrib[SHA256].lower())
+            if SHA384 in attrib:
+                a, _ = Algorithm.objects.get_or_create(name='SHA384')
+                h, _ = FileHash.objects.get_or_create(version=self.version,
+                           file=f, size=size, mutable=mutable, algorithm=a,
+                           hash=attrib[SHA384].lower())
+            if SHA512 in attrib:
+                a, _ = Algorithm.objects.get_or_create(name='SHA512')
+                h, _ = FileHash.objects.get_or_create(version=self.version,
+                           file=f, size=size, mutable=mutable, algorithm=a,
+                           hash=attrib[SHA512].lower())
+
         elif clean_tag == 'Entity':
             # Store entities
             regid = attrib['regid']
@@ -53,16 +137,21 @@ class SwidParser(object):
                 entity_role.role = role_id
                 self.entities.append((entity, entity_role))
 
-                # Use regid of last entity with tagcreator role to construct software-id
-                if role_id == EntityRole.TAGCREATOR:
-                    self.tag.software_id = '%s_%s' % (regid, self.tag.unique_id)
+                # Use regid of last entity with tagCreator role to construct software-id
+                if role_id == EntityRole.TAG_CREATOR:
+                    self.tag.software_id = '%s__%s' % (regid, self.tag.unique_id)
+
+    def end(self, tag):
+        clean_tag = tag.split('}')[-1]  # Strip XSD part from tag name
+        if clean_tag == 'Directory':
+            self.level -= 1
 
     def close(self):
         """
         Fired when parsing is complete.
         """
         if not self.tag.software_id:
-            msg = 'A SWID tag (%s) without a `tagcreator` entity is currently not supported.'
+            msg = 'A SWID tag (%s) without a `tagCreator` entity is currently not supported.'
             raise ValueError(msg % self.tag.unique_id)
         return self.tag, self.files, self.entities
 

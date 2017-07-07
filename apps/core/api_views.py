@@ -9,6 +9,7 @@ from . import models, serializers
 class IdentityViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.Identity
     serializer_class = serializers.IdentitySerializer
+    filter_fields = ('type', 'data',)
 
 
 class SessionViewSet(viewsets.ReadOnlyModelViewSet):

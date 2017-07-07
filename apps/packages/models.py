@@ -37,12 +37,12 @@ class Version(models.Model):
     release = models.CharField(max_length=255, db_index=True)
     security = models.BooleanField(default=False)
     blacklist = models.BooleanField(default=False)
-    time = EpochField()
+    time = EpochField(default=0)
 
     class Meta(object):
         db_table = 'versions'
         index_together = [('package', 'product')]
-        ordering = ('release',)
+        ordering = ('package', 'release',)
 
     def __unicode__(self):
         return self.release

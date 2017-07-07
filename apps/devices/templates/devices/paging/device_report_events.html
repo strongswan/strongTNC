@@ -1,0 +1,26 @@
+{% load i18n %}
+
+{% if events.count %}
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th class="dateWidth">{% trans "Time" %}</th>
+        <th>{% trans "EID" %}</th>
+        <th>{% trans "Epoch" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for e in events %}
+        <tr>
+            <td><a
+                href="{% url url_name e.pk %}">{{ e.timestamp|date:'M d H:i:s Y' }}</a>
+            </td>
+            <td>{{ e.eid }}</td>
+            <td>{{ e.epoch }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>{% trans 'No software events reported for this device.' %}</p>
+{% endif %}
