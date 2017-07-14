@@ -35,7 +35,8 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class TagStatsViewSet(viewsets.ReadOnlyModelViewSet):
     model = TagStats
     serializer_class = serializers.TagStatsSerializer
-    filter_fields = ('tag', 'device', 'first_seen', 'last_seen')
+    filter_fields = ('tag', 'tag__package_name', 'tag__version', 'tag__unique_id',
+                     'device', 'first_seen', 'last_seen')
 
 
 def validate_data_param(request, list_name):

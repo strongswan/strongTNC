@@ -42,7 +42,15 @@ class TagSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
                   'entities', 'events', 'swid_xml')
 
 
+class TagMiniSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
+
+    class Meta(object):
+        model = models.Tag
+        fields = ('id', 'uri', 'package_name', 'version', 'unique_id')
+
+
 class TagStatsSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
+    tag = TagMiniSerializer()
 
     class Meta(object):
         model = models.TagStats
