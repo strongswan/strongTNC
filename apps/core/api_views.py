@@ -15,3 +15,9 @@ class IdentityViewSet(viewsets.ReadOnlyModelViewSet):
 class SessionViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.Session
     serializer_class = serializers.SessionSerializer
+
+
+class ResultViewSet(viewsets.ReadOnlyModelViewSet):
+    model = models.Result
+    serializer_class = serializers.ResultSerializer
+    filter_fields = ('session', 'policy')

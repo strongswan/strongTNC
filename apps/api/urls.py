@@ -5,7 +5,7 @@ from django.conf.urls import url, patterns, include
 
 from rest_framework import routers
 
-from apps.core.api_views import IdentityViewSet, SessionViewSet
+from apps.core.api_views import IdentityViewSet, SessionViewSet, ResultViewSet
 from apps.swid.api_views import EventViewSet, EntityViewSet, TagViewSet, TagStatsViewSet, TagAddView
 from apps.swid.api_views import SwidMeasurementView, SwidEventsView
 from apps.devices.api_views import ProductViewSet, DeviceViewSet
