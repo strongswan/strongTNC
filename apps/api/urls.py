@@ -9,6 +9,7 @@ from apps.core.api_views import IdentityViewSet, SessionViewSet
 from apps.swid.api_views import EventViewSet, EntityViewSet, TagViewSet, TagStatsViewSet, TagAddView
 from apps.swid.api_views import SwidMeasurementView, SwidEventsView
 from apps.devices.api_views import ProductViewSet, DeviceViewSet
+from apps.policies.api_views import PolicyViewSet
 from apps.packages.api_views import PackageViewSet, VersionViewSet
 from apps.filesystem.api_views import AlgorithmViewSet, DirectoryViewSet, FileViewSet, FileHashViewSet
 
@@ -18,6 +19,8 @@ router = routers.DefaultRouter()
 # Register resources
 router.register(r'identities', IdentityViewSet)
 router.register(r'sessions', SessionViewSet)
+router.register(r'results', ResultViewSet)
+router.register(r'policies', PolicyViewSet)
 router.register(r'products', ProductViewSet)
 router.register(r'devices', DeviceViewSet)
 router.register(r'packages', PackageViewSet)
