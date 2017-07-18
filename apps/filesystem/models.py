@@ -42,13 +42,19 @@ class File(models.Model):
         ordering = ('directory__path', 'name',)
 
     def __unicode__(self):
-        return '%s/%s' % (self.directory.path, self.name)
+        if self.directory.path == '/':
+            return '/%s' % self.name
+        else:
+            return '%s/%s' % (self.directory.path, self.name)
 
     def list_repr(self):
         """
         String representation in lists
         """
-        return '%s/%s' % (self.directory.path, self.name)
+        if self.directory.path == '/':
+            return '/%s' % self.name
+        else:
+            return '%s/%s' % (self.directory.path, self.name)
 
     @classmethod
     def filter(cls, search_term, order_by=Meta.ordering):

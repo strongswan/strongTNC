@@ -12,7 +12,7 @@
         <tbody id="tags-table-body">
         {% for file in object_list %}
             <tr>
-                <td><a href="{% url url_name file.pk %}">{{ file.directory }}/{{ file.name }}</a></td>
+                <td><a href="{% url url_name file.pk %}">{{ file }}</a></td>
             </tr>
         {% endfor %}
         </tbody>
