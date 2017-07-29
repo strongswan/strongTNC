@@ -58,9 +58,9 @@
                         <tr>
                             <td>
                                 {% if te.action == 1 %}
-                                    {% trans 'ADDED' %}
+                                    <i class="glyphicon glyphicon-plus-sign"></i>
                                 {% else %}
-                                    {% trans 'REMOVED' %}
+                                    <i class="glyphicon glyphicon-minus-sign"></i>
                                 {% endif %}
                             </td>
                             <td><a href="{% url 'swid:tag_detail' te.tag.pk %}">{{ te.tag.list_repr }}</a></td>

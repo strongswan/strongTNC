@@ -33,7 +33,13 @@
                             <a href="{% url 'devices:session_detail' session.pk %}">{{ session.time|date:"M d H:i:s Y" }}</a>
                         </td>
                     {% endif %}
-                    <td>{{ tag.added|yesno:"ADDED,REMOVED" }}</td>
+                    <td>
+                        {% if tag.added %}
+                            <i class="glyphicon glyphicon-plus-sign"></i>
+                        {% else %}
+                            <i class="glyphicon glyphicon-minus-sign"></i>
+                        {% endif %}
+                    </td>
                     <td><a href="{% url url_name tag.pk %}">{{ tag.unique_id|highlight:filter_query }}</a></td>
                     <td>
                         {% if tag.get_matching_packages %}
