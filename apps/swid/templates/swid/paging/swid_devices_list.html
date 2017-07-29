@@ -25,8 +25,12 @@
                 <td>
                    {% if tagstat.last_deleted %}
                         <a href="{% url 'devices:event_detail' tagstat.last_deleted.pk %}">{{ tagstat.last_deleted.timestamp|date:"M d H:i:s Y" }}</a>
+                        &nbsp;<i class="glyphicon glyphicon-remove-circle" rel="tooltip" title="removed"></i>
                     {% else %}
                         <a href="{% url 'devices:session_detail' tagstat.last_seen.pk %}">{{ tagstat.last_seen.time|date:"M d H:i:s Y" }}</a>
+                       {% if tagstat.first_installed %}
+                           &nbsp;<i class="glyphicon glyphicon-ok-circle" rel="tooltip" title="still installed"></i>
+                       {% endif %}
                    {% endif %}
                 </td>
             </tr>
