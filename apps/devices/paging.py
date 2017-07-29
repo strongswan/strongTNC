@@ -92,7 +92,7 @@ device_session_list_paging = {
     'static_producer_args': None,
     'var_name': 'sessions',
     'url_name': 'devices:session_detail',
-    'page_size': 20,
+    'page_size': 10,
 }
 
 device_event_list_paging = {
@@ -102,5 +102,5 @@ device_event_list_paging = {
     'static_producer_args': None,
     'var_name': 'events',
     'url_name': 'devices:event_detail',
-    'page_size': 20,
+    'page_size': 10,
 }
