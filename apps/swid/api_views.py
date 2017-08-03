@@ -202,7 +202,9 @@ class SwidEventsView(views.APIView):
             for e in obj['events']:
                 sw_id = e['softwareId']
                 if not Tag.objects.filter(software_id=sw_id).exists():
-                    missing_tags.append(sw_id)
+                    if sw_id not in missing_tags:
+                        missing_tags.append(sw_id)
+
             if missing_tags:
                 return Response(data=missing_tags,
                                 status=status.HTTP_412_PRECONDITION_FAILED)
