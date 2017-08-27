@@ -9,6 +9,8 @@ from django.db import models
 from apps.core.fields import EpochField
 from apps.core.models import Result
 from apps.core.types import Action
+from apps.packages.models import Version
+from apps.swid.models import TagStats
 
 
 class Product(models.Model):
@@ -129,6 +131,21 @@ class Device(models.Model):
         dt_from = datetime.utcfromtimestamp(from_timestamp).replace(hour=0, minute=0, second=0)
         dt_to = datetime.utcfromtimestamp(to_timestamp).replace(hour=23, minute=59, second=59)
         return self.sessions.filter(time__gte=dt_from, time__lte=dt_to).order_by('-time')
+
+    def get_vulnerability_count(self):
+        count = 0
+        for ts in TagStats.objects.filter(device=self.pk, last_deleted=None).exclude(first_installed=None):
+            count += Version.objects.filter(product=self.product, package__name=ts.tag.package_name,
+                                            release=ts.tag.version, security=1).exists()
+        return count
+
+    def get_vulnerabilities(self):
+        vulnerabilities = []
+        for ts in TagStats.objects.filter(device=self.pk, last_deleted=None).exclude(first_installed=None):
+            if Version.objects.filter(product=self.product, package__name=ts.tag.package_name,
+                                      release=ts.tag.version, security=1).exists():
+                vulnerabilities.append(ts)
+        return vulnerabilities
 
 
 class Group(models.Model):

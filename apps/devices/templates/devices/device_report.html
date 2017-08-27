@@ -49,6 +49,10 @@
                                 <td><strong>{% trans 'Total Sessions' %}</strong></td>
                                 <td>{{ session_count }}</td>
                             </tr>
+                            <tr>
+                                <td><strong>{% trans 'Vulnerable Software' %}</strong></td>
+                                <td>{{ vulnerability_count }}</td>
+                            </tr>
                             </tbody>
                         </table>
                         <div>
@@ -121,6 +125,11 @@
                 <hr>
                 <h4>{% trans 'Software Events' %}</h4>
                 {% paged_block config_name="device_event_list_config" producer_args=paging_args %}
+
+                <hr>
+                <h4>{% trans 'Vulnerable Software' %}</h4>
+                {% paged_block config_name="device_vulnerability_list_config" producer_args=paging_args %}
+
             </div>
         </div>
     </div>

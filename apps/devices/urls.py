@@ -28,5 +28,4 @@ urlpatterns = patterns('',
     url(r'^products/save/?$', product_views.save, name='product_save'),
     url(r'^products/(?P<productID>\d+)/delete/?$', product_views.delete, name='product_delete'),
     url(r'^products/check/?$', product_views.check, name='product_check'),
-
 )

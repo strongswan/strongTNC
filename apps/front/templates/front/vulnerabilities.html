@@ -1,0 +1,41 @@
+{% extends "front/base.html" %}
+
+{% load i18n %}
+{% block title %}{% trans "Vulnerabilities" %}{% endblock %}
+
+{% block hero %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h3>{% trans "Devices with Vulnerable Software Packages" %}</h3>
+                </div>
+                <table class="table table-striped sortable">
+                    <thead>
+                    <tr>
+                        <th>{% trans "Device" %}</th>
+                        <th>{% trans "Tag ID" %}</th>
+                        <th>{% trans "Package" %}</th>
+                        <th>{% trans "Version" %}</th>
+                    </tr>
+                   </thead>
+                   <tbody>
+                   {% for v in vulnerabilities %}
+                       <tr>
+                           <td><a href="{% url 'devices:device_detail' v.device.pk %}">{{ v.device }}</a></td>
+                           <td><a href="{% url 'swid:tag_detail' v.tag.pk %}">{{ v.tag }}</a></td>
+                           <td><a href="{% url 'packages:package_detail' v.tag.get_matching_packages.0.pk %}">{{ v.tag.package_name }}</a></td>
+                           <td>{{ v.tag.version }}</td>
+                           <td></td>
+                       </tr>
+                   {% endfor %}
+                   </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -5,7 +5,6 @@ from django.db import models
 
 from apps.packages.models import Package
 
-
 TABLE_PREFIX = 'swid_'
 
 
@@ -75,6 +74,7 @@ class TagStats(models.Model):
     class Meta(object):
         unique_together = ('tag', 'device')
         verbose_name_plural = 'tag stats'
+        ordering = ('device', 'tag')
 
 
 class EntityRole(models.Model):

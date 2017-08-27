@@ -12,7 +12,7 @@ from apps.policies.models import Policy, Enforcement
 from apps.devices.models import Device, Group, Product
 from apps.packages.models import Package, Version
 from apps.filesystem.models import Directory, File, FileHash
-from apps.swid.models import Tag, Entity, Event
+from apps.swid.models import Tag, TagStats, Entity, Event
 
 
 @require_GET
@@ -22,6 +22,25 @@ def overview(request):
     Main page
     """
     return render(request, 'front/overview.html')
+
+
+@require_GET
+@login_required
+def vulnerabilities(request):
+    """
+    Vulnerabilities view
+    """
+    context = {}
+    context['title'] = _('Vulnerabilities')
+
+    vulnerabilities = []
+    for ts in TagStats.objects.filter(last_deleted=None).exclude(first_installed=None):
+        if Version.objects.filter(product=ts.device.product, release=ts.tag.version,
+                                  package__name=ts.tag.package_name, security=1).exists():
+            vulnerabilities.append(ts)
+    context['vulnerabilities'] = vulnerabilities
+
+    return render(request, 'front/vulnerabilities.html', context)
 
 
 @require_GET

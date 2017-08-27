@@ -214,8 +214,9 @@ def report(request, deviceID):
                     current_device.is_due_for(e)))
             except Result.DoesNotExist:
                 enforcements.append((e, _('None'), True))
-
     context['enforcements'] = enforcements
+
+    context['vulnerability_count'] = current_device.get_vulnerability_count()
 
     return render(request, 'devices/device_report.html', context)
 
