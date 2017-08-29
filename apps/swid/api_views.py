@@ -29,13 +29,13 @@ class EntityViewSet(viewsets.ReadOnlyModelViewSet):
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     model = Tag
     serializer_class = serializers.TagSerializer
-    filter_fields = ('package_name', 'version', 'unique_id', 'software_id')
+    filter_fields = ('package_name', 'version_str', 'version', 'unique_id', 'software_id')
 
 
 class TagStatsViewSet(viewsets.ReadOnlyModelViewSet):
     model = TagStats
     serializer_class = serializers.TagStatsSerializer
-    filter_fields = ('tag', 'tag__package_name', 'tag__version', 'tag__unique_id',
+    filter_fields = ('tag', 'tag__package_name', 'tag__version_str', 'tag__unique_id',
                      'device', 'first_seen', 'last_seen')
 
 

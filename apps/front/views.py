@@ -33,11 +33,8 @@ def vulnerabilities(request):
     context = {}
     context['title'] = _('Vulnerabilities')
 
-    vulnerabilities = []
-    for ts in TagStats.objects.filter(last_deleted=None).exclude(first_installed=None):
-        if Version.objects.filter(product=ts.device.product, release=ts.tag.version,
-                                  package__name=ts.tag.package_name, security=1).exists():
-            vulnerabilities.append(ts)
+    vulnerabilities = TagStats.objects.exclude(first_installed=None).filter(last_deleted=None,
+                                                                     tag__version__security=1)
     context['vulnerabilities'] = vulnerabilities
 
     return render(request, 'front/vulnerabilities.html', context)

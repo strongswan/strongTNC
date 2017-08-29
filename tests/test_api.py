@@ -239,7 +239,7 @@ def test_limit_fields(api_client):
     r = api_client.get(reverse('tag-list'))
     data = json.loads(r.content)
     assert len(data) == 5
-    assert len(data[0].keys()) == 9
+    assert len(data[0].keys()) == 10 
 
     # Filter some fields
     r = api_client.get(reverse('tag-list'), data={'fields': 'packageName,id,uri'})

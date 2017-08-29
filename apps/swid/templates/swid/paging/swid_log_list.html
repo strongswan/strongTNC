@@ -50,7 +50,7 @@
                             <span title="{% trans 'No matching package found' %}">{{ tag.package_name|highlight:filter_query }}</span>
                         {% endif %}
                     </td>
-                    <td>{{ tag.version }}</td>
+                    <td>{{ tag.version_str }}</td>
                 </tr>
             {% endfor %}
         {% endfor %}

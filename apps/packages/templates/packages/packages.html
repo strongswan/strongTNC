@@ -207,7 +207,7 @@
                 <tr>
                     <th>{% trans 'Tag ID' %}</th>
                     <th>{% trans 'Package name' %}</th>
-                    <th>{% trans 'Version' %}</th>
+                    <th>&nbsp; &nbsp;{% trans 'Version' %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -215,7 +215,18 @@
                     <tr>
                         <td><a href="{% url 'swid:tag_detail' tag.pk %}">{{ tag.list_repr }}</a></td>
                         <td>{{ tag.package_name }}</td>
-                        <td>{{ tag.version }}</td>
+                        <td>
+                            {% if tag.version %}
+                                {% if tag.version.security %}
+                                    <i class="glyphicon glyphicon-ban-circle text-danger" rel="tooltip" title="vulnerable"></i>
+                                {% else %}
+                                    <i class="glyphicon glyphicon-ok-circle text-success" rel="tooltip" title="ok"></i>
+                                {% endif %}
+                            {% else %}
+                                &nbsp; &nbsp;
+                            {% endif %}
+                            {{ tag.version_str }}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

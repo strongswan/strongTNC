@@ -6,7 +6,7 @@
     <tr>
         <th>{% trans "Tag ID" %}</th>
         <th>{% trans "Package" %}</th>
-        <th>{% trans "Version" %}</th>
+        <th>&nbsp; &nbsp;{% trans "Version" %}</th>
         <th>{% trans "Installed" %}</th>
     </tr>
     </thead>
@@ -15,7 +15,10 @@
         <tr>
             <td><a href="{% url 'swid:tag_detail' v.tag.pk %}">{{ v.tag }}</a></td>
             <td><a href="{% url 'packages:package_detail' v.tag.get_matching_packages.0.pk %}">{{ v.tag.package_name }}</a></td>
-            <td>{{ v.tag.version }}</td>
+            <td>
+                <i class="glyphicon glyphicon-ban-circle text-danger" rel="tooltip" title="vulnerable"></i>
+                {{ v.tag.version_str }}
+            </td>
             <td><a href="{% url 'devices:event_detail' v.first_installed.pk %}">{{ v.first_installed.timestamp|date:"M d H:i:s Y" }}</a></td>
         </tr>
     {% endfor %}

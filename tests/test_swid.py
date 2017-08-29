@@ -77,7 +77,7 @@ def test_tag_unique_id(swidtag, filename, unique_id):
     assert swidtag.unique_id == unique_id
 
 
-@pytest.mark.parametrize(['filename', 'version'], [
+@pytest.mark.parametrize(['filename', 'version_str'], [
     ('strongswan.short.swidtag', '4.5.2-1.5+deb7u3'),
     ('strongswan.full.swidtag', '4.5.2-1.5+deb7u3'),
     ('cowsay.short.swidtag', '3.03+dfsg1-4'),
@@ -85,8 +85,8 @@ def test_tag_unique_id(swidtag, filename, unique_id):
     ('strongswan-tnc-imcvs.short.swidtag', '5.1.2-4.fc19'),
     ('strongswan-tnc-imcvs.full.swidtag', '5.1.2-4.fc19'),
 ])
-def test_tag_version(swidtag, filename, version):
-    assert swidtag.version == version
+def test_tag_version(swidtag, filename, version_str):
+    assert swidtag.version_str == version_str
 
 
 @pytest.mark.parametrize(['filename', 'tagroles'], [

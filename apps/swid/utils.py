@@ -56,7 +56,7 @@ class SwidParser(object):
             # Store basic attributes
             self.tag.package_name = attrib['name']
             self.package, _ = Package.objects.get_or_create(name=self.tag.package_name)
-            self.tag.version = attrib['version']
+            self.tag.version_str = attrib['version']
             if 'tagId' in attrib:
                 self.tag.unique_id = attrib['tagId']
             else:
@@ -67,10 +67,11 @@ class SwidParser(object):
                 product = attrib['product']
                 p, _ = Product.objects.get_or_create(name=product)
                 self.version, _ = Version.objects.get_or_create(product=p,
-                                    package=self.package, release=self.tag.version)
+                                    package=self.package, release=self.tag.version_str)
                 # Update time
                 self.version.time = timezone.now()
                 self.version.save()
+                self.tag.version = self.version
         elif clean_tag == 'Directory':
             # Increment <Directory> level
             self.level += 1
@@ -209,6 +210,7 @@ def process_swid_tag(tag_xml, allow_tag_update=False):
             return Tag.objects.get(pk=old_tag.pk), replaced
         # Update tag with new information
         old_tag.package_name = tag.package_name
+        old_tag.version_str = tag.version_str
         old_tag.version = tag.version
         old_tag.unique_id = tag.unique_id
         old_tag.files.clear()

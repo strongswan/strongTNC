@@ -42,7 +42,7 @@
                     <span title="{% trans 'No matching package found' %}">{{ obj.tag.package_name|highlight:filter_query }}</span>
                 {% endif %}
             </td>
-            <td>{{ obj.tag.version|highlight:filter_query }}</td>
+            <td>{{ obj.tag.version_str|highlight:filter_query }}</td>
             <td><a href="{% url 'devices:session_detail' obj.first_seen.pk %}">{{ obj.first_seen.time|date:"M d H:i:s Y" }}</a></td>
             <td><a href="{% url 'devices:session_detail' obj.last_seen.pk %}">{{ obj.last_seen.time|date:"M d H:i:s Y" }}</a></td>
 

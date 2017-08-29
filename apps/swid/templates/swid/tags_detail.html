@@ -35,7 +35,16 @@
                     </tr>
                     <tr>
                         <td class="noWrap"><strong>{% trans 'Version' %}</strong></td>
-                        <td>{{ object.version }}</td>
+                        <td>
+                            {{ object.version_str }}
+                            {% if object.version %}
+                                {% if object.version.security %}
+                                    <i class="glyphicon glyphicon-ban-circle text-danger" rel="tooltip" title="vulnerable"></i>
+                                {% else %}
+                                    <i class="glyphicon glyphicon-ok-circle text-success" rel="tooltip" title="ok"></i>
+                                {% endif %}
+                            {% endif %}
+                        </td>
                     </tr>
                     <tr>
                         <td class="noWrap"><strong>{% trans 'Tag ID' %}</strong></td>

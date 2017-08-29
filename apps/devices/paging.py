@@ -57,7 +57,7 @@ def device_vulnerability_stat_producer(page_size, filter_query, dynamic_params=N
                                                                  static_params=None):
     device_id = dynamic_params['device_id']
     device = Device.objects.get(pk=device_id)
-    count = device.get_vulnerability_count()
+    count = device.get_vulnerabilities().count()
     return math.ceil(count / page_size)
 
 

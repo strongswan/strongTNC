@@ -29,7 +29,7 @@
                            <td><a href="{% url 'devices:device_detail' v.device.pk %}">{{ v.device }}</a></td>
                            <td><a href="{% url 'swid:tag_detail' v.tag.pk %}">{{ v.tag }}</a></td>
                            <td><a href="{% url 'packages:package_detail' v.tag.get_matching_packages.0.pk %}">{{ v.tag.package_name }}</a></td>
-                           <td>{{ v.tag.version }}</td>
+                           <td>{{ v.tag.version_str }}</td>
                            <td></td>
                        </tr>
                    {% endfor %}

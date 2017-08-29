@@ -216,7 +216,7 @@ def report(request, deviceID):
                 enforcements.append((e, _('None'), True))
     context['enforcements'] = enforcements
 
-    context['vulnerability_count'] = current_device.get_vulnerability_count()
+    context['vulnerability_count'] = current_device.get_vulnerabilities().count()
 
     return render(request, 'devices/device_report.html', context)
 
