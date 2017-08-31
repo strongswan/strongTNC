@@ -7,7 +7,7 @@
         <tr>
             <th>{% trans 'Unique ID' %}</th>
             <th>{% trans 'Package name' %}</th>
-            <th>{% trans 'Version' %}</th>
+            <th>&nbsp; &nbsp;{% trans 'Version' %}</th>
         </tr>
         </thead>
         <tbody>
@@ -29,7 +29,18 @@
                         </span>
                     {% endif %}
                 </td>
-                <td>{{ obj.version|highlight:filter_query }}</td>
+                <td>
+                    {% if obj.version %}
+                        {% if obj.version.security %}
+                            <i class="glyphicon glyphicon-ban-circle text-danger" rel="tooltip" title="vulnerable"></i>
+                        {% else %}
+                            <i class="glyphicon glyphicon-ok-circle text-success" rel="tooltip" title="ok"></i>
+                        {% endif %}
+                    {% else %}
+                        &nbsp; &nbsp;
+                    {% endif %}
+                    {{ obj.version_str }}
+                </td>
             </tr>
         {% endfor %}
         </tbody>
