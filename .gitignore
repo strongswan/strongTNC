@@ -20,6 +20,9 @@ settings.ini
 .idea/*
 *.iml
 
+# Static files
+static
+
 # Other files
 *.patch
 *.log
