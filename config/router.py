@@ -26,16 +26,16 @@ class DBRouter(object):
 
         return response
 
-    def allow_syncdb(self, db, model):
+    def allow_migrate(self, db, app_label, model_name=None, **hints):
         """
-        For manage.py syncdb make sure data ends up in the right table
+        Routes migrations to appropriate database
         """
+        meta_apps = app_label == 'auth' or app_label == 'admin' or \
+                    app_label == 'contenttypes' or app_label == 'sessions'
         if db == 'meta':
-            return self.is_meta(model)
-        elif self.is_meta(model):
-            return False
-
-        return True
+            return meta_apps
+        else:
+            return not meta_apps
 
     def is_meta(self, model):
         """
