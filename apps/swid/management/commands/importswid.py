@@ -11,7 +11,9 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 import os.path
 
 from django.core.management.base import BaseCommand, CommandError
+from config.settings import USE_XMPP, XMPP_GRID
 from apps.swid import utils
+from apps.swid.xmpp_grid import XmppGridClient
 
 
 class Command(BaseCommand):
@@ -31,6 +33,24 @@ class Command(BaseCommand):
         if not os.path.isfile(filename):
             raise CommandError('No such file: ' + filename)
 
+        # Publish SWID tags on XMPP-Grid?
+        xmpp_connected = False
+        if USE_XMPP:
+            # Initialize XMPP client
+            xmpp = XmppGridClient(XMPP_GRID['jid'], XMPP_GRID['password'],
+                                  XMPP_GRID['pubsub_server'])
+            xmpp.ca_certs = XMPP_GRID['cacert']
+            xmpp.certfile = XMPP_GRID['certfile']
+            xmpp.keyfile = XMPP_GRID['keyfile']
+            xmpp.use_ipv6 = XMPP_GRID['use_ipv6']
+
+            # Connect to the XMPP server and start processing XMPP stanzas.
+            if xmpp.connect():
+                xmpp.process()
+                xmpp_connected = True
+            else:
+                self.stdout.write('Unable to connect to XMPP-Grid server.')
+
         encoding = self.stdout.encoding or 'ascii'
         with open(filename, 'r') as f:
             for line in f:
@@ -40,3 +60,7 @@ class Command(BaseCommand):
                     self.stdout.write('Replaced {0}'.format(tag).encode(encoding, 'replace'))
                 else:
                     self.stdout.write('Added {0}'.format(tag).encode(encoding, 'replace'))
+                if xmpp_connected:
+                    xmpp.publish(XMPP_GRID['node_swidtags'], tag.software_id, tag.swid_xml)
+        if xmpp_connected:
+            xmpp.disconnect()
