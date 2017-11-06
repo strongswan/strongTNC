@@ -238,8 +238,23 @@ class SwidEventsView(views.APIView):
                 msg = 'Session with id "%s" not found' % pk
                 return make_message(msg, status.HTTP_404_NOT_FOUND)
 
+            # Publish SWID events on XMPP-Grid?
+            xmpp_connected = False
+            if USE_XMPP:
+                # Initialize XMPP client
+                xmpp = XmppGridClient(XMPP_GRID['jid'], XMPP_GRID['password'],
+                                      XMPP_GRID['pubsub_server'])
+                xmpp.ca_certs = XMPP_GRID['cacert']
+                xmpp.certfile = XMPP_GRID['certfile']
+                xmpp.keyfile = XMPP_GRID['keyfile']
+                xmpp.use_ipv6 = XMPP_GRID['use_ipv6']
+
+                # Connect to the XMPP server and start processing XMPP stanzas.
+                if xmpp.connect():
+                    xmpp.process()
+                    xmpp_connected = True
+
             # Create Event and TagEvent objects if they don't exist yet
-            found_tags = set()
             epoch = obj['epoch']
             last_eid = obj['lastEid']
             for e in obj['events']:
@@ -250,6 +265,19 @@ class SwidEventsView(views.APIView):
                 te, _ = TagEvent.objects.get_or_create(event=ev, tag=t,
                            record_id=e['recordId'], source_id=e['sourceId'],
                            action=action)
+
+                if xmpp_connected:
+                    ns = 'http://strongswan.org/swidevent/schema.xsd'
+                    device_el = '<device id="%s" description="%s" />' % \
+                        (session.device.value, session.device.description)
+                    swid_el = '<swid softwareId="%s" recordId="%s" sourceId="%s" />' % \
+                        (e['softwareId'], e['recordId'], e['sourceId'])
+                    action_el = '<action>%d</action>' % action
+                    event_params = 'timestamp="%s" epoch="%s" eid="%s"' % \
+                        (e['timestamp'], epoch, e['eid'])
+                    event_el = '<swidEvent xmlns="%s" %s>%s%s%s</swidEvent>' % \
+                        (ns, event_params, device_el, swid_el, action_el)
+                    xmpp.publish(XMPP_GRID['node_events'], None, event_el)
 
                 # Update tag stats
                 ts_set = TagStats.objects.filter(device=session.device, tag=t)
@@ -264,6 +292,9 @@ class SwidEventsView(views.APIView):
                 else:
                     ts = TagStats.objects.create(device=session.device, tag=t,
                             first_seen=session, last_seen=session, first_installed=ev)
+
+            if xmpp_connected:
+                xmpp.disconnect()
 
             return Response(data=[], status=status.HTTP_200_OK)
         except ValueError as e:

@@ -82,6 +82,7 @@ try:
     XMPP_GRID['keyfile'] = config.get('xmpp', 'keyfile')
     XMPP_GRID['use_ipv6'] = config.getboolean('xmpp', 'use_ipv6')
     XMPP_GRID['node_swidtags'] = config.get('xmpp', 'node_swidtags')
+    XMPP_GRID['node_events'] = config.get('xmpp', 'node_events')
 
 except (NoSectionError, NoOptionError):
     USE_XMPP = False
