@@ -124,7 +124,7 @@ class TagAddView(views.APIView):
                 else:
                     stats['added'] += 1
                 if xmpp_connected:
-                    xmpp.publish(XMPP_GRID['node_swidtags'], tag.software_id, tag.swid_xml)
+                    xmpp.publish(XMPP_GRID['node_swidtags'], tag.software_id, tag.json())
 
         if xmpp_connected:
             xmpp.disconnect()
@@ -267,17 +267,15 @@ class SwidEventsView(views.APIView):
                            action=action)
 
                 if xmpp_connected:
-                    ns = 'http://strongswan.org/swidevent/schema.xsd'
-                    device_el = '<device id="%s" description="%s" />' % \
-                        (session.device.value, session.device.description)
-                    swid_el = '<swid softwareId="%s" recordId="%s" sourceId="%s" />' % \
-                        (e['softwareId'], e['recordId'], e['sourceId'])
-                    action_el = '<action>%d</action>' % action
-                    event_params = 'timestamp="%s" epoch="%s" eid="%s"' % \
+                    j_event = '"event": {"timestamp": "%s", "epoch": "%s", "eid": "%s"}' % \
                         (e['timestamp'], epoch, e['eid'])
-                    event_el = '<swidEvent xmlns="%s" %s>%s%s%s</swidEvent>' % \
-                        (ns, event_params, device_el, swid_el, action_el)
-                    xmpp.publish(XMPP_GRID['node_events'], None, event_el)
+                    j_device = '"device": {"value": "%s", "description": "%s"}' % \
+                        (session.device.value, session.device.description)
+                    j_tag = '"tag": {"softwareId": "%s", "recordId": %s, "sourceId": %s}' % \
+                        (e['softwareId'], e['recordId'], e['sourceId'])
+                    j_action = '"action": %d' % action
+                    j_data = '{%s, %s, %s, %s}' % (j_event, j_device, j_tag, j_action)
+                    xmpp.publish(XMPP_GRID['node_events'], None, j_data)
 
                 # Update tag stats
                 ts_set = TagStats.objects.filter(device=session.device, tag=t)

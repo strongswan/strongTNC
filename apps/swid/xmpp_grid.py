@@ -33,7 +33,8 @@ class XmppGridClient(ClientXMPP):
         self.send_presence()
 
     def publish(self, node, item_id, item):
-        payload = ET.fromstring(item)
+        json_xml = '<json xmlns="urn:xmpp:json:0">%s</json>' % item
+        payload = ET.fromstring(json_xml)
         self['xep_0060'].publish(self.pubsub_server, node, id=item_id,
                                  payload=payload)
         print('Published item %s to %s' % (item_id, node))

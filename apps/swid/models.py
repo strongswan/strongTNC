@@ -4,6 +4,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 from django.db import models
 
 from apps.packages.models import Package
+from config.settings import XMPP_GRID
 
 TABLE_PREFIX = 'swid_'
 
@@ -36,6 +37,14 @@ class Tag(models.Model):
 
     def list_repr(self):
         return self.unique_id
+
+    def json(self):
+        j_tag_id = '"tagId": "%s"' % self.unique_id
+        j_package_name = '"packageName": "%s"' % self.package_name
+        j_version_str = '"versionStr": "%s"' % self.version_str
+        j_uri = '"uri": "%s/api/swid-tags/%s/"' % (XMPP_GRID['rest_uri'], self.id)
+        j_data = '{%s, %s, %s, %s}' % (j_tag_id, j_package_name, j_version_str, j_uri)
+        return j_data
 
     @classmethod
     def get_installed_tags_with_time(cls, session):
