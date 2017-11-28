@@ -70,6 +70,25 @@ DATABASE_ROUTERS = ['config.router.DBRouter']
 # Auth URLs
 LOGIN_URL = '/login'
 
+# XMPP configuration
+XMPP_GRID = {}
+try:
+    USE_XMPP = config.getboolean('xmpp', 'USE_XMPP')
+    XMPP_GRID['jid'] = config.get('xmpp', 'jid')
+    XMPP_GRID['password'] = config.get('xmpp', 'password')
+    XMPP_GRID['pubsub_server'] = config.get('xmpp', 'pubsub_server')
+    XMPP_GRID['cacert'] = config.get('xmpp', 'cacert')
+    XMPP_GRID['certfile'] = config.get('xmpp', 'certfile')
+    XMPP_GRID['keyfile'] = config.get('xmpp', 'keyfile')
+    XMPP_GRID['use_ipv6'] = config.getboolean('xmpp', 'use_ipv6')
+    XMPP_GRID['node_swidtags'] = config.get('xmpp', 'node_swidtags')
+    XMPP_GRID['node_events'] = config.get('xmpp', 'node_events')
+    XMPP_GRID['rest_uri'] = config.get('xmpp', 'rest_uri')
+
+except (NoSectionError, NoOptionError):
+    USE_XMPP = False
+
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.

@@ -132,6 +132,26 @@ Setup a database with test data::
     $ ./manage.py shell
     >>> execfile('tests/create_test_db.py')
 
+
+XMPP-Grid Publishing Interface
+------------------------------
+
+strongTNC can publish SWID tag and SWIMA event information in JSON format to an
+XMPP-Grid by setting ``[xmpp] USE_XMPP = 1`` and configuring various parameters
+(in ``settings.ini``). Here is an example configuration:
+
+    [xmpp]
+    USE_XMPP = 1
+    jid: tnc@strongswan.org
+    password: <password>
+    pubsub_server: pubsub.strongswan.org
+    cacert: /etc/swanctl/x509ca/strongswanCaCert.pem
+    use_ipv6: 0
+    node_events: sacm/events
+    node_swidtags: sacm/swidtags
+    rest_uri: https://tnc.strongswan.org
+
+
 License
 -------
 
