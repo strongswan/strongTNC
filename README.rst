@@ -136,9 +136,39 @@ Setup a database with test data::
 XMPP-Grid Publishing Interface
 ------------------------------
 
-strongTNC can publish SWID tag and SWIMA event information in JSON format to an
-XMPP-Grid by setting ``[xmpp] USE_XMPP = 1`` and configuring various parameters
-(in ``settings.ini``). Here is an example configuration::
+strongTNC can publish real-time information on new SWID tags::
+
+    Published item strongswan.org__Debian_7.11-armv7l-smbclient-2~3.6.6-6~deb7u15 to sacm/swidtags:
+    {
+      "tagId": "Debian_7.11-armv7l-smbclient-2~3.6.6-6~deb7u15",
+      "versionStr": "2:3.6.6-6+deb7u15",
+      "packageName": "smbclient",
+      "uri": "https://tnc.strongswan.org/api/swid-tags/10550/"
+    }
+
+and push ``create`` (action: 1) or ``remove`` (action: 2) SWIMA events received from endpoints::
+
+    Published item 270aea08-d972-478c-b414-23abb0e82f1d332 to sacm/events:
+    {
+      "device": {
+        "description": "Raspi 3",
+        "value": "565feb9e8462870dba884ce540a0768d68829873"
+      },
+      "action": 1,
+      "tag": {
+        "recordId": 1413,
+        "sourceId": 1,
+        "softwareId": "strongswan.org__Debian_7.11-armv7l-smbclient-2~3.6.6-6~deb7u15"
+      },
+      "event": {
+        "timestamp": "2017-11-22T15:04:35Z",
+        "epoch": "1594045818",
+        "eid": "82"
+      }
+    }
+
+in JSON format to an XMPP-Grid by setting ``[xmpp] USE_XMPP = 1`` and configuring
+various parameters (in ``settings.ini``). Here is an example configuration::
 
     [xmpp]
     USE_XMPP = 1
@@ -159,6 +189,7 @@ License
 
     Copyright (C) 2013 Marco Tanner, Stefan Rohner
     Copyright (C) 2014 Christian Fässler, Danilo Bargen, Jonas Furrer
+    Copyright (C) 2013-2017 Andreas Steffen, Tobias Brunner
     HSR University of Applied Sciences Rapperswil
 
     This file is part of strongTNC.  strongTNC is free software: you can
