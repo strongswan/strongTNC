@@ -138,7 +138,7 @@ XMPP-Grid Publishing Interface
 
 strongTNC can publish SWID tag and SWIMA event information in JSON format to an
 XMPP-Grid by setting ``[xmpp] USE_XMPP = 1`` and configuring various parameters
-(in ``settings.ini``). Here is an example configuration:
+(in ``settings.ini``). Here is an example configuration::
 
     [xmpp]
     USE_XMPP = 1
