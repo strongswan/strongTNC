@@ -1,7 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from . import file_views, directory_views
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^files/?$', file_views.files, name='file_list'),
     url(r'^files/(?P<fileID>\d+)/?$', file_views.file, name='file_detail'),
     url(r'^files/add/?$', file_views.add, name='file_add'),
@@ -16,4 +16,4 @@ urlpatterns = patterns('',
     url(r'^directories/save/?$', directory_views.save, name='directory_save'),
     url(r'^directories/(?P<directoryID>\d+)/delete/?$', directory_views.delete, name='directory_delete'),
     url(r'^directories/check/?$', directory_views.check, name='directory_check'),
-)
+]

@@ -1,7 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from . import views
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^login/?$', views.login, name='login'),
     url(r'^logout/?$', views.logout, name='logout'),
-)
+]

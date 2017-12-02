@@ -1,7 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from . import device_views, group_views, product_views
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^devices/?$', device_views.devices, name='device_list'),
     url(r'^devices/(?P<deviceID>\d+)/?$', device_views.device, name='device_detail'),
     url(r'^devices/add/?$', device_views.add, name='device_add'),
@@ -28,4 +28,4 @@ urlpatterns = patterns('',
     url(r'^products/save/?$', product_views.save, name='product_save'),
     url(r'^products/(?P<productID>\d+)/delete/?$', product_views.delete, name='product_delete'),
     url(r'^products/check/?$', product_views.check, name='product_check'),
-)
+]

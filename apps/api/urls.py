@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-from django.conf.urls import url, patterns, include
+from django.conf.urls import url, include
 
 from rest_framework import routers
 
@@ -38,7 +38,7 @@ router.register(r'swid-stats', TagStatsViewSet)
 urlpatterns = router.urls
 
 # Register additional endpoints
-urlpatterns += patterns('',
+urlpatterns += [
     # Auth views
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
@@ -57,4 +57,4 @@ urlpatterns += patterns('',
         SwidEventsView.as_view(), name='session-swid-events'),
     url(r'^sessions/(?P<pk>[^/]+)/swid-events/\.(?P<format>[a-z0-9]+)',
         SwidEventsView.as_view(), name='session-swid-events'),
-)
+]

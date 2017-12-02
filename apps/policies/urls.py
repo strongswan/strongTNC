@@ -1,7 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from . import policy_views, enforcement_views
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^policies/?$', policy_views.policies, name='policy_list'),
     url(r'^policies/(?P<policyID>\d+)/?$', policy_views.policy, name='policy_detail'),
     url(r'^policies/add/?$', policy_views.add, name='policy_add'),
@@ -15,4 +15,4 @@ urlpatterns = patterns('',
     url(r'^enforcements/save/?$', enforcement_views.save, name='enforcement_save'),
     url(r'^enforcements/(?P<enforcementID>\d+)/delete/?$', enforcement_views.delete, name='enforcement_delete'),
     url(r'^enforcements/check/?$', enforcement_views.check, name='enforcement_check'),
-)
+]
