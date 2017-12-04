@@ -29,14 +29,20 @@ function AjaxSessionsLoader() {
             }
         );
         pager.getPage();
-        Dajaxice.apps.swid.get_tag_inventory_stats(this.updateStats, {
-            'device_id': this.deviceId,
-            'from_timestamp': fromTimestamp,
-            'to_timestamp': toTimestamp
-        },
-        {'error_callback': function() {
-            alert('Error: Could not fetch tag inventory stats.');
-        }});
+        $.ajax({
+            method: 'POST',
+            // hardcode the URL for now (could be retrieved with '{% url 'swid:tag_inventory_stats' %}')
+            url: '/swid-inventory/stats',
+            data: {
+                'device_id': this.deviceId,
+                'from_timestamp': fromTimestamp,
+                'to_timestamp': toTimestamp
+            },
+            success: this.updateStats,
+            error: function() {
+                alert('Error: Could not fetch tag inventory stats.');
+            },
+        });
     };
 
     this.updateStats = function(data) {

@@ -3,7 +3,8 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 import json
 
-from dajaxice.decorators import dajaxice_register
+from django.http import HttpResponse
+from django.views.decorators.http import require_POST
 
 from apps.core.decorators import ajax_login_required
 from apps.core.models import Session
@@ -12,9 +13,9 @@ from apps.front.utils import local_dtstring, timestamp_local_to_utc
 from .paging import get_tag_diffs
 
 
-@dajaxice_register
+@require_POST
 @ajax_login_required
-def get_tag_inventory_stats(request, device_id, from_timestamp, to_timestamp):
+def get_tag_inventory_stats(request):
     """
     Return some figures regarding the number of sessions in a given
     given timerange.
@@ -36,6 +37,10 @@ def get_tag_inventory_stats(request, device_id, from_timestamp, to_timestamp):
             }
 
     """
+    device_id = request.POST.get('device_id')
+    from_timestamp = int(request.POST.get('from_timestamp'))
+    to_timestamp = int(request.POST.get('to_timestamp'))
+
     data = {
         'session_count': 0,
         'last_session': 'None',
@@ -45,7 +50,7 @@ def get_tag_inventory_stats(request, device_id, from_timestamp, to_timestamp):
     try:
         device = Device.objects.get(pk=device_id)
     except Session.DoesNotExist:
-        return json.dumps(data)
+        return HttpResponse(json.dumps(data), content_type="application/x-json")
 
     from_timestamp = timestamp_local_to_utc(from_timestamp)
     to_timestamp = timestamp_local_to_utc(to_timestamp)
@@ -57,12 +62,12 @@ def get_tag_inventory_stats(request, device_id, from_timestamp, to_timestamp):
             'fist_session': local_dtstring(sessions.first().time),
         }
 
-    return json.dumps(data)
+    return HttpResponse(json.dumps(data), content_type="application/x-json")
 
 
-@dajaxice_register
+@require_POST
 @ajax_login_required
-def get_tag_log_stats(request, device_id, from_timestamp, to_timestamp):
+def get_tag_log_stats(request):
     """
     Return some figures regarding SWID tags history of given device
     in a given timerange.
@@ -86,6 +91,10 @@ def get_tag_log_stats(request, device_id, from_timestamp, to_timestamp):
         }
 
     """
+    device_id = request.POST.get('device_id')
+    from_timestamp = int(request.POST.get('from_timestamp'))
+    to_timestamp = int(request.POST.get('to_timestamp'))
+
     from_timestamp = timestamp_local_to_utc(from_timestamp)
     to_timestamp = timestamp_local_to_utc(to_timestamp)
     diffs = get_tag_diffs(device_id, from_timestamp, to_timestamp)
@@ -112,28 +121,29 @@ def get_tag_log_stats(request, device_id, from_timestamp, to_timestamp):
             'removed_count': removed_count,
         }
 
-        return json.dumps(result)
+        return HttpResponse(json.dumps(result), content_type="application/x-json")
     else:
-        return json.dumps({
+        return HttpResponse(json.dumps({
             'session_count': 0,
             'first_session': 'None',
             'last_session': 'None',
             'added_count': 0,
             'removed_count': 0,
-        })
+        }), content_type="application/x-json")
 
 
-@dajaxice_register
+@require_POST
 @ajax_login_required
-def session_info(request, session_id):
+def session_info(request):
+    session_id = request.POST.get('session_id')
     try:
         session = Session.objects.get(pk=session_id)
     except Session.DoesNotExist:
-        return json.dumps({})
+        return HttpResponse(json.dumps({}), content_type="application/x-json")
 
     detail = {
         'id': session.pk,
         'time': local_dtstring(session.time)
     }
 
-    return json.dumps(detail)
+    return HttpResponse(json.dumps(detail), content_type="application/x-json")

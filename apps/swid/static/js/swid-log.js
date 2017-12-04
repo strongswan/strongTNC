@@ -61,13 +61,20 @@ var getTagList = function() {
     });
     pager.getPage();
 
-    Dajaxice.apps.swid.get_tag_log_stats(updateStats, {
-        'device_id': deviceId,
-        'from_timestamp': fromTimestamp,
-        'to_timestamp': toTimestamp
-    }, {'error_callback': function() {
-        alert('Error: Could not fetch tag log stats.');
-    }});
+    $.ajax({
+        method: 'POST',
+        // hardcode the URL for now (could be retrieved with '{% url 'swid:tag_log_stats' %}')
+        url: '/swid-log/stats',
+        data: {
+            'device_id': deviceId,
+            'from_timestamp': fromTimestamp,
+            'to_timestamp': toTimestamp
+        },
+        success: updateStats,
+        error: function() {
+            alert('Error: Could not fetch tag log stats.');
+        }
+    });
 };
 
 var updateStats = function(data) {
