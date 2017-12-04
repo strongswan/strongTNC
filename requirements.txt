@@ -3,9 +3,6 @@ Django>=1.8,<1.9
 pytz==2016.7
 dj-database-url==0.4.1
 
-# AJAX
-django-dajaxice==0.7
-
 # Parsing
 lxml==3.6.4
 

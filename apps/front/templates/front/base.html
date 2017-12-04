@@ -1,5 +1,4 @@
 {% load i18n %}
-{% load dajaxice_templatetags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,8 +24,6 @@
 
     <script src="{{ STATIC_URL }}js/hashquery.js"></script>
     <script src="{{ STATIC_URL }}js/paging.js"></script>
-
-    {% dajaxice_js_import %}
 
     <!--[if lt IE 9]>
       <script src="{{ STATIC_URL }}js/html5shiv.js"></script>
