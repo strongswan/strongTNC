@@ -306,4 +306,10 @@
 {% block footer_js %}
     {{ block.super }}
     <script src="{{ STATIC_URL }}js/files.js"></script>
+    <script>
+        $(function() {
+            setupDirectoryDropdown('{% url 'filesystem:directory_autocomplete' %}');
+            initValidation();
+        });
+    </script>
 {% endblock %}

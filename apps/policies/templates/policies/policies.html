@@ -329,7 +329,7 @@
                     return o.file
                 },
                 query: function (query) {
-                    autocompleteDelay.ajaxFunction = Dajaxice.apps.filesystem.files_autocomplete;
+                    autocompleteDelay.ajaxUrl = '{% url 'filesystem:file_autocomplete' %}';
                     autocompleteDelay.callback = query.callback;
                     autocompleteDelay.errorCallback = function() {
                         alert('Error: Could not fetch file list.');
@@ -352,7 +352,7 @@
                     return o.directory
                 },
                 query: function (query) {
-                    autocompleteDelay.ajaxFunction = Dajaxice.apps.filesystem.directories_autocomplete;
+                    autocompleteDelay.ajaxUrl = '{% url 'filesystem:directory_autocomplete' %}';
                     autocompleteDelay.callback = query.callback;
                     autocompleteDelay.errorCallback = function() {
                         alert('Error: Could not fetch directory list.');

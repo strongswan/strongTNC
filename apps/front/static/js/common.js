@@ -34,7 +34,7 @@ var autocompleteDelay = {
     callback: null,
     errorCallback: function() {
     },
-    ajaxFunction: null,
+    ajaxUrl: null,
 
     queryUpdate: function(newQuery) {
         this.query = newQuery;
@@ -53,11 +53,14 @@ var autocompleteDelay = {
     },
 
     autocompleteCall: function() {
-        // function is called by setTimeout,
-        // thus it's running in the context of the window object
-        var data = {'search_term': autocompleteDelay.query};
-        var config = {'error_callback': autocompleteDelay.errorCallback};
-        autocompleteDelay.ajaxFunction(autocompleteDelay.callback, data, config);
+        var config = {
+            method: 'POST',
+            url: autocompleteDelay.ajaxUrl,
+            data: {'search_term': autocompleteDelay.query},
+            success: autocompleteDelay.callback,
+            error: autocompleteDelay.errorCallback,
+        };
+        $.ajax(config);
     }
 };
 

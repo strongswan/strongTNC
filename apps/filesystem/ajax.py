@@ -3,15 +3,16 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 import json
 
-from dajaxice.decorators import dajaxice_register
+from django.http import HttpResponse
+from django.views.decorators.http import require_POST
 
 from apps.core.decorators import ajax_login_required
 from .models import File, Directory
 
 
-@dajaxice_register
+@require_POST
 @ajax_login_required
-def files_autocomplete(request, search_term):
+def files_autocomplete(request):
     """
     Provides the autocomplete backend for the file dropdown in the policy view.
 
@@ -36,6 +37,7 @@ def files_autocomplete(request, search_term):
     the autocomplete feature of the jQuery plugin Select2: http://ivaynberg.github.io/select2/
 
     """
+    search_term = request.POST.get('search_term')
     resulting_files = File.filter(search_term)
 
     # create resulting json to return
@@ -43,12 +45,12 @@ def files_autocomplete(request, search_term):
                for f in resulting_files]
 
     results = {'results': options}
-    return json.dumps(results)
+    return HttpResponse(json.dumps(results), content_type="application/x-json")
 
 
-@dajaxice_register
+@require_POST
 @ajax_login_required
-def directories_autocomplete(request, search_term):
+def directories_autocomplete(request):
     """
     Provides the autocomplete backend for the directories dropdown in the policy view.
 
@@ -73,6 +75,7 @@ def directories_autocomplete(request, search_term):
     the autocomplete feature of the jQuery plugin Select2: http://ivaynberg.github.io/select2/
 
     """
+    search_term = request.POST.get('search_term')
     dirs = Directory.objects.filter(path__icontains=search_term)
     results = {'results': [{'id': d.id, 'directory': d.path} for d in dirs]}
-    return json.dumps(results)
+    return HttpResponse(json.dumps(results), content_type="application/x-json")
