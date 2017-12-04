@@ -102,19 +102,6 @@ DajaxWrapper = function($container) {
     };
 };
 
-var GlobalAjaxIndicator = {
-    loader: $("#global-loader"),
-    showLoading: function() {
-        if(!this._count) this.loader.show();
-        ++this._count;
-    },
-    _count: 0,
-    hideLoading: function() {
-        --this._count;
-        if(!this._count) this.loader.hide();
-    }
-};
-
 function getCookie(name) {
     var value = null;
     if (document.cookie && document.cookie !== '') {
@@ -135,10 +122,14 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-$.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-        }
+$(document).ajaxStart(function() {
+    $("#global-loader").show();
+});
+$(document).ajaxSend(function(event, xhr, settings) {
+    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     }
+});
+$(document).ajaxStop(function(xhr, status) {
+    $("#global-loader").hide();
 });
