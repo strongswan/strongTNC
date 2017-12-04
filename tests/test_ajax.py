@@ -32,15 +32,12 @@ def ajax_request(client, endpoint, payload):
         The JSON response data as a dictionary.
 
     """
-    url = '/dajaxice/%s/' % endpoint
-    data = {'argv': json.dumps(payload)}
-
     # check if test user exists, in case a test calls this function twice
     if not User.objects.filter(username='tester').count():
         User.objects.create_user(username='tester', password='tester')
     client.login(username='tester', password='tester')
 
-    response = client.post(url, data=urllib.urlencode(data),
+    response = client.post(endpoint, data=urllib.urlencode(payload),
                            content_type='application/x-www-form-urlencoded',
                            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
     return json.loads(response.content)
@@ -124,7 +121,7 @@ def get_completions(client, files_and_directories_test_data):
     ('/saberthoothtigerdinozord', [])
 ])
 def test_files_autocomplete(get_completions, search_term, expected):
-    results = get_completions(search_term, 'apps.filesystem.files_autocomplete', 'file')
+    results = get_completions(search_term, '/files/autocomplete', 'file')
     assert sorted(results) == sorted(expected)
 
 
@@ -147,5 +144,5 @@ def test_files_autocomplete(get_completions, search_term, expected):
     ('/saberthoothtigerdinozord', [])
 ])
 def test_directory_autocomplete(get_completions, search_term, expected):
-    results = get_completions(search_term, 'apps.filesystem.directories_autocomplete', 'directory')
+    results = get_completions(search_term, '/directories/autocomplete', 'directory')
     assert sorted(results) == sorted(expected)

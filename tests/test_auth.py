@@ -154,20 +154,16 @@ def test_write_permission_enforced(client, strongtnc_users, url, method):
 
 
 @pytest.mark.parametrize('endpoint, payload', [
-    ('apps.filesystem.files_autocomplete', {'search_term': 'bash'}),
-    ('apps.filesystem.directories_autocomplete', {'search_term': 'bash'}),
-    ('apps.swid.get_tag_inventory_stats', {'device_id': 1, 'date_from': '', 'date_to': ''}),
-    ('apps.swid.get_tag_log_stats', {'device_id': 1, 'date_from': '', 'date_to': ''}),
-    ('apps.front.paging', {'template': '', 'list_producer': '', 'stat_producer': '', 'var_name': '',
+    ('/files/autocomplete/', {'search_term': 'bash'}),
+    ('/directories/autocomplete/', {'search_term': 'bash'}),
+    ('/swid-inventory/stats', {'device_id': 1, 'date_from': '', 'date_to': ''}),
+    ('/swid-log/stats', {'device_id': 1, 'date_from': '', 'date_to': ''}),
+    ('/paging', {'template': '', 'list_producer': '', 'stat_producer': '', 'var_name': '',
         'url_name': '', 'current_page': '', 'page_size': '', 'filter_query': '', 'pager_id': ''}),
 ])
 def test_ajax_login_required(client, endpoint, payload):
-    url = '/dajaxice/%s/' % endpoint
-    data = {'argv': json.dumps(payload)}
-
-    response = client.post(url, data=urllib.urlencode(data),
+    response = client.post(endpoint, data=urllib.urlencode(payload),
                            content_type='application/x-www-form-urlencoded',
                            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
-    assert response.status_code == 200
-    assert response.content == 'DAJAXICE_EXCEPTION'
+    assert response.status_code == 403
