@@ -108,12 +108,26 @@ var Pager = function() {
         var paramObject = this.getParamObject(filterQuery);
         this.loading = true;
 
-        var callback = this.pagingCallback.bind(this);
-        var ajaxWrapper = new DajaxWrapper(this.$contentContainer);
-        ajaxWrapper.call(Dajaxice.apps.front.paging, callback, paramObject, {'error_callback': function() {
-            alert('Error: Failed to fetch "' + paramObject.config_name + '" paging.');
-            this.loading = false;
-        }.bind(this)});
+        var loader;
+        var config = {
+            method: 'POST',
+            beforeSend: function() {
+                this.$contentContainer.css({'min-height': '55px'});
+                loader = new ajaxLoader(this.$contentContainer);
+            }.bind(this),
+            complete: function() {
+                loader.remove();
+                this.loading = false;
+            }.bind(this),
+            error: function() {
+                alert('Error: Failed to fetch "' + paramObject.config_name + '" paging.');
+            },
+            success: this.pagingCallback.bind(this),
+            // hardcode the URL for now (could be retrieved with '{% url 'front:paging' %}')
+            url: '/paging',
+            data: paramObject,
+        };
+        $.ajax(config);
     };
 
     this.statsUpdate = function(data) {
@@ -198,7 +212,7 @@ var Pager = function() {
             'current_page': this.currentPageIdx,
             'filter_query': filterQuery,
             'pager_id': this.uid,
-            'producer_args': this.args
+            'producer_args': JSON.stringify(this.args)
         };
     };
 

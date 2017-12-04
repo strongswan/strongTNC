@@ -4,7 +4,9 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 import json
 
 from django.template.loader import render_to_string
-from dajaxice.decorators import dajaxice_register
+
+from django.http import HttpResponse
+from django.views.decorators.http import require_POST
 
 from apps.core.decorators import ajax_login_required
 from . import paging as paging_functions
@@ -21,9 +23,9 @@ from apps.devices.paging import device_vulnerability_list_paging
 from apps.tpm.paging import tpm_devices_list_paging
 
 
-@dajaxice_register
+@require_POST
 @ajax_login_required
-def paging(request, config_name, current_page, filter_query, pager_id, producer_args):
+def paging(request):
     """
     Returns paged tables.
 
@@ -36,9 +38,6 @@ def paging(request, config_name, current_page, filter_query, pager_id, producer_
 
         current_page (int):
             Current page index, 0 based.
-
-        page_size (int):
-            Number of items to be shown on one page.
 
         filter_query (str):
             Query to filter the paged list/table.
@@ -58,6 +57,11 @@ def paging(request, config_name, current_page, filter_query, pager_id, producer_
         }
 
     """
+    config_name = request.POST.get('config_name')
+    current_page = int(request.POST.get('current_page'))
+    filter_query = request.POST.get('filter_query')
+    pager_id = int(request.POST.get('pager_id'))
+    producer_args = json.loads(request.POST.get('producer_args'))
     # TODO: extract this to somewhere else
     # register configs
     paging_conf_dict = {
@@ -120,5 +124,4 @@ def paging(request, config_name, current_page, filter_query, pager_id, producer_
         'page_count': page_count,
         'html': render_to_string(template_name + '.html', template_context)
     }
-
-    return json.dumps(response)
+    return HttpResponse(json.dumps(response), content_type="application/x-json")

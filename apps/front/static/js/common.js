@@ -64,44 +64,6 @@ var autocompleteDelay = {
     }
 };
 
-// Wrapper object to inject pre and post execute to Dajaxice requests.
-// Used to show ajax loading status
-
-DajaxWrapper = function($container) {
-    this.$container = $container;
-    this.ajaxLoader = null;
-    this.preLoad = function() {
-        this.$container.css({'min-height': '55px'});
-        this.ajaxLoader = new ajaxLoader(this.$container);
-        GlobalAjaxIndicator.showLoading();
-    };
-
-    this.postLoad = function() {
-        this.ajaxLoader.remove();
-        GlobalAjaxIndicator.hideLoading();
-    };
-
-    this.call = function(dajaxCall, callback, params, errorHandlers) {
-        this.preLoad();
-        errorHandlers = errorHandlers || {'error_callback': function(){}};
-        var originalHandler = errorHandlers['error_callback'];
-
-        var errorHandlerProxy = function handlerProxy() {
-            originalHandler();
-            this.postLoad();
-        }.bind(this);
-
-        errorHandlers['error_callback'] = errorHandlerProxy;
-
-        var callbackProxy = function(data) {
-            callback(data);
-            this.postLoad();
-        }.bind(this);
-
-        dajaxCall(callbackProxy, params, errorHandlers);
-    };
-};
-
 function getCookie(name) {
     var value = null;
     if (document.cookie && document.cookie !== '') {
