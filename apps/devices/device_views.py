@@ -102,6 +102,7 @@ def save(request):
         return HttpResponse(status=400)
 
     trusted = True if request.POST.get('device-trusted', False) == 'on' else False
+    inactive = True if request.POST.get('device-inactive', False) == 'on' else False
 
     try:
         product = Product.objects.get(pk=productID)
@@ -110,13 +111,14 @@ def save(request):
 
     if deviceID == 'None':
         device = Device.objects.create(value=value, description=description,
-                product=product, created=timezone.now(), trusted=trusted)
+                product=product, created=timezone.now(), trusted=trusted, inactive=inactive)
     else:
         device = get_object_or_404(Device, pk=deviceID)
         device.value = value
         device.description = description
         device.product = product
         device.trusted = trusted
+        device.inactive = inactive
         device.save()
 
     if device_groups:
@@ -265,3 +267,15 @@ def toggle_trusted(request, device_id):
     device_object.trusted = not device_object.trusted
     device_object.save()
     return HttpResponse(_('Yes' if device_object.trusted else 'No'))
+
+
+@require_GET
+@login_required
+def toggle_inactive(request, device_id):
+    """
+    Toggle the inactive state of a device
+    """
+    device_object = get_object_or_404(Device, pk=device_id)
+    device_object.inactive = not device_object.inactive
+    device_object.save()
+    return HttpResponse(_('Yes' if device_object.inactive else 'No'))

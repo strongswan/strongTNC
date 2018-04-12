@@ -34,7 +34,8 @@ def vulnerabilities(request):
     context['title'] = _('Vulnerabilities')
 
     vulnerabilities = TagStats.objects.exclude(first_installed=None).filter(last_deleted=None,
-                                                                     tag__version__security=1)
+                                                                     tag__version__security=1,
+                                                                     device__inactive=False)
     context['vulnerabilities'] = vulnerabilities
 
     return render(request, 'front/vulnerabilities.html', context)

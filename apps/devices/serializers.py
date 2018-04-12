@@ -18,7 +18,7 @@ class DeviceSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerialize
 
     class Meta(object):
         model = models.Device
-        fields = ('id', 'uri', 'value', 'description', 'product', 'created', 'trusted')
+        fields = ('id', 'uri', 'value', 'description', 'product', 'created', 'trusted', 'inactive')
 
 
 class DeviceMiniSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):

@@ -41,6 +41,7 @@ class Device(models.Model):
     product = models.ForeignKey(Product, related_name='devices', db_column='product')
     created = EpochField(null=True, blank=True)
     trusted = models.BooleanField(default=False)
+    inactive = models.BooleanField(default=False)
 
     class Meta(object):
         db_table = 'devices'

@@ -15,4 +15,4 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
 class DeviceViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.Device
     serializer_class = serializers.DeviceSerializer
-    filter_fields = ('value', 'description', 'product', 'created', 'trusted',)
+    filter_fields = ('value', 'description', 'product', 'created', 'trusted', 'inactive',)

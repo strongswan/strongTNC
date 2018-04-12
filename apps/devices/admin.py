@@ -8,7 +8,7 @@ from . import models
 
 class DeviceAdmin(admin.ModelAdmin):
     list_display = ('description', 'value', 'created')
-    list_filter = ('product', 'trusted')
+    list_filter = ('product', 'trusted', 'inactive')
 
 
 class GroupAdmin(admin.ModelAdmin):
