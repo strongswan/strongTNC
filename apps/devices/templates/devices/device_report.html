@@ -28,6 +28,10 @@
                                 <td><a href="{% url 'devices:device_detail' device.pk %}">{{ device.description }}</a></td>
                             </tr>
                             <tr>
+                                <td><strong>{% trans 'Created' %}</strong></td>
+                                <td>{{ device.created|date:'M d H:i:s Y' }}</td>
+                            </tr>
+                            <tr>
                                 <td><strong>{% trans 'Most recent user' %}</strong></td>
                                 <td>{{ last_user }}</td>
                             </tr>
