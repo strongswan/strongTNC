@@ -1,9 +1,15 @@
 FROM registry.fedoraproject.org/fedora:28
-RUN curl -LO https://github.com/strongswan/strongTNC/archive/master.tar.gz
-RUN tar xvzf master.tar.gz
+COPY . /strongTNC/
+RUN if ! test -d /strongTNC/apps ; then \
+	rm -rf /strongTNC \
+	&& curl -LO https://github.com/strongswan/strongTNC/archive/master.tar.gz \
+	&& tar xzf master.tar.gz \
+	&& mv -v /strongTNC-master /strongTNC \
+	&& rm -f master.tar.gz ; \
+	fi
 RUN dnf install -y python2-virtualenv gcc libxml2-devel libxslt-devel \
 	&& dnf clean all
-WORKDIR /strongTNC-master
+WORKDIR /strongTNC
 RUN virtualenv --no-site-packages VIRTUAL
 RUN source VIRTUAL/bin/activate \
 	&& pip install -r requirements.txt

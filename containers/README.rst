@@ -37,6 +37,14 @@ In this directory, running
 will fetch the master branch from strongTNC GitHub repo and build
 the container image, tagging it as ``strongtnc``.
 
+When run from a top level directory of strongTNC repository checkout as
+
+::
+
+    $ sudo docker build -t strongtnc -f containers/Dockerfile .
+
+the container image is built from that checked out content.
+
 Running the container
 ---------------------
 
