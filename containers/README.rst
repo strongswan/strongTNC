@@ -80,3 +80,24 @@ The default passwords are
 - Readonly: ``demo``
 - User ``admin`` at the ``/admin`` interface: ``Secret123``
 
+Using the container for testing
+-------------------------------
+
+To build image which can be used for running the strongTNC tests, use
+`--build-arg=tests=true` parameter with the `docker build` command.
+
+Then, after the container was started, it is possible to run tests in it
+per `the Testing section <../README.rst#testing>`_.
+For example, to run the ``./runtests.py``, from different terminal run
+
+::
+
+    $ sudo docker exec -ti strongtnc bash
+    [root@c886cd20708f strongTNC-master]# source VIRTUAL/bin/activate
+    (VIRTUAL) [root@c886cd20708f strongTNC-master]# ./runtests.py
+    ========================== test session starts ===========================
+    platform linux2 -- Python 2.7.15, pytest-3.0.4, py-1.5.3, pluggy-0.4.0
+    rootdir: /strongTNC-master, inifile: pytest.ini
+    plugins: pep8-1.0.6, django-2.8.0
+    collected 254 items
+

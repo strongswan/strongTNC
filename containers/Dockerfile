@@ -20,5 +20,10 @@ RUN source VIRTUAL/bin/activate \
 	&& ./manage.py createsuperuser --database meta --noinput --username admin --email admin@example.test \
 	&& yes Secret123 | ./manage.py changepassword admin --database meta
 
+ARG tests=false
+RUN if $tests ; then source VIRTUAL/bin/activate \
+	&& pip install -r requirements-tests.txt ; \
+	fi
+
 EXPOSE 8000
 ENTRYPOINT source VIRTUAL/bin/activate && ./manage.py runserver 0.0.0.0:8000
