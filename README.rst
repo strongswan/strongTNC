@@ -127,11 +127,6 @@ Run tests without coverage::
 
     ./runtests.py --no-cov
 
-Setup a database with test data::
-
-    $ ./manage.py shell
-    >>> execfile('tests/create_test_db.py')
-
 
 XMPP-Grid Publishing Interface
 ------------------------------
