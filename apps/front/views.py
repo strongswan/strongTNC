@@ -65,6 +65,8 @@ def statistics(request):
     context['hashes'] = FileHash.objects.count()
     context['packages'] = Package.objects.count()
     context['versions'] = Version.objects.count()
+    context['secure'] = Version.objects.filter(security=0).count()
+    context['vulnerable'] = Version.objects.filter(security=1).count()
     context['OSranking'] = Product.objects.annotate(
             num=Count('devices__id')).filter(num__gt=0).order_by('-num', 'name')
 
