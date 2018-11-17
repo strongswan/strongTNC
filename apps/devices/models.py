@@ -136,6 +136,10 @@ class Device(models.Model):
         return TagStats.objects.exclude(first_installed=None).filter(last_deleted=None,
                                 device=self.pk, tag__version__security=1)
 
+    def get_installed_count(self):
+        return TagStats.objects.exclude(first_installed=None).filter(last_deleted=None,
+                                device=self.pk).count()
+
 
 class Group(models.Model):
     """
