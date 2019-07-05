@@ -2,6 +2,7 @@
 from __future__ import print_function, division, absolute_import, unicode_literals
 
 from django.db import models
+from django.utils import timezone
 
 from apps.core.fields import EpochField
 
@@ -37,7 +38,7 @@ class Version(models.Model):
     release = models.CharField(max_length=255, db_index=True)
     security = models.BooleanField(default=False)
     blacklist = models.BooleanField(default=False)
-    time = EpochField(default=0)
+    time = EpochField(default=timezone.now())
 
     class Meta(object):
         db_table = 'versions'

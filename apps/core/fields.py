@@ -27,7 +27,11 @@ class EpochField(models.IntegerField):
     """
     Custom field type for unix timestamps.
     """
-    __metaclass__ = models.SubfieldBase
+    def from_db_value(self, value, expression, connection, context):
+        if value is None:
+            return value
+        dt = datetime.utcfromtimestamp(value)
+        return dt.replace(tzinfo=pytz.utc)  # Make datetime timezone-aware
 
     def to_python(self, value):
         if isinstance(value, (int, long)):
