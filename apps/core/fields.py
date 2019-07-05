@@ -14,7 +14,8 @@ class HashField(models.BinaryField):
     """
     Custom field type to display file hashes
     """
-    __metaclass__ = models.SubfieldBase
+    def from_db_value(self, value, expression, connection, context):
+        return value
 
     def to_python(self, value):
         return binascii.hexlify(value)
