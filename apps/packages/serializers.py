@@ -17,6 +17,7 @@ class PackageSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializ
 class VersionSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
     package = PackageSerializer()
     product = ProductSerializer()
+    time = serializers.DateTimeField()
 
     class Meta(object):
         model = models.Version

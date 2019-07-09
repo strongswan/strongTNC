@@ -15,6 +15,7 @@ class ProductSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializ
 
 class DeviceSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
     product = ProductSerializer()
+    created = serializers.DateTimeField()
 
     class Meta(object):
         model = models.Device

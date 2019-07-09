@@ -23,6 +23,7 @@ class IdentityMiniSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSer
 class SessionSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
     device = DeviceMiniSerializer()
     identity = IdentityMiniSerializer()
+    time = serializers.DateTimeField()
 
     class Meta(object):
         model = models.Session
