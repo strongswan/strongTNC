@@ -8,11 +8,13 @@ from . import models, serializers
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.Product
+    queryset = model.objects.all()
     serializer_class = serializers.ProductSerializer
     filter_fields = ('name',)
 
 
 class DeviceViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.Device
+    queryset = model.objects.all()
     serializer_class = serializers.DeviceSerializer
     filter_fields = ('value', 'description', 'product', 'created', 'trusted', 'inactive',)

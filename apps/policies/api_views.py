@@ -8,4 +8,5 @@ from . import models, serializers
 
 class PolicyViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.Policy
+    queryset = model.objects.all()
     serializer_class = serializers.PolicySerializer

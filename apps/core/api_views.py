@@ -8,16 +8,19 @@ from . import models, serializers
 
 class IdentityViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.Identity
+    queryset = model.objects.all()
     serializer_class = serializers.IdentitySerializer
     filter_fields = ('type', 'data',)
 
 
 class SessionViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.Session
+    queryset = model.objects.all()
     serializer_class = serializers.SessionSerializer
 
 
 class ResultViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.Result
+    queryset = model.objects.all()
     serializer_class = serializers.ResultSerializer
     filter_fields = ('session', 'policy')

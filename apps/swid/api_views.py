@@ -19,23 +19,27 @@ from apps.swid.xmpp_grid import XmppGridClient
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
     model = Event
+    queryset = model.objects.all()
     serializer_class = serializers.EventSerializer
     filter_fields = ('device', 'epoch', 'eid')
 
 
 class EntityViewSet(viewsets.ReadOnlyModelViewSet):
     model = Entity
+    queryset = model.objects.all()
     serializer_class = serializers.EntitySerializer
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     model = Tag
+    queryset = model.objects.all()
     serializer_class = serializers.TagSerializer
     filter_fields = ('package_name', 'version_str', 'version', 'unique_id', 'software_id')
 
 
 class TagStatsViewSet(viewsets.ReadOnlyModelViewSet):
     model = TagStats
+    queryset = model.objects.all()
     serializer_class = serializers.TagStatsSerializer
     filter_fields = ('tag', 'tag__package_name', 'tag__version_str', 'tag__unique_id',
                      'device', 'first_seen', 'last_seen')
