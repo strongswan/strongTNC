@@ -26,7 +26,7 @@ class DynamicFieldsMixin(object):
         super(DynamicFieldsMixin, self).__init__(*args, **kwargs)
         request = self.context.get('request')
         if request:
-            fields = request.QUERY_PARAMS.get('fields')
+            fields = request.query_params.get('fields')
             if fields:
                 fields = fields.split(',')
                 fields = map(camel_to_underscore, fields)

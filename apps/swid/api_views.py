@@ -53,10 +53,11 @@ def validate_data_param(request, list_name):
     message. Otherwise, the list is returned.
 
     """
-    if hasattr(request.DATA, 'getlist'):
-        items = request.DATA.getlist('data')
-    elif hasattr(request.DATA, 'get'):
-        items = request.DATA.get('data')
+    data = request.data
+    if hasattr(data, 'getlist'):
+        items = data.getlist('data')
+    elif hasattr(data, 'get'):
+        items = data.get('data')
     else:
         response = make_message('Missing "data" parameter', status.HTTP_400_BAD_REQUEST)
         raise ValueError(response)
@@ -221,7 +222,7 @@ class SwidEventsView(views.APIView):
 
     def post(self, request, pk, format=None):
         try:
-            obj = request.DATA
+            obj = request.data
 
             # Check if any software identifiers, i.e. Tags are missing
             missing_tags = []
