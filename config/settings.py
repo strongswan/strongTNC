@@ -225,6 +225,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'django_filters',
     'rest_framework',
 
     # Own apps
@@ -324,7 +325,7 @@ REST_FRAMEWORK = {
         'apps.auth.permissions.IsStaffOrHasWritePerm',
     ),
     'DEFAULT_FILTER_BACKENDS': (
-        'rest_framework.filters.DjangoFilterBackend',
+        'django_filters.rest_framework.DjangoFilterBackend',
     ),
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'rest_framework.serializers.HyperlinkedModelSerializer',
     'URL_FIELD_NAME': 'uri',
