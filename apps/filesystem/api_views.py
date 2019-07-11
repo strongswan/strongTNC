@@ -24,12 +24,12 @@ class FileViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.File
     queryset = model.objects.all()
     serializer_class = serializers.FileSerializer
-    filter_fields = ('name', 'directory', 'directory__path',)
+    filter_fields = ('name', 'directory__path')
 
 
 class FileHashViewSet(viewsets.ReadOnlyModelViewSet):
     model = models.FileHash
     queryset = model.objects.all()
     serializer_class = serializers.FileHashSerializer
-    filter_fields = ('file', 'file__name', 'file__directory__path', 'version',
-                     'device', 'size', 'algorithm', 'hash', 'mutable',)
+    filter_fields = ('file__name', 'file__directory__path', 'version__product',
+                     'version__release', 'algorithm', 'hash')

@@ -34,15 +34,15 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     model = Tag
     queryset = model.objects.all()
     serializer_class = serializers.TagSerializer
-    filter_fields = ('package_name', 'version_str', 'version', 'unique_id', 'software_id')
+    filter_fields = ('package_name', 'version_str', 'unique_id', 'software_id')
 
 
 class TagStatsViewSet(viewsets.ReadOnlyModelViewSet):
     model = TagStats
     queryset = model.objects.all()
     serializer_class = serializers.TagStatsSerializer
-    filter_fields = ('tag', 'tag__package_name', 'tag__version_str', 'tag__unique_id',
-                     'device', 'first_seen', 'last_seen')
+    filter_fields = ('tag__package_name', 'tag__version_str', 'tag__unique_id',
+                     'device', 'first_seen__time', 'last_seen__time')
 
 
 def validate_data_param(request, list_name):
