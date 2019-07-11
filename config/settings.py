@@ -247,7 +247,7 @@ if DEBUG_TOOLBAR:
 # Ignore migrations in the auth module as our virtual permission model can't
 # have any
 MIGRATION_MODULES = {
-    'auth': "contrib.auth.migrations_not_used_in_tests",
+    'auth': None,
 }
 
 # A sample logging configuration. The only tangible logging
