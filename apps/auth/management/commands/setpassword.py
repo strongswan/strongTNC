@@ -22,6 +22,9 @@ class Command(BaseCommand):
     help = 'Get or create admin-user and set password'
     args = '[<readonly_password> <readwrite_password>]'
 
+    def add_arguments(self, parser):
+        parser.add_argument('args', nargs='*')
+
     def handle(self, *args, **kwargs):
         if len(args) == 0:
             readonly_pw = admin_pw = None

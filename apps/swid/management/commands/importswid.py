@@ -24,6 +24,9 @@ class Command(BaseCommand):
     help = 'Import SWID tags from a file into the DB. ' \
            'The file must contain one swid tag per line.'
 
+    def add_arguments(self, parser):
+        parser.add_argument('args', nargs='*')
+
     def handle(self, *args, **kwargs):
         if len(args) != 1:
             raise CommandError('Usage: ./manage.py importswid <filename>')
