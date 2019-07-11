@@ -35,9 +35,12 @@ class Session(models.Model):
     """
     time = fields.EpochField()
     connection_id = models.IntegerField(db_column='connection')
-    identity = models.ForeignKey(Identity, related_name='sessions', db_column='identity')
-    device = models.ForeignKey('devices.Device', related_name='sessions', db_column='device')
-    recommendation = models.IntegerField(db_column='rec', null=True, choices=types.ACTION_CHOICES)
+    identity = models.ForeignKey(Identity, db_column='identity',
+                            on_delete=models.CASCADE, related_name='sessions')
+    device = models.ForeignKey('devices.Device', db_column='device',
+                            on_delete=models.CASCADE, related_name='sessions')
+    recommendation = models.IntegerField(db_column='rec', null=True,
+                            choices=types.ACTION_CHOICES)
 
     class Meta(object):
         db_table = u'sessions'
@@ -59,15 +62,17 @@ class WorkItem(models.Model):
     A workitem representing a task for an IMV
     """
     enforcement = models.ForeignKey('policies.Enforcement', db_column='enforcement',
-            related_name="workitems")
-    session = models.ForeignKey(Session, db_column='session', related_name='workitems')
-    type = models.IntegerField(null=False, blank=False, choices=types.WORKITEM_TYPE_CHOICES)
+                            on_delete=models.CASCADE, related_name="workitems")
+    session = models.ForeignKey(Session, db_column='session',
+                            on_delete=models.CASCADE, related_name='workitems')
+    type = models.IntegerField(null=False, blank=False,
+                            choices=types.WORKITEM_TYPE_CHOICES)
     arg_str = models.TextField()
     arg_int = models.IntegerField(default=0)
-    fail = models.IntegerField(null=True, blank=True, db_column='rec_fail')
-    noresult = models.IntegerField(null=True, blank=True, db_column='rec_noresult')
-    recommendation = models.IntegerField(null=True, blank=True, db_column='rec_final')
-    result = models.TextField(null=True, blank=True, db_column='result')
+    fail = models.IntegerField(db_column='rec_fail', null=True, blank=True)
+    noresult = models.IntegerField(db_column='rec_noresult', null=True, blank=True)
+    recommendation = models.IntegerField(db_column='rec_final', null=True, blank=True)
+    result = models.TextField(db_column='result', null=True, blank=True)
 
     class Meta(object):
         db_table = 'workitems'
@@ -86,10 +91,13 @@ class Result(models.Model):
     """
     A result of a measurement.
     """
-    session = models.ForeignKey(Session, db_column='session', related_name='results')
-    policy = models.ForeignKey('policies.Policy', db_column='policy', related_name='results')
+    session = models.ForeignKey(Session, db_column='session',
+                        on_delete=models.CASCADE, related_name='results')
+    policy = models.ForeignKey('policies.Policy', db_column='policy',
+                        on_delete=models.CASCADE, related_name='results')
     result = models.TextField()
-    recommendation = models.IntegerField(db_column='rec', choices=types.ACTION_CHOICES)
+    recommendation = models.IntegerField(db_column='rec',
+                        choices=types.ACTION_CHOICES)
 
     class Meta(object):
         db_table = 'results'

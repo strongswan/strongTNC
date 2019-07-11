@@ -32,11 +32,14 @@ class ComponentHash(models.Model):
     """
     A component hash.
     """
-    component = models.ForeignKey(Component, db_column='component')
-    device = models.ForeignKey('devices.Device', db_column='key')
+    component = models.ForeignKey(Component, db_column='component',
+                        on_delete=models.CASCADE)
+    device = models.ForeignKey('devices.Device', db_column='key',
+                        on_delete=models.CASCADE)
     seq_no = models.IntegerField()
     pcr = models.IntegerField()
-    algorithm = models.ForeignKey('filesystem.Algorithm', db_column='algo')
+    algorithm = models.ForeignKey('filesystem.Algorithm', db_column='algo',
+                        on_delete=models.CASCADE)
     hash = HashField(db_column='hash')
 
     class Meta(object):

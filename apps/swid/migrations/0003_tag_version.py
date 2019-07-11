@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='tag',
             name='version',
-            field=models.ForeignKey(to='packages.Version', null=True),
+            field=models.ForeignKey(to='packages.Version', null=True, on_delete=models.CASCADE),
         ),
     ]

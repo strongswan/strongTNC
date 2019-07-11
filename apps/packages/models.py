@@ -31,10 +31,10 @@ class Version(models.Model):
     """
     Version number string of a package.
     """
-    package = models.ForeignKey(Package, on_delete=models.CASCADE, db_column='package',
-                                related_name='versions')
-    product = models.ForeignKey('devices.Product', db_column='product', on_delete=models.CASCADE,
-                                related_name='versions')
+    package = models.ForeignKey(Package, db_column='package',
+                        on_delete=models.CASCADE, related_name='versions')
+    product = models.ForeignKey('devices.Product', db_column='product',
+                        on_delete=models.CASCADE, related_name='versions')
     release = models.CharField(max_length=255, db_index=True)
     security = models.BooleanField(default=False)
     blacklist = models.BooleanField(default=False)

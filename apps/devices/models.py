@@ -38,7 +38,8 @@ class Device(models.Model):
     """
     value = models.CharField(max_length=255, db_index=True)
     description = models.TextField(blank=True, null=True, default='')
-    product = models.ForeignKey(Product, related_name='devices', db_column='product')
+    product = models.ForeignKey(Product, db_column='product',
+                        on_delete=models.CASCADE, related_name='devices')
     created = EpochField(null=True, blank=True)
     trusted = models.BooleanField(default=False)
     inactive = models.BooleanField(default=False)
@@ -148,8 +149,8 @@ class Group(models.Model):
     name = models.CharField(max_length=50)
     devices = models.ManyToManyField(Device, related_name='groups', blank=True, db_table='groups_members')
     product_defaults = models.ManyToManyField(Product, related_name='default_groups', blank=True)
-    parent = models.ForeignKey('self', related_name='membergroups', null=True,
-            blank=True, db_column='parent')
+    parent = models.ForeignKey('self', db_column='parent', null=True, blank=True,
+                        on_delete=models.CASCADE, related_name='membergroups')
 
     class Meta(object):
         db_table = 'groups'

@@ -35,7 +35,8 @@ class File(models.Model):
     A file in a directory.
     """
     name = models.CharField(max_length=255, db_index=True)
-    directory = models.ForeignKey(Directory, db_column='dir')
+    directory = models.ForeignKey(Directory, db_column='dir',
+                        on_delete=models.CASCADE)
 
     class Meta(object):
         db_table = 'files'
@@ -116,11 +117,15 @@ class FileHash(models.Model):
     """
     A file hash.
     """
-    file = models.ForeignKey(File, on_delete=models.CASCADE, db_column='file')
-    version = models.ForeignKey('packages.Version', db_column='version', null=True, blank=True)
-    device = models.ForeignKey('devices.Device', db_column='device', null=True, blank=True)
+    file = models.ForeignKey(File, db_column='file',
+                        on_delete=models.CASCADE)
+    version = models.ForeignKey('packages.Version', db_column='version', null=True, blank=True,
+                        on_delete=models.CASCADE)
+    device = models.ForeignKey('devices.Device', db_column='device', null=True, blank=True,
+                        on_delete=models.CASCADE)
     size = models.IntegerField()
-    algorithm = models.ForeignKey(Algorithm, db_column='algo', on_delete=models.PROTECT)
+    algorithm = models.ForeignKey(Algorithm, db_column='algo',
+                        on_delete=models.PROTECT)
     hash = models.CharField(max_length=64, db_column='hash')
     mutable = models.BooleanField(default=False)
 

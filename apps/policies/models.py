@@ -117,9 +117,10 @@ class Enforcement(models.Model):
     """
     Rule to enforce a policy on a group.
     """
-    policy = models.ForeignKey(Policy, related_name='enforcements',
-                               on_delete=models.CASCADE, db_column='policy')
-    group = models.ForeignKey('devices.Group', related_name='enforcements', db_column='group_id')
+    policy = models.ForeignKey(Policy, db_column='policy',
+                        on_delete=models.CASCADE, related_name='enforcements')
+    group = models.ForeignKey('devices.Group', db_column='group_id',
+                        on_delete=models.CASCADE, related_name='enforcements')
     max_age = models.IntegerField()
     fail = models.IntegerField(db_column='rec_fail', null=True, blank=True,
             choices=ACTION_CHOICES)

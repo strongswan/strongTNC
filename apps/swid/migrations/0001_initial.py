@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('role', models.PositiveSmallIntegerField(choices=[(0, 'aggregator'), (1, 'distributor'), (2, 'licensor'), (3, 'softwareCreator'), (4, 'tagCreator')])),
-                ('entity', models.ForeignKey(to='swid.Entity')),
+                ('entity', models.ForeignKey(to='swid.Entity', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'swid_entityroles',
@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('eid', models.PositiveIntegerField()),
                 ('epoch', models.PositiveIntegerField()),
                 ('timestamp', models.DateTimeField()),
-                ('device', models.ForeignKey(related_name='events', db_column='device', to='devices.Device')),
+                ('device', models.ForeignKey(related_name='events', db_column='device', to='devices.Device', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('device', 'epoch', '-eid'),
@@ -76,8 +76,8 @@ class Migration(migrations.Migration):
                 ('action', models.PositiveSmallIntegerField(choices=[(1, 'Creation'), (2, 'Deletion'), (3, 'Alteration')])),
                 ('record_id', models.PositiveIntegerField()),
                 ('source_id', models.PositiveSmallIntegerField()),
-                ('event', models.ForeignKey(to='swid.Event')),
-                ('tag', models.ForeignKey(to='swid.Tag')),
+                ('event', models.ForeignKey(to='swid.Event', on_delete=models.CASCADE)),
+                ('tag', models.ForeignKey(to='swid.Tag', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'swid_tags_events',
@@ -88,12 +88,12 @@ class Migration(migrations.Migration):
             name='TagStats',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('device', models.ForeignKey(to='devices.Device')),
-                ('first_installed', models.ForeignKey(related_name='tags_first_installed_set', to='swid.Event', null=True)),
-                ('first_seen', models.ForeignKey(related_name='tags_first_seen_set', to='core.Session')),
-                ('last_deleted', models.ForeignKey(related_name='tags_last_deleted_set', to='swid.Event', null=True)),
-                ('last_seen', models.ForeignKey(related_name='tags_last_seen_set', to='core.Session')),
-                ('tag', models.ForeignKey(to='swid.Tag')),
+                ('device', models.ForeignKey(to='devices.Device', on_delete=models.CASCADE)),
+                ('first_installed', models.ForeignKey(related_name='tags_first_installed_set', to='swid.Event', null=True, on_delete=models.CASCADE)),
+                ('first_seen', models.ForeignKey(related_name='tags_first_seen_set', to='core.Session', on_delete=models.CASCADE)),
+                ('last_deleted', models.ForeignKey(related_name='tags_last_deleted_set', to='swid.Event', null=True, on_delete=models.CASCADE)),
+                ('last_seen', models.ForeignKey(related_name='tags_last_seen_set', to='core.Session', on_delete=models.CASCADE)),
+                ('tag', models.ForeignKey(to='swid.Tag', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('device', 'tag'),
@@ -108,7 +108,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='entityrole',
             name='tag',
-            field=models.ForeignKey(to='swid.Tag'),
+            field=models.ForeignKey(to='swid.Tag', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='entity',

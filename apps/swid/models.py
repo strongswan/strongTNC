@@ -15,17 +15,18 @@ TABLE_PREFIX = 'swid_'
 
 class Tag(models.Model):
     package_name = models.CharField(max_length=255, db_index=True,
-                                    help_text='The name of the software, e.g. "strongswan"')
+                        help_text='The name of the software, e.g. "strongswan"')
     version_str = models.CharField(max_length=255,
-                               help_text='The version of the software, e.g. "5.1.2-4.fc19"')
-    version = models.ForeignKey('packages.Version', null=True, blank=True)
+                        help_text='The version of the software, e.g. "5.1.2-4.fc19"')
+    version = models.ForeignKey('packages.Version', null=True, blank=True,
+                        on_delete=models.CASCADE)
     unique_id = models.CharField(max_length=255, db_index=True,
-                                 help_text='The tagId, e.g. "fedora_19-x86_64-strongswan-5.1.2-4.fc19"')
+                        help_text='The tagId, e.g. "fedora_19-x86_64-strongswan-5.1.2-4.fc19"')
     swid_xml = models.TextField(help_text='The full SWID tag XML')
     files = models.ManyToManyField('filesystem.File', blank=True, verbose_name='list of files')
     sessions = models.ManyToManyField('core.Session', verbose_name='list of sessions')
     software_id = models.CharField(max_length=767, db_index=True,
-                                   help_text='The Software ID, format: {regid}__{tagId} '
+                        help_text='The Software ID, format: {regid}__{tagId} '
                                              'e.g strongswan.org__fedora_19-x86_64-strongswan-5.1.2-4.fc19')
 
     class Meta(object):
@@ -74,12 +75,16 @@ class Tag(models.Model):
 
 
 class TagStats(models.Model):
-    tag = models.ForeignKey('Tag')
-    device = models.ForeignKey('devices.Device')
-    first_seen = models.ForeignKey('core.Session', related_name='tags_first_seen_set')
-    last_seen = models.ForeignKey('core.Session', related_name='tags_last_seen_set')
-    first_installed = models.ForeignKey('Event', null=True, related_name='tags_first_installed_set')
-    last_deleted = models.ForeignKey('Event', null=True, related_name='tags_last_deleted_set')
+    tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
+    device = models.ForeignKey('devices.Device', on_delete=models.CASCADE)
+    first_seen = models.ForeignKey('core.Session', on_delete=models.CASCADE,
+                        related_name='tags_first_seen_set')
+    last_seen = models.ForeignKey('core.Session', on_delete=models.CASCADE,
+                        related_name='tags_last_seen_set')
+    first_installed = models.ForeignKey('Event', null=True, on_delete=models.CASCADE,
+                        related_name='tags_first_installed_set')
+    last_deleted = models.ForeignKey('Event', null=True, on_delete=models.CASCADE,
+                        related_name='tags_last_deleted_set')
 
     class Meta(object):
         unique_together = ('tag', 'device')
@@ -102,8 +107,8 @@ class EntityRole(models.Model):
         (TAG_CREATOR, 'tagCreator'),
     )
 
-    tag = models.ForeignKey('Tag')
-    entity = models.ForeignKey('Entity')
+    tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
+    entity = models.ForeignKey('Entity', on_delete=models.CASCADE)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
 
     class Meta(object):
@@ -162,8 +167,8 @@ class TagEvent(models.Model):
         (ALTERATION, 'Alteration'),
     )
 
-    tag = models.ForeignKey('Tag')
-    event = models.ForeignKey('Event')
+    tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
+    event = models.ForeignKey('Event', on_delete=models.CASCADE)
     action = models.PositiveSmallIntegerField(choices=ACTION_CHOICES)
     record_id = models.PositiveIntegerField()
     source_id = models.PositiveSmallIntegerField()
@@ -180,7 +185,8 @@ class TagEvent(models.Model):
 
 
 class Event(models.Model):
-    device = models.ForeignKey('devices.Device', related_name='events', db_column='device', db_index=True)
+    device = models.ForeignKey('devices.Device', db_column='device', db_index=True,
+                        on_delete=models.CASCADE, related_name='events')
     eid = models.PositiveIntegerField()
     epoch = models.PositiveIntegerField()
     timestamp = models.DateTimeField()

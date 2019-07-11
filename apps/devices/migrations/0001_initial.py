@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=50)),
                 ('devices', models.ManyToManyField(related_name='groups', db_table='groups_members', to='devices.Device', blank=True)),
-                ('parent', models.ForeignKey(related_name='membergroups', db_column='parent', blank=True, to='devices.Group', null=True)),
+                ('parent', models.ForeignKey(related_name='membergroups', db_column='parent', blank=True, to='devices.Group', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('name',),
@@ -57,6 +57,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='device',
             name='product',
-            field=models.ForeignKey(related_name='devices', db_column='product', to='devices.Product'),
+            field=models.ForeignKey(related_name='devices', db_column='product', to='devices.Product', on_delete=models.CASCADE),
         ),
     ]

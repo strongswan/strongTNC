@@ -31,8 +31,8 @@ class Migration(migrations.Migration):
                 ('security', models.BooleanField(default=False)),
                 ('blacklist', models.BooleanField(default=False)),
                 ('time', apps.core.fields.EpochField(default=0)),
-                ('package', models.ForeignKey(related_name='versions', db_column='package', to='packages.Package')),
-                ('product', models.ForeignKey(related_name='versions', db_column='product', to='devices.Product')),
+                ('package', models.ForeignKey(related_name='versions', db_column='package', to='packages.Package', on_delete=models.CASCADE)),
+                ('product', models.ForeignKey(related_name='versions', db_column='product', to='devices.Product', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('package', 'release'),
