@@ -129,9 +129,7 @@ def test_data_param_validation(api_client, session, url, list_name):
     # Empty data param
     data = {'data': []}
     r1 = json_request(data)
-    r2 = form_request(data)
     validate(r1, status.HTTP_400_BAD_REQUEST, 'No %s submitted' % list_name)
-    validate(r2, status.HTTP_400_BAD_REQUEST, 'No %s submitted' % list_name)
 
     # Invalid data param
     data = {'data': 'foo'}
@@ -242,7 +240,7 @@ def test_limit_fields(api_client):
     assert len(data[0].keys()) == 10 
 
     # Filter some fields
-    r = api_client.get(reverse('tag-list'), data={'fields': 'packageName,id,uri'})
+    r = api_client.get(reverse('tag-list'), data={'fields': 'package_name,id,uri'})
     data = json.loads(r.content)
     assert len(data) == 5
     assert len(data[0].keys()) == 3
@@ -256,7 +254,7 @@ def test_limit_fields(api_client):
     assert data[0].keys() == ['id']
 
     # Filtered detail page
-    r = api_client.get(reverse('tag-detail', args=[tags[0].pk]), data={'fields': 'packageName'})
+    r = api_client.get(reverse('tag-detail', args=[tags[0].pk]), data={'fields': 'package_name'})
     data = json.loads(r.content)
     assert len(data.keys()) == 1
     assert data.keys() == ['packageName']
@@ -283,7 +281,6 @@ def test_large_measurement(api_factory):
     user = mommy.make(User, is_staff=True)
     force_authenticate(request, user=user)
 
-    response = SwidMeasurementView.as_view()(request, 1)
     try:
         SwidMeasurementView.as_view()(request, 1)
     except OperationalError:
