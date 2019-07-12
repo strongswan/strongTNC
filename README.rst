@@ -21,7 +21,7 @@ to all VPN clients and must be fulfilled with each connection attempt.
 Development Setup
 -----------------
 
-strongTNC uses Django (currently version 1.8.x). It is recommended to use the
+strongTNC uses Django (currently version 1.11.22). It is recommended to use the
 pip_ and virtualenv_ tools to ease the dependency management. They can be
 installed via your package manager on most Linux distributions.
 
@@ -184,7 +184,8 @@ License
 
     Copyright (C) 2013 Marco Tanner, Stefan Rohner
     Copyright (C) 2014 Christian Fässler, Danilo Bargen, Jonas Furrer
-    Copyright (C) 2013-2017 Andreas Steffen, Tobias Brunner
+    Copyright (C) 2013-2017 Tobias Brunner
+    Copyright (C) 2013-2019 Andreas Steffen
     HSR University of Applied Sciences Rapperswil
 
     This file is part of strongTNC.  strongTNC is free software: you can

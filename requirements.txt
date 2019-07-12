@@ -1,13 +1,13 @@
 # Base system
-Django==1.11.22
-pytz==2016.7
+Django>=1.11.19,<=1.11.22
+pytz==2019.1
 dj-database-url==0.4.1
 
 # Parsing
 lxml==3.6.4
 
 # API
-djangorestframework==3.4.7
+djangorestframework<3.5
 django-filter==1.1.0
 djangorestframework-camel-case==1.0.3
 Markdown==2.4.1
