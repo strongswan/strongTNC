@@ -47,7 +47,7 @@ def save(request):
     if not re.match(r'^[a-f0-9]+$', hash):
         messages.error(request, _("Component hash has incorrect hex format!"))
     else:
-        comp_hash.hash = binascii.unhexlify(hash)
+        comp_hash.hash = hash
         comp_hash.save()
         messages.success(request, _('Component hash saved!'))
 
