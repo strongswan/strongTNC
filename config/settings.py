@@ -244,12 +244,6 @@ INSTALLED_APPS = (
 if DEBUG_TOOLBAR:
     INSTALLED_APPS += ('debug_toolbar',)
 
-# Ignore migrations in the auth module as our virtual permission model can't
-# have any
-MIGRATION_MODULES = {
-    'auth': None,
-}
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error.

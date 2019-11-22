@@ -6,7 +6,7 @@ import coverage
 
 if __name__ == '__main__':
     # Environment variables
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_tests')
 
     measure_coverage = True
     if '--no-cov' in sys.argv:
