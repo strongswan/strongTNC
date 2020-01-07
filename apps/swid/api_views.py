@@ -3,6 +3,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 import json
 
+from django.db import transaction
 from rest_framework import viewsets, views, status
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
@@ -91,6 +92,7 @@ class TagAddView(views.APIView):
     """
     parser_classes = (JSONParser,)  # Only JSON data is supported
 
+    @transaction.atomic
     def post(self, request, format=None):
         try:
             tags = validate_data_param(request, 'SWID tags')
@@ -156,6 +158,7 @@ class SwidMeasurementView(views.APIView):
         {"data": ["software-id-1", "software-id-2", "software-id-n"]}
 
     """
+    @transaction.atomic
     def post(self, request, pk, format=None):
         try:
             software_ids = validate_data_param(request, 'software IDs')
@@ -220,6 +223,7 @@ class SwidEventsView(views.APIView):
     """
     parser_classes = (JSONParser,)  # Only JSON data is supported
 
+    @transaction.atomic
     def post(self, request, pk, format=None):
         try:
             obj = request.data
