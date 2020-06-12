@@ -1,6 +1,6 @@
 # Base system
-Django==1.11.28
-pytz==2019.1
+Django==1.11.29
+pytz==2020.1
 dj-database-url==0.4.1
 
 # Parsing
