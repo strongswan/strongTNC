@@ -124,7 +124,7 @@ def save(request):
     # port ranges
     if policy_type in [11, 12, 13, 14]:
         ranges = request.POST.get('range')
-        if ranges is not '' and ranges is not None:
+        if ranges != '' and ranges != None:
             if not check_range(ranges):
                 raise ValueError('Port ranges are not valid.')
 

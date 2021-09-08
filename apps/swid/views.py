@@ -5,7 +5,7 @@ from django.views.generic import ListView, DetailView
 
 from apps.core.models import Session, WorkItem
 from apps.core.types import WorkItemType
-from apps.auth.mixins import LoginRequiredMixin
+from apps.authentication.mixins import LoginRequiredMixin
 from apps.devices.models import Device
 from .models import Entity, Tag
 from . import utils

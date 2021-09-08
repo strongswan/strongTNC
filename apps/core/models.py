@@ -12,14 +12,14 @@ class Identity(models.Model):
     A user identity.
     """
     type = models.IntegerField()
-    data = models.TextField(db_column='value')
+    data = fields.DataField(db_column='value')
 
     class Meta(object):
         db_table = 'identities'
         verbose_name_plural = 'identities'
         ordering = ('data',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.data
 
     def list_repr(self):
@@ -47,7 +47,7 @@ class Session(models.Model):
         get_latest_by = 'time'
         ordering = ('-time',)
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Session %s by %s' % (self.pk, self.identity)
 
     def list_repr(self):
@@ -77,7 +77,7 @@ class WorkItem(models.Model):
     class Meta(object):
         db_table = 'workitems'
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Workitem %i of session %i, enforcement %s' % (self.pk, self.session.pk, self.enforcement)
 
     def list_repr(self):
@@ -103,7 +103,7 @@ class Result(models.Model):
         db_table = 'results'
         get_latest_by = 'session__time'
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Result of Session %i: %s' % (self.session.pk, self.result)
 
     def list_repr(self):

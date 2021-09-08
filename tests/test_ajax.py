@@ -37,7 +37,7 @@ def ajax_request(client, endpoint, payload):
         User.objects.create_user(username='tester', password='tester')
     client.login(username='tester', password='tester')
 
-    response = client.post(endpoint, data=urllib.urlencode(payload),
+    response = client.post(endpoint, data=urllib.parse.urlencode(payload),
                            content_type='application/x-www-form-urlencoded',
                            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
     return json.loads(response.content)

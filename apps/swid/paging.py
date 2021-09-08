@@ -4,7 +4,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 import math
 from collections import OrderedDict, namedtuple
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from .models import Entity, Tag
 from apps.core.models import Session
@@ -188,7 +188,7 @@ def session_tag_difference(curr_session, prev_session, filter_query):
     DiffEntry = namedtuple('DiffEntry', ['session', 'action', 'tag'])
 
     block_size = 980
-    for i in xrange(0, len(added_ids), block_size):
+    for i in range(0, len(added_ids), block_size):
         added_ids_slice = added_ids[i:i + block_size]
         if filter_query:
             added_tags = Tag.objects \
@@ -200,7 +200,7 @@ def session_tag_difference(curr_session, prev_session, filter_query):
             entry = DiffEntry(curr_session, '+', tag)
             differences.append(entry)
 
-    for i in xrange(0, len(removed_ids), block_size):
+    for i in range(0, len(removed_ids), block_size):
         removed_ids_slice = removed_ids[i:i + block_size]
         if filter_query:
             removed_tags = Tag.objects \
@@ -258,7 +258,7 @@ def last_session_diff(last_session, diff, filter_query):
         added_ids = list(set(curr_tag_ids) - set(prev_tag_ids))
         block_size = 980
         added_block_count = int(math.ceil(len(added_ids) / block_size))
-        for i in xrange(added_block_count):
+        for i in range(added_block_count):
             added_ids_slice = added_ids[i * block_size: (i + 1) * block_size]
             if filter_query:
                 added_tags = Tag.objects.filter(id__in=added_ids_slice, unique_id__icontains=filter_query)\

@@ -6,7 +6,7 @@ import re
 from django.db.models import Q
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render, redirect

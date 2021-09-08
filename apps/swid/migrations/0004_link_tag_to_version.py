@@ -12,7 +12,7 @@ def link_version_to_tag(apps, schema_editor):
         try:
             ts = tag.tagstats_set.all()[0]
         except IndexError:
-            print 'tag %d not migrated' % tag.pk
+            print('tag %d not migrated' % tag.pk)
             continue
         version = Version.objects.filter(product=ts.device.product,
                                          package__name=ts.tag.package_name, 

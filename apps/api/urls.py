@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-from django.conf.urls import url, include
+from django.conf.urls import re_path, include
 
 from rest_framework import routers
 
@@ -40,21 +40,21 @@ urlpatterns = router.urls
 # Register additional endpoints
 urlpatterns += [
     # Auth views
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     # Add tags
-    url(r'^swid/add-tags/', TagAddView.as_view(), name='swid-add-tags'),
-    url(r'^swid/add-tags/\.(?P<format>[a-z0-9]+)', TagAddView.as_view(), name='swid-add-tags'),
+    re_path(r'^swid/add-tags/', TagAddView.as_view(), name='swid-add-tags'),
+    re_path(r'^swid/add-tags/\.(?P<format>[a-z0-9]+)', TagAddView.as_view(), name='swid-add-tags'),
 
     # Register SW ID inventory upload
-    url(r'^sessions/(?P<pk>[^/]+)/swid-measurement/',
+    re_path(r'^sessions/(?P<pk>[^/]+)/swid-measurement/',
         SwidMeasurementView.as_view(), name='session-swid-measurement'),
-    url(r'^sessions/(?P<pk>[^/]+)/swid-measurement/\.(?P<format>[a-z0-9]+)',
+    re_path(r'^sessions/(?P<pk>[^/]+)/swid-measurement/\.(?P<format>[a-z0-9]+)',
         SwidMeasurementView.as_view(), name='session-swid-measurement'),
 
     # Register SW ID events upload
-    url(r'^sessions/(?P<pk>[^/]+)/swid-events/',
+    re_path(r'^sessions/(?P<pk>[^/]+)/swid-events/',
         SwidEventsView.as_view(), name='session-swid-events'),
-    url(r'^sessions/(?P<pk>[^/]+)/swid-events/\.(?P<format>[a-z0-9]+)',
+    re_path(r'^sessions/(?P<pk>[^/]+)/swid-events/\.(?P<format>[a-z0-9]+)',
         SwidEventsView.as_view(), name='session-swid-events'),
 ]

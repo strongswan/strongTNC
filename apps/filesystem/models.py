@@ -20,7 +20,7 @@ class Directory(models.Model):
         verbose_name_plural = 'directories'
         ordering = ('path',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.path
 
     def list_repr(self):
@@ -42,7 +42,7 @@ class File(models.Model):
         db_table = 'files'
         ordering = ('directory__path', 'name',)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.directory.path == '/':
             return '/%s' % self.name
         else:
@@ -103,7 +103,7 @@ class Algorithm(models.Model):
         db_table = 'algorithms'
         ordering = ('name',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def list_repr(self):
@@ -134,7 +134,7 @@ class FileHash(models.Model):
         verbose_name_plural = 'file hashes'
         ordering = ('file__directory__path', 'file__name',)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.hash, self.algorithm)
 
     def list_repr(self):

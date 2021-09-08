@@ -38,11 +38,11 @@ def login(request):
         else:
             messages.error(request, _('Bad password!'))
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect('/')
 
     context = {'next_url': request.GET.get('next', '')}
-    return render(request, 'auth/login.html', context)
+    return render(request, 'authentication/login.html', context)
 
 
 def logout(request):
@@ -52,4 +52,4 @@ def logout(request):
     django_logout(request)
     messages.success(request, _('Logout successful!'))
 
-    return render(request, 'auth/login.html')
+    return render(request, 'authentication/login.html')

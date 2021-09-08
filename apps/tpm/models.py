@@ -18,7 +18,7 @@ class Component(models.Model):
     class Meta(object):
         db_table = 'components'
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s' % (self.label)
 
     def list_repr(self):
@@ -47,7 +47,7 @@ class ComponentHash(models.Model):
         verbose_name_plural = 'component hashes'
         ordering = ('device', 'component', 'seq_no',)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.hash, self.algorithm)
 
     def list_repr(self):

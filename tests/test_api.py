@@ -6,7 +6,7 @@ import random
 import string
 
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.utils import OperationalError
 from django.utils import timezone
 
@@ -16,7 +16,7 @@ from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
 from rest_framework import status
 
 from .test_swid import swidtag  # NOQA
-from apps.auth.permissions import GlobalPermission
+from apps.authentication.permissions import GlobalPermission
 from apps.swid import utils
 from apps.swid.api_views import SwidMeasurementView
 from apps.swid.models import Tag
@@ -123,18 +123,18 @@ def test_data_param_validation(api_client, session, url, list_name):
     r2 = form_request('', encode=False)
     # Uncomment the following line if
     # https://github.com/tomchristie/django-rest-framework/pull/1608 gets merged
-    validate(r1, status.HTTP_400_BAD_REQUEST, 'Missing "data" parameter')
-    validate(r2, status.HTTP_400_BAD_REQUEST, 'No %s submitted' % list_name)
+    validate(r1, status.HTTP_400_BAD_REQUEST, 'ValueError in %s' % list_name)
+    validate(r2, status.HTTP_400_BAD_REQUEST, 'ValueError in %s' % list_name)
 
     # Empty data param
     data = {'data': []}
     r1 = json_request(data)
-    validate(r1, status.HTTP_400_BAD_REQUEST, 'No %s submitted' % list_name)
+    validate(r1, status.HTTP_400_BAD_REQUEST, 'ValueError in %s' % list_name)
 
     # Invalid data param
     data = {'data': 'foo'}
     r1 = json_request(data)
-    validate(r1, status.HTTP_400_BAD_REQUEST, 'The submitted "data" parameter does not contain a list')
+    validate(r1, status.HTTP_400_BAD_REQUEST, 'ValueError in %s' % list_name)
 
 
 @pytest.mark.parametrize('filename', [
@@ -271,9 +271,9 @@ def test_large_measurement(api_factory):
     Test API calls with more than 999 Software-IDs.
     """
     def make_random_string():
-        lst = [random.choice(string.ascii_letters + string.digits) for n in xrange(15)]
+        lst = [random.choice(string.ascii_letters + string.digits) for n in range(15)]
         return ''.join(lst)
-    software_ids = [make_random_string() for _ in xrange(1000)]
+    software_ids = [make_random_string() for _ in range(1000)]
 
     data = {'data': software_ids}
     request = api_factory.post(reverse('session-swid-measurement', args=[1]), data, format='json')

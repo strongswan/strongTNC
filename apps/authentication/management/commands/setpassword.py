@@ -12,7 +12,7 @@ from getpass import getpass
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from apps.auth.permissions import GlobalPermission
+from apps.authentication.permissions import GlobalPermission
 
 
 class Command(BaseCommand):

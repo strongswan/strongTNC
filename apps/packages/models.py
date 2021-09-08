@@ -17,7 +17,7 @@ class Package(models.Model):
         db_table = 'packages'
         ordering = ('name',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def list_repr(self):
@@ -45,7 +45,7 @@ class Version(models.Model):
         index_together = [('package', 'product')]
         ordering = ('package', 'release',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.release
 
     def list_repr(self):

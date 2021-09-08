@@ -32,7 +32,7 @@ def swidtag(request, transactional_db):
     inside `tests/test_tags/`.
 
     """
-    filename = request.getfuncargvalue('filename')
+    filename = request.getfixturevalue('filename')
     with open('tests/test_tags/%s' % filename, 'r') as f:
         tag_xml = f.read()
         return utils.process_swid_tag(tag_xml, allow_tag_update=True)[0]
@@ -115,7 +115,7 @@ def test_tag_entity_roles(swidtag, filename, tagroles):
 def test_tag_xml(swidtag, filename):
     with open('tests/test_tags/%s' % filename, 'r') as swid_file:
         swid_tag_xml = swid_file.read()
-        swid_tag_xml_pretty = utils.prettify_xml(swid_tag_xml.decode('utf8'))
+        swid_tag_xml_pretty = utils.prettify_xml(swid_tag_xml)
         assert swidtag.swid_xml == swid_tag_xml_pretty
 
 

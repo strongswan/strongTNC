@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 Used to dump all data in ipsec.config.db into sql statements

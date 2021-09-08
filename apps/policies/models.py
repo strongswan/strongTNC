@@ -26,7 +26,7 @@ class Policy(models.Model):
         verbose_name_plural = 'Policies'
         ordering = ('name',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def list_repr(self):
@@ -131,7 +131,7 @@ class Enforcement(models.Model):
         db_table = 'enforcements'
         unique_together = [('policy', 'group')]
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s on %s' % (self.policy.name, self.group.name)
 
     def list_repr(self):

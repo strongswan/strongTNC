@@ -22,7 +22,7 @@ class Product(models.Model):
         db_table = 'products'
         ordering = ('name',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def list_repr(self):
@@ -48,7 +48,7 @@ class Device(models.Model):
         db_table = 'devices'
         ordering = ('description',)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.description:
             return '%s (%s)' % (self.description, self.value[:10])
         else:
@@ -156,7 +156,7 @@ class Group(models.Model):
         db_table = 'groups'
         ordering = ('name',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def list_repr(self):

@@ -4,7 +4,7 @@ Tests for `policies` app.
 """
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 import pytest
 from model_mommy import mommy

@@ -57,7 +57,7 @@
                 the BYOD TNC Database Management Tool</p>
         </div>
         <div class="col-md-7">
-            <form class="form-signin" action="{% url 'auth:login' %}" method="post" id=signform>
+            <form class="form-signin" action="{% url 'authentication:login' %}" method="post" id=signform>
                 {% csrf_token %}
                 {% if next_url %}
                     <input type="hidden" name="next_url" value="{{ next_url }}"/>

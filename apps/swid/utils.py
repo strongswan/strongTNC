@@ -184,7 +184,7 @@ def process_swid_tag(tag_xml, allow_tag_update=False):
 
     # Parse XML, save tag into database
     try:
-        tag, files, entities = etree.fromstring(tag_xml.encode('utf8'), parser)
+        tag, files, entities = etree.fromstring(tag_xml.encode('utf-8'), parser)
     except KeyError as ke:
         raise ValueError('Invalid tag: missing %s property' % ke.message)
 
@@ -235,7 +235,7 @@ def process_swid_tag(tag_xml, allow_tag_update=False):
             entity_role.save()
     except ValidationError as e:
         msgs = []
-        for field, errors in e.error_dict.iteritems():
+        for field, errors in e.error_dict.items():
             error_str = ' '.join([m for err in errors for m in err.messages])
             msgs.append('%s: %s' % (field, error_str))
         raise ValueError(' '.join(msgs))
@@ -262,11 +262,11 @@ def prettify_xml(xml, xml_declaration=True):
         A prettified version of the given XML string.
 
     """
-    xml_bytes = xml.encode('utf8')
+    xml_bytes = xml.encode('utf-8')
     return etree.tostring(etree.fromstring(xml_bytes),
                           pretty_print=True,
                           xml_declaration=xml_declaration,
-                          encoding='UTF-8')
+                          encoding='UTF-8').decode('utf-8')
 
 
 def chunked_bulk_add(manager, objects, block_size):
@@ -282,7 +282,7 @@ def chunked_bulk_add(manager, objects, block_size):
             Number of objects per block.
 
     """
-    for i in xrange(0, len(objects), block_size):
+    for i in range(0, len(objects), block_size):
         pk_slice = objects[i:i + block_size]
         manager.add(*pk_slice)
 
@@ -319,7 +319,7 @@ def chunked_filter_in(queryset, filter_field, filter_list, block_size):
 
     """
     out = []
-    for i in xrange(0, len(filter_list), block_size):
+    for i in range(0, len(filter_list), block_size):
         filter_slice = filter_list[i:i + block_size]
         kwargs = {filter_field + '__in': filter_slice}
         items = list(queryset.filter(**kwargs))
@@ -330,7 +330,7 @@ def chunked_filter_in(queryset, filter_field, filter_list, block_size):
 def update_tag_stats(session, tag_ids):
     new_tags = []
     block_size = 980
-    for i in xrange(0, len(tag_ids), block_size):
+    for i in range(0, len(tag_ids), block_size):
         tag_ids_slice = tag_ids[i:i + block_size]
         # TODO: Instead of filtering the device tags, a list of all tags for a
         # device could be created outside of the loop.

@@ -5,7 +5,7 @@ import urllib
 import pytest
 import json
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 
 from .fixtures import *  # NOQA: Star import is OK here because it's just a test
@@ -162,7 +162,7 @@ def test_write_permission_enforced(client, strongtnc_users, url, method):
         'url_name': '', 'current_page': '', 'page_size': '', 'filter_query': '', 'pager_id': ''}),
 ])
 def test_ajax_login_required(client, endpoint, payload):
-    response = client.post(endpoint, data=urllib.urlencode(payload),
+    response = client.post(endpoint, data=urllib.parse.urlencode(payload),
                            content_type='application/x-www-form-urlencoded',
                            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 

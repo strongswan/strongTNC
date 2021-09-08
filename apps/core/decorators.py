@@ -9,7 +9,7 @@ def ajax_login_required(func):
     @wraps(func)
     def __wrapper(request, *args, **kwargs):
         # Check authentication
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             raise PermissionDenied()
         return func(request, *args, **kwargs)
     return __wrapper

@@ -5,6 +5,7 @@ from rest_framework import serializers
 
 from apps.api.mixins import DynamicFieldsMixin
 from apps.devices.serializers import DeviceMiniSerializer
+
 from . import models
 
 

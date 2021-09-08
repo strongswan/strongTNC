@@ -33,7 +33,7 @@ class Tag(models.Model):
         db_table = TABLE_PREFIX + 'tags'
         ordering = ('unique_id',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.unique_id
 
     def list_repr(self):
@@ -114,7 +114,7 @@ class EntityRole(models.Model):
     class Meta(object):
         db_table = TABLE_PREFIX + 'entityroles'
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s as %s' % (self.entity, dict(EntityRole.ROLE_CHOICES)[self.role])
 
     def list_repr(self):
@@ -149,7 +149,7 @@ class Entity(models.Model):
         verbose_name_plural = 'entities'
         ordering = ('regid',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def list_repr(self):
@@ -177,7 +177,7 @@ class TagEvent(models.Model):
         db_table = TABLE_PREFIX + 'tags_events'
         verbose_name_plural = 'tag events'
 
-    def __unicode__(self):
+    def __str__(self):
         return ' %s in %s' % (self.tag, self.event)
 
     def list_repr(self):
@@ -197,7 +197,7 @@ class Event(models.Model):
         verbose_name_plural = 'events'
         ordering = ('device', 'epoch', '-eid')
 
-    def __unicode__(self):
+    def __str__(self):
         return 'EID %s of %s' % (self.eid, self.device)
 
     def list_repr(self):

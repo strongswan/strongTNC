@@ -5,7 +5,7 @@ import pytest
 
 from django.contrib.auth import get_user_model
 
-from apps.auth.permissions import GlobalPermission
+from apps.authentication.permissions import GlobalPermission
 
 
 @pytest.fixture

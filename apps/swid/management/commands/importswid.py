@@ -54,15 +54,14 @@ class Command(BaseCommand):
             else:
                 self.stdout.write('Unable to connect to XMPP-Grid server.')
 
-        encoding = self.stdout.encoding or 'ascii'
         with open(filename, 'r') as f:
             for line in f:
-                tag_xml = line.strip().decode('utf8')
+                tag_xml = line.strip()
                 tag, replaced = utils.process_swid_tag(tag_xml, allow_tag_update=True)
                 if replaced:
-                    self.stdout.write('Replaced {0}'.format(tag).encode(encoding, 'replace'))
+                    self.stdout.write('Replaced {0}'.format(tag))
                 else:
-                    self.stdout.write('Added {0}'.format(tag).encode(encoding, 'replace'))
+                    self.stdout.write('Added {0}'.format(tag))
                 if xmpp_connected:
                     xmpp.publish(XMPP_GRID['node_swidtags'], tag.software_id, tag.json())
         if xmpp_connected:
