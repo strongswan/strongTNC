@@ -3,5 +3,5 @@
 
 def version(request):
     return {
-        'VERSION': '0.9.9',
+        'VERSION': '1.0.0',
     }

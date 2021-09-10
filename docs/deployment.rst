@@ -27,8 +27,9 @@ Set up your base Ubuntu system. Make sure all the packages are up to date.
 
 Install the dependencies for strongTNC::
 
-    sudo apt-get install wget build-essential apache2 libapache2-mod-wsgi python2.7 \
-        python2.7-dev python-pip python-virtualenv libxml2-dev libxslt1-dev
+    sudo apt-get install wget build-essential apache2 libapache2-mod-wsgi-py3 \
+         python3.8 python3.8-dev python3-pip python3-virtualenv libxml2-dev \
+         libxslt1-dev
 
 If you want to use MySQL instead of SQLite, you need a few additional
 dependencies::

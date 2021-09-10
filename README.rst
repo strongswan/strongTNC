@@ -181,9 +181,11 @@ License
 
     Copyright (C) 2013 Marco Tanner, Stefan Rohner
     Copyright (C) 2014 Christian Fässler, Danilo Bargen, Jonas Furrer
-    Copyright (C) 2013-2017 Tobias Brunner
-    Copyright (C) 2013-2019 Andreas Steffen
+    Copyright (C) 2013-2019 Tobias Brunner
+    Copyright (C) 2013-2020 Andreas Steffen
     HSR University of Applied Sciences Rapperswil
+
+    Copyright (C) 2021 Andreas Steffen, strongSec GmbH
 
     This file is part of strongTNC.  strongTNC is free software: you can
     redistribute it and/or modify it under the terms of the GNU Affero General
