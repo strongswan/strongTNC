@@ -22,7 +22,7 @@ def test_login(client, strongtnc_users, test_user, username, password, success):
     """
     Test whether valid logins succeed and invalid logins fail.
     """
-    url = reverse('auth:login')
+    url = reverse('authentication:login')
     data = {'access_level': username, 'password': password}
     response = client.post(url, data=data)
     if success is True:

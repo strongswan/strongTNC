@@ -33,7 +33,7 @@ def test_save_version_validation(strongtnc_users, client, package_testdata):
     data = {}
 
     def do_request(reason):
-        resp = client.post(url, data=data)
+        resp = client.post(url, json=data)
         assert resp.status_code == 400, reason
 
     # Missing data
