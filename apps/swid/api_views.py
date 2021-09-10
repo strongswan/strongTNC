@@ -183,11 +183,11 @@ class SwidMeasurementView(views.APIView):
             except Session.DoesNotExist:
                 msg = 'Session with id "%s" not found' % pk
                 return make_message(msg, status.HTTP_404_NOT_FOUND)
-            utils.chunked_bulk_add(session.tag_set, found_tags.values(), 980)
+            utils.chunked_bulk_add(session.tag_set, list(found_tags.values()), 980)
 
             # Update tag stats
             # Also possible with signaling https://docs.djangoproject.com/en/dev/ref/signals/#m2m-changed
-            utils.update_tag_stats(session, found_tags.values())
+            utils.update_tag_stats(session, list(found_tags.values()))
 
             return Response(data=[], status=status.HTTP_200_OK)
 
