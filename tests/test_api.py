@@ -123,18 +123,18 @@ def test_data_param_validation(api_client, session, url, list_name):
     r2 = form_request('', encode=False)
     # Uncomment the following line if
     # https://github.com/tomchristie/django-rest-framework/pull/1608 gets merged
-    validate(r1, status.HTTP_400_BAD_REQUEST, 'ValueError in %s' % list_name)
-    validate(r2, status.HTTP_400_BAD_REQUEST, 'ValueError in %s' % list_name)
+    validate(r1, status.HTTP_400_BAD_REQUEST, 'Missing "data" parameter')
+    validate(r2, status.HTTP_400_BAD_REQUEST, 'No %s submitted' % list_name)
 
     # Empty data param
     data = {'data': []}
     r1 = json_request(data)
-    validate(r1, status.HTTP_400_BAD_REQUEST, 'ValueError in %s' % list_name)
+    validate(r1, status.HTTP_400_BAD_REQUEST, 'No %s submitted' % list_name)
 
     # Invalid data param
     data = {'data': 'foo'}
     r1 = json_request(data)
-    validate(r1, status.HTTP_400_BAD_REQUEST, 'ValueError in %s' % list_name)
+    validate(r1, status.HTTP_400_BAD_REQUEST, 'The submitted "data" parameter does not contain a list')
 
 
 @pytest.mark.parametrize('filename', [
@@ -237,7 +237,7 @@ def test_limit_fields(api_client):
     r = api_client.get(reverse('tag-list'))
     data = json.loads(r.content)
     assert len(data) == 5
-    assert len(data[0].keys()) == 10 
+    assert len(data[0].keys()) == 10
 
     # Filter some fields
     r = api_client.get(reverse('tag-list'), data={'fields': 'package_name,id,uri'})
@@ -251,13 +251,13 @@ def test_limit_fields(api_client):
     data = json.loads(r.content)
     assert len(data) == 5
     assert len(data[0].keys()) == 1
-    assert data[0].keys() == ['id']
+    assert list(data[0].keys()) == ['id']
 
     # Filtered detail page
     r = api_client.get(reverse('tag-detail', args=[tags[0].pk]), data={'fields': 'package_name'})
     data = json.loads(r.content)
     assert len(data.keys()) == 1
-    assert data.keys() == ['packageName']
+    assert list(data.keys()) == ['packageName']
 
     # Only invalid fields
     r = api_client.get(reverse('tag-detail', args=[tags[0].pk]), data={'fields': 'spam'})

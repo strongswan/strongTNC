@@ -97,7 +97,7 @@ class TagAddView(views.APIView):
         try:
             tags = validate_data_param(request, 'SWID tags')
         except ValueError as e:
-            return e.message
+            return e.args[0]
 
         # Publish SWID tags on XMPP-Grid?
         xmpp_connected = False
@@ -163,7 +163,7 @@ class SwidMeasurementView(views.APIView):
         try:
             software_ids = validate_data_param(request, 'software IDs')
         except ValueError as e:
-            return make_message('ValueError in software IDs', status.HTTP_400_BAD_REQUEST)
+            return e.args[0]
         found_tag_qs = Tag.objects.values_list('software_id', 'pk')
         found_tags = dict(utils.chunked_filter_in(found_tag_qs, 'software_id', software_ids, 980))
 
@@ -304,4 +304,4 @@ class SwidEventsView(views.APIView):
 
             return Response(data=[], status=status.HTTP_200_OK)
         except ValueError as e:
-            return e.message
+            return make_message('ValueError in SWID events', status.HTTP_400_BAD_REQUEST)
