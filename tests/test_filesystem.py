@@ -7,7 +7,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 from django.urls import reverse
 
 import pytest
-from model_mommy import mommy
+from model_bakery import baker
 
 from apps.filesystem.models import File, Directory
 
@@ -16,8 +16,8 @@ from .fixtures import *  # NOQA: Star import is OK here because it's just a test
 
 @pytest.fixture
 def file_testdata(transactional_db):
-    dir_obj = mommy.make(Directory, pk=1)
-    mommy.make(File, pk=1, name='the_file', directory=dir_obj)
+    dir_obj = baker.make(Directory, pk=1)
+    baker.make(File, pk=1, name='the_file', directory=dir_obj)
 
 
 def test_save_file_validation(strongtnc_users, client, file_testdata):

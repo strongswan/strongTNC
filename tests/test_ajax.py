@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 import pytest
-from model_mommy import mommy
+from model_bakery import baker
 
 from apps.core.models import Session
 from apps.filesystem.models import File, Directory
@@ -74,10 +74,10 @@ def files_and_directories_test_data(transactional_db):
 @pytest.fixture
 def sessions_test_data(transactional_db):
     now = timezone.now()
-    mommy.make(Session, id=1, time=now - timedelta(days=1), device__id=1)
-    mommy.make(Session, id=2, time=now + timedelta(days=1), device__id=1)
-    mommy.make(Session, id=3, time=now + timedelta(days=3), device__id=1)
-    mommy.make(Session, id=4, time=now - timedelta(days=3), device__id=1)
+    baker.make(Session, id=1, time=now - timedelta(days=1), device__id=1)
+    baker.make(Session, id=2, time=now + timedelta(days=1), device__id=1)
+    baker.make(Session, id=3, time=now + timedelta(days=3), device__id=1)
+    baker.make(Session, id=4, time=now - timedelta(days=3), device__id=1)
 
 
 @pytest.fixture

@@ -11,7 +11,7 @@ from django.db.utils import OperationalError
 from django.utils import timezone
 
 import pytest
-from model_mommy import mommy
+from model_bakery import baker
 from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
 from rest_framework import status
 
@@ -52,7 +52,7 @@ def session(transactional_db):
     Generate a session object with pk=1 and no associated tags.
     """
     time = timezone.now()
-    session = mommy.make(Session, id=1, time=time)
+    session = baker.make(Session, id=1, time=time, identity__data="tester")
     session.tag_set.clear()
     return session
 
@@ -231,7 +231,7 @@ def test_invalid_xml(api_client):
 def test_limit_fields(api_client):
     # TODO convert to class
 
-    tags = mommy.make(Tag, _quantity=5)
+    tags = baker.make(Tag, _quantity=5)
 
     # Unfiltered list
     r = api_client.get(reverse('tag-list'))
@@ -278,7 +278,7 @@ def test_large_measurement(api_factory):
     data = {'data': software_ids}
     request = api_factory.post(reverse('session-swid-measurement', args=[1]), data, format='json')
 
-    user = mommy.make(User, is_staff=True)
+    user = baker.make(User, is_staff=True)
     force_authenticate(request, user=user)
 
     try:

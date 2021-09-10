@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.utils.dateformat import format
 
 import pytest
-from model_mommy import mommy
+from model_bakery import baker
 
 from apps.core.models import Session, WorkItem
 from apps.core.types import WorkItemType
@@ -40,8 +40,8 @@ def swidtag(request, transactional_db):
 
 @pytest.fixture
 def session(transactional_db):
-    test_session = mommy.make(Session, time=timezone.now())
-    workitem = mommy.make(WorkItem, type=WorkItemType.SWIDT,
+    test_session = baker.make(Session, time=timezone.now())
+    workitem = baker.make(WorkItem, type=WorkItemType.SWIDT,
                           session=test_session)
 
     with open('tests/test_tags/multiple-swid-tags.txt', 'r') as f:
@@ -298,21 +298,21 @@ def test_invalid_role():
 @pytest.fixture
 def tags_and_sessions(transactional_db):
     now = timezone.now()
-    s1 = mommy.make(Session, id=1, identity__data="tester", time=now - timedelta(days=3), device__id=1)
-    s2 = mommy.make(Session, id=2, identity__data="tester", time=now - timedelta(days=1), device__id=1)
-    s3 = mommy.make(Session, id=3, identity__data="tester", time=now + timedelta(days=1), device__id=1)
-    mommy.make(Session, id=7, identity__data="tester", time=now + timedelta(days=2), device__id=1)
-    s4 = mommy.make(Session, id=4, identity__data="tester", time=now + timedelta(days=3), device__id=1)
-    mommy.make(Session, id=5, identity__data="tester", time=now - timedelta(days=4), device__id=1)
-    mommy.make(Session, id=6, identity__data="tester", time=now + timedelta(days=4), device__id=1)
+    s1 = baker.make(Session, id=1, identity__data="tester", time=now - timedelta(days=3), device__id=1)
+    s2 = baker.make(Session, id=2, identity__data="tester", time=now - timedelta(days=1), device__id=1)
+    s3 = baker.make(Session, id=3, identity__data="tester", time=now + timedelta(days=1), device__id=1)
+    baker.make(Session, id=7, identity__data="tester", time=now + timedelta(days=2), device__id=1)
+    s4 = baker.make(Session, id=4, identity__data="tester", time=now + timedelta(days=3), device__id=1)
+    baker.make(Session, id=5, identity__data="tester", time=now - timedelta(days=4), device__id=1)
+    baker.make(Session, id=6, identity__data="tester", time=now + timedelta(days=4), device__id=1)
 
-    tag1 = mommy.make(Tag, id=1, unique_id='tag1')
-    tag2 = mommy.make(Tag, id=2, unique_id='tag2')
-    tag3 = mommy.make(Tag, id=3, unique_id='tag3')
-    tag4 = mommy.make(Tag, id=4, unique_id='tag4')
-    tag5 = mommy.make(Tag, id=5, unique_id='tag5')
-    tag6 = mommy.make(Tag, id=6, unique_id='tag6')
-    tag7 = mommy.make(Tag, id=7, unique_id='tag7')
+    tag1 = baker.make(Tag, id=1, unique_id='tag1')
+    tag2 = baker.make(Tag, id=2, unique_id='tag2')
+    tag3 = baker.make(Tag, id=3, unique_id='tag3')
+    tag4 = baker.make(Tag, id=4, unique_id='tag4')
+    tag5 = baker.make(Tag, id=5, unique_id='tag5')
+    tag6 = baker.make(Tag, id=6, unique_id='tag6')
+    tag7 = baker.make(Tag, id=7, unique_id='tag7')
 
     # intital set: tag 1-4
     s1.tag_set.add(tag1, tag2, tag3, tag4)
@@ -491,10 +491,10 @@ def test_changed_software_entity_name(swidtag, filename):
 def test_update_tag_stats(transactional_db):
     # Setup some sessions and tags
     now = timezone.now()
-    s1 = mommy.make(Session, id=1, identity__data="tester", time=now - timedelta(days=3), device__id=1)
-    s2 = mommy.make(Session, id=2, identity__data="tester", time=now - timedelta(days=2), device__id=1)
-    s3 = mommy.make(Session, id=3, identity__data="tester", time=now - timedelta(days=1), device__id=1)
-    tags = [mommy.make(Tag, id=n, unique_id='tag%i' % n) for n in range(10)]
+    s1 = baker.make(Session, id=1, identity__data="tester", time=now - timedelta(days=3), device__id=1)
+    s2 = baker.make(Session, id=2, identity__data="tester", time=now - timedelta(days=2), device__id=1)
+    s3 = baker.make(Session, id=3, identity__data="tester", time=now - timedelta(days=1), device__id=1)
+    tags = [baker.make(Tag, id=n, unique_id='tag%i' % n) for n in range(10)]
 
     utils.update_tag_stats(s1, Tag.objects.values_list('pk', flat=True)[:4])
 
@@ -522,7 +522,8 @@ def test_update_tag_stats(transactional_db):
 
 def test_large_tagstats_update(transactional_db):
     now = timezone.now()
-    s1 = mommy.make(Session, id=1,time=now)
-    tags = range(2000)
-    utils.update_tag_stats(s1, tags)
+    s1 = baker.make(Session, id=1, time=now, identity__data="tester")
+    tags = [baker.make(Tag, id=n, unique_id='tag%i' % n) for n in range(2000)]
+    tag_ids = range(2000)
+    utils.update_tag_stats(s1, tag_ids)
     assert TagStats.objects.count() == 2000

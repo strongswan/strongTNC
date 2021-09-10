@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 import pytest
-from model_mommy import mommy
+from model_bakery import baker
 
 from apps.packages.models import Version, Package
 from apps.devices.models import Product
@@ -18,10 +18,10 @@ from .fixtures import *  # NOQA: Star import is OK here because it's just a test
 
 @pytest.fixture
 def package_testdata(transactional_db):
-    package = mommy.make(Package, pk=1)
-    product = mommy.make(Product, pk=1)
+    package = baker.make(Package, pk=1)
+    product = baker.make(Product, pk=1)
     time = timezone.now()
-    mommy.make(Version, pk=1, product=product, package=package, release='1.0', security=True, blacklist=True,
+    baker.make(Version, pk=1, product=product, package=package, release='1.0', security=True, blacklist=True,
                time=time)
     return package
 

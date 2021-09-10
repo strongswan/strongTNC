@@ -7,7 +7,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 from django.urls import reverse
 
 import pytest
-from model_mommy import mommy
+from model_bakery import baker
 
 from apps.policies.models import Policy, Enforcement
 from apps.devices.models import Group
@@ -17,9 +17,9 @@ from .fixtures import *  # NOQA: Star import is OK here because it's just a test
 
 @pytest.fixture
 def policy_testdata(transactional_db):
-    p = mommy.make(Policy, pk=1)
-    g = mommy.make(Group, pk=1)
-    mommy.make(Enforcement, pk=1, policy=p, group=g)
+    p = baker.make(Policy, pk=1)
+    g = baker.make(Group, pk=1)
+    baker.make(Enforcement, pk=1, policy=p, group=g)
 
 
 def test_save_enforcement_validation(strongtnc_users, client, policy_testdata):
