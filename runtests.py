@@ -3,6 +3,9 @@ import os
 import sys
 import pytest
 import coverage
+from django.test import TransactionTestCase
+
+TransactionTestCase.databases = {'default', 'meta'}
 
 if __name__ == '__main__':
     # Environment variables
