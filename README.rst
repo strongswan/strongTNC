@@ -1,8 +1,8 @@
 strongTNC
 =========
 
-.. image:: https://travis-ci.org/strongswan/strongTNC.png?branch=master
-   :target: https://travis-ci.org/strongswan/strongTNC
+.. image:: https://github.com/strongswan/strongTNC/workflows/CI/badge.svg
+   :target: https://github.com/strongswan/strongTNC/actions?query=workflow%3ACI
    :alt: Build status
 
 .. image:: https://coveralls.io/repos/github/strongswan/strongTNC/badge.svg?branch=master
