@@ -4,7 +4,6 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 from rest_framework import serializers
 
 from apps.api.mixins import DynamicFieldsMixin
-from apps.devices.serializers import DeviceSerializer
 from . import models
 
 

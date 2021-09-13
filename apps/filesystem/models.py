@@ -5,9 +5,6 @@ import os
 
 from django.db import models
 
-from apps.packages.models import Version
-from apps.core.fields import HashField
-
 
 class Directory(models.Model):
     """

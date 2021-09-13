@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import sys
-import sleekxmpp
 
 from sleekxmpp.clientxmpp import ClientXMPP
 from sleekxmpp.xmlstream import ET

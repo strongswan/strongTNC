@@ -11,6 +11,7 @@ class Action(object):
     ISOLATE = 2
     NONE = 3
 
+
 ACTION_CHOICES = (
     (Action.ALLOW, 'Allow'),
     (Action.BLOCK, 'Block'),
@@ -40,6 +41,7 @@ class WorkItemType(object):
     UDPBL = 14
     SWIDT = 15
     TPMRA = 16
+
 
 WORKITEM_TYPE_CHOICES = (
     (WorkItemType.RESVD, 'RESVD'),

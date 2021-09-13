@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
-import json
-
 from django.db import transaction
 from rest_framework import viewsets, views, status
 from rest_framework.response import Response
@@ -123,7 +121,7 @@ class TagAddView(views.APIView):
             except XMLSyntaxError:
                 return make_message('Invalid XML', status.HTTP_400_BAD_REQUEST)
             except ValueError as e:
-                return make_message(unicode(e), status.HTTP_400_BAD_REQUEST)
+                return make_message(str(e), status.HTTP_400_BAD_REQUEST)
             else:
                 # Update stats
                 if replaced:
@@ -264,7 +262,6 @@ class SwidEventsView(views.APIView):
 
             # Create Event and TagEvent objects if they don't exist yet
             epoch = obj['epoch']
-            last_eid = obj['lastEid']
             for e in obj['events']:
                 action = e['action']
                 ev, _ = Event.objects.get_or_create(device=session.device,
@@ -303,5 +300,5 @@ class SwidEventsView(views.APIView):
                 xmpp.disconnect()
 
             return Response(data=[], status=status.HTTP_200_OK)
-        except ValueError as e:
+        except ValueError:
             return make_message('ValueError in SWID events', status.HTTP_400_BAD_REQUEST)

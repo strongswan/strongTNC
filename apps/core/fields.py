@@ -49,7 +49,7 @@ class EpochField(models.IntegerField):
         return dt.replace(tzinfo=pytz.utc)  # Make datetime timezone-aware
 
     def to_python(self, value):
-        if isinstance(value, (int, long)):
+        if isinstance(value, int):
             dt = datetime.utcfromtimestamp(value)
             return dt.replace(tzinfo=pytz.utc)  # Make datetime timezone-aware
         elif isinstance(value, datetime):

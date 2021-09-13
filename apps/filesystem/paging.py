@@ -49,6 +49,7 @@ def file_simple_stat_producer(page_size, filter_query, dynamic_params=None, stat
         count = file_list.filter(name__icontains=filter_query).count()
     return math.ceil(count / page_size)
 
+
 # PAGING CONFIG
 
 dir_list_paging = {

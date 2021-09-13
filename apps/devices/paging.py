@@ -5,7 +5,6 @@ import math
 
 from .models import Device, Product
 from apps.core.models import Session
-from apps.devices.models import Device
 from apps.swid.models import Event
 from apps.front.paging import ProducerFactory
 

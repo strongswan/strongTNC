@@ -124,7 +124,7 @@ def save(request):
     # port ranges
     if policy_type in [11, 12, 13, 14]:
         ranges = request.POST.get('range')
-        if ranges != '' and ranges != None:
+        if ranges != '' and ranges is not None:
             if not check_range(ranges):
                 raise ValueError('Port ranges are not valid.')
 
@@ -232,7 +232,7 @@ def normalize_ranges_whitespace(ranges):
             String containing port ranges.
 
     """
-    return re.sub('\s+', ' ', ranges.strip())
+    return re.sub(r'\s+', ' ', ranges.strip())
 
 
 def check_range(ranges):
@@ -246,7 +246,7 @@ def check_range(ranges):
     for r in ranges.split():
         bounds = r.split('-', 1)
         for b in bounds:
-            if not re.match('^\d+$', b):
+            if not re.match(r'^\d+$', b):
                 return False
 
         lower = int(bounds[0])
