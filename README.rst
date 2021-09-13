@@ -9,10 +9,6 @@ strongTNC
    :target: https://coveralls.io/github/strongswan/strongTNC?branch=master
    :alt: Test coverage
 
-.. image:: https://landscape.io/github/strongswan/strongTNC/master/landscape.png
-   :target: https://landscape.io/github/strongswan/strongTNC/master
-   :alt: Code Health
-
 strongTNC is a Trusted Network Connect (TNC) extension for the strongSwan VPN
 solution. It allows the definition and enforcement of TNC policies that apply
 to all VPN clients and must be fulfilled with each connection attempt.
