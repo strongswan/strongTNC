@@ -5,7 +5,7 @@ from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
 from django.shortcuts import render
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import Session, Result, Identity
 from apps.policies.models import Policy, Enforcement
