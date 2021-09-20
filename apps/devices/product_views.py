@@ -125,18 +125,16 @@ def check(request):
     """
     Check if product name is unique
     """
-    response = False
-    if request.is_ajax():
-        product_name = request.POST['name']
-        product_id = request.POST['product']
-        if product_id == 'None':
-            product_id = ''
+    product_name = request.POST['name']
+    product_id = request.POST['product']
+    if product_id == 'None':
+        product_id = ''
 
-        try:
-            product = Product.objects.get(name=product_name)
-            response = (str(product.id) == product_id)
-        except Product.DoesNotExist:
-            response = True
+    try:
+        product = Product.objects.get(name=product_name)
+        response = (str(product.id) == product_id)
+    except Product.DoesNotExist:
+        response = True
 
     return HttpResponse(("%s" % response).lower())
 

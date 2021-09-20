@@ -154,16 +154,14 @@ def check(request):
         - false for invalid group name
 
     """
-    is_valid = False
-    if request.is_ajax():
-        group_name = request.POST.get('name')
-        group_id = request.POST.get('group')
+    group_name = request.POST.get('name')
+    group_id = request.POST.get('group')
 
-        try:
-            group_obj = Group.objects.get(name=group_name)
-            is_valid = (str(group_obj.id) == group_id)
-        except Group.DoesNotExist:
-            is_valid = True
+    try:
+        group_obj = Group.objects.get(name=group_name)
+        is_valid = (str(group_obj.id) == group_id)
+    except Group.DoesNotExist:
+        is_valid = True
 
     return HttpResponse(("%s" % is_valid).lower())
 

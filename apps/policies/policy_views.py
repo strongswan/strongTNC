@@ -195,16 +195,14 @@ def check(request):
     - false for invalid policy name
 
     """
-    is_valid = False
-    if request.is_ajax():
-        policy_name = request.POST.get('name')
-        policy_id = request.POST.get('policy')
+    policy_name = request.POST.get('name')
+    policy_id = request.POST.get('policy')
 
-        try:
-            policy_obj = Policy.objects.get(name=policy_name)
-            is_valid = (str(policy_obj.id) == policy_id)
-        except Policy.DoesNotExist:
-            is_valid = True
+    try:
+        policy_obj = Policy.objects.get(name=policy_name)
+        is_valid = (str(policy_obj.id) == policy_id)
+    except Policy.DoesNotExist:
+        is_valid = True
 
     return HttpResponse(("%s" % is_valid).lower())
 

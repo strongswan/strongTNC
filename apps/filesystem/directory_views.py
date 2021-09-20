@@ -120,15 +120,13 @@ def check(request):
         - false for invalid directory name
 
     """
-    is_valid = False
-    if request.is_ajax():
-        directory_path = request.POST.get('path')
-        directory_id = request.POST.get('directory')
+    directory_path = request.POST.get('path')
+    directory_id = request.POST.get('directory')
 
-        try:
-            dir_obj = Directory.objects.get(path=directory_path)
-            is_valid = (str(dir_obj.id) == directory_id)
-        except Directory.DoesNotExist:
-            is_valid = True
+    try:
+        dir_obj = Directory.objects.get(path=directory_path)
+        is_valid = (str(dir_obj.id) == directory_id)
+    except Directory.DoesNotExist:
+        is_valid = True
 
     return HttpResponse(("%s" % is_valid).lower())

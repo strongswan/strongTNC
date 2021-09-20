@@ -146,22 +146,20 @@ def check(request):
     - true for valid enforcement name
     - false for invalid einforcement name
     """
-    is_valid = False
-    if request.is_ajax():
-        policy_id = request.POST.get('policy')
-        policy_id = int(policy_id) if policy_id != '' else -1
-        group_id = request.POST.get('group')
-        group_id = int(group_id) if group_id != '' else -1
-        enforcement_id = request.POST.get('enforcement')
-        if enforcement_id == 'None':
-            enforcement_id = ''
-        enforcement_id = int(enforcement_id) if enforcement_id != '' else -1
+    policy_id = request.POST.get('policy')
+    policy_id = int(policy_id) if policy_id and policy_id != '' else -1
+    group_id = request.POST.get('group')
+    group_id = int(group_id) if group_id and group_id != '' else -1
+    enforcement_id = request.POST.get('enforcement')
+    if enforcement_id == 'None':
+        enforcement_id = ''
+    enforcement_id = int(enforcement_id) if enforcement_id and enforcement_id != '' else -1
 
-        try:
-            e = Enforcement.objects.get(policy=policy_id, group=group_id)
-            is_valid = (e.id == enforcement_id)
-        except Enforcement.DoesNotExist:
-            is_valid = True
+    try:
+        e = Enforcement.objects.get(policy=policy_id, group=group_id)
+        is_valid = (e.id == enforcement_id)
+    except Enforcement.DoesNotExist:
+        is_valid = True
 
     return HttpResponse(("%s" % is_valid).lower())
 

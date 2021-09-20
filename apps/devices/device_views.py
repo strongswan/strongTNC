@@ -161,21 +161,19 @@ def check(request):
     - true for valid device name
     - false for invalid device name
     """
-    is_valid = False
-    if request.is_ajax():
-        product_id = request.POST.get('product')
-        product_id = int(product_id) if product_id != '' else -1
-        device_value = request.POST.get('value')
-        device_id = request.POST.get('device')
-        if device_id == 'None':
-            device_id = ''
-        device_id = int(device_id) if device_id != '' else -1
+    product_id = request.POST.get('product')
+    product_id = int(product_id) if product_id and product_id != '' else -1
+    device_value = request.POST.get('value')
+    device_id = request.POST.get('device')
+    if device_id == 'None':
+        device_id = ''
+    device_id = int(device_id) if device_id and device_id != '' else -1
 
-        try:
-            d = Device.objects.get(value=device_value, product=product_id)
-            is_valid = (d.id == device_id)
-        except Device.DoesNotExist:
-            is_valid = True
+    try:
+        d = Device.objects.get(value=device_value, product=product_id)
+        is_valid = (d.id == device_id)
+    except Device.DoesNotExist:
+        is_valid = True
 
     return HttpResponse(("%s" % is_valid).lower())
 

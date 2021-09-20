@@ -124,18 +124,16 @@ def check(request):
     - true for valid package name
     - false for invalid package name
     """
-    is_valid = False
-    if request.is_ajax():
-        package_name = request.POST.get('name')
-        package_id = request.POST.get('package')
-        if package_id == 'None':
-            package_id = ''
+    package_name = request.POST.get('name')
+    package_id = request.POST.get('package')
+    if package_id == 'None':
+        package_id = ''
 
-        try:
-            package_obj = Package.objects.get(name=package_name)
-            is_valid = (str(package_obj.id) == package_id)
-        except Package.DoesNotExist:
-            is_valid = True
+    try:
+        package_obj = Package.objects.get(name=package_name)
+        is_valid = (str(package_obj.id) == package_id)
+    except Package.DoesNotExist:
+        is_valid = True
 
     return HttpResponse(("%s" % is_valid).lower())
 
