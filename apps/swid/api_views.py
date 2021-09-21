@@ -222,83 +222,80 @@ class SwidEventsView(views.APIView):
 
     @transaction.atomic
     def post(self, request, pk, format=None):
+        obj = request.data
+
+        # Check if any software identifiers, i.e. Tags are missing
+        missing_tags = []
+        for e in obj['events']:
+            sw_id = e['softwareId']
+            if not Tag.objects.filter(software_id=sw_id).exists():
+                if sw_id not in missing_tags:
+                    missing_tags.append(sw_id)
+
+        if missing_tags:
+            return Response(data=missing_tags,
+                            status=status.HTTP_412_PRECONDITION_FAILED)
+
+        # Get current Session object
         try:
-            obj = request.data
+            session = Session.objects.get(pk=pk)
+        except Session.DoesNotExist:
+            msg = 'Session with id "%s" not found' % pk
+            return make_message(msg, status.HTTP_404_NOT_FOUND)
 
-            # Check if any software identifiers, i.e. Tags are missing
-            missing_tags = []
-            for e in obj['events']:
-                sw_id = e['softwareId']
-                if not Tag.objects.filter(software_id=sw_id).exists():
-                    if sw_id not in missing_tags:
-                        missing_tags.append(sw_id)
+        # Publish SWID events on XMPP-Grid?
+        xmpp_connected = False
+        if USE_XMPP:
+            # Initialize XMPP client
+            xmpp = XmppGridClient(XMPP_GRID['jid'], XMPP_GRID['password'],
+                                  XMPP_GRID['pubsub_server'])
+            xmpp.ca_certs = XMPP_GRID['cacert']
+            xmpp.certfile = XMPP_GRID['certfile']
+            xmpp.keyfile = XMPP_GRID['keyfile']
+            xmpp.use_ipv6 = XMPP_GRID['use_ipv6']
 
-            if missing_tags:
-                return Response(data=missing_tags,
-                                status=status.HTTP_412_PRECONDITION_FAILED)
+            # Connect to the XMPP server and start processing XMPP stanzas.
+            if xmpp.connect():
+                xmpp.process()
+                xmpp_connected = True
 
-            # Get current Session object
-            try:
-                session = Session.objects.get(pk=pk)
-            except Session.DoesNotExist:
-                msg = 'Session with id "%s" not found' % pk
-                return make_message(msg, status.HTTP_404_NOT_FOUND)
-
-            # Publish SWID events on XMPP-Grid?
-            xmpp_connected = False
-            if USE_XMPP:
-                # Initialize XMPP client
-                xmpp = XmppGridClient(XMPP_GRID['jid'], XMPP_GRID['password'],
-                                      XMPP_GRID['pubsub_server'])
-                xmpp.ca_certs = XMPP_GRID['cacert']
-                xmpp.certfile = XMPP_GRID['certfile']
-                xmpp.keyfile = XMPP_GRID['keyfile']
-                xmpp.use_ipv6 = XMPP_GRID['use_ipv6']
-
-                # Connect to the XMPP server and start processing XMPP stanzas.
-                if xmpp.connect():
-                    xmpp.process()
-                    xmpp_connected = True
-
-            # Create Event and TagEvent objects if they don't exist yet
-            epoch = obj['epoch']
-            for e in obj['events']:
-                action = e['action']
-                ev, _ = Event.objects.get_or_create(device=session.device,
-                           epoch=epoch, eid=e['eid'], timestamp=e['timestamp'])
-                t = Tag.objects.get(software_id=e['softwareId'])
-                te, _ = TagEvent.objects.get_or_create(event=ev, tag=t,
-                           record_id=e['recordId'], source_id=e['sourceId'],
-                           action=action)
-
-                if xmpp_connected:
-                    j_event = '"event": {"timestamp": "%s", "epoch": "%s", "eid": "%s"}' % \
-                        (e['timestamp'], epoch, e['eid'])
-                    j_device = '"device": {"value": "%s", "description": "%s"}' % \
-                        (session.device.value, session.device.description)
-                    j_tag = '"tag": {"softwareId": "%s", "recordId": %s, "sourceId": %s}' % \
-                        (e['softwareId'], e['recordId'], e['sourceId'])
-                    j_action = '"action": %d' % action
-                    j_data = '{%s, %s, %s, %s}' % (j_event, j_device, j_tag, j_action)
-                    xmpp.publish(XMPP_GRID['node_events'], None, j_data)
-
-                # Update tag stats
-                ts_set = TagStats.objects.filter(device=session.device, tag=t)
-                if ts_set:
-                    ts = ts_set[0]
-                    if action == TagEvent.CREATION:
-                        ts.last_deleted = None
-                    else:
-                        ts.last_deleted = ev
-                    ts.last_seen = session
-                    ts.save()
-                else:
-                    ts = TagStats.objects.create(device=session.device, tag=t,
-                            first_seen=session, last_seen=session, first_installed=ev)
+        # Create Event and TagEvent objects if they don't exist yet
+        epoch = obj['epoch']
+        for e in obj['events']:
+            action = e['action']
+            ev, _ = Event.objects.get_or_create(device=session.device,
+                       epoch=epoch, eid=e['eid'], timestamp=e['timestamp'])
+            t = Tag.objects.get(software_id=e['softwareId'])
+            te, _ = TagEvent.objects.get_or_create(event=ev, tag=t,
+                       record_id=e['recordId'], source_id=e['sourceId'],
+                       action=action)
 
             if xmpp_connected:
-                xmpp.disconnect()
+                j_event = '"event": {"timestamp": "%s", "epoch": "%s", "eid": "%s"}' % \
+                    (e['timestamp'], epoch, e['eid'])
+                j_device = '"device": {"value": "%s", "description": "%s"}' % \
+                    (session.device.value, session.device.description)
+                j_tag = '"tag": {"softwareId": "%s", "recordId": %s, "sourceId": %s}' % \
+                    (e['softwareId'], e['recordId'], e['sourceId'])
+                j_action = '"action": %d' % action
+                j_data = '{%s, %s, %s, %s}' % (j_event, j_device, j_tag, j_action)
+                xmpp.publish(XMPP_GRID['node_events'], None, j_data)
 
-            return Response(data=[], status=status.HTTP_200_OK)
-        except ValueError:
-            return make_message('ValueError in SWID events', status.HTTP_400_BAD_REQUEST)
+            # Update tag stats
+            ts_set = TagStats.objects.filter(device=session.device, tag=t)
+            if ts_set:
+                ts = ts_set[0]
+                if action == TagEvent.CREATION:
+                    ts.last_deleted = None
+                else:
+                    ts.last_deleted = ev
+                ts.last_seen = session
+                ts.save()
+            else:
+                ts = TagStats.objects.create(device=session.device, tag=t,
+                        first_seen=session, last_seen=session, first_installed=ev)
+
+        if xmpp_connected:
+            xmpp.disconnect()
+
+        return Response(data=[], status=status.HTTP_200_OK)
