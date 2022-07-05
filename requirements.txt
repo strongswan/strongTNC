@@ -1,5 +1,5 @@
 # Base system
-Django==3.2.13
+Django==3.2.14
 pytz==2020.1
 dj-database-url==0.4.1
 
