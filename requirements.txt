@@ -4,7 +4,7 @@ pytz==2020.1
 dj-database-url==0.4.1
 
 # Parsing
-lxml==4.6.5
+lxml==4.9.1
 
 # API
 djangorestframework==3.12.4
