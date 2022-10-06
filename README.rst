@@ -17,7 +17,7 @@ to all VPN clients and must be fulfilled with each connection attempt.
 Development Setup
 -----------------
 
-strongTNC uses Django (currently version 3.2.13) requiring Python 3. It is
+strongTNC uses Django (currently version 3.2.15) requiring Python 3. It is
 recommended to use the pip_ and virtualenv_ tools to ease the dependency
 management. They can be installed via your package manager on most Linux
 distributions.
