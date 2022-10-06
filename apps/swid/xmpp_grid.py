@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from sleekxmpp.clientxmpp import ClientXMPP
-from sleekxmpp.xmlstream import ET
+from slixmpp.clientxmpp import ClientXMPP
+from slixmpp.xmlstream import ET
 
 
 # Python versions before 3.0 do not use UTF-8 encoding
