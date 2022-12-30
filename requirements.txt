@@ -13,5 +13,5 @@ djangorestframework-camel-case==1.2.0
 Markdown==3.3.4
 
 #XMPP
-slixmpp==1.8.2
+slixmpp==1.8.3
 dnspython==2.1.0
