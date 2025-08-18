@@ -18,7 +18,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip coveralls
+        # legacy-cgi can probably be removed once Django is updated
+        python -m pip install --upgrade pip coveralls legacy-cgi
         pip install -r requirements-tests.txt
     - name: Prepare config
       run: |
